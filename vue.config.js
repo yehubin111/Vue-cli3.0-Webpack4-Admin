@@ -36,6 +36,10 @@ module.exports = {
       })
   },
   configureWebpack: config => {
+    // 性能检测，文件大小超过最大限制，会提示
+    config.performance = {
+      hints: false
+    };
     config.resolve = {
       extensions: ['.js', '.vue', '.json', '.css', 'svg'],
       alias: {
@@ -45,7 +49,4 @@ module.exports = {
     }
   },
   productionSourceMap: false, // 开发环境是否生成sourcemap文件
-  // performance: { // 性能检测，文件大小超过最大限制，会提示
-  //   hints: false
-  // }
 }

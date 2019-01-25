@@ -1,0 +1,823 @@
+<template>
+  <div class="outbox">
+    <div class="ctrlbutton">
+      <div class="createbutton">
+        <el-button type="primary" @click="createAd">创建</el-button>
+      </div>
+      <el-dropdown
+        class="select"
+        split-button
+        type="primary"
+        @click="toCtrlAll('Edit')"
+        @command="handleCommand"
+      >编辑
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item class="tocreate" command="a" :disabled="archivedbutton">开启</el-dropdown-item>
+          <el-dropdown-item class="tocreate" command="b" :disabled="archivedbutton">关闭</el-dropdown-item>
+          <el-dropdown-item class="tocreate" command="c" :disabled="archivedbutton">重命名</el-dropdown-item>
+          <el-dropdown-item class="tocreate" command="d" :disabled="archivedbutton">查找替换</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <div class="createbutton">
+        <el-button
+          type="text"
+          icon="el-icon-news"
+          @click="toCtrlAll('Copy')"
+          :disabled="archivedbutton"
+        >复制</el-button>
+      </div>
+      <div class="createbutton">
+        <el-button
+          type="text"
+          icon="el-icon-menu"
+          @click="toCtrlAll('ARCHIVED')"
+          :disabled="archivedbutton"
+        >归档</el-button>
+      </div>
+      <div class="createbutton">
+        <el-button type="text" icon="el-icon-delete" @click="toCtrlAll('DELETED')">删除</el-button>
+      </div>
+      <p class="download">
+        <span @click="outTable" :style="{color: exportstatus?'': '#999'}">导出全部
+          <svg-icon svgname="save" svgclass="save" :style="{color: exportstatus?'': '#999'}"></svg-icon>
+        </span>
+      </p>
+      <div class="at-dropdown" @mouseenter="sortDown = !sortDown" @mouseleave="searchStatus">
+        <p class="theme">
+          <span>
+            细分数据
+            <i class="el-icon-arrow-down"></i>
+          </span>
+        </p>
+        <div class="droplist" v-show="sortDown" :style="{width: firstSearch? '280px':'160px'}">
+          <div class="listarr" id="firstList">
+            <div class="list" @mouseenter="sweepCare" @click="clearCare">清空所有细分</div>
+            <div
+              class="list"
+              v-for="(lst, lsindex) in searchList"
+              :key="lsindex"
+              @mouseenter="searchClick(lst.name, lst.key)"
+            >
+              {{lst.name}}
+              <i class="el-icon-caret-right"></i>
+            </div>
+          </div>
+          <div class="listarr rightarr" id="secondList">
+            <div
+              :class="{list: true, selected: scd.checked}"
+              v-for="(scd, sindex) in secondSearchList"
+              :key="sindex"
+              @click="selectCare(scd.key)"
+            >{{scd.cname}}</div>
+          </div>
+        </div>
+      </div>
+      <p class="autolist">
+        <span @click="importRemain">
+          <i class="el-icon-download"></i>
+          导入留存
+        </span>
+        <span @click="outListOption">
+          <i class="el-icon-tickets"></i>
+          自定义列
+        </span>
+      </p>
+    </div>
+    <div class="timeout" v-show="adlisttimeout">加载失败请
+      <el-button type="text" @click="toGetdata(false)">重试</el-button>
+    </div>
+    <div class="list" id="AdList" v-show="!adlisttimeout">
+      <ad-setlist
+        :customOption="customOptionDefault"
+        @toCopy="toCopy"
+        @toEdit="toEdit"
+        @reName="reName"
+        @mutilSelect="mutilSelect"
+        :type="type"
+        @tableSort="tableSort"
+        @tabJump="tabJump"
+      ></ad-setlist>
+    </div>
+    <div class="pageswitch" v-show="!adlisttimeout">
+      <el-pagination
+        @size-change="pageSizeChange"
+        @current-change="pageSwitch"
+        :current-page="pageindex"
+        :page-sizes="[20, 50, 80]"
+        :page-size="adpagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="adtotal"
+      ></el-pagination>
+    </div>
+    <ad-rename ref="reName" :type="type"></ad-rename>
+  </div>
+</template>
+
+<script>
+import AdSetlist from "./ad-setlist";
+import AdRename from "./ad-rename";
+import { mapState, mapMutations } from "vuex";
+import { Msgwarning } from "../../js/message";
+let search;
+export default {
+  props: ["opDefault", "type", "defaultOption"],
+  data() {
+    return {
+      sortDown: false,
+      firstSearch: "",
+      firstKey: "",
+      secondSearchList: [],
+      // defaultSwitch: true, // 广告系列默认筛选状态失效开关，如果有加入新的筛选条件，则失效
+      // careData: [],
+      state: "",
+      value2: "",
+      // status: false,
+      customOption: this.defaultOption.concat(this.opDefault), // 自定义列配置, 默认+常用
+      pageindex: 1,
+      // pagesize: 20,
+      mutilselect: [],
+      archivedbutton: false,
+      sort: "",
+      order: true,
+      // renameKey: '', // 重命名key，多个逗号间隔
+      // renameName: '', // 重命名原始名称，单个才会有
+      statuslist: [
+        {
+          name: "不限",
+          code: "-1"
+        },
+        {
+          name: "投放中",
+          code: "ACTIVE"
+        },
+        {
+          name: "已暂停",
+          code: "PAUSED"
+        },
+        {
+          name: "已归档",
+          code: "ARCHIVED"
+        },
+        {
+          name: "已删除",
+          code: "DELETED"
+        }
+      ]
+    };
+  },
+  components: {
+    AdSetlist,
+    AdRename
+  },
+  mounted() {},
+  watch: {},
+  methods: {
+    ...mapMutations(["SETSTATE"]),
+    tabJump(tabname, row, type) {
+      this.$emit("tabJump", tabname, row, type);
+    },
+    toEdit(id, name) {
+      this.$emit("wantEdit", this.type, id, name);
+    },
+    toCopy(option, accountId) {
+      this.$emit("wantCopy", this.type, option, accountId);
+    },
+    // 清空细分数据
+    clearCare() {
+      this.searchList.forEach(v => {
+        if (v.name == this.firstSearch) {
+          v.list.forEach(g => {
+            g.checked = false;
+          });
+        }
+      });
+
+      this.SETSTATE({ k: "careData", v: [] });
+
+      this.toGetdata();
+    },
+    sweepCare() {
+      this.secondSearchList = [];
+      this.firstSearch = "";
+    },
+    selectCare(key) {
+      this.searchList.forEach(v => {
+        if (v.name == this.firstSearch) {
+          v.list.forEach(g => {
+            g.checked = false;
+          });
+        }
+      });
+      // 如果选择的是无，则清空选项
+      if (key) {
+        this.secondSearchList.forEach(v => {
+          if (v.key == key) {
+            v.checked = true;
+          }
+        });
+      }
+
+      let obj = {
+        key: this.firstKey,
+        vl: key
+      };
+      let careData = this.careData;
+
+      careData = careData.filter(v => v.key != this.firstKey);
+      careData.push(obj);
+      this.SETSTATE({ k: "careData", v: careData });
+
+      this.toGetdata();
+    },
+    createAd() {
+      this.$emit("toCreateAd", this.type);
+    },
+    // 重命名
+    reName(key, name) {
+      this.$refs.reName.showBox(key, name);
+    },
+    searchStatus() {
+      this.sortDown = !this.sortDown;
+      this.secondSearchList = [];
+      this.firstSearch = "";
+    },
+    searchClick(name, key) {
+      this.firstSearch = name;
+      this.firstKey = key;
+      this.secondSearchList = this.searchList.find(
+        v => this.firstSearch == v.name
+      ).list;
+    },
+
+    tableSort(sort) {
+      this.sort = sort;
+      // this.order = sort ? true : false;
+      this.toGetdata(true);
+    },
+    adSearch() {
+      let self = this;
+      if (this.value == "") return;
+
+      clearTimeout(search);
+      search = setTimeout(function() {
+        self.toSort();
+      }, 300);
+    },
+    outListOption() {
+      this.$emit("showOptionbox", this.type);
+      // this.status = true;
+    },
+    importRemain() {
+      this.$emit('showRemainBox', this.type);
+    },
+    outTable() {
+      if (!this.exportstatus) return;
+      // 数据超过5万条，无法导出
+      if (this.adtotal > 50000) {
+        Msgwarning("数据请少于5万条");
+        return;
+      }
+
+      let name = `${this.projectname}${this.opDefault[0].name.replace(
+        "名称",
+        ""
+      )}${this.$timeFormat(new Date(), "yyyyMMddHHmmss")}`;
+
+      let outNotify = this.$notify({
+        title: "正在导出...",
+        message: "广告管理数据量较大，请稍等",
+        duration: 0,
+        showClose: false
+      });
+      // 改变导出按钮状态
+      this.SETSTATE({ k: "exportstatus", v: false });
+
+      let option = "";
+      let k = this.typeData.optionName;
+      option = this[k];
+      option.pageSize = this.adtotal;
+      this.$store.dispatch("getAdlist", {
+        option,
+        name,
+        fullScreen: false,
+        customOption: this.customOptionDefault,
+        type: this.type,
+        // order: this.order,
+        applicationid: this.applicationId,
+        editType: "export",
+        outNotify // notification实例
+      });
+    },
+    toSort() {
+      this.toGetdata(true);
+    },
+    pageSwitch(page) {
+      this.pageindex = page;
+
+      this.toGetdata();
+    },
+    pageSizeChange(size) {
+      // this.pagesize = size;
+      this.SETSTATE({ k: "adpagesize", v: size });
+
+      this.toGetdata(true);
+    },
+    // changeFilterSwitch(status) {
+    //   this.defaultSwitch = status ? status : false;
+    // },
+    sortConditionLogic(option) {
+      /**
+       * 20180104新增需求，筛选条件默认情况
+       * @父级 已归档/已删除 @子级 已归档/已删除
+       * @父级 没选/已暂停/投放中 @子级 已暂停+投放中
+       * @父级 已暂停/投放中+已归档/已删除 @子级 已暂停+投放中+已归档/已删除
+       */
+      let kdefault = "ACTIVE,PAUSED";
+      let defaultkey = option["adSetStatusStr"]
+        ? "adSetStatusStr"
+        : "adCampaignStatusStr";
+      if (option[defaultkey]) {
+        kdefault = "";
+        if (
+          option[defaultkey].indexOf("ACTIVE") != -1 ||
+          option[defaultkey].indexOf("PAUSED") != -1
+        ) {
+          kdefault = "ACTIVE,PAUSED";
+        }
+        if (option[defaultkey].indexOf("ARCHIVED") != -1) {
+          kdefault += ",ARCHIVED";
+        }
+        if (option[defaultkey].indexOf("DELETED") != -1) {
+          kdefault += ",DELETED";
+        }
+      }
+      this.SETSTATE({ k: "sortdefault", v: kdefault.replace(/^,/, "") });
+    },
+    toGetdata(pageReset) {
+      console.log(pageReset);
+      let batchId = this.$route.params.bid;
+      // 从本地缓存获取筛选条件
+      let allCondition = localStorage.getItem(adFilterLS.new)
+        ? JSON.parse(localStorage.getItem(adFilterLS.new))
+        : {};
+      let disCondition = allCondition[this.$route.params.id]
+        ? allCondition[this.$route.params.id]
+        : [];
+
+      if (pageReset) this.pageindex = 1;
+
+      let option = {
+        pageNo: this.pageindex,
+        pageSize: this.adpagesize,
+        projectId: this.$route.params.id,
+        batchId
+      };
+      if (this.sort) option.orderByCause = this.sort;
+      if (this.value2) option[this.typeData.effect] = this.value2;
+      if (this.state) option[this.typeData.searchKeyword] = this.state;
+
+      // 添加细分数据
+      this.careData.forEach(v => {
+        if (v.vl) {
+          option[v.key] = v.vl;
+        }
+      });
+      /**
+       * 20181227新增默认条件
+       * 各tab分别默认各投放状态投放中and已暂停
+       * 如果有操作过相关条件，则取消默认
+       */
+      disCondition.forEach(v => {
+        if (option[v.key] && v.key != this.typeData.defaultFilter)
+          option[v.key] += " and " + v.option;
+        else option[v.key] = v.option;
+      });
+      // 设置默认条件，详情见方法注释
+      this.sortConditionLogic(option);
+
+      option[this.typeData.defaultFilter] = option[this.typeData.defaultFilter]
+        ? option[this.typeData.defaultFilter]
+        : this.sortdefault;
+
+      let v = {
+        ...option
+      };
+      // v.pageNo = 1;
+
+      var k = this.typeData.optionName;
+      this.SETSTATE({ k, v });
+
+      this.$store.dispatch("getAdlist", {
+        option,
+        type: this.type,
+        order: this.order,
+        applicationid: this.applicationId
+      });
+    },
+    mutilSelect(arr) {
+      this.mutilselect = arr;
+
+      this.archivedbutton = this.mutilselect.find(
+        v => v.effectiveStatus == "ARCHIVED"
+      )
+        ? true
+        : false;
+      /**
+       * 只有广告系列才有的方法，筛选广告组和广告账户的列表
+       * 广告系列选择了几个，广告组和广告分别对应显示几个
+       * 没选则的情况下，显示全部
+       *  */
+
+      this.$emit("selectSort", arr);
+    },
+    toCtrlAll(k) {
+      if (this.mutilselect.length == 0) {
+        Msgwarning("请先选择要处理的广告系列/广告组/广告");
+        return;
+      }
+      if (this.mutilselect.length > 200) {
+        Msgwarning("批量操作最大条数为200");
+        return;
+      }
+      if (
+        k == "Edit" &&
+        this.mutilselect.find(v => v.effectiveStatus == "ARCHIVED")
+      ) {
+        Msgwarning("已选项中包含已归档项，已归档无法编辑");
+        return;
+      }
+      let effectiveStatus = k,
+        adIds = [];
+      let option = [];
+      this.mutilselect.forEach(v => {
+        // 批量复制用
+        let obj = {
+          id: v[this.typeData.effectIdsPush],
+          orgid: v[this.typeData.originalId],
+          orgname: v[this.typeData.originalName]
+        };
+        option.push(obj);
+
+        adIds.push(v[this.typeData.effectIdsPush]);
+      });
+      adIds = adIds.join(",");
+      // 归档
+      if (k == "ARCHIVED") {
+        this.$confirm(
+          `确认对${this.mutilselect.length}个${
+            this.typeData.name
+          }执行归档操作？归档后无法恢复`,
+          "提示",
+          {
+            confirmButtonText: "归档",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.commandExecute(adIds, effectiveStatus);
+          })
+          .catch(() => {});
+      } else if (k == "DELETED") {
+        // 删除
+        this.$confirm(
+          `确认对${this.mutilselect.length}个${
+            this.typeData.name
+          }执行删除操作？删除后无法恢复`,
+          "提示",
+          {
+            confirmButtonText: "删除",
+            cancelButtonText: "取消",
+            type: "warning"
+          }
+        )
+          .then(() => {
+            this.commandExecute(adIds, effectiveStatus);
+          })
+          .catch(() => {});
+      } else if (k == "Copy") {
+        if ([...new Set(this.mutilselect.map(v => v.accountId))].length > 1) {
+          Msgwarning("暂不支持跨广告账户复制，请选择同一个广告账户下的对象");
+          return;
+        }
+        let accountId = this.mutilselect[0].accountId;
+        this.$emit("wantCopy", this.type, option, accountId);
+      } else if (k == "Edit") {
+        this.$emit(
+          "wantEdit",
+          this.type,
+          this.mutilselect.map(v => v[this.typeData.effectIdsPush]),
+          [
+            [...new Set(this.mutilselect.map(v => v.campaignName))].join(","),
+            [...new Set(this.mutilselect.map(v => v.adSetName))].join(","),
+            [...new Set(this.mutilselect.map(v => v.adName))].join(",")
+          ]
+        );
+      }
+    },
+    handleCommand(k) {
+      if (this.mutilselect.length == 0) {
+        Msgwarning("请先选择广告");
+        return;
+      }
+      if (this.mutilselect.length > 200) {
+        Msgwarning("批量操作最大条数为200");
+        return;
+      }
+
+      let effectiveStatus,
+        adIds = [];
+      this.mutilselect.forEach(v => {
+        // seekid 用来查找替换
+        v.seekid = v[this.typeData.effectIdsPush];
+
+        adIds.push(v[this.typeData.effectIdsPush]);
+      });
+      adIds = adIds.join(",");
+      // 开启
+      if (k == "a") {
+        effectiveStatus = "ACTIVE";
+        this.commandExecute(adIds, effectiveStatus);
+      }
+      // 关闭
+      if (k == "b") {
+        effectiveStatus = "PAUSED";
+        this.commandExecute(adIds, effectiveStatus);
+      }
+      if (k == "c") {
+        this.reName(adIds);
+      }
+      if (k == "d") {
+        this.$emit("changeReplace", this.type, this.mutilselect);
+      }
+    },
+    commandExecute(adIds, effectiveStatus) {
+      let option = {
+        effectiveStatus
+      };
+      // console.log(this.typeData);
+      option[this.typeData.effectIds] = adIds;
+      this.$store.dispatch("changeAdstatus", {
+        option,
+        type: this.type,
+        fullScreen: true
+      });
+    }
+  },
+  computed: {
+    ...mapState([
+      "itemlist",
+      "adcampaigntotal",
+      "adsettotal",
+      "adadtotal",
+      "ad_option",
+      "campain_option",
+      "set_option",
+      "searchList",
+      "careData",
+      "adpagesize",
+      "adlisttimeout",
+      "exportstatus",
+      "sortdefault"
+    ]),
+    customOptionDefault() {
+      /**
+       * 去除不显示的项
+       * 广告系列 => 相关度、广告编号、广告组编号、广告组名称、广告系列名称、广告名称
+       * 广告组 => 相关度、广告编号、广告组名称、广告名称
+       * 广告 => 广告名称
+       * 非Tiktok => AF_次日留存率
+       */
+      let optionArr = this.defaultOption;
+      if (this.applicationId != "597615686992125") {
+        optionArr = this.defaultOption.filter(v => v.name != "AF_次日留存率");
+      }
+      if (this.type == "adName") {
+        return this.opDefault.concat(
+          optionArr.filter(v => v.name != "广告名称")
+        );
+      } else if (this.type == "campaignName") {
+        return this.opDefault.concat(
+          optionArr.filter(
+            v =>
+              v.name != "相关度" &&
+              v.name != "广告编号" &&
+              v.name != "广告组编号" &&
+              v.name != "广告组名称" &&
+              v.name != "广告系列名称" &&
+              v.name != "广告名称"
+          )
+        );
+      } else {
+        return this.opDefault.concat(
+          optionArr.filter(
+            v =>
+              v.name != "相关度" &&
+              v.name != "广告编号" &&
+              v.name != "广告名称" &&
+              v.name != "广告组名称"
+          )
+        );
+      }
+    },
+    typeData() {
+      let k = { name: "", effect: "", effectIds: "" };
+      switch (this.type) {
+        case "campaignName":
+          k.name = "广告系列";
+          k.effect = "adCampaignStatus";
+          k.effectIds = "adCampaignIds";
+          k.effectIdsPush = "campaignId";
+          k.effectName = "campaignName";
+          k.optionName = "campain_option";
+          k.searchKeyword = "campaignName";
+          k.listTotal = "adcampaigntotal";
+          k.originalId = "campaignId"; // 复制所需特殊id, 复制campaign无需id
+          k.originalName = "campaignName"; // 复制所需特殊name, 复制campaign无需name
+          k.defaultFilter = "adCampaignStatusStr"; // 默认筛选投放状态
+          break;
+        case "adSetName":
+          k.name = "广告组";
+          k.effect = "adSetStatus";
+          k.effectIds = "adSetIds";
+          k.effectIdsPush = "adsetId";
+          k.effectName = "adSetName";
+          k.optionName = "set_option";
+          k.searchKeyword = "adSetName";
+          k.listTotal = "adsettotal";
+          k.originalId = "campaignId";
+          k.originalName = "campaignName";
+          k.defaultFilter = "adSetStatusStr"; // 默认筛选投放状态
+          break;
+        case "adName":
+          k.name = "广告";
+          k.effect = "effectiveStatus";
+          k.effectIds = "adIds";
+          k.effectIdsPush = "adId";
+          k.effectName = "adName";
+          k.optionName = "ad_option";
+          k.searchKeyword = "adName";
+          k.listTotal = "adadtotal";
+          k.originalId = "adsetId";
+          k.originalName = "adSetName";
+          k.defaultFilter = "adStatusStr"; // 默认筛选投放状态
+          break;
+      }
+      return k;
+    },
+    adtotal() {
+      let k = this[this.typeData.listTotal];
+      return k;
+    },
+    projectname() {
+      if (this.itemlist.length == 0) return;
+      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
+    },
+    applicationId() {
+      if (this.itemlist.length == 0) return;
+      return this.itemlist.find(v => v.id == this.$route.params.id)
+        .applicationId;
+    }
+  }
+};
+</script>
+
+<style lang="less" scoped>
+.pageswitch {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+.ctrlbutton {
+  // overflow: hidden;
+  margin-bottom: 10px;
+  height: 40px;
+  .at-dropdown {
+    float: right;
+    position: relative;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    .theme {
+      width: 100px;
+      height: 40px;
+      border-radius: 4px;
+      background-color: #409eff;
+      line-height: 40px;
+      font-size: 14px;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      span {
+      }
+    }
+    .droplist {
+      position: absolute;
+      top: 40px;
+      left: -60px;
+      border-radius: 5px;
+      overflow: hidden;
+      -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      display: block;
+      z-index: 999;
+      background-color: #fff;
+      .listarr {
+        float: left;
+        width: 160px;
+        .list {
+          list-style: none;
+          line-height: 36px;
+          padding: 0 20px;
+          margin: 0;
+          font-size: 14px;
+          color: #606266;
+          cursor: pointer;
+          outline: 0;
+          position: relative;
+          &:hover {
+            background-color: #deedfd;
+            color: #3297ff;
+          }
+          i {
+            position: absolute;
+            right: 10px;
+            line-height: 36px;
+          }
+          &.selected {
+            color: #3297ff;
+          }
+        }
+        &.rightarr {
+          width: 120px;
+        }
+      }
+    }
+  }
+  .createbutton {
+    float: left;
+    margin-right: 10px;
+  }
+  .select {
+    float: left;
+    margin-right: 20px;
+  }
+  .search {
+    float: right;
+    width: 200px;
+    margin-left: 20px;
+  }
+  .selectr {
+    width: 100px;
+    margin-left: 20px;
+    float: right;
+  }
+  .datebox {
+    margin-left: 20px;
+    float: right;
+  }
+  .autolist {
+    font-size: 14px;
+    color: #3297ff;
+    text-align: right;
+    float: right;
+    line-height: 20px;
+    margin-bottom: 5px;
+    span {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      line-height: 40px;
+      margin-right: 20px;
+    }
+  }
+  .download {
+    font-size: 14px;
+    color: #3297ff;
+    text-align: right;
+    float: right;
+    line-height: 20px;
+    margin-bottom: 5px;
+    // margin-right: 25px;
+    span {
+      position: relative;
+      padding-right: 24px;
+      display: inline-block;
+      cursor: pointer;
+      line-height: 40px;
+      .save {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+        right: 0;
+        top: 12px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.timeout {
+  text-align: center;
+  font-size: 14px;
+  margin: 175px 0;
+}
+</style>

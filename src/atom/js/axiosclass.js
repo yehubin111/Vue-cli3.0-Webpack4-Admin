@@ -6,7 +6,7 @@ import { Loading } from 'element-ui'
 class AXIOS {
     constructor() {
         this.axios = axios.create({
-            baseURL: baseurl[process.env.NODE_ENV].BASE_URL,
+            baseURL: baseurl[process.env.VUE_APP_URLBASE].BASE_URL,
             timeout: 60000,
             headers: {
                 'X-Token': localStorage.getItem('atom_token')

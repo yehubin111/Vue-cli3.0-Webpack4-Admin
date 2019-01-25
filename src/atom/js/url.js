@@ -46,8 +46,8 @@ export default {
     'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}
     'optimizeadaccount': 'optimize/getAdaccountLists?', // 优化记录广告账户
     // create
-    'matchmd5': `${baseurl[process.env.NODE_ENV].MD5_URL}/file/search`,
-    'fileupload': `${baseurl[process.env.NODE_ENV].UPLOAD_URL}/file/`,
+    'matchmd5': `${baseurl[process.env.VUE_APP_URLBASE].MD5_URL}/file/search`,
+    'fileupload': `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`,
     'classify': 'creative/getClassifys?projectId={projectid}', // 分类列表
     'createlist': 'creative/getCreatives?', // 创意列表
     'countries': 'common/countries',  // 国家列表
@@ -139,7 +139,7 @@ export default {
     'joblist': 'asyncTasks/unCompleted', // 初始化获取JOB列表
     'jobresultdetail': 'asyncTasks/', // task任务结果详情，主要针对有出现失败的任务
     'calendardata': '/afFile/getDateList?', // 数据日历高亮日期
-    'addatacsv': `${baseurl[process.env.NODE_ENV].BASE_URL}/afFile/upload`, // af留存数据文件上传 ${baseurl[process.env.NODE_ENV].BASE_URL}
+    'addatacsv': `${baseurl[process.env.VUE_APP_URLBASE].BASE_URL}/afFile/upload`, // af留存数据文件上传 ${baseurl[process.env.VUE_APP_URLBASE].BASE_URL}
     'submitafdata': `afFile/upload`, // af留存数据提交
     'affiledownload': 'afFile/download?', // af数据下载
     // data
@@ -169,5 +169,5 @@ export default {
     'messagelist': 'user/userMessage?', // 获取消息列表
     'setmessage': 'user/setUserMessageStatus?', // 消息设置已读
     'setallread': 'user/setUserMessageRead', // 全部已读
-    'messageCountWebsocket': `${location.protocol.indexOf('https:') != -1? 'wss':'ws'}://${baseurl[process.env.NODE_ENV].WEBSOCKET_URL}/websocket/`, // 获取消息数量websocket连接地址
+    'messageCountWebsocket': `${location.protocol.indexOf('https:') != -1? 'wss':'ws'}://${baseurl[process.env.VUE_APP_URLBASE].WEBSOCKET_URL}/websocket/`, // 获取消息数量websocket连接地址
 }

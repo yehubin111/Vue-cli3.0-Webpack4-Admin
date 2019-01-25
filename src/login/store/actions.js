@@ -9,7 +9,7 @@ export default {
             password: psw
         }
 
-        axios.post(baseurl[process.env.NODE_ENV].BASE_URL + '/user/login', params)
+        axios.post(baseurl[process.env.VUE_APP_URLBASE].BASE_URL + '/user/login', params)
             .then(res => {
                 let r = res.data;
                 console.log(r);
@@ -35,7 +35,7 @@ export default {
         let url = 'facebook/isBindFacebok';
 
         let AXIOS = axios.create({
-            baseURL: baseurl[process.env.NODE_ENV].BASE_URL,
+            baseURL: baseurl[process.env.VUE_APP_URLBASE].BASE_URL,
             timeout: 5000,
             headers: {
                 'X-Token': localStorage.getItem('atom_token')

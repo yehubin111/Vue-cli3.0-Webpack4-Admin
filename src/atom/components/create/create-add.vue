@@ -433,7 +433,7 @@ export default {
     ...mapState(["othercountries", "allpagelist", "addcreate", "wantupload"]),
     ...mapGetters(["createclassify", "allactions"]),
     uploadFileUrl() {
-      return `${baseurl[process.env.NODE_ENV].UPLOAD_URL}/file/`;
+      return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
     }
   },
   methods: {

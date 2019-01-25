@@ -1,8 +1,8 @@
 export default {
     'development': {
-        BASE_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.1.76:9600',
-        UPLOAD_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.1.76:8888',
-        MD5_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.1.76:8888',
+        BASE_URL: 'http://172.31.1.76:9600',
+        UPLOAD_URL: 'http://172.31.1.76:8888',
+        MD5_URL: 'http://172.31.1.76:8888',
         WEBSOCKET_URL: '172.31.1.76:9600',
 
         // BASE_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.17.190:9600/', // wuhonggang

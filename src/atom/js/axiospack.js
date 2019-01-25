@@ -4,7 +4,7 @@ import baseurl from './baseurl'
 import { Loading } from 'element-ui'
 
 const AXIOS = axios.create({
-    baseURL: baseurl[process.env.NODE_ENV].BASE_URL,
+    baseURL: baseurl[process.env.VUE_APP_URLBASE].BASE_URL,
     timeout: 60000,
     headers: {
         'X-Token': localStorage.getItem('atom_token')

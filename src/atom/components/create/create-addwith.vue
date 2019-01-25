@@ -458,7 +458,7 @@ export default {
       );
     },
     uploadFileUrl() {
-      return `${baseurl[process.env.NODE_ENV].UPLOAD_URL}/file/`;
+      return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
     }
   },
   watch: {

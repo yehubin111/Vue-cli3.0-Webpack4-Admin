@@ -3,7 +3,6 @@ import { Msgsuccess, Msgerror } from './message'
 import baseurl from './baseurl'
 import { Loading } from 'element-ui'
 
-console.log(process.env.NODE_ENV);
 const AXIOS = axios.create({
     baseURL: baseurl[process.env.NODE_ENV].BASE_URL,
     timeout: 60000,

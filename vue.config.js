@@ -49,4 +49,7 @@ module.exports = {
     }
   },
   productionSourceMap: false, // 开发环境是否生成sourcemap文件
+  devServer: {
+    port: 8008
+  }
 }

@@ -213,6 +213,11 @@ export default {
   sortdefault: 'ACTIVE,PAUSED',
   adcreateadd: true,  // 新增单个创意，资源是否正在上传 true 否 false 是，创建广告用
   calendardate: [], // 导入af数据日历
+  hascreatead: false, // 动态创意广告组是否包含广告，创建广告用
+  withcreatead: '', // 新增动态创意，资源是否正在上传 true 否 false 是，创建广告用
+  imgspwant: 0, // 非素材库将要上传的文件数量，创建广告用
+  viospwant: 0, // 非素材库将要上传的文件数量，创建广告用
+  edittype: 0, // 编辑广告组初始类型
 
   adlist: [], // 广告管理列表
   adpagesize: 20, // 广告管理页面一页数量
@@ -285,12 +290,19 @@ export default {
   daycpitotal: 0,
   cpicountry: [],
   cpiimpression: [],
+  imagematterlist: [], // 图片列表
+  imagemattersum: {}, // 图片总数
+  imagemattertotal: 0,
+  videomatterlist: [], // 视频列表
+  videomattersum: {}, // 视频总数
+  videomattertotal: 0,
   // target
   tg_project_id: '',
   tg_pageSize: 20,
   tg_pageIndex: 1,
   tg_keyword: '',
-  tg_audience_type: '',
+  tg_type: '',
+  tg_adaccounts: '',
   targetlist: [],
   targettype: [],
   targettotal: 0,
@@ -317,6 +329,8 @@ export default {
   // targetlogdel: [], 
   filterarr: [], // 推广计划二级菜单，已打开过的推广计划
   targetcampaignaccount: [], // 广告系列对应广告账户
+  deleteusing: [], // 将要删除的受众共享情况
+  deletesharing: [], // 将要删除的受众使用情况
   // regular
   rg_ruleStatus: '',
   rg_keyword: '',

@@ -1,12 +1,26 @@
 // import dt from '../js/data.js'
 import _axios from '../js/axiospack';
-import Axios from '../js/axiosclass';
+import AX from '../js/axiosclass';
 // import AXIOS from '../js/axiospack2.0';
-import axios from 'axios';
+// import axios from 'axios';
 import URL from '../js/url.js'
 import WS from '../js/websocket'
 import { Msgsuccess, Msgwarning, Msgerror, MsgnotifySuccess, MsgnotifyError } from "../js/message";
 import { Loading } from 'element-ui';
+function Axios({ url, method = 'get', data = {}, callback = null, fullscreen = false }) {
+    return _axios({
+        method,
+        url,
+        data,
+        fullscreen
+    })
+        .then(res => {
+            return callback(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+}
 
 export default {
     /***************************** common */
@@ -857,7 +871,7 @@ export default {
                 console.log(err);
             })
     },
-    matchMutiFileMD5({ state, commit }, { md5, file, list, type, on, vdname, callback = null }) {
+    matchMutiFileMD5({ state, commit }, { md5, file, list, type, on, vdname, callback = null, maxcount = 0 }) {
         let url = URL.matchmd5;
 
         // 阻塞
@@ -866,7 +880,36 @@ export default {
 
         _axios.post(url, md5)
             .then(res => {
-                state.wantupload++;
+                /**
+                 * 20180130新增创建广告模块，图片视频素材最大数量判断
+                 */
+                if (type == 'img') {
+                    if (maxcount && list.length + state.imgspwant >= maxcount) {
+                        Msgwarning("图片素材最多上传10张");
+                        file.cancel();
+                        file.remove();
+
+                        state.imgspwant++;
+                        state.wantupload++;
+                        return;
+                    } else {
+                        state.imgspwant++;
+                        state.wantupload++;
+                    }
+                } else {
+                    if (maxcount && list.length + state.viospwant >= maxcount) {
+                        Msgwarning("视频素材最多上传10个");
+                        file.cancel();
+                        file.remove();
+
+                        state.viospwant++;
+                        state.wantupload++;
+                        return;
+                    } else {
+                        state.viospwant++;
+                        state.wantupload++;
+                    }
+                }
 
                 if (res.code == 0 && res.data.length > 0) {
                     // 设置上传状态，true为上传完成，允许提交
@@ -874,9 +917,11 @@ export default {
 
                     if (type == 'img' && !list.find(v => v.imageHash == res.data[0].md5)) {
                         list.push({ imageHash: res.data[0].md5 });
+                        state.imgspwant--;
                     }
                     if (type == 'video' && !list.find(v => v.videoHash == res.data[0].md5)) {
                         list.push({ videoHash: res.data[0].md5 });
+                        state.viospwant--;
                     }
 
                     let obj = null;
@@ -2074,7 +2119,7 @@ export default {
     },
     asyncJobProcess({ state, commit, dispatch }) {
         let url = URL.joblist;
-        return new Axios().get(url)
+        return new AX().get(url)
             .then(res => res)
     },
     async jobList({ state, commit, dispatch }) {
@@ -2253,7 +2298,7 @@ export default {
     getCreateAdsetlist({ state, commit }, { keyword, projectId }) {
         let url = `${URL.createadsetlist}keyword=${keyword}&project_id=${projectId}`;
 
-        _axios.get(url)
+        return _axios.get(url)
             .then(res => {
                 commit('SETSTATE', { k: 'adsetlistload', v: false })
 
@@ -2399,6 +2444,17 @@ export default {
         _axios.get(url)
             .then(res => {
                 commit('AFFILEDOWNLOAD', { r: res, name: fileName });
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    },
+    isActiveAd({ state, commit }, adsetid) {
+        let url = `${URL.isactivead}adset_id=${adsetid}`;
+
+        _axios.get(url)
+            .then(res => {
+                commit('ACTIVEAD', res);
             })
             .catch(err => {
                 console.log(err);
@@ -2559,31 +2615,53 @@ export default {
             })
 
     },
+    getMatterList({ state, commit }, { option, name = '' }) {
+        let url = URL.matterlist;
+
+        _axios.post(url, option, { fullScreen: true })
+            .then(res => {
+                commit('MATTERLIST', { res, type: option.materialType, name });
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    },
+    getVideoLink({ state, commit }, videoid) {
+        let url = `${URL.getvideourl}videoId=${videoid}`;
+
+        return _axios.get(url)
+            .then(res => res)
+            .catch(err => {
+                console.log(err)
+            })
+    },
     // target
     getTargetlist({ state, commit }, { fullScreen = '' } = {}) {
         let url = URL.targetlist;
 
-        let option = ['project_id',
-            'audience_type',
+        let data = [
+            'type',
             'keyword',
+            'adaccounts',
             'pageIndex',
             'pageSize'];
 
         let str = '';
-        option.forEach(v => {
+        data.forEach(v => {
             if (state['tg_' + v])
                 str += '&' + v + '=' + state['tg_' + v];
         });
 
         url = url + str.substr(1);
 
-        _axios.get(url, { fullScreen })
-            .then(res => {
+        Axios({
+            url,
+            data,
+            fullscreen: true,
+            callback: res => {
                 commit('TARGETLIST', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     getTargetDetail({ state, commit }, { targetid, loadDom }) {
         let url = URL.targetdetail;
@@ -2696,7 +2774,7 @@ export default {
             })
     },
     likeTarget({ state, commit }, { project_id, }) {
-        let url = `${URL.targetlist}project_id=${project_id}&keyword=&pageIndex=1&audience_type=app&pageSize=200`;
+        let url = `${URL.targetlist}project_id=${project_id}&keyword=&pageIndex=1&type=app&pageSize=200`;
 
         _axios.get(url)
             .then(res => {
@@ -2750,6 +2828,30 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    deleteDetail({ state, commit }, ids) {
+        let url = `${URL.deletedetail}audience_ids=${ids}`;
+
+        Axios({
+            url,
+            callback: res => {
+                commit('DELETEDETAIL', res);
+            }
+        })
+    },
+    submitDelete({ state, commit, dispatch }, ids) {
+        let url = URL.targetdelete;
+        let data = ids;
+
+        return Axios({
+            url,
+            method: 'post',
+            data,
+            callback: res => { 
+                dispatch('getTargetlist', { fullScreen: true });
+                return res;
+            }
+        })
     },
     // regular
     getRegular({ state, commit }) {

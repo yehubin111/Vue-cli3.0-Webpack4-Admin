@@ -11,7 +11,7 @@
         <el-carousel v-if="l.creativityType == 2" arrow="never" indicator-position="none">
           <el-carousel-item v-for="(crd, index) in l.card" :key="index">
             <p class="img">
-              <img v-if="crd.cardType == 1" @click="showBigImg(crd.imageUrl)" :src="crd.image.imageUrl" alt="">
+              <img v-if="crd.cardType == 1" @click="showBigImg(crd.image.imageUrl)" :src="crd.image.imageUrl" alt="">
               <video v-else :src="crd.video.videoUrl" controls="controls"></video>
             </p>
             <div class="imginfo">

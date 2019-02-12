@@ -2,7 +2,7 @@
   <el-form ref="form" :model="form" label-width="80px" class="cform" label-position="left">
     <el-form-item label="主页" class="cline">
       <el-select v-model="form.homepage" placeholder="请选择主页" filterable @change="selectHomepage">
-        <el-option v-if="otherpagename" :label="otherpagename" :value="otherpageid"></el-option>
+        <el-option v-if="otherpageid" :label="otherpagename" :value="otherpageid"></el-option>
         <el-option v-for="(l,index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
       </el-select>
     </el-form-item>
@@ -302,7 +302,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["allpagelist", "adcreateadd", "wantupload"]),
+    ...mapState(["allpagelist", "adcreateadd", "wantupload", "edittype"]),
     ...mapGetters(["allactions"]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
@@ -311,9 +311,14 @@ export default {
   mounted() {
     let n = this.createObject;
     if (n) {
-      this.otherpageid = n.pageId ? n.pageId : "";
-      if (!this.allpagelist.find(v => v.pageId == n.pageId))
+      if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
         this.otherpagename = n.pageName ? n.pageName : "";
+        this.otherpageid = n.pageId ? n.pageId : "";
+      }
+
+      if (this.edittype == this.createType) {
+        this.dataSet(n);
+      }
     }
   },
   watch: {
@@ -323,47 +328,22 @@ export default {
       await this.$barrageTime(100);
 
       if (n && !n.cards) {
-        this.form.homepage = n.pageId ? n.pageId : "";
-        this.otherpageid = n.pageId ? n.pageId : "";
-        if (!this.allpagelist.find(v => v.pageId == n.pageId))
+        if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
+          this.otherpageid = n.pageId ? n.pageId : "";
           this.otherpagename = n.pageName ? n.pageName : "";
-
-        this.form.deeplink = n.deeplink ? n.deeplink : "";
-        this.form.desc = n.creativityText ? n.creativityText : "";
-        this.form.title = n.creativityTitle ? n.creativityTitle : "";
-        this.form.actions = n.actionCallOn ? n.actionCallOn : "";
-
-        if (n.videoId) {
-          // 单视频创意
-          this.processVIO.push({
-            name: n.videoName ? n.videoName : n.videoId,
-            process: 100,
-            file: null,
-            size: 0,
-            videoUrl: "",
-            videoHash: "",
-            videoId: n.videoId,
-            fmname: n.imageName ? n.imageName : n.imageHash,
-            fmprocess: 100,
-            fmUrl: n.imageUrl,
-            fmHash: n.imageHash
-          });
-        } else {
-          // 单图片创意
-          this.processIMG.push({
-            name: n.imageName ? n.imageName : n.imageHash,
-            process: 100,
-            size: 0,
-            file: null,
-            imageUrl: "",
-            imageHash: n.imageHash
-          });
         }
+        // 20190130新增逻辑，编辑单个广告组，初始化保存该创意类型，切换的时候数据填充
+        this.SETSTATE({ k: "edittype", v: this.createType });
+        this.dataSet(n);
       }
     },
     createType(n, o) {
       // 初始化
       this.reset();
+      // 20190130新增逻辑，如果切回该广告创意原来的类型，则数据继续填充
+      if (this.edittype == n) {
+        this.dataSet(this.createObject);
+      }
     },
     "form.homepage": {
       handler(n, o) {
@@ -406,6 +386,40 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    dataSet(n) {
+      this.form.homepage = n.pageId ? n.pageId : "";
+      this.form.deeplink = n.deeplink ? n.deeplink : "";
+      this.form.desc = n.creativityText ? n.creativityText : "";
+      this.form.title = n.creativityTitle ? n.creativityTitle : "";
+      this.form.actions = n.actionCallOn ? n.actionCallOn : "";
+
+      if (n.videoId) {
+        // 单视频创意
+        this.processVIO.push({
+          name: n.videoName ? n.videoName : n.videoId,
+          process: 100,
+          file: null,
+          size: 0,
+          videoUrl: "",
+          videoHash: "",
+          videoId: n.videoId,
+          fmname: n.imageName ? n.imageName : n.imageHash,
+          fmprocess: 100,
+          fmUrl: n.imageUrl,
+          fmHash: n.imageHash
+        });
+      } else {
+        // 单图片创意
+        this.processIMG.push({
+          name: n.imageName ? n.imageName : n.imageHash,
+          process: 100,
+          size: 0,
+          file: null,
+          imageUrl: "",
+          imageHash: n.imageHash
+        });
+      }
+    },
     reset() {
       // 初始化
       // 如果当前file存在且未成功上传且未取消
@@ -484,9 +498,9 @@ export default {
         v => v.pageId == this.form.homepage
       )[0];
       let action = this.allactions.filter(v => v.code == this.form.actions)[0];
-      creative.pageId = homepage.pageId;
-      creative.pageLogo = homepage.picture;
-      creative.pageName = homepage.name;
+      creative.pageId = homepage ? homepage.pageId : this.otherpageid;
+      creative.pageLogo = homepage ? homepage.picture : "";
+      creative.pageName = homepage ? homepage.name : this.otherpagename;
       creative.actionCallOn = action.code;
       creative.actionCallOnName = action.name;
       creative.creativityText = this.form.desc;

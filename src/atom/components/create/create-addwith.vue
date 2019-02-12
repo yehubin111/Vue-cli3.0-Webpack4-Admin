@@ -520,12 +520,6 @@ export default {
       this.uploadsize = files.length;
       console.log("this.uploadsize:", this.uploadsize);
     },
-    // onAddItemVio(files) {
-    //   console.log(files);
-    //   this.SETSTATE({ k: "wantupload", v: 0 });
-    //   this.uploadsize = files.length;
-    //   console.log("this.uploadsize:", this.uploadsize);
-    // },
     changeFocusaccount() {
       // 计算总数
       this.setTotal();

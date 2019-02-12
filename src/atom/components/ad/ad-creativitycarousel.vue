@@ -231,8 +231,8 @@ export default {
         title: "",
         actions: ""
       },
-      otherpagename: '',
-      otherpageid: '',
+      otherpagename: "",
+      otherpageid: "",
       msg: {
         homepage: "请选择主页",
         desc: "请输入文本",
@@ -338,12 +338,15 @@ export default {
   },
   mounted() {
     let n = this.createObject;
-    if(n) {
+    if (n) {
       this.otherpageid = n.pageId ? n.pageId : "";
-      if(!this.allpagelist.find(v => v.pageId == n.pageId))
+      if (!this.allpagelist.find(v => v.pageId == n.pageId))
         this.otherpagename = n.pageName ? n.pageName : "";
     }
     if (n && n.cards) {
+      // 20190130新增逻辑，编辑单个广告组，初始化保存该创意类型，切换的时候数据填充
+      this.SETSTATE({ k: "edittype", v: '2' });
+
       this.form.homepage = n.pageId ? n.pageId : "";
       this.form.deeplink = n.deeplink ? n.deeplink : "";
       this.form.desc = n.creativityText ? n.creativityText : "";
@@ -473,8 +476,8 @@ export default {
       ];
       this.tabvalue = "t1";
       this.tabindex = 3;
-      this.otherpagename = '';
-      this.otherpageid = '';
+      this.otherpagename = "";
+      this.otherpageid = "";
     }
   },
   methods: {

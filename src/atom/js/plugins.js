@@ -101,5 +101,37 @@ export default {
                 }, time);
             })
         }
+        // 视频图片文件下载
+        Vue.prototype.$fileDownload = (url) => {
+            function downloadFile(fileName, content) {
+                var aLink = document.createElement('a');
+                var blob = new Blob([content]);
+                var evt = document.createEvent("HTMLEvents");
+                evt.initEvent("click", false, false);//initEvent 不加后两个参数在FF下会报错, 感谢 Barret Lee 的反馈
+                aLink.download = fileName;
+                aLink.href = URL.createObjectURL(blob);
+                aLink.click();
+                // aLink.dispatchEvent(evt);
+            }
+
+            return new Promise((resolve, reject) => {
+                let end = url.indexOf('?');
+                let urllink = url.substring(0, end == -1 ? url.length : end);
+                let start = urllink.lastIndexOf('/');
+                let fileName = urllink.substring(start + 1);
+                var oReq = new XMLHttpRequest();
+                oReq.open("GET", url, true);
+                oReq.responseType = "arraybuffer";
+                oReq.onload = function (oEvent) {
+                    var arrayBuffer = oReq.response;
+                    if (arrayBuffer) {
+                        downloadFile(fileName, arrayBuffer);
+
+                        resolve('download');
+                    }
+                }
+                oReq.send();
+            })
+        }
     }
 }

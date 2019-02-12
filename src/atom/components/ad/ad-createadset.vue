@@ -18,10 +18,7 @@
             :label="item.campaiggName+'('+item.campaignId+')'"
             :value="item.campaignId + '|' + item.fbAccount"
             class="selectOption"
-          >
-            <!-- <span class="lineList">{{item.campaiggName}}</span>
-            <span class="lineListid">ID: {{item.campaignId}}</span>-->
-          </el-option>
+          ></el-option>
         </el-select>
         <p v-if="mutil.campaign">多项内容</p>
       </el-form-item>
@@ -46,6 +43,19 @@
           </span>
         </p>
         <el-input v-model="form.name" placeholder="请输入广告组名称" v-show="!mutilstatus.name"></el-input>
+      </el-form-item>
+      <el-form-item label="动态创意" class="activecreate">
+        <p v-if="mutil.activecreate">
+          <span v-show="mutilstatus.activecreate">多项内容</span>
+        </p>
+        <el-switch
+          v-model="form.activecreate"
+          active-color="#13ce66"
+          inactive-color="#d7dae2"
+          v-show="!mutilstatus.activecreate"
+          :disabled="editId.length > 0"
+        ></el-switch>
+        <span class="tipfont" v-show="!mutilstatus.activecreate">提供图片和标题等素材，并自动为受众生成创意组合</span>
       </el-form-item>
       <el-form-item label="国家">
         <p v-if="mutil.country">
@@ -433,6 +443,7 @@ export default {
       form: {
         campaign: "",
         name: "",
+        activecreate: false,
         country: [],
         action: "", // applicationid
         platform: "",
@@ -463,6 +474,7 @@ export default {
       mutil: {
         campaign: false,
         name: false,
+        activecreate: false,
         country: false,
         action: false,
         platform: false,
@@ -635,6 +647,7 @@ export default {
           obj.adSet = v.adsetId;
           obj.adSetName = this.mutilstatus.name ? v.name : this.form.name;
           obj.applicationId = this.form.applicationid;
+          obj.dynamicCreative = v.isDynamicCreative;
           /**
            * 竞价 竞价上限
            */
@@ -917,6 +930,10 @@ export default {
             : n[0].campaignId + "|act_" + n[0].accountId;
         this.form.name =
           [...new Set(n.map(v => v.name))].length > 1 ? "" : n[0].name;
+        this.form.activecreate =
+          [...new Set(n.map(v => v.isDynamicCreative))].length > 1
+            ? ""
+            : n[0].isDynamicCreative;
         this.form.country = !this.$equalArray(n.map(v => v.country))
           ? []
           : n[0].country;
@@ -1009,7 +1026,8 @@ export default {
         this.mutil = {
           campaign: !this.form.campaign ? true : false,
           name: !this.form.name ? true : false,
-          country: this.form.language.length == 0 ? true : false,
+          activecreate: this.form.activecreate === "" ? true : false,
+          country: this.form.country.length == 0 ? true : false,
           action: !this.form.action ? true : false,
           platform: !this.form.platform ? true : false,
           version: !this.form.lowversion ? true : false,
@@ -1022,7 +1040,8 @@ export default {
               ? true
               : false,
           language: this.form.language.length == 0 ? true : false,
-          interest: n.length > 1 && this.form.interest.length == 0 ? true : false,
+          interest:
+            n.length > 1 && this.form.interest.length == 0 ? true : false,
           auto: !auto ? true : false,
           bid: !this.form.bid ? true : false,
           filtra: this.form.filtra.length == 0 ? true : false
@@ -1155,6 +1174,14 @@ export default {
 }
 .form {
   width: 420px;
+  .tipfont {
+    color: #999;
+    font-size: 12px;
+    margin-left: 10px;
+  }
+  .activecreate {
+    width: 110%;
+  }
   .formselect {
     width: 100%;
   }

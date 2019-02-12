@@ -1130,6 +1130,9 @@ export default {
 
         cm.exportEXCEL("", name.replace(/\.csv$/, '') + '_error', str, 'xls');
     },
+    ACTIVEAD(state, r) {
+        state.hascreatead = r.data;
+    },
     // data
     CONDITION(state, r) {
         state.datacountry = r.data.countryList;
@@ -1422,22 +1425,116 @@ export default {
         state.adaccount = keyword == 'accountKeyword' ? res.data : [];
         state.adcreate = keyword == 'creativeKeyword' ? res.data : [];
     },
+    MATTERLIST(state, { res, type, name }) {
+        if (name) {
+            let data = res.data.list;
+            let titlearr = [
+                { name: type == 0 ? 'FB图片编号' : 'FB视频编号', key: 'materialId' },
+                { name: type == 0 ? '图片' : '视频', key: type == 0 ? 'materialUrl' : 'materialUrl' },
+                { name: '触达', key: 'reachNum' },
+                { name: '展示', key: 'showNum' },
+                { name: '点击', key: 'clicksNum' },
+                { name: 'CTR', key: 'ctr' },
+                { name: 'CVR', key: 'cvr' },
+                { name: 'CPM', key: 'cpm' },
+                { name: 'CPC', key: 'cpc' },
+                { name: '相关度', key: 'relevanceScore' },
+                { name: '安装', key: 'installsNum' },
+                { name: '花费', key: 'spend' },
+                { name: 'CPI', key: 'cpi' }];
+            let str = '\uFEFF';
+            str += "" + titlearr.map(v => v.name).join(',');
+            str += '\n';
+
+            for (let i = 0; i < data.length; i++) {
+                let content = ''
+                titlearr.forEach(v => {
+                    content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"' : '--'}`;
+                })
+                content = content.substr(1);
+                str += content;
+                str += "\n";
+            }
+            let sum = '';
+            sum += '合计, ,';
+            titlearr.forEach(v => {
+                if (v.key != 'materialId' && v.key != 'materialUrl') {
+                    sum += res.data[v.key] + ',';
+                }
+            })
+            str += sum;
+
+            cm.exportEXCEL("outAdList", name, str, 'xls');
+        } else if (type == 0) {
+            state.imagematterlist = res.data.list;
+            state.imagemattersum = res.data;
+            state.imagemattertotal = res.data.count;
+            delete (state.imagemattersum, 'list');
+        } else {
+            state.videomatterlist = res.data.list;
+            state.videomattersum = res.data;
+            state.videomattertotal = res.data.count;
+            delete (state.videomattersum, 'list');
+        }
+    },
     // target 
     TARGETLIST(state, r) {
-        state.targetlist = r.data.list;
+        state.targetlist = r.data.data;
         state.targettotal = r.data.total;
 
         state.targetlist.forEach(v => {
-            if (v.audienceType == 'app') {
-                v.childType = '应用';
-            } else {
-                if (v.lookalikeType == 'custom_audience') {
-                    v.childType = `自定义受众：${v.audienceName}`;
-                } else if (v.lookalikeType == 'campaign') {
-                    v.childType = '广告活动';
-                } else if (v.lookalikeType == 'page') {
-                    v.childType = '主页粉丝';
-                }
+            // 是否可以编辑/共享
+            v.ifedit = v.ownAccountId.split('_')[1] != v.accountId ? false : true;
+            // 是否可以删除
+            v.ifdelete = v.lookalikeAudienceIds ? false : true;
+
+            switch (v.deliveryStatusCode) {
+                case 200:
+                    v.statusName = '正常';
+                    break;
+                case 400:
+                    v.statusName = '警告';
+                    break;
+                case '':
+                case null:
+                case undefined:
+                    v.statusName = '--';
+                    break;
+                default:
+                    v.statusName = '错误';
+                    break;
+            }
+            let targettype = [
+                { name: '客户文件', key: 'CUSTOM' },
+                { name: '网站', key: 'WEBSITE' },
+                { name: '应用', key: 'APP' },
+                { name: '线下转化', key: 'OFFLINE_CONVERSION' },
+                { name: 'CLAIM', key: 'CLAIM' },
+                { name: '合作伙伴', key: 'PARTNER' },
+                { name: 'MANAGED', key: 'MANAGED' },
+                { name: '视频', key: 'VIDEO' },
+                { name: '预约', key: 'ENGAGEMENT' },
+                { name: '账户包', key: 'BAG_OF_ACCOUNTS' },
+                { name: '研究规则受众', key: 'STUDY_RULE_AUDIENCE' },
+                { name: 'FOX', key: 'FOX' }
+            ]
+            switch (v.subtype) {
+                // 类似受众
+                case 'LOOKALIKE':
+                    let lookaliketype = JSON.parse(v.lookalikeSpec).origin[0];
+                    if (lookaliketype.type == 'custom_audience') {
+                        v.childType = `自定义受众：${lookaliketype.name}`;
+                    } else if (lookaliketype.type == 'campaign') {
+                        v.childType = '广告活动';
+                    } else if (lookaliketype.type == 'page') {
+                        v.childType = '主页粉丝';
+                    }
+                    break;
+                // 自定义受众
+                default:
+                    let tg = targettype.find(g => g.key == v.subtype);
+                    v.childType = tg.name;
+                    break;
             }
         })
 
@@ -1446,10 +1543,10 @@ export default {
             value: '-1'
         }, {
             name: '类似受众',
-            value: 'lookalike'
+            value: 'LOOKALIKE'
         }, {
             name: '自定义受众',
-            value: 'app'
+            value: 'APP'
         }];
     },
     TARGETDETAIL(state, r) {
@@ -1592,6 +1689,10 @@ export default {
     },
     TARGETCAMPAIGNACCOUNT(state, r) {
         state.targetcampaignaccount = r.data;
+    },
+    DELETEDETAIL(state, r) {
+        state.deleteusing = r.data.usedAudience;
+        state.deletesharing = r.data.sharedAudience;
     },
     // regular
     REGULARLIST(state, r) {

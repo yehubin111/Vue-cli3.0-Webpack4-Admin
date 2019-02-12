@@ -17,9 +17,9 @@ let LOAD;
 AXIOS.interceptors.request.use(
     config => {
         // 请求拦截，加入loading
-        if (config.loadDom || config.fullScreen) {
+        if (config.loadDom || config.fullscreen) {
             let dom = document.getElementById(config.loadDom);
-            LOAD = Loading.service({ target: dom, fullscreen: config.fullScreen });
+            LOAD = Loading.service({ target: dom, fullscreen: config.fullscreen });
         }
         return config;
     }

@@ -23,7 +23,7 @@
         </div>
         <div class="buttomctrl">
           <el-button size="medium" @click="hideBox">取消</el-button>
-          <el-button type="primary" size="medium" @click="saveInfo">保存</el-button>
+          <el-button type="primary" size="medium" @click="saveInfo" :disabled="hascreatead">保存</el-button>
         </div>
       </div>
     </transition>
@@ -105,6 +105,7 @@ export default {
                   ? opt.equip.filter(v => v == "iPhone" || v == "iPad")
                   : opt.equip.filter(v => v == "Android_Smartphone"),
               endMinute: this.$timeFormat(opt.rtime[1], "HH") + ":00",
+              dynamicCreative: opt.activecreate,
               endTime: new Date(opt.date[1]).getTime(),
               filteAttentionUser: opt.filtrapage,
               filteInstalledUser: opt.filtra.indexOf("1") != -1 ? "yes" : "",
@@ -318,7 +319,8 @@ export default {
       "adsetcount",
       "campaigncount",
       "editcampaignlist",
-      "itemlist"
+      "itemlist",
+      "hascreatead"
     ]),
     actions() {
       if (this.itemlist.length == 0) return;

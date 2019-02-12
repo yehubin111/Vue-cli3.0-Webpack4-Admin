@@ -47,6 +47,7 @@
         </template>
         <el-menu-item-group>
           <!-- <el-menu-item class="lstitle" index="5-1" disabled>尽请期待</el-menu-item> -->
+          <el-menu-item class="lstitle" :index="'/project/' + $route.params.id + '/matterform'">素材报表</el-menu-item>
           <el-menu-item class="lstitle" :index="'/project/' + $route.params.id + '/data'">账户报表</el-menu-item>
           <!-- <el-menu-item class="lstitle" :index="'/project/' + $route.params.id + '/adform'">广告报表</el-menu-item> -->
           <el-menu-item class="lstitle" :index="'/project/' + $route.params.id + '/daycpi'">每日CPI</el-menu-item>

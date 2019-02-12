@@ -6,6 +6,7 @@ export default {
     'gettoken': 'facebook/getLongTimeToken',  // 获取长token
     'logout': 'user/logout',  // 退出
     'messagecount': 'user/UnreadMessageCount',  // 消息条数
+    // 'messagecount': 'http://localhost:3000/gecors',
     'videourl': 'tool/transformUrl',  // 短视频链接转换
     // pandect
     'initurl': 'report/rptTotal',
@@ -134,6 +135,7 @@ export default {
     'editad': 'ad/editAd', // 编辑广告
     'createeditasync': 'ad/modifyAdWithNewCreative', // 创建创意 创建/编辑广告
     'appinfo': 'ad/getAppInfo?', // 获取应用信息，编辑广告组用
+    'isactivead': 'ad/isIncludeAd?', // 动态创意广告组是否包含广告，创建广告用
     'asyncquery': 'fbAd/getJob?', // 异步获取JOB进度，复制用
     // 'joblist': 'fbAd/getJobList', // 初始化获取JOB列表
     'joblist': 'asyncTasks/unCompleted', // 初始化获取JOB列表
@@ -150,8 +152,11 @@ export default {
     'daycpi': 'report/rptCpi', //每日cpi
     'getoptionmore': 'report/getRptOptionMore?', // 获取筛选条件
     'createcard': 'report/rptCreateCarousel?', // 创意报表轮播卡片列表
+    'matterlist': 'report/rptMaterial', // 素材报表列表
+    'getvideourl': 'report/video/source?', // 根据视频id，获取视频地址
     // target
-    'targetlist': 'audience/list?', // 受众列表
+    // 'targetlist': 'audience/list?', // 受众列表
+    'targetlist': 'v2/audience/list?', // 受众列表 v2
     'targetdetail': 'audience/detail?', // 受众详情
     'appmethod': 'audience/appEvents?', // 应用对应的用户
     'addtarget': 'audience/create', // 新增自定义受众
@@ -160,6 +165,8 @@ export default {
     'targetinfo': 'audience/info?', // 编辑时获取受众信息
     'targetcampaigns': 'audience/campaigns?', // 类似受众广告系列
     'campaigntoaccount': 'audience/getAccountByBatch?', // 广告系列获取广告账户
+    'targetdelete': 'v2/audience/deleteBatchAudience', // 单个删除受众
+    'deletedetail': 'v2/audience/waitingDeleteAudienceDetail?', // 待删除的受众详情
     // regular
     'regularlist': 'optimize/ruleGroupsList?', // 规则列表
     'regularstatus': 'optimize/update?', // 规则状态更改

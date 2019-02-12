@@ -21,6 +21,7 @@ import plan from '../components/generalize/plan'
 import edit from '../components/generalize/edit'
 import copy from '../components/generalize/copy'
 import ad from '../components/ad/ad'
+import matter from '../components/data/matterform'
 import data from '../components/data/data'
 import createform from '../components/data/createform'
 import daycpi from '../components/data/daycpi'
@@ -203,6 +204,14 @@ export default new Router({
                 component: ad,
                 meta: {
                     title: '广告管理'
+                }
+            },
+            {
+                path: 'matterform',
+                name: 'matterform',
+                component: matter,
+                meta: {
+                    title: '素材报表'
                 }
             },
             {

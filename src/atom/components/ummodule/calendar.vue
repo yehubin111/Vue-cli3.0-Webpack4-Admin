@@ -230,6 +230,7 @@ export default {
         justify-content: center;
         font-size: 12px;
         cursor: pointer;
+        height: 40px;
         &.prev-day {
           color: #c0c4cc;
         }

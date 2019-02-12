@@ -22,6 +22,7 @@
           :value="item.adSetId + '|' + item.fbAccountId"
         ></el-option>
       </el-select>
+      <p class="wrongti" v-show="hascreatead">广告组不可用，此动态创意广告组已有广告</p>
     </el-form-item>
     <el-form-item label="广告编号" v-if="editId.length > 0">
       <span class="adnum" id="copyAd">{{editId.length > 1? '多项内容': editId[0]}}</span>
@@ -50,7 +51,23 @@
         v-show="!mutilstatus.name"
       ></el-input>
     </el-form-item>
-    <el-form-item label="创意">
+    <!--动态创意-->
+    <el-form-item label="创意" v-if="isactive">
+      <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
+        <el-radio :label="0">图片或视频</el-radio>
+        <el-radio :label="1">轮播图片</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label v-if="isactive">
+      <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
+        <el-tab-pane :label="'创建创意'" name="first">
+          <active-create :createType="form.type" ref="activeCreate"></active-create>
+        </el-tab-pane>
+      </el-tabs>
+    </el-form-item>
+    <!--动态创意-->
+    <!--普通创意-->
+    <el-form-item label="创意" v-if="!isactive">
       <p v-if="mutil.type">
         <span v-show="mutilstatus.type">多项内容，
           <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">编辑</el-button>
@@ -59,14 +76,13 @@
           <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">撤销编辑</el-button>
         </span>
       </p>
-      <p v-if="isdynamic" class="dynamic">暂不支持动态创意</p>
       <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
         <el-radio :label="0">单图片</el-radio>
         <el-radio :label="1">单视频</el-radio>
         <el-radio :label="2">轮播</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label v-show="!mutilstatus.type">
+    <el-form-item label v-if="!isactive" v-show="!mutilstatus.type">
       <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
         <el-tab-pane :label="editId.length > 0?'编辑创意':'创建创意'" name="first">
           <creativity-carousel
@@ -90,6 +106,7 @@
         </el-tab-pane>
       </el-tabs>
     </el-form-item>
+    <!--普通创意-->
   </el-form>
 </template>
 
@@ -97,22 +114,25 @@
 import CreateList from "./ad-createlist";
 import CreativityNormal from "./ad-creativitynormal";
 import CreativityCarousel from "./ad-creativitycarousel";
+import ActiveCreate from "./ad-activecreate";
 import { mapState, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
-import { Loading } from 'element-ui';
+import { Loading } from "element-ui";
 
 export default {
   props: ["editId"],
   components: {
     CreateList,
     CreativityNormal,
-    CreativityCarousel
+    CreativityCarousel,
+    ActiveCreate
   },
   data() {
     return {
       editArray: [],
       createObject: null, // 创意
       fbAccountId: "",
+      isactive: false, // 是否为动态创意广告组
       form: {
         adset: "",
         name: "",
@@ -120,7 +140,6 @@ export default {
         activeName: "first",
         checkcreate: null
       },
-      // createSpecial: "",
       mutilstatus: {},
       mutil: {
         adset: false,
@@ -130,7 +149,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(["createadsetlist", "setsortlist", "editadlist", "isdynamic", "adsetlistload"])
+    ...mapState([
+      "createadsetlist",
+      "setsortlist",
+      "editadlist",
+      "adsetlistload",
+      "hascreatead"
+    ])
   },
   mounted() {
     // 新建编辑实例，绑定到操作按钮上
@@ -148,7 +173,7 @@ export default {
     },
     remoteMethod(query) {
       if (query !== "") {
-        this.SETSTATE({k:'adsetlistload',v: true});
+        this.SETSTATE({ k: "adsetlistload", v: true });
         this.$store.dispatch("getCreateAdsetlist", {
           keyword: query,
           projectId: this.$route.params.id
@@ -159,9 +184,14 @@ export default {
     },
     reset() {
       this.SETSTATE({ k: "createadsetlist", v: [] });
-      this.SETSTATE({ k: "isdynamic", v: false });
+      this.SETSTATE({ k: "hascreatead", v: false });
       // 轮播页面和单视频创意会因为类型重置而重置数据，所以只需要重置单图片创意页面
-      if (this.form.type == 0) this.$refs.createNormal.reset();
+      if (this.isactive) {
+        if (this.form.type == 0) this.$refs.activeCreate.reset();
+      } else {
+        if (this.form.type == 0) this.$refs.createNormal.reset();
+        this.$refs.createList.reset();
+      }
 
       this.editArray = [];
       this.fbAccountId = "";
@@ -180,8 +210,7 @@ export default {
         name: false,
         type: false
       };
-
-      this.$refs.createList.reset();
+      this.isactive = false;
     },
     dataChecked() {
       if (!this.form.adset && !this.mutilstatus.adset) {
@@ -198,15 +227,20 @@ export default {
        */
       if (!this.mutilstatus.type) {
         // 单个或者多个点开编辑
-        if (this.form.activeName == "first") {
-          if (this.form.type == 2) {
-            return this.$refs.createCarousel.getCheckData();
-          } else {
-            return this.$refs.createNormal.getCheckData();
-          }
+        // 区分是否是动态创意
+        if (this.isactive) {
+          return this.$refs.activeCreate.getCheckData();
         } else {
-          if (!this.form.checkcreate) return [false, "请选择创意"];
-          else return [true];
+          if (this.form.activeName == "first") {
+            if (this.form.type == 2) {
+              return this.$refs.createCarousel.getCheckData();
+            } else {
+              return this.$refs.createNormal.getCheckData();
+            }
+          } else {
+            if (!this.form.checkcreate) return [false, "请选择创意"];
+            else return [true];
+          }
         }
       } else {
         // 多个未点开编辑
@@ -215,6 +249,22 @@ export default {
     },
     setFbAccountId() {
       this.fbAccountId = this.form.adset.split("|")[1];
+      /**
+       * 20190129新增
+       * 选择广告组之后，如果为动态创意广告组，则去判断是否包含广告
+       */
+      this.adsetIfdynamicCreative();
+
+      this.form.type = 0;
+    },
+    adsetIfdynamicCreative() {
+      let adset = this.createadsetlist.find(
+        v => v.adSetId == this.form.adset.split("|")[0]
+      );
+      this.isactive = adset.isDynamicCreative;
+      if (adset.isDynamicCreative) {
+        this.$store.dispatch("isActiveAd", adset.adSetId);
+      }
     },
     extractInfo() {
       let msg = "";
@@ -284,7 +334,7 @@ export default {
         }
       }
     },
-    initData() {
+    async initData() {
       /**
        * 创建初始化获取已选广告组
        * 如果已选多个，则显示为空，当前只能单选
@@ -301,11 +351,17 @@ export default {
               this.setsortlist[0].accountId;
       }
       if (this.form.adset) {
-        // 初始化获取广告系列列表
-        this.$store.dispatch("getCreateAdsetlist", {
+        // 初始化获取广告组列表
+        await this.$store.dispatch("getCreateAdsetlist", {
           keyword: this.setsortlist[0].adsetId,
           projectId: this.$route.params.id
         });
+        /**
+         * 20190129新增
+         * 初始化判断当前广告组是否允许创建广告
+         * 选择广告组之后，如果为动态创意广告组，则去判断是否包含广告
+         */
+        this.adsetIfdynamicCreative();
       }
       this.$refs.createNormal.initData();
       // 初始化重置是否已改动状态
@@ -354,7 +410,7 @@ export default {
         // 判断是否动态创意
         let creativearr = n.map(v => v.creativeId);
         let creativeids = [...new Set(creativearr)].join(",");
-        this.$store.dispatch("isDynamicCreate", creativeids);
+        // this.$store.dispatch("isDynamicCreate", creativeids);
         /**
          * 如果所编辑的广告只有相同的一个创意（包含单个广告和多个创意相同的广告两种情况）
          * 则需要获取该创意详情，用于展示
@@ -457,6 +513,9 @@ export default {
 <style lang="less" scoped>
 .form {
   width: 100%;
+  .wrongti {
+    color: red;
+  }
   .formselect {
     width: 360px;
   }

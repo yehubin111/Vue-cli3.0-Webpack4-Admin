@@ -224,6 +224,9 @@ export default {
         state.appdata = r.data.pageInfoAll.list;
         // console.log(state.appdata);
     },
+    APPINFOTABLETOTAL(state, r) {
+        state.appcpitotal = r.data;
+    },
     APPINFOTABLEOUT(state, { res, name }) {
         state.appdataall = res.data.pageInfoAll.list;
         state.appdataall.forEach(v => {
@@ -720,18 +723,21 @@ export default {
             if (v.fbAdPartList) (
                 v.fbAdPartList.forEach((g, q) => {
                     let name = '';
+                    let materialId = g.materialId && g.materialId.indexOf('http') != -1 ? `<span class="headpic"><a href="${g.materialId}" target="_blank"><img src="${g.materialId}"/></span></a>` : g.materialId;
                     name += dateCond && g.insightDate ? ',' + g.insightDate : '';
                     name += g.age ? ',' + g.age : '';
                     name += g.gender ? ',' + g.gender : '';
                     name += g.country ? ',' + g.country : '';
                     name += g.impressionDevice ? ',' + g.impressionDevice : '';
                     name += g.publisherPlatform ? ',' + g.publisherPlatform : '';
+                    name += materialId ? ',' + materialId : '';
+                    name += g.materialText ? ',' + g.materialText : '';
 
                     g['parentindex'] = i;
                     g['iscare'] = true;
-                    g['campaignName'] = name.substring(1);
-                    g['adSetName'] = name.substring(1);
-                    g['adName'] = name.substring(1);
+                    g[type] = name.substring(1);
+                    // 特殊细分数据，用于判断是否展示缩略图
+                    g['careimg'] = g.materialId && g.materialId.indexOf('http') != -1 ? true : false;
                     caredata.push(g);
                 })
             )
@@ -887,6 +893,9 @@ export default {
                 state.adadtotal = res.data.total;
                 break;
         }
+    },
+    ADLISTTOTAL(state, r) {
+        state.adlisttotal = r.data;
     },
     ADLISTTIMEOUT(state) {
         state.adlisttimeout = true;
@@ -1478,6 +1487,31 @@ export default {
         }
     },
     // target 
+    TARGETADLIST(state, r) {
+        state.targetadlist = r.data.list;
+
+        state.targetadlist.forEach(v => {
+            v.secondtree = true;
+            v.isIndeterminate = false;
+        })
+    },
+    TARGETADSETLIST(state, { r, campaignid }) {
+        let data = r.data.list;
+        data.forEach(v => {
+            v.checked = '';
+        })
+
+        state.targetadsetlist = data;
+        state.targetadsetarray[`campaignid_${campaignid}`] = data;
+
+        state.targetadlist.forEach(v => {
+            if (v.campaignId == campaignid)
+                v.secondtree = false;
+        })
+    },
+    TARGETTREE(state, campaignid) {
+        state.targetadsetlist = state.targetadsetarray[`campaignid_${campaignid}`];
+    },
     TARGETLIST(state, r) {
         state.targetlist = r.data.data;
         state.targettotal = r.data.total;
@@ -1580,12 +1614,12 @@ export default {
         state.targetadddetail = r.data;
     },
     TARGETINFO(state, r) {
-        state.targetinfo = r.data.audience;
-        state.addtargetaccount = r.data.adaccounts;
+        state.targetinfo = r.data;
+        // state.addtargetaccount = r.data.adaccounts;
     },
-    ADDTARGET(state, r) {
-        state.resultid = r.data.audienceId;
-    },
+    // ADDTARGET(state, r) {
+    //     state.resultid = r.data.audienceId;
+    // },
     LIKETARGETINFO(state, r) {
         state.campainother = r.data.batchList;
         state.liketargetinfo = r.data.audience;
@@ -1633,7 +1667,7 @@ export default {
         state.targetplanlist = ar;
     },
     TARGETPLANLISTCHECK(state, { id, key, vl }) {
-        state.targetplanlist.forEach(v => {
+        state.targetadlist.forEach(v => {
             if (id) {
                 if (v.id == id)
                     v[key] = vl;
@@ -1643,31 +1677,28 @@ export default {
             }
         })
     },
-    TARGETLOG(state, { res, plan_id, planName }) {
-        let r = res.data;
-        r.forEach(v => {
-            v.planname = planName;
-            v.checked = '';
-        })
+    // TARGETLOG(state, { res, plan_id, planName }) {
+    //     let r = res.data;
+    //     r.forEach(v => {
+    //         v.planname = planName;
+    //         v.checked = '';
+    //     })
 
-        state.treegradelist = r;
+    //     state.treegradelist = r;
 
-        state.treegradeall[`plan_id_${plan_id}`] = r;
+    //     state.treegradeall[`plan_id_${plan_id}`] = r;
 
-        if (state.treegradefilter) return;
+    //     if (state.treegradefilter) return;
 
-        state.targetplanlist.forEach(v => {
-            if (v.id == plan_id)
-                v.secondtree = false;
-        })
+    //     state.targetplanlist.forEach(v => {
+    //         if (v.id == plan_id)
+    //             v.secondtree = false;
+    //     })
 
-        // state.filterarr.push(planid);
+    //     // state.filterarr.push(planid);
 
-        // resolve(r);
-    },
-    TARGETTREE(state, plan_id) {
-        state.treegradelist = state.treegradeall[`plan_id_${plan_id}`];
-    },
+    //     // resolve(r);
+    // },
     TARGETTREECHECK(state, { plan_id, check }) {
         state.treegradelist.forEach(v => {
             v.checked = check

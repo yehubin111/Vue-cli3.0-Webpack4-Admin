@@ -127,7 +127,7 @@
               type="text"
               size="small"
               :disabled="!scope.row.ifedit"
-              @click="toEdit(scope.row.id, scope.row.audienceType, scope.row.lookalikeType)"
+              @click="toEdit(scope.row.audienceId, scope.row.audienceType, scope.row.lookalikeType)"
             >编辑</el-button>
           </span>
         </el-tooltip>
@@ -143,7 +143,7 @@
               type="text"
               size="small"
               :disabled="!scope.row.ifedit"
-              @click="toShare(scope.row.audienceId)"
+              @click="toShare(scope.row.id)"
             >共享</el-button>
           </span>
         </el-tooltip>

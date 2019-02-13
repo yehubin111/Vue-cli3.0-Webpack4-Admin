@@ -56,10 +56,11 @@
               class="list"
               v-for="(lst, lsindex) in searchList"
               :key="lsindex"
-              @mouseenter="searchClick(lst.name, lst.key)"
+              @mouseenter="searchClick(lst.name, lst.key, lst.importkey)"
+              @click="selectCare('', lst.importkey)"
             >
               {{lst.name}}
-              <i class="el-icon-caret-right"></i>
+              <i class="el-icon-caret-right" v-if="!lst.importkey"></i>
             </div>
           </div>
           <div class="listarr rightarr" id="secondList">
@@ -200,9 +201,9 @@ export default {
       this.secondSearchList = [];
       this.firstSearch = "";
     },
-    selectCare(key) {
+    selectCare(key, importkey) {
       this.searchList.forEach(v => {
-        if (v.name == this.firstSearch) {
+        if (v.key == this.firstKey) {
           v.list.forEach(g => {
             g.checked = false;
           });
@@ -219,7 +220,7 @@ export default {
 
       let obj = {
         key: this.firstKey,
-        vl: key
+        vl: importkey ? importkey : key
       };
       let careData = this.careData;
 
@@ -241,14 +242,16 @@ export default {
       this.secondSearchList = [];
       this.firstSearch = "";
     },
-    searchClick(name, key) {
-      this.firstSearch = name;
+    searchClick(name, key, importkey) {
+      /**
+       * 20190212新增特殊细分数据逻辑，选择第一级之后可以直接细分，无第二级菜单
+       */
+      this.firstSearch = importkey ? "" : name;
       this.firstKey = key;
-      this.secondSearchList = this.searchList.find(
-        v => this.firstSearch == v.name
-      ).list;
+      this.secondSearchList = importkey
+        ? []
+        : this.searchList.find(v => this.firstSearch == v.name).list;
     },
-
     tableSort(sort) {
       this.sort = sort;
       // this.order = sort ? true : false;
@@ -268,7 +271,7 @@ export default {
       // this.status = true;
     },
     importRemain() {
-      this.$emit('showRemainBox', this.type);
+      this.$emit("showRemainBox", this.type);
     },
     outTable() {
       if (!this.exportstatus) return;

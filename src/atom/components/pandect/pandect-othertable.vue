@@ -15,6 +15,8 @@
       style="width: 100%"
       @sort-change="toSort"
       @filter-change="toFilter"
+      show-summary
+      :summary-method="getSummaries"
     >
       <el-table-column
         :prop="item.key"
@@ -179,6 +181,29 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    getSummaries(param) {
+      let { columns, data } = param;
+      let sums = [];
+      columns.forEach((column, index) => {
+        switch (index) {
+          case 0:
+            sums[index] = "合计";
+            break;
+          case 1:
+          case 2:
+            sums[index] = "";
+            break;
+          default:
+            let d = this.appcpitotal[column.property] || this.appcpitotal[column.property] === 0
+              ? this.appcpitotal[column.property]
+              : "";
+            sums[index] = d;
+            break;
+        }
+      });
+
+      return sums;
+    },
     filterJudge(name) {
       if (name == "国家") {
         return this.countryfilter;
@@ -300,7 +325,13 @@ export default {
     }
   },
   computed: {
-    ...mapState(["appdataall", "customevent", "customunit", "appdataappid"]),
+    ...mapState([
+      "appdataall",
+      "customevent",
+      "customunit",
+      "appdataappid",
+      "appcpitotal"
+    ]),
     ...mapGetters(["onlyapplist", "countryfilter"])
   }
 };

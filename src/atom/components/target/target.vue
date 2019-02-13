@@ -126,7 +126,7 @@
       @cancelAddbm="cancelAddbm"
       @showResult="showResult"
     ></target-like>
-    <target-result :status="status3" :newaccount="newaccount" @cancelAddbm="cancelAddbm"></target-result>
+    <!-- <target-result :status="status3" :newaccount="newaccount" @cancelAddbm="cancelAddbm"></target-result> -->
     <target-delete :status.sync="deletestatus" :deleteids="deleteids" @hideBox="hideDeletebox"></target-delete>
     <target-share :status.sync="sharestatus" :shareids="shareids" @hideBox="hideSharebox"></target-share>
   </div>
@@ -138,7 +138,7 @@ import TargetDelete from "./target-delete";
 import TargetList from "./target-list";
 import TargetAdd from "./target-add";
 import TargetLike from "./target-like";
-import TargetResult from "./target-result";
+// import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
 let targetsearch;
 export default {
@@ -146,7 +146,7 @@ export default {
     TargetList,
     TargetAdd,
     TargetLike,
-    TargetResult,
+    // TargetResult,
     TargetDelete,
     TargetShare
   },
@@ -212,11 +212,6 @@ export default {
     this.$store.dispatch("getAllpages");
     // 获取广告账户
     this.$store.dispatch("getAdaccount", v);
-
-    // // 根据广告创建类似受众
-    // this.$store.dispatch("getTargetPlan", {
-    //   project_id: this.$route.params.id
-    // });
   },
   computed: {
     ...mapState(["itemlist", "targettotal", "targettype", "adaccountlist"]),

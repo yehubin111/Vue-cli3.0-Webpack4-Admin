@@ -1,8 +1,30 @@
 <template>
-  <el-dialog title="创建类似受众" :visible.sync="dialogFormVisible" class="dialog likedialog" @close="toCancel">
+  <el-dialog
+    title="创建类似受众"
+    :visible.sync="dialogFormVisible"
+    class="dialog likedialog"
+    @close="toCancel"
+  >
     <el-form ref="form" :model="form" label-width="90px" class="cform">
+      <el-form-item label="广告账户">
+        <el-select class="search" v-model="form.account" placeholder="请选择广告账户，可搜索" filterable>
+          <el-option
+            v-for="(l,index) in setapplist"
+            :key="index"
+            :label="l.name + '('+l.fbId.split('_')[1]+')'"
+            :value="l.fbId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="自定义受众" v-if="liketype == 1">
-        <el-select class="search" v-model="form.custom" :disabled="likeeditid != ''" placeholder="请选择自定义受众" filterable @change="formTargetName">
+        <el-select
+          class="search"
+          v-model="form.custom"
+          :disabled="likeeditid != ''"
+          placeholder="请选择自定义受众"
+          filterable
+          @change="formTargetName"
+        >
           <el-option v-for="(l,index) in liketarget" :key="index" :label="l.name" :value="l.id"></el-option>
         </el-select>
         <p class="info">至少拥有100个用户</p>
@@ -11,36 +33,54 @@
         <div class="selectinput">
           <div v-if="form.customarr.length > 0">
             <el-popover placement="right" width="400" trigger="hover">
-              <div v-for="(g, index) in form.customarrfrom" :key="index" v-if="g.bth.length > 0">
-                <h1 class="cpselectedtitle">{{g.name}}</h1>
-                <p class="cpselected" v-for="(t, idx) in g.bth" :key="idx">{{idx + 1}}.{{t}}</p>
+              <div v-if="g.bth.length > 0">
+                <div v-for="(g, index) in form.customarrfrom" :key="index">
+                  <h1 class="cpselectedtitle">{{g.name}}</h1>
+                  <p class="cpselected" v-for="(t, idx) in g.bth" :key="idx">{{idx + 1}}.{{t}}</p>
+                </div>
               </div>
-              <el-tag slot="reference" class="custag" type="">
-                已选{{form.customarr.length}}个
-              </el-tag>
+              <el-tag slot="reference" class="custag" type>已选{{form.customarr.length}}个</el-tag>
             </el-popover>
           </div>
-          <el-button class="cusinput" type="primary" size="small" v-show="likeeditid == ''" @click.stop="filterShow">选择创建记录</el-button>
+          <el-button
+            class="cusinput"
+            type="primary"
+            size="small"
+            v-show="likeeditid == ''"
+            @click.stop="filterShow"
+          >选择创建记录</el-button>
         </div>
         <div class="downselect" v-if="status2">
           <div class="specialselect" v-show="status3" v-Clickoutside="filterHide">
-            <el-input placeholder="输入关键字进行过滤" v-model="filterText" class="filterinput">
-            </el-input>
+            <el-input placeholder="输入关键字进行过滤" v-model="filterText" class="filterinput"></el-input>
             <div class="treebox">
               <div class="treelist">
-                <div class="treeline" v-for="(item, index) in targetplanlist" :key="index">
-                  <p class="ftree" @click="secondTree(item.id, item.name)">
-                    <el-checkbox v-model="item.checked" :indeterminate="item.isIndeterminate" :disabled="item.secondtree" class="treecheck" @change="firstTreeSelect(item.id, item.name)"></el-checkbox>
-                    {{item.name}}
+                <div class="treeline" v-for="(item, index) in targetadlist" :key="index">
+                  <p class="ftree" @click="secondTree(item.campaignId, item.campaignName)">
+                    <el-checkbox
+                      v-model="item.checked"
+                      :indeterminate="item.isIndeterminate"
+                      :disabled="item.secondtree"
+                      class="treecheck"
+                      @change="firstTreeSelect(item.campaignId, item.campaignName)"
+                    ></el-checkbox>
+                    {{item.campaignName}}
                   </p>
                 </div>
               </div>
               <div class="ctreelist">
-                <p class="ctree" v-for="(item, index) in treesecondlist" :key="index">
-                  <el-tooltip class="item" effect="dark" :content="item.campaignName" placement="top-start">
-                    <el-checkbox v-model="item.checked" class="treecheck" @change="secondTreeSelect(item.id, item.planId, item.planname)">
-                      {{item.campaignName}}
-                    </el-checkbox>
+                <p class="ctree" v-for="(item, index) in targetadsetlist" :key="index">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="item.adSetName"
+                    placement="top-start"
+                  >
+                    <el-checkbox
+                      v-model="item.checked"
+                      class="treecheck"
+                      @change="secondTreeSelect(item.adsetId, item.adSetName)"
+                    >{{item.adSetName}}</el-checkbox>
                   </el-tooltip>
                 </p>
               </div>
@@ -50,18 +90,52 @@
         <p class="info">至少拥有100个用户</p>
       </el-form-item>
       <el-form-item label="主页" v-if="liketype == 3">
-        <el-select class="search" v-model="form.custom" :disabled="likeeditid != ''" placeholder="请选择主页，可搜索" filterable @change="setName">
-          <el-option v-for="(l,index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
+        <el-select
+          class="search"
+          v-model="form.custom"
+          :disabled="likeeditid != ''"
+          placeholder="请选择主页，可搜索"
+          filterable
+          @change="setName"
+        >
+          <el-option
+            v-for="(l,index) in allpagelist"
+            :key="index"
+            :label="l.name"
+            :value="l.pageId"
+          ></el-option>
         </el-select>
         <p class="info">至少拥有100个用户</p>
       </el-form-item>
       <el-form-item label="国家">
-        <el-select class="search" v-model="form.country" :disabled="likeeditid != ''" multiple placeholder="请选择国家，可搜索" filterable @change="setName">
-          <el-option v-for="l in othercountries" :key="l.code" :label="l.name + '(' + l.code + ')'" :value="l.code"></el-option>
+        <el-select
+          class="search"
+          v-model="form.country"
+          :disabled="likeeditid != ''"
+          multiple
+          placeholder="请选择国家，可搜索"
+          filterable
+          @change="setName"
+        >
+          <el-option
+            v-for="l in othercountries"
+            :key="l.code"
+            :label="l.name + '(' + l.code + ')'"
+            :value="l.code"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="受众规模">
-        <el-slider v-model="form.scale" class="slider" :disabled="likeeditid != ''" range :min="0" :max="20" :format-tooltip="formatTooltip" @change="setName"></el-slider>
+        <el-slider
+          v-model="form.scale"
+          class="slider"
+          :disabled="likeeditid != ''"
+          range
+          :min="0"
+          :max="20"
+          :format-tooltip="formatTooltip"
+          @change="setName"
+        ></el-slider>
         <p class="info">可以选择国家/地区总人口的 0% 到 20% 作为广告受众规模，1% 代表最接近受众来源的规模</p>
       </el-form-item>
       <el-form-item label="受众名称">
@@ -70,16 +144,11 @@
       <el-form-item label="描述">
         <el-input v-model="form.desc" placeholder="请输入描述，选填"></el-input>
       </el-form-item>
-      <el-form-item label="已选账户" v-if="selectaccount.length > 0">
+      <!-- <el-form-item label="已选账户" v-if="selectaccount.length > 0">
         <el-select class="search" v-model="selectid" multiple disabled placeholder="请选择广告账户" filterable>
           <el-option v-for="(l,index) in selectaccount" :key="index" :label="l.name + '('+l.id.split('_')[1]+')'" :value="l.id"></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item label="广告账户">
-        <el-select class="search" v-model="form.account" collapse-tags multiple placeholder="请选择广告账户" filterable>
-          <el-option v-for="(l,index) in applist" :key="index" :label="l.name + '('+l.fbId.split('_')[1]+')'" :value="l.fbId"></el-option>
-        </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item class="cbutton">
         <el-button type="primary" @click="toSubmit">保存</el-button>
         <el-button @click="dialogFormVisible = false">取消</el-button>
@@ -126,7 +195,7 @@ export default {
         scale: [0, 20],
         name: "",
         desc: "",
-        account: []
+        account: ""
       },
       customname: "",
       camppage: 1,
@@ -151,14 +220,25 @@ export default {
       this.status3 = false;
     },
     secondTree(id, name) {
-      let plan_id = id;
-      let planName = name;
+      let campaignid = id;
+      let campaignname = name;
       /**
-       * 获取campaign列表
-       * 如果已经获取
+       * 获取adset列表
+       * 如果已经获取的则无需请求接口
        */
-      if (this.treegradeall[`plan_id_${plan_id}`]) this.TARGETTREE(plan_id);
-      else this.$store.dispatch("getTargetLog", { plan_id, planName });
+      if (this.targetadsetarray[`campaignid_${campaignid}`]) this.TARGETTREE(campaignid);
+      else {
+        let option = {
+            groupByClause: "adset_id",
+            campaignIdInStr: campaignid,
+            pageNo: 1,
+            pageSize: 1000,
+            projectId: this.$route.params.id,
+            endDate: this.$timeFormat(new Date(), 'yyyy-MM-dd'),
+            startDate: this.$timeFormat(new Date().getTime() - 10 * 24 * 3600 * 1000, 'yyyy-MM-dd')
+          }
+        this.$store.dispatch("targetAdlist", { option, type: 'adset' });
+      }
     },
     selectCallback(planid, planname) {
       /**
@@ -283,7 +363,7 @@ export default {
       if (this.form.custom) {
         let targetid = this.form.custom;
         this.$store.dispatch("getTargetAccount", { targetid });
-        this.form.account = [];
+        this.form.account = "";
       }
 
       this.setName();
@@ -352,8 +432,7 @@ export default {
       if (this.form.desc.replace(/[\u0391-\uFFE5]/g, "aa").length > 200) {
         return [false, "描述长度不能大于200个字符"];
       }
-      if (this.form.account.length == 0 && this.selectid.length == 0)
-        return [false, "请选择广告账户"];
+      if (!this.form.account) return [false, "请选择广告账户"];
 
       return [true];
     },
@@ -412,7 +491,7 @@ export default {
         ratio: this.form.scale[1] / 100 + "",
         startingRatio: this.form.scale[0] / 100 + "",
         description: this.form.desc,
-        fbAccountIds: this.selectid.concat(this.form.account),
+        fbAccountIds: this.form.account,
         name: this.form.name,
         projectId: this.$route.params.id,
         lookalikeType: liketp,
@@ -440,7 +519,7 @@ export default {
       else this.$store.dispatch("addTarget", { option });
 
       // let totalcount = this.selectid.concat(this.form.account).length;
-      this.$emit("showResult", this.form.account);
+      // this.$emit("showResult", this.form.account);
       this.formReset();
       this.dialogFormVisible = false;
     },
@@ -451,7 +530,7 @@ export default {
       this.form.country = [];
       this.form.scale = [0, 20];
       this.form.desc = "";
-      this.form.account = [];
+      this.form.account = "";
       this.selectid = [];
       this.form.name = "";
       this.selectaccount = [];
@@ -480,40 +559,44 @@ export default {
       "addliketargetaccount",
       "campainother",
       "targetaccount",
+      "targetadlist",
+      "targetadsetlist",
+      "targetadsetarray",
+      
       "targetplanlist",
       "treegradelist",
       "treegradeall",
       "targetcampaignaccount"
     ]),
     ...mapGetters(["setapplist"]),
-    treesecondlist() {
-      return this.treegradelist.filter(
-        v => v.campaignName.indexOf(this.filterText) != -1
-      );
-    },
+    // treesecondlist() {
+    //   return this.treegradelist.filter(
+    //     v => v.campaignName.indexOf(this.filterText) != -1
+    //   );
+    // },
     applicationid() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id)
         .applicationId;
-    },
-    applist() {
-      /**
-       * 可选择广告账户列表
-       * 主要针对编辑情况下
-       * 排除已选广告账户
-       */
-      if (this.liketype == 1) {
-        return this.targetaccount.filter(
-          v => this.selectid.indexOf(v.fbId) == -1
-        );
-      } else if (this.liketype == 2) {
-        return this.targetcampaignaccount.filter(
-          v => this.selectid.indexOf(v.fbId) == -1
-        );
-      } else {
-        return this.setapplist.filter(v => this.selectid.indexOf(v.fbId) == -1);
-      }
     }
+    // applist() {
+    //   /**
+    //    * 可选择广告账户列表
+    //    * 主要针对编辑情况下
+    //    * 排除已选广告账户
+    //    */
+    //   if (this.liketype == 1) {
+    //     return this.targetaccount.filter(
+    //       v => this.selectid.indexOf(v.fbId) == -1
+    //     );
+    //   } else if (this.liketype == 2) {
+    //     return this.targetcampaignaccount.filter(
+    //       v => this.selectid.indexOf(v.fbId) == -1
+    //     );
+    //   } else {
+    //     return this.setapplist.filter(v => this.selectid.indexOf(v.fbId) == -1);
+    //   }
+    // }
   },
   watch: {
     filterText(val) {
@@ -544,20 +627,20 @@ export default {
         //   );
         // }
 
-        // 获取广告系列列表
+        // 获取广告系列列表，广告管理相同接口
         if (this.liketype == 2) {
-          // 根据广告创建类似受众
-          this.$store.dispatch("getTargetPlan", {
-            project_id: this.$route.params.id
-          });
+          let option = {
+            groupByClause: "campaign_id",
+            pageNo: 1,
+            pageSize: 1000,
+            projectId: this.$route.params.id,
+            endDate: this.$timeFormat(new Date(), 'yyyy-MM-dd'),
+            startDate: this.$timeFormat(new Date().getTime() - 10 * 24 * 3600 * 1000, 'yyyy-MM-dd')
+          }
+          this.$store.dispatch('targetAdlist', { option, type: 'campaign' });
         }
       }
     },
-    // targetaccount(n, v) {
-    //   this.applist = this.targetaccount.filter(
-    //     v => this.selectid.indexOf(v.fbId) == -1
-    //   );
-    // },
     likeeditid(n, v) {
       if (n) {
         // 根据受众ID 获取已创建受众信息，包括国家、规模等

@@ -11,6 +11,7 @@ export default {
     // pandect
     'initurl': 'report/rptTotal',
     'appurl': 'report/rptAppcpi',
+    'appcpitotal': 'report/sumAppcpi', // 合计
     'counturl': 'report/countRecharge', // 待充值广告
     'customevent': 'report/afEvents?', // 自定义事件列表
     // bm
@@ -102,6 +103,7 @@ export default {
     'closeplan': 'plan/closePlan', //关闭智能推广计划
     'bidguide': 'plan/priceGuide?', // 出价指南
     // ad
+    'adlisttotal': 'projectad/sumFbAdList', // 广告管理列表合计
     'adlist': 'projectad/getProjectsAd?', // 广告列表
     'adlistnew': 'projectad/getFbAdList', // 新版广告列表
     'adlistdata': 'projectad/getProjectsAdCpi?', //广告列表其他数据
@@ -159,13 +161,16 @@ export default {
     'targetlist': 'v2/audience/list?', // 受众列表 v2
     'targetdetail': 'audience/detail?', // 受众详情
     'appmethod': 'audience/appEvents?', // 应用对应的用户
-    'addtarget': 'audience/create', // 新增自定义受众
+    // 'addtarget': 'audience/create', // 新增自定义受众
+    'addtarget': 'v2/audience/createCustomAudience', // 新增自定义受众
     'edittarget': 'audience/edit', // 编辑自定义受众
     'targetadddetail': 'audience/createDetail?', // 新增编辑受众结果
-    'targetinfo': 'audience/info?', // 编辑时获取受众信息
+    // 'targetinfo': 'audience/info?', // 编辑时获取受众信息
+    'targetinfo': 'v2/audience/getAudienceDetail?', // 编辑时获取受众信息
     'targetcampaigns': 'audience/campaigns?', // 类似受众广告系列
     'campaigntoaccount': 'audience/getAccountByBatch?', // 广告系列获取广告账户
     'targetdelete': 'v2/audience/deleteBatchAudience', // 单个删除受众
+    'targetshare': 'v2/audience/shareAudience', // 受众共享
     'deletedetail': 'v2/audience/waitingDeleteAudienceDetail?', // 待删除的受众详情
     // regular
     'regularlist': 'optimize/ruleGroupsList?', // 规则列表

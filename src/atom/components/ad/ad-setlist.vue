@@ -9,6 +9,8 @@
     style="width: 100%"
     @selection-change="handleSelectionChange"
     @sort-change="sortChange"
+    show-summary
+    :summary-method="getSummaries"
   >
     <el-table-column type="selection" :selectable="ifSelect" fixed width="55"></el-table-column>
     <el-table-column label="状态" fixed width="80">
@@ -53,21 +55,39 @@
       :width="item.name.indexOf('名称') == -1 && item.name.indexOf('编号') == -1?'100': '200'"
     >
       <template slot-scope="scope">
+        <!--广告系列名称，广告组名称，点击可跳转到下一级tab-->
         <p
           :class="{canjump: true, linedata: true, iscare: scope.row.iscare}"
           v-if="!scope.row.iscare && item.link"
           @click="tabJump(scope.row)"
           :title="item.name != '广告系列名称' && item.name != '广告组名称'?'':scope.row[item.key]"
         >{{scope.row[item.key] || scope.row[item.key] === 0 || scope.row[item.key] === "0"? scope.row[item.key]:'--'}}</p>
+        <!--20190212新增，动态创意图片/视频 细分数据情况，缩略图-->
+        <p
+          v-else-if="scope.row.careimg && (item.name == '广告系列名称' || item.name == '广告组名称' || item.name == '广告名称')"
+          v-html="scope.row[item.key] ? scope.row[item.key]:'--'"
+        ></p>
+        <!--20190212新增，广告名称旁边放缩略图-->
+        <p v-else-if="item.name == '广告名称'" class="adname">
+          <span class="headpic">
+            <a :href="scope.row.materialText" target="_blank">
+              <img :src="scope.row.materialText">
+            </a>
+          </span>
+          <span class="name" :title="scope.row[item.key]">{{scope.row[item.key]}}</span>
+        </p>
+        <!--普通数据-->
         <p
           :class="{linedata: true, iscare: scope.row.iscare}"
           v-else
           :title="item.name != '广告名称'?'':scope.row[item.key]"
-        >{{scope.row[item.key] || scope.row[item.key] === 0 || scope.row[item.key] === "0"? scope.row[item.key]:'--'}}</p>
+        >{{scope.row[item.key] || scope.row[item.key] === 0 || scope.row[item.key] === '0'? scope.row[item.key]:'--'}}</p>
+        <!--投放状态二级状态-->
         <p
           v-if="item.key == 'effectiveStatusName' && scope.row.effectiveImport != scope.row.effectiveStatus"
           style="font-size: 12px;color: #999;"
         >{{scope.row.effectiveImportName}}</p>
+        <!--广告系列/广告组/广告名称 操作按钮-->
         <p
           class="namectrl"
           v-if="item.tool && !scope.row.iscare && scope.row.effectiveStatus != 'ARCHIVED' && scope.row.effectiveStatus != 'DELETED' && (item.name == '广告系列名称' || item.name == '广告组名称' || item.name == '广告名称')"
@@ -107,11 +127,10 @@ import { mapState, mapMutations } from "vuex";
 export default {
   props: ["customOption", "type"],
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
-    ...mapState(["adcampaignlist", "adsetlist", "adadlist"]),
+    ...mapState(["adcampaignlist", "adsetlist", "adadlist", "adlisttotal"]),
     // 计算表格宽度
     totalWidth() {
       let totalwidth = 0;
@@ -166,6 +185,49 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE", "CHANGEADLOAD"]),
+    getSummaries(param) {
+      let { columns, data } = param;
+      let sums = [];
+      let persentArray = [
+        "ctr",
+        "afMinsRate",
+        "afRetentionRate",
+        "cvr",
+        "afCtr",
+        "afLoyalUsersRate",
+        "afROI",
+        "afConversionRate",
+        "afReRate1",
+        "afReRate2",
+        "afReRate3",
+        "afReRate4",
+        "afReRate5",
+        "afReRate6",
+        "afReRate7"
+      ];
+      columns.forEach((column, index) => {
+        switch (index) {
+          case 0:
+            sums[index] = "合计";
+            break;
+          case 1:
+          case 2:
+            sums[index] = "";
+            break;
+          default:
+            let d =
+              this.adlisttotal[column.property] ||
+              this.adlisttotal[column.property] === 0
+                ? this.adlisttotal[column.property]
+                : "";
+            sums[index] =
+              d + (persentArray.indexOf(column.property) != -1 ? "%" : "");
+            break;
+        }
+      });
+
+      return sums;
+    },
     tabJump(row) {
       let tabname = "";
       if (this.type == "campaignName") {
@@ -252,6 +314,26 @@ export default {
       top: 0;
       margin-top: -1px;
     }
+  }
+}
+.headpic {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  background-color: #f5f5f5;
+  position: relative;
+  margin-right: 10px;
+  flex-basis: 60px;
+  flex-shrink: 0;
+  img {
+    // width: 100%;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    height: 100%;
+    cursor: pointer;
   }
 }
 </style>
@@ -413,6 +495,18 @@ export default {
   &.canjump {
     color: #409eff;
     cursor: pointer;
+  }
+}
+.adname {
+  display: flex;
+  .headpic {
+  }
+  .name {
+    height: 60px;
+    line-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 .namectrl {

@@ -7,7 +7,7 @@ import URL from '../js/url.js'
 import WS from '../js/websocket'
 import { Msgsuccess, Msgwarning, Msgerror, MsgnotifySuccess, MsgnotifyError } from "../js/message";
 import { Loading } from 'element-ui';
-function Axios({ url, method = 'get', data = {}, callback = null, fullscreen = false }) {
+function Axios({ url, method = 'get', data = {}, success = null, fail = null, fullscreen = false }) {
     return _axios({
         method,
         url,
@@ -15,10 +15,11 @@ function Axios({ url, method = 'get', data = {}, callback = null, fullscreen = f
         fullscreen
     })
         .then(res => {
-            return callback(res);
+            return success(res);
         })
         .catch(err => {
             console.log(err);
+            if (fail) fail();
         })
 }
 
@@ -199,7 +200,7 @@ export default {
                 console.log(err);
             })
     },
-    selectApp({ state, commit }) {
+    selectApp({ state, commit, dispatch }) {
         let url = URL.appurl;
 
         let params = {
@@ -220,26 +221,7 @@ export default {
                 console.log(err);
             })
 
-        let params2 = {
-            fbAppId: state.appdataappid,
-            startDate: state.appdatastartdate,
-            endDate: state.appdataenddate,
-            flag: '1',
-            pageNo: state.appdataindex,
-            pageSize: state.appdatapagesize,
-            countryList: state.appdatacountry,
-            impressionDeviceList: state.appdataimporession,
-            orderByClause: state.appdatasort,
-            eventsName: localStorage.getItem(pandectEventLS.new) && JSON.parse(localStorage.getItem(pandectEventLS.new))[state.appdataappid] ? JSON.parse(localStorage.getItem(pandectEventLS.new))[state.appdataappid].join(',') : ""
-        };
-        _axios.post(url, params2)
-            .then(res => {
-                let r = res;
-                commit('APPINFOTABLE', r);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        dispatch('selectApptable');
     },
     selectApptable({ state, commit }) {
         let url = URL.appurl;
@@ -256,6 +238,18 @@ export default {
             orderByClause: state.appdatasort,
             eventsName: localStorage.getItem(pandectEventLS.new) && JSON.parse(localStorage.getItem(pandectEventLS.new))[state.appdataappid] ? JSON.parse(localStorage.getItem(pandectEventLS.new))[state.appdataappid].join(',') : ""
         };
+
+        // 合计
+        let totalurl = URL.appcpitotal;
+        Axios({
+            url: totalurl,
+            method: 'post',
+            data: params2,
+            success: res => {
+                commit('APPINFOTABLETOTAL', res);
+            }
+        })
+
         _axios.post(url, params2)
             .then(res => {
                 let r = res;
@@ -1855,6 +1849,17 @@ export default {
 
         // 区分列表请求和导出数据
         if (!editType) {
+            // 获取合计数据
+            let totalurl = URL.adlisttotal;
+            Axios({
+                url: totalurl,
+                method: 'post',
+                data: opt,
+                success: res => {
+                    commit('ADLISTTOTAL', res);
+                }
+            })
+
             _axios.post(url, opt, {
                 timeout: 20000
             })
@@ -2636,6 +2641,21 @@ export default {
             })
     },
     // target
+    targetAdlist({ state, commit, dispatch }, { option, type }) {
+        let url = URL.adlistnew;
+
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            success: res => {
+                if (type == 'campaign')
+                    commit('TARGETADLIST', res);
+                else
+                    commit('TARGETADSETLIST', { r: res, campaignid: option.campaignIdInStr });
+            }
+        })
+    },
     getTargetlist({ state, commit }, { fullScreen = '' } = {}) {
         let url = URL.targetlist;
 
@@ -2658,7 +2678,7 @@ export default {
             url,
             data,
             fullscreen: true,
-            callback: res => {
+            success: res => {
                 commit('TARGETLIST', res);
             }
         })
@@ -2689,23 +2709,21 @@ export default {
     addTarget({ state, commit, dispatch }, { option }) {
         let url = URL.addtarget;
 
-        _axios.post(url, option)
-            .then(res => {
-                if (res.data.status == 'createError') {
-                    Msgwarning(res.data.message);
-
-                    commit('SAMELIKE');
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => {
+                if (res.data.status == 'failed') {
+                    Msgerror(res.data.errorMsg);
+                    //     commit('SAMELIKE');
                 } else {
-                    Msgsuccess('自定义受众新增成功');
-                    commit('ADDTARGET', res);
-
+                    Msgsuccess(`自定义受众${option.fbAudienceId ? '编辑' : '创建'}成功`);
                     dispatch('getTargetlist', { fullScreen: true });
                 }
-            })
-            .catch(err => {
-                console.log(err);
-                commit('SAMELIKE');
-            })
+            }
+        })
     },
     editTarget({ state, commit, dispatch }, { option, account }) {
         let url = URL.edittarget;
@@ -2715,7 +2733,7 @@ export default {
                 if (account.length == 0) {
                     Msgsuccess('保存成功');
 
-                    commit('SAMELIKE');
+                    // commit('SAMELIKE');
                 } else {
                     Msgsuccess('自定义受众编辑成功');
                 }
@@ -2806,18 +2824,18 @@ export default {
                 console.log(err);
             })
     },
-    getTargetLog({ state, commit }, { plan_id, planName }) {
-        let url = URL.planlog;
-        url += 'plan_id=' + plan_id;
+    // getTargetLog({ state, commit }, { plan_id, planName }) {
+    //     let url = URL.planlog;
+    //     url += 'plan_id=' + plan_id;
 
-        _axios.get(url)
-            .then(res => {
-                commit('TARGETLOG', { res, plan_id, planName });
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //     _axios.get(url)
+    //         .then(res => {
+    //             commit('TARGETLOG', { res, plan_id, planName });
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     getTargetCampaignAccount({ state, commit }, { project_id, batch_id }) {
         let url = `${URL.campaigntoaccount}project_id=${project_id}&batch_id=${batch_id}`;
 
@@ -2834,7 +2852,7 @@ export default {
 
         Axios({
             url,
-            callback: res => {
+            success: res => {
                 commit('DELETEDETAIL', res);
             }
         })
@@ -2847,7 +2865,24 @@ export default {
             url,
             method: 'post',
             data,
-            callback: res => { 
+            success: res => {
+                dispatch('getTargetlist', { fullScreen: true });
+                return res;
+            }
+        })
+    },
+    submitShare({ state, commit, dispatch }, { audienceList, adaccountList }) {
+        let url = URL.targetshare;
+        let data = {
+            audienceList,
+            adaccountList
+        };
+
+        return Axios({
+            url,
+            method: 'post',
+            data,
+            success: res => {
                 dispatch('getTargetlist', { fullScreen: true });
                 return res;
             }

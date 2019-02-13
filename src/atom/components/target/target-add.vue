@@ -2,6 +2,11 @@
   <el-dialog :title="`创建${customtype == 1? '应用事件': '客户名单'}自定义受众`" :visible.sync="dialogFormVisible" class="dialog createdialog" @close="toCancel">
     <el-form ref="form" :model="form" label-width="80px" class="cform">
       <div class="leftform forleft">
+        <el-form-item label="广告账户">
+          <el-select class="search" v-model="form.account" collapse-tags placeholder="请选择广告账户" filterable :disabled="Boolean(editid)">
+            <el-option v-for="(l,index) in setapplist" :key="index" :label="l.name + '('+l.fbId.split('_')[1]+')'" :value="l.fbId"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="应用">
           <el-select class="search" v-model="form.app" disabled placeholder="请选择应用" filterable @change="getAccount">
             <el-option v-for="(l,index) in targetapplist" :key="index" :label="l.name" :value="l.applicationId"></el-option>
@@ -27,16 +32,6 @@
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="form.desc" placeholder="请输入描述，选填"></el-input>
-        </el-form-item>
-        <el-form-item label="已选账户" v-if="form.selectaccount.length > 0">
-          <el-select class="search" v-model="form.selectid" multiple disabled placeholder="请选择广告账户" filterable>
-            <el-option v-for="(l,index) in form.selectaccount" :key="index" :label="l.name + '('+l.id.split('_')[1]+')'" :value="l.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="广告账户">
-          <el-select class="search" v-model="form.account" collapse-tags multiple placeholder="请选择广告账户" filterable>
-            <el-option v-for="(l,index) in applist" :key="index" :label="l.name + '('+l.fbId.split('_')[1]+')'" :value="l.fbId"></el-option>
-          </el-select>
         </el-form-item>
       </div>
       <div class="leftform">
@@ -79,9 +74,6 @@
               <span class="condition">过去</span>
               <el-input-number style="width: 140px" v-model="item.day" :precision="0" :disabled="editid != ''" :min="1" :max="180" label="天数"></el-input-number>
               <span class="condition">天内</span>
-              <!-- <el-select class="selectapp" v-model="item.app" :disabled="editid != ''" placeholder="请选择事件" filterable>
-                <el-option v-for="(l,index) in appaccount" :key="index" :label="l.display_name" :value="l.event_name"></el-option>
-              </el-select> -->
               <el-select class="selectapp" v-model="item.app" :disabled="editid != ''" placeholder="请选择事件" filterable>
                 <el-option v-for="(l,index) in appaccount" :key="index" :label="l.display_name" :value="l.template? `${l.event_name}|${l.template}` : l.event_name"></el-option>
               </el-select>
@@ -122,9 +114,7 @@ export default {
         name: "",
         desc: "",
         checked: true,
-        account: [],
-        selectid: [],
-        selectaccount: [],
+        account: '',
         platform: '',
         // 包含条件
         condition: [
@@ -155,7 +145,7 @@ export default {
       let id = this.form.app;
       this.$store.dispatch("setApp", { id });
 
-      this.form.account = [];
+      this.form.account = '';
     },
     toCancel() {
       this.formReset();
@@ -170,7 +160,7 @@ export default {
       if (this.form.desc.replace(/[\u0391-\uFFE5]/g, "aa").length > 200) {
         return [false, "描述长度不能大于200个字符"];
       }
-      if (this.form.account.length == 0 && this.form.selectid.length == 0)
+      if (!this.form.account)
         return [false, "请选择广告账户"];
 
       // 已新增的条件必须填写完整
@@ -289,13 +279,13 @@ export default {
       }
 
       let option = {
-        audienceId: this.editid ? this.editid : "",
-        applicationId: this.form.app,
-        audienceType: "app",
+        fbAudienceId: this.editid ? this.editid : "",
+        // applicationId: this.form.app,
+        // audienceType: "app",
         description: this.form.desc,
-        fbAccountIds: this.form.selectid.concat(this.form.account),
+        adaccountId: this.form.account,
         name: this.form.name,
-        projectId: this.$route.params.id,
+        // projectId: this.$route.params.id,
         rule: JSON.stringify(rule)
       };
 
@@ -303,15 +293,16 @@ export default {
       let v = this.editid;
       this.SETSTATE({ k, v });
 
-      if (this.editid)
-        this.$store.dispatch("editTarget", {
-          option,
-          account: this.form.account
-        });
-      else this.$store.dispatch("addTarget", { option });
+      // if (this.editid)
+      //   this.$store.dispatch("editTarget", {
+      //     option,
+      //     account: this.form.account
+      //   });
+      // else
+      // 创建与编辑用同一逻辑
+      this.$store.dispatch("addTarget", { option });
 
-      // let totalcount = this.form.selectid.concat(this.form.account).length;
-      this.$emit("showResult", this.form.account);
+      // this.$emit("showResult", this.form.account);
 
       this.dialogFormVisible = false;
     },
@@ -323,7 +314,7 @@ export default {
       this.form.relative = "任意";
       this.form.name = "";
       this.form.desc = "";
-      this.form.account = [];
+      this.form.account = '';
       this.form.checked = true;
       this.form.condition = [
         {
@@ -339,9 +330,6 @@ export default {
           percent: "25%"
         }
       ];
-
-      this.form.selectaccount = [];
-      this.form.selectid = [];
     },
     addCondition() {
       this.form.condition.push({
@@ -373,16 +361,9 @@ export default {
       "targetapplist",
       "itemlist",
       "appaccount",
-      "targetinfo",
-      "addtargetaccount"
+      "targetinfo"
     ]),
     ...mapGetters(["setapplist"]),
-    // 可选广告账户列表，排除已选广告账户
-    applist() {
-      return this.setapplist.filter(
-        v => this.form.selectid.indexOf(v.fbId) == -1
-      );
-    },
     relativekey() {
       return this.form.relative == "任意" ? "或" : "且";
     },
@@ -434,28 +415,18 @@ export default {
         this.$store.dispatch("appToAccount", { appid: this.form.app });
       }
     },
-    // 根据获取到的已创建受众信息，提取已选择广告账户列表
-    addtargetaccount(n, v) {
-      if (n.length > 0) {
-        this.form.selectaccount = [];
-        this.form.selectid = [];
-
-        n.forEach(v => {
-          let obj = {
-            id: v.fbAccountId,
-            name: v.fbAccountName
-          };
-
-          this.form.selectaccount.push(obj);
-          this.form.selectid.push(v.fbAccountId);
-        });
-      }
-    },
+    // // 根据获取到的已创建受众信息，提取已选择广告账户列表
+    // addtargetaccount(n, v) {
+    //   if (n.length > 0) {
+    //     this.form.account = n[0].fbAccountId;
+    //   }
+    // },
     targetinfo(n, v) {
       if (n) {
+        console.log(n);
         this.form.name = n.name;
         this.form.desc = n.description;
-        this.form.account = [];
+        this.form.account = 'act_' + n.accountId;
 
         let rule = eval("(" + n.rule + ")");
 

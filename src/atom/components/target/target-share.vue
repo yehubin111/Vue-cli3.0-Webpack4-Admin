@@ -27,13 +27,15 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button @click="toCancel">取 消</el-button>
-      <el-button type="primary" @click="submitShare">删 除</el-button>
+      <el-button type="primary" @click="submitShare">共 享</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+import { Loading } from "element-ui";
+import { Msgsuccess, Msgwarning, Msgerror } from "../../js/message";
 export default {
   props: ["status", "shareids"],
   data() {
@@ -49,8 +51,24 @@ export default {
       this.$emit("hideBox");
       this.adaccounts = [];
     },
-    submitShare() {
-      this.$store.dispatch("submitDelete", this.deleteids);
+    async submitShare() {
+      let load = Loading.service({ fullscreen: true });
+      let res = await this.$store.dispatch("submitShare", {
+        audienceList: this.shareids,
+        adaccountList: this.adaccounts
+      });
+      load.close();
+      if (res) {
+        let fail = res.data.filter(v => v.status != "success");
+        if (fail.length == 0) {
+          Msgsuccess("共享成功");
+        } else {
+          Msgerror(
+            `以下受众共享失败，${fail.map(v => `${v.audienceId}原因：${v.errorMsg}`).join(",")}`
+          );
+        }
+        this.toCancel();
+      }
     }
   }
 };

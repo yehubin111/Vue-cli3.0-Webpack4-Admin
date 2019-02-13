@@ -58,7 +58,7 @@ export default {
         if (fail.length == 0) {
           Msgsuccess("删除成功");
         } else {
-          Msgerror(`以下受众删除失败，${fail.map(v => v.audienceId).join(',')}`);
+          Msgerror(`以下受众删除失败，${fail.map(v => `${v.audienceId}原因：${v.errorMsg}`).join(',')}`);
         }
         this.toCancel();
       }

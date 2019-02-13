@@ -15,6 +15,7 @@ export default {
   customevent: [], // 自定义事件列表
   customunit: '', // 自定义事件收益单位
   appdata: [],
+  appcpitotal: {}, // appcpi合计
   appcount: 0,
   ifaccount: false,
   appdataall: [], // 带个APP数据用于导出全部
@@ -185,6 +186,19 @@ export default {
           { cname: '设备', key: 'impression_device', checked: false },
           { cname: '版位和设备', key: 'publisher_platform,impression_device', checked: false }
         ]
+    },
+    {
+      name: '按动态创意', key: 'partOptions', list:
+        [
+          { cname: '无', key: '', checked: false },
+          { cname: '图片/视频', key: 'agCreativity', checked: false },
+          { cname: '文本', key: 'bagCreativity', checked: false },
+          { cname: '标题', key: 'tagCreativity', checked: false },
+          { cname: '行动号召', key: 'cagCreativity', checked: false }
+        ]
+    },
+    {
+      name: '按轮播卡片', key: 'partOptions', importkey: 'material_id', list:[]
     }
   ],
   adlisttimeout: false, // 广告管理列表超时情况处理
@@ -220,6 +234,7 @@ export default {
   edittype: 0, // 编辑广告组初始类型
 
   adlist: [], // 广告管理列表
+  adlisttotal: {}, // 广告管理列表数据合计
   adpagesize: 20, // 广告管理页面一页数量
   adcampaignlist: '[]', //广告管理 广告系列列表
   adcampaigntotal: 0,
@@ -303,6 +318,9 @@ export default {
   tg_keyword: '',
   tg_type: '',
   tg_adaccounts: '',
+  targetadlist: [], // 创建类似受众用的广告系列列表
+  targetadsetlist: [], // 创建类似受众用的广告组列表
+  targetadsetarray: {}, // 创建类似受众用的广告组列表集合
   targetlist: [],
   targettype: [],
   targettotal: 0,
@@ -310,7 +328,7 @@ export default {
   appaccount: [], // 应用的所有用户
   targetinfo: null, //编辑时受众信息
   liketargetinfo: null, //编辑类似受众信息
-  addtargetaccount: [], // 编辑时账户
+  // addtargetaccount: [], // 编辑时账户
   addliketargetaccount: [],
   targetaccount: [], //类似受众根据自定义受众对应广告账户
   campainother: [], // 类似受众广告系列特殊字段

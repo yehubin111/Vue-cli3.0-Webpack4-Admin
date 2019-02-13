@@ -1502,12 +1502,14 @@ export default {
         })
 
         state.targetadsetlist = data;
-        state.targetadsetarray[`campaignid_${campaignid}`] = data;
 
-        state.targetadlist.forEach(v => {
-            if (v.campaignId == campaignid)
-                v.secondtree = false;
-        })
+        // 下面的暂时用不到
+        // state.targetadsetarray[`campaignid_${campaignid}`] = data;
+
+        // state.targetadlist.forEach(v => {
+        //     if (v.campaignId == campaignid)
+        //         v.secondtree = false;
+        // })
     },
     TARGETTREE(state, campaignid) {
         state.targetadsetlist = state.targetadsetarray[`campaignid_${campaignid}`];
@@ -1638,7 +1640,7 @@ export default {
         state.targetaccount = ar;
     },
     LIKETARGET(state, r) {
-        state.liketarget = r.data.list;
+        state.liketarget = r.data;
     },
     TARGETCAMPAINGNS(state, { res, pageIndex }) {
         if (pageIndex == 1) {
@@ -1669,7 +1671,7 @@ export default {
     TARGETPLANLISTCHECK(state, { id, key, vl }) {
         state.targetadlist.forEach(v => {
             if (id) {
-                if (v.id == id)
+                if (v.campaignId == id)
                     v[key] = vl;
             } else {
                 console.log(key);
@@ -1677,30 +1679,8 @@ export default {
             }
         })
     },
-    // TARGETLOG(state, { res, plan_id, planName }) {
-    //     let r = res.data;
-    //     r.forEach(v => {
-    //         v.planname = planName;
-    //         v.checked = '';
-    //     })
-
-    //     state.treegradelist = r;
-
-    //     state.treegradeall[`plan_id_${plan_id}`] = r;
-
-    //     if (state.treegradefilter) return;
-
-    //     state.targetplanlist.forEach(v => {
-    //         if (v.id == plan_id)
-    //             v.secondtree = false;
-    //     })
-
-    //     // state.filterarr.push(planid);
-
-    //     // resolve(r);
-    // },
-    TARGETTREECHECK(state, { plan_id, check }) {
-        state.treegradelist.forEach(v => {
+    TARGETTREECHECK(state, { check }) {
+        state.targetadsetlist.forEach(v => {
             v.checked = check
         })
     },

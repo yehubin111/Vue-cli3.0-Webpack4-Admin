@@ -165,6 +165,10 @@ export default {
     'addtarget': 'v2/audience/createCustomAudience', // 新增自定义受众
     'edittarget': 'audience/edit', // 编辑自定义受众
     'targetadddetail': 'audience/createDetail?', // 新增编辑受众结果
+    'liketarget': 'v2/audience/getCustomAudienceByAccount?', // 指定广告账户下的自定义受众
+    'autoliketarget': 'v2/audience/createAudienceWithAudience', // 根据自定义受众创建类似受众
+    'pageliketarget': 'v2/audience/createAudienceUsePage', // 根据主页创建类似受众
+    'adliketarget': 'v2/audience/createCustomAudienceWithCampaign', // 根据广告创建类似受众
     // 'targetinfo': 'audience/info?', // 编辑时获取受众信息
     'targetinfo': 'v2/audience/getAudienceDetail?', // 编辑时获取受众信息
     'targetcampaigns': 'audience/campaigns?', // 类似受众广告系列

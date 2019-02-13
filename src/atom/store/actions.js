@@ -2706,10 +2706,27 @@ export default {
                 console.log(err);
             })
     },
-    addTarget({ state, commit, dispatch }, { option }) {
-        let url = URL.addtarget;
+    addTarget({ state, commit, dispatch }, { option, type = '' }) {
+        let url = '';
+        switch (type) {
+            // 根据自定义受众创建类似受众
+            case 'auto':
+                url = URL.autoliketarget;
+                break;
+            // 根据主页创建类似受众
+            case 'page':
+                url = URL.pageliketarget;
+                break;
+            case 'ad':
+                url = URL.adliketarget;
+                break;
+            // 创建自定义受众
+            default:
+                url = URL.addtarget;
+                break;
+        }
 
-        Axios({
+        return Axios({
             url,
             method: 'post',
             data: option,
@@ -2719,9 +2736,10 @@ export default {
                     Msgerror(res.data.errorMsg);
                     //     commit('SAMELIKE');
                 } else {
-                    Msgsuccess(`自定义受众${option.fbAudienceId ? '编辑' : '创建'}成功`);
+                    Msgsuccess(`${type?'类似': '自定义'}受众${option.fbAudienceId ? '编辑' : '创建'}成功`);
                     dispatch('getTargetlist', { fullScreen: true });
                 }
+                return res;
             }
         })
     },
@@ -2791,16 +2809,15 @@ export default {
                 console.log(err);
             })
     },
-    likeTarget({ state, commit }, { project_id, }) {
-        let url = `${URL.targetlist}project_id=${project_id}&keyword=&pageIndex=1&type=app&pageSize=200`;
+    likeTarget({ state, commit }, { adaccount }) {
+        let url = `${URL.liketarget}adaccount=${adaccount}&keyword=`;
 
-        _axios.get(url)
-            .then(res => {
+        Axios({
+            url,
+            success: res => {
                 commit('LIKETARGET', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     targetCampaigns({ state, commit }, { project_id, keyword = '', pageIndex = 1, pageSize = 50 }) {
         let url = `${URL.targetcampaigns}project_id=${project_id}&keyword=${keyword}&pageIndex=${pageIndex}&pageSize=${pageSize}`;

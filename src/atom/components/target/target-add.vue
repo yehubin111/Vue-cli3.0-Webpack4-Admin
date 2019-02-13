@@ -172,7 +172,7 @@ export default {
 
       return [true];
     },
-    toSubmit() {
+    async toSubmit() {
       let check = this.formCheck();
       if (!check[0]) {
         Msgwarning(check[1]);
@@ -300,11 +300,12 @@ export default {
       //   });
       // else
       // 创建与编辑用同一逻辑
-      this.$store.dispatch("addTarget", { option });
+      let res = await this.$store.dispatch("addTarget", { option });
 
       // this.$emit("showResult", this.form.account);
 
-      this.dialogFormVisible = false;
+      if(res.data.status != 'failed')
+        this.dialogFormVisible = false;
     },
     formReset() {
       this.form.type = "应用事件";

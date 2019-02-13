@@ -137,7 +137,7 @@ import TargetShare from "./target-share";
 import TargetDelete from "./target-delete";
 import TargetList from "./target-list";
 import TargetAdd from "./target-add";
-import TargetLike from "./target-like";
+import TargetLike from "./target-newlike";
 // import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
 let targetsearch;

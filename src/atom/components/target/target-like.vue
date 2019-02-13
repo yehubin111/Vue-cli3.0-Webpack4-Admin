@@ -260,40 +260,40 @@ export default {
 
       this.treegradelist.forEach(v => {
         if (v.checked) {
-          obj.bth.push(v.campaignName);
+          obj.bth.push(v.adSetName);
 
           let ot = {};
           ot.id = v.id;
-          ot.planname = planname;
+          ot.campaign = planname;
           ot.name = v.campaignName;
           this.form.customarr.push(ot);
         }
       });
       this.form.customarrfrom.push(obj);
 
-      /**
-       * 根据批次获取广告账户
-       */
-      let idarr = [];
-      this.form.customarr.forEach(v => {
-        idarr.push(v.id);
-      });
+      // /**
+      //  * 根据批次获取广告账户
+      //  */
+      // let idarr = [];
+      // this.form.customarr.forEach(v => {
+      //   idarr.push(v.id);
+      // });
 
-      clearTimeout(campaignaccount);
-      campaignaccount = setTimeout(() => {
-        this.$store.dispatch("getTargetCampaignAccount", {
-          project_id: this.$route.params.id,
-          batch_id: idarr.join(",")
-        });
-      }, 300);
+      // clearTimeout(campaignaccount);
+      // campaignaccount = setTimeout(() => {
+      //   this.$store.dispatch("getTargetCampaignAccount", {
+      //     project_id: this.$route.params.id,
+      //     batch_id: idarr.join(",")
+      //   });
+      // }, 300);
     },
-    firstTreeSelect(id, planname) {
-      let check = this.targetplanlist.find(v => v.id == id).checked;
-      console.log(id, check);
-      // 全选的时候，需要取消当前选项的不确定选择状态，不然会被覆盖
-      this.TARGETTREECHECK({ plan_id: id, check });
+    firstTreeSelect(id, name) {
+      // let check = this.targetplanlist.find(v => v.id == id).checked;
+      // console.log(id, check);
+      // // 全选的时候，需要取消当前选项的不确定选择状态，不然会被覆盖
+      // this.TARGETTREECHECK({ plan_id: id, check });
 
-      this.selectCallback(id, planname);
+      this.selectCallback(id, name);
 
       this.TARGETPLANLISTCHECK({
         id: id,

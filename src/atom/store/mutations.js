@@ -1560,10 +1560,13 @@ export default {
                     let lookaliketype = JSON.parse(v.lookalikeSpec).origin[0];
                     if (lookaliketype.type == 'custom_audience') {
                         v.childType = `自定义受众：${lookaliketype.name}`;
+                        v.childliketype = 'custom_audience';
                     } else if (lookaliketype.type == 'campaign') {
                         v.childType = '广告活动';
+                        v.childliketype = 'campaign';
                     } else if (lookaliketype.type == 'page') {
                         v.childType = '主页粉丝';
+                        v.childliketype = 'page';
                     }
                     break;
                 // 自定义受众
@@ -1617,15 +1620,9 @@ export default {
     },
     TARGETINFO(state, r) {
         state.targetinfo = r.data;
-        // state.addtargetaccount = r.data.adaccounts;
     },
-    // ADDTARGET(state, r) {
-    //     state.resultid = r.data.audienceId;
-    // },
     LIKETARGETINFO(state, r) {
-        state.campainother = r.data.batchList;
-        state.liketargetinfo = r.data.audience;
-        state.addliketargetaccount = r.data.adaccounts;
+        state.liketargetinfo = r.data;
     },
     TARGETACCOUNT(state, r) {
         let ar = [];

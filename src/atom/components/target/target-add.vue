@@ -293,12 +293,6 @@ export default {
       let v = this.editid;
       this.SETSTATE({ k, v });
 
-      // if (this.editid)
-      //   this.$store.dispatch("editTarget", {
-      //     option,
-      //     account: this.form.account
-      //   });
-      // else
       // 创建与编辑用同一逻辑
       let res = await this.$store.dispatch("addTarget", { option });
 

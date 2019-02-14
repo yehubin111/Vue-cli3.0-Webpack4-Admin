@@ -127,7 +127,7 @@
               type="text"
               size="small"
               :disabled="!scope.row.ifedit"
-              @click="toEdit(scope.row.audienceId, scope.row.audienceType, scope.row.lookalikeType)"
+              @click="toEdit(scope.row.audienceId, scope.row.subtype, scope.row.childliketype)"
             >编辑</el-button>
           </span>
         </el-tooltip>
@@ -198,7 +198,7 @@ export default {
       } else {
         ltype = 3;
       }
-      if (type == "lookalike") this.$emit("likeEdit", id, ltype);
+      if (type == "LOOKALIKE") this.$emit("likeEdit", id, ltype);
       else this.$emit("targetEdit", id);
     }
   }

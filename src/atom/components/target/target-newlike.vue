@@ -10,6 +10,7 @@
         <el-select
           class="search"
           v-model="form.account"
+          :disabled="likeeditid != ''"
           placeholder="请选择广告账户，可搜索"
           filterable
           @change="selectAccount"
@@ -127,7 +128,6 @@ import { Msgwarning } from "../../js/message";
 import Clickoutside from "element-ui/src/utils/clickoutside";
 let timeout;
 let campaignaccount;
-// let treerun;
 export default {
   props: ["status", "liketype", "likeeditid"], //liketype
   directives: {
@@ -137,8 +137,6 @@ export default {
     return {
       input: "",
       filterText: "",
-      //   status2: false,
-      //   status3: false,
       props1: {
         label: "name",
         children: "zones",
@@ -160,7 +158,6 @@ export default {
       customname: "",
       camppage: 1,
       campkword: ""
-      // applist: []
     };
   },
   created() {},
@@ -172,48 +169,6 @@ export default {
       "TARGETTREECHECK",
       "TARGETPLANLISTCHECK"
     ]),
-    // filterShow() {
-    //   this.status2 = true;
-    //   this.status3 = !this.status3;
-    // },
-    // filterHide() {
-    //   this.status3 = false;
-    // },
-    // secondTree(id, name) {
-    //   let campaignid = id;
-    //   let campaignname = name;
-    //   /**
-    //    * 获取adset列表
-    //    * 如果已经获取的则无需请求接口
-    //    */
-    //   if (this.targetadsetarray[`campaignid_${campaignid}`])
-    //     this.TARGETTREE(campaignid);
-    //   else {
-    //     this.getCampaignAdset({ type: "adset" });
-    //   }
-    // },
-    // loadMore() {
-    //   if (this.ifmorecampaigns) {
-    //     let k = "ifmorecampaigns";
-    //     let v = false;
-
-    //     this.SETSTATE({ k, v });
-
-    //     this.camppage++;
-
-    //     this.$store.dispatch("targetCampaigns", {
-    //       project_id: this.$route.params.id,
-    //       pageIndex: this.camppage,
-    //       keyword: this.campkword
-    //     });
-
-    //     console.log(this.camppage);
-    //   }
-    // },
-    // 根据所选自定义受众获取可选广告账户列表
-    // formTargetName() {
-    //   this.setName();
-    // },
     // 选择广告账户之后
     selectAccount() {
       // 获取该广告账户下的自定义受众
@@ -291,7 +246,6 @@ export default {
       return [true];
     },
     async toSubmit() {
-      console.log(this.form);
       let check = this.formCheck();
       if (!check[0]) {
         Msgwarning(check[1]);
@@ -310,7 +264,6 @@ export default {
             countries: this.form.country
           }
         };
-        // rule.target_countries = this.form.country;
       } else {
         rule.country = this.form.country.join(",");
       }
@@ -318,7 +271,7 @@ export default {
       let option = {
         adaccountId: this.form.account,
         description: this.form.desc,
-        fbAudienceId: "",
+        fbAudienceId: this.likeeditid ? this.likeeditid : "",
         name: this.form.name
       };
       if (this.liketype == 1) {
@@ -338,13 +291,7 @@ export default {
       }
       option.lookalikeSpec = JSON.stringify(rule);
 
-      let res;
-      if (this.likeeditid)
-        this.$store.dispatch("editTarget", {
-          option,
-          account: this.form.account
-        });
-      else res = await this.$store.dispatch("addTarget", { option, type });
+      let res = await this.$store.dispatch("addTarget", { option, type });
 
       if (res.data.status != "failed") {
         this.dialogFormVisible = false;
@@ -374,7 +321,6 @@ export default {
       this.form.adset = [];
       this.selectaccount = [];
       this.filterText = "";
-      // this.applist = [];
 
       let k = "targetaccount";
       let v = [];
@@ -389,10 +335,8 @@ export default {
       "ifmorecampaigns",
       "itemlist",
       "liketargetinfo",
-      "addliketargetaccount",
-      "campainother",
       "targetaccount",
-      "targetadsetlist",
+      "targetadsetlist"
     ]),
     ...mapGetters(["setapplist"]),
     applicationid() {
@@ -408,9 +352,7 @@ export default {
       if (n) {
         // 获取自定义受众列表
         if (this.liketype == 1) {
-          //   this.$store.dispatch("likeTarget", {
-          //     project_id: this.$route.params.id
-          //   });
+          
         }
 
         // 获取广告系列列表，广告管理相同接口
@@ -426,30 +368,14 @@ export default {
         this.$store.dispatch("getLikeTargetInfo", { audience_id });
       }
     },
-    addliketargetaccount(n, v) {
-      // 从所获取的受众信息中，提取已选择广告账户列表
-      if (n.length > 0) {
-        this.selectaccount = [];
-        this.selectid = [];
-
-        n.forEach(v => {
-          let obj = {
-            id: v.fbAccountId,
-            name: v.fbAccountName
-          };
-
-          this.selectaccount.push(obj);
-          this.selectid.push(v.fbAccountId);
-        });
-      }
-    },
     // 已创建受众信息
     liketargetinfo(n, v) {
       if (n) {
         this.form.name = n.name;
         this.form.desc = n.description;
+        this.form.account = n.ownAccountId;
 
-        let rule = eval("(" + n.rule + ")");
+        let rule = JSON.parse(n.lookalikeSpec);
         this.form.scale = [rule.starting_ratio * 100, rule.ratio * 100];
         this.form.country = rule.target_countries
           ? rule.target_countries
@@ -457,58 +383,12 @@ export default {
 
         if (this.liketype == 1) {
           this.form.custom = rule.origin[0].id;
-          /**
-           * 编辑的时候，根据自定义受众获取相应广告账户
-           * 排除掉已选择广告账户 selectid
-           * 等于可选择广告账户列表 applist（见上方computed）
-           */
-          this.$store.dispatch("getTargetAccount", {
-            targetid: rule.origin[0].id
-          });
+
+          // 根据广告账户获取自定义受众列表
+          this.selectAccount();
         }
         if (this.liketype == 2) {
-          this.form.customarr = [];
-          this.campainother.forEach(v => {
-            let obj = {};
-            obj.name = v.campaignName;
-            obj.id = v.id;
-            obj.planname = v.planName;
-
-            this.form.customarr.push(obj);
-          });
-
-          /**
-           * form.customarrfrom 用于存储显示已选批次以及广告账户
-           * 存放格式 [{name: 推广计划名称, btn: [批次id列表]}]
-           */
-          this.form.customarrfrom = [];
-          for (let i = 0; i < this.form.customarr.length; i++) {
-            let v = this.form.customarr[i];
-            if (this.form.customarrfrom.find(l => l.name == v.planname)) {
-              continue;
-            }
-            // this.form.customarr.forEach(v => {
-            let obj = {};
-            obj.name = v.planname;
-            obj.bth = [];
-            this.form.customarr.forEach(g => {
-              if (g.planname == obj.name) {
-                obj.bth.push(g.name);
-              }
-            });
-
-            this.form.customarrfrom.push(obj);
-          }
-
-          // 根据批次获取可选广告账户列表
-          let idarr = [];
-          this.form.customarr.forEach(v => {
-            idarr.push(v.id);
-          });
-          this.$store.dispatch("getTargetCampaignAccount", {
-            project_id: this.$route.params.id,
-            batch_id: idarr.join(",")
-          });
+          this.form.adset = [];
         }
         if (this.liketype == 3) {
           this.form.custom = rule.page_id;
@@ -518,23 +398,10 @@ export default {
   }
 };
 </script>
-<style>
-/* .campaignselect .el-tag {
-  max-width: 400px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 28px;
-} */
-</style>
 
 <style lang="less" scoped>
 .search {
   width: 100%;
-}
-
-.cline {
-  // width: 50%;
-  // float: left;
 }
 .cpselected {
   margin-bottom: 3px;

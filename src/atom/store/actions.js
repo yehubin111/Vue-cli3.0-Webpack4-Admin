@@ -2743,25 +2743,25 @@ export default {
             }
         })
     },
-    editTarget({ state, commit, dispatch }, { option, account }) {
-        let url = URL.edittarget;
+    // editTarget({ state, commit, dispatch }, { option, account }) {
+    //     let url = URL.edittarget;
 
-        _axios.post(url, option)
-            .then(res => {
-                if (account.length == 0) {
-                    Msgsuccess('保存成功');
+    //     _axios.post(url, option)
+    //         .then(res => {
+    //             if (account.length == 0) {
+    //                 Msgsuccess('保存成功');
 
-                    // commit('SAMELIKE');
-                } else {
-                    Msgsuccess('自定义受众编辑成功');
-                }
+    //                 // commit('SAMELIKE');
+    //             } else {
+    //                 Msgsuccess('自定义受众编辑成功');
+    //             }
 
-                dispatch('getTargetlist', { fullScreen: true });
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //             dispatch('getTargetlist', { fullScreen: true });
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     getAddDetail({ state, commit }) {
         let url = `${URL.targetadddetail}audience_id=${state.resultid}`;
 

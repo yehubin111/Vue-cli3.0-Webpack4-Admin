@@ -329,9 +329,9 @@ export default {
   targetinfo: null, //编辑时受众信息
   liketargetinfo: null, //编辑类似受众信息
   // addtargetaccount: [], // 编辑时账户
-  addliketargetaccount: [],
+  // addliketargetaccount: [],
   targetaccount: [], //类似受众根据自定义受众对应广告账户
-  campainother: [], // 类似受众广告系列特殊字段
+  // campainother: [], // 类似受众广告系列特殊字段
   resultid: '',
   targetadddetail: [], //创建编辑结果
   liketarget: [], //类似受众自定义受众列表

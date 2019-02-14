@@ -163,7 +163,7 @@ export default {
     'appmethod': 'audience/appEvents?', // 应用对应的用户
     // 'addtarget': 'audience/create', // 新增自定义受众
     'addtarget': 'v2/audience/createCustomAudience', // 新增自定义受众
-    'edittarget': 'audience/edit', // 编辑自定义受众
+    // 'edittarget': 'audience/edit', // 编辑自定义受众
     'targetadddetail': 'audience/createDetail?', // 新增编辑受众结果
     'liketarget': 'v2/audience/getCustomAudienceByAccount?', // 指定广告账户下的自定义受众
     'autoliketarget': 'v2/audience/createAudienceWithAudience', // 根据自定义受众创建类似受众

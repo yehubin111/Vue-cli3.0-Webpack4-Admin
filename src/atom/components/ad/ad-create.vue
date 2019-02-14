@@ -121,7 +121,9 @@ export default {
               startTime: new Date(opt.date[0]).getTime(),
               totalBudget: parseInt(opt.money * 100),
               minVersion: opt.lowversion,
-              maxVersion: opt.highversion
+              maxVersion: opt.highversion,
+              includeAudience: opt.target,
+              excludeAudience: opt.iftarget[0] == '1'?[]:opt.notarget
             };
 
             res = await this.$store.dispatch("createAdset", option);
@@ -183,7 +185,8 @@ export default {
           "错误信息",
           {
             confirmButtonText: "重新编辑",
-            dangerouslyUseHTMLString: true
+            dangerouslyUseHTMLString: true,
+            callback: () => {}
           }
         );
       } else {

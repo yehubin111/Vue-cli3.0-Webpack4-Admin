@@ -181,13 +181,13 @@ export default {
   },
   methods: {
     handleSelectionChange(sl) {
-      this.$emit('listSelect', sl);
+      this.$emit("listSelect", sl);
     },
     toDelete(id) {
-      this.$emit('toDelete', [id]);
+      this.$emit("toDelete", [id]);
     },
     toShare(id) {
-      this.$emit('toShare', [id]);
+      this.$emit("toShare", [id]);
     },
     toEdit(id, type, liketype) {
       let ltype = "";
@@ -198,8 +198,18 @@ export default {
       } else {
         ltype = 3;
       }
-      if (type == "LOOKALIKE") this.$emit("likeEdit", id, ltype);
-      else this.$emit("targetEdit", id);
+
+      switch (type) {
+        case "LOOKALIKE":
+          this.$emit("likeEdit", id, ltype);
+          break;
+        case "APP":
+          this.$emit("targetEdit", id);
+          break;
+        default:
+          this.$emit("specialEdit", id);
+          break;
+      }
     }
   }
 };

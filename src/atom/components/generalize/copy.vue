@@ -47,12 +47,9 @@ export default {
     let plan_id = this.$route.params.pid;
     this.$store.dispatch("getCreateInfo", { plan_id });
 
-    // let k = 'cr_projectId';
-    // let v = this.$route.params.id;
-    // this.SETSTATE({k, v});
-    // this.$store.dispatch("getOtherCreateList");
-
-    // this.$store.dispatch("getClassify");
+    let project_id = this.$route.params.id;
+    let audience_ids = this.$route.params.tid ? this.$route.params.tid : "";
+    this.$store.dispatch("generAccountList", { audience_ids, project_id });
   },
   computed: {
     ...mapState(["itemlist", "disinfo"]),

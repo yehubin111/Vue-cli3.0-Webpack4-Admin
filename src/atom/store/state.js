@@ -328,6 +328,7 @@ export default {
   appaccount: [], // 应用的所有用户
   targetinfo: null, //编辑时受众信息
   liketargetinfo: null, //编辑类似受众信息
+  specialtargetinfo: null, // 特殊受众
   // addtargetaccount: [], // 编辑时账户
   // addliketargetaccount: [],
   targetaccount: [], //类似受众根据自定义受众对应广告账户

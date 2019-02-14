@@ -40,12 +40,7 @@ export default {
     // SelectAccount
   },
   created() {
-    // let k = 'genertarget';
-    // let v = [];
-    // this.SETSTATE({k, v});
-    // k = 'genernotarget';
-    // v = [];
-    // this.SETSTATE({k, v});
+
   },
   mounted() {
     this.$store.dispatch("otherCountries");
@@ -54,18 +49,9 @@ export default {
     this.$store.dispatch("getApplist");
     this.$store.dispatch("getAllpages");
     // 创建推广计划受众列表
-    let fb_account_ids = "";
     let project_id = this.$route.params.id;
-    this.$store.dispatch("generTargetList", { fb_account_ids, project_id });
     let audience_ids = this.$route.params.tid ? this.$route.params.tid : "";
     this.$store.dispatch("generAccountList", { audience_ids, project_id });
-
-    // let k = 'cr_projectId';
-    // let v = this.$route.params.id;
-    // this.SETSTATE({k, v});
-    // this.$store.dispatch("getOtherCreateList");
-
-    // this.$store.dispatch("getClassify");
   },
   computed: {
     ...mapState(["itemlist"]),

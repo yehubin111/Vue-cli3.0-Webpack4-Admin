@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="创建类似受众"
+    :title="`${likeeditid?'编辑':'创建'}类似受众`"
     :visible.sync="dialogFormVisible"
     class="dialog likedialog"
     @close="toCancel"
@@ -28,7 +28,7 @@
           class="search"
           v-model="form.custom"
           :disabled="likeeditid != ''"
-          placeholder="请选择自定义受众,可搜索"
+          placeholder="请选择自定义受众，可搜索"
           filterable
           @change="setName"
         >
@@ -365,7 +365,7 @@ export default {
       if (n) {
         // 根据受众ID 获取已创建受众信息，包括国家、规模等
         let audience_id = n;
-        this.$store.dispatch("getLikeTargetInfo", { audience_id });
+        this.$store.dispatch("getTargetInfo", { audience_id, type: 'lookalike' });
       }
     },
     // 已创建受众信息

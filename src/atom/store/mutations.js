@@ -616,15 +616,36 @@ export default {
         state.logcreatecampaign = res.data.campaignNum;
     },
     CREATEINFO(state, r) {
+        let included = r.data.includeAudiences ? JSON.parse(r.data.includeAudiences) : {};
+        let excluded = r.data.excludedAudiences ? JSON.parse(r.data.excludedAudiences) : {};
+        r.data.included = [];
+        for (let i in included) {
+            included[i].forEach(v => {
+                r.data.included.push(`${v}|${i}`);
+            })
+        }
+        r.data.excluded = [];
+        for (let p in excluded) {
+            excluded[p].forEach(v => {
+                r.data.excluded.push(`${v}|${p}`);
+            })
+        }
         state.createinfo = r.data;
-
         state.disinfo.push(r.data);
     },
     RESETEDIT(state, r) {
         state.disinfo.splice(0);
     },
     GENERTARGET(state, r) {
-        state.genertarget = r.data.audiences;
+        let data = r.data;
+        state.genertarget = [];
+
+        for (let i in data) {
+            let obj = {};
+            obj.label = i;
+            obj.options = data[i];
+            state.genertarget.push(obj);
+        }
     },
     GENERACCOUNT(state, r) {
         state.generaccount = r.data.adaccounts;
@@ -955,15 +976,11 @@ export default {
         state.editadsetlist = res.data;
         state.editadsetlist.forEach(v => {
             let userOs = v.userOs.split('_');
-            // let lowOs = '';
-            // let baseOs = 0;
-            // userOsList.forEach(v => {
-            //     let os = v.split('_')[2];
-            //     if(parseFloat(os) > 0)
-            // });
             let target = JSON.parse(v.targeting);
             let schedule = JSON.parse(v.adsetSchedule);
 
+            v.included = target.custom_audiences ? target.custom_audiences.map(v => v.id) : [];
+            v.excluded = target.excluded_custom_audiences ? target.excluded_custom_audiences.map(v => v.id) : [];
             v.country = v.countries.split(',');
             v.platform = userOs[0].toLocaleLowerCase().indexOf('android') != -1 ? 'google_play' : 'itunes';
             v.lowversion = userOs[2];
@@ -1618,12 +1635,22 @@ export default {
     TARGETADDDETAIL(state, r) {
         state.targetadddetail = r.data;
     },
-    TARGETINFO(state, r) {
-        state.targetinfo = r.data;
+    TARGETINFO(state, { r, type }) {
+        switch (type) {
+            case 'app':
+                state.targetinfo = r.data;
+                break;
+            case 'lookalike':
+                state.liketargetinfo = r.data;
+                break;
+            default:
+                state.specialtargetinfo = r.data;
+                break;
+        }
     },
-    LIKETARGETINFO(state, r) {
-        state.liketargetinfo = r.data;
-    },
+    // LIKETARGETINFO(state, r) {
+    //     state.liketargetinfo = r.data;
+    // },
     TARGETACCOUNT(state, r) {
         let ar = [];
         r.data.forEach(v => {

@@ -1,7 +1,12 @@
 <template>
   <div class="formlist">
     <div class="bidguide">
-      <gener-guide :bid="form.bid" :maxbid="form.maxbid" :moneytype="form.moneytype" :money="form.money"></gener-guide>
+      <gener-guide
+        :bid="form.bid"
+        :maxbid="form.maxbid"
+        :moneytype="form.moneytype"
+        :money="form.money"
+      ></gener-guide>
     </div>
     <div class="eltitle">
       <b>基础信息</b>
@@ -13,25 +18,47 @@
       </el-form-item>
       <el-form-item label="推广计划类型" class="cline ctype">
         <el-radio-group v-model="form.type">
-          <el-radio label="manual">
-            通用推广计划
-          </el-radio>
-          <el-radio label="auto">
-            智能推广计划
-          </el-radio>
+          <el-radio label="manual">通用推广计划</el-radio>
+          <el-radio label="auto">智能推广计划</el-radio>
         </el-radio-group>
         <span class="typetip1">需要手动创建广告和选择创意</span>
         <span class="typetip2">每天11点自动选择创意并创建广告</span>
       </el-form-item>
+      <el-form-item label="广告账户" class="cline">
+        <el-select
+          class="select accountselect"
+          v-model="form.account"
+          multiple
+          filterable
+          placeholder="请选择广告账户"
+          @change="accountToAudience"
+        >
+          <el-option
+            v-for="item in generaccount"
+            :key="item.code"
+            :label="item.name + '(' + item.fbId + ')'"
+            :value="item.fbId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="国家" class="cline">
         <el-select class="select" v-model="form.country" filterable placeholder="请选择国家，可搜索">
-          <el-option v-for="item in othercountries" :key="item.code" :label="item.name + '(' + item.code + ')'" :value="item.code">
-          </el-option>
+          <el-option
+            v-for="item in othercountries"
+            :key="item.code"
+            :label="item.name + '(' + item.code + ')'"
+            :value="item.code"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="应用" class="cline">
         <el-select class="select" disabled v-model="actions" placeholder="请选择应用">
-          <el-option v-for="(l, index) in applist" :key="index" :label="l.name" :value="l.applicationId"></el-option>
+          <el-option
+            v-for="(l, index) in applist"
+            :key="index"
+            :label="l.name"
+            :value="l.applicationId"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="平台" class="cline timerange" v-show="form.actions != ''">
@@ -46,22 +73,49 @@
     </div>
     <el-form class="elform" label-position="left" label-width="110px" :model="form">
       <el-form-item label="受众" class="cline">
-        <div class="targettip">
-          定位至少符合以下一项条件的用户
-        </div>
-        <el-select class="select accountselect" no-data-text="暂无受众，请修改账户或新增受众" v-model="form.target" multiple filterable placeholder="请选择受众，可搜索" @change="targetToAccount">
-          <el-option v-for="item in generhastarget" :key="item.code" :label="item.name + '（'+item.adaccountNum+'个账户）'" :value="item.id.toString()">
-          </el-option>
+        <div class="targettip">定位至少符合以下一项条件的用户</div>
+        <el-select
+          class="select accountselect"
+          no-data-text="暂无受众，请修改账户或新增受众"
+          v-model="form.target"
+          multiple
+          filterable
+          placeholder="请选择受众，可搜索"
+          @change="targetToAccount"
+        >
+          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label">
+            <el-option
+              v-for="item in group.options"
+              :key="item.code"
+              :label="`${item.name}（${item.audienceId}）`"
+              :value="`${item.audienceId}|${group.label}`"
+              v-show="form.notarget.indexOf(`${item.audienceId}|${group.label}`) == -1"
+            ></el-option>
+          </el-option-group>
         </el-select>
         <el-checkbox-group v-model="form.iftarget">
           <el-checkbox label="1" name="type">不排除任何受众</el-checkbox>
         </el-checkbox-group>
-        <div class="targettip" v-if="form.iftarget[0] != 1">
-          排除至少符合以下一项条件的用户
-        </div>
-        <el-select class="select accountselect" no-data-text="暂无受众，请修改账户或新增受众" v-if="form.iftarget[0] != 1" v-model="form.notarget" multiple filterable placeholder="请选择受众，可搜索" @change="targetToAccount">
-          <el-option v-for="item in genernotarget" :key="item.code" :label="item.name + '（'+item.adaccountNum+'个账户）'" :value="item.id.toString()">
-          </el-option>
+        <div class="targettip" v-if="form.iftarget[0] != 1">排除至少符合以下一项条件的用户</div>
+        <el-select
+          class="select accountselect"
+          no-data-text="暂无受众，请修改账户或新增受众"
+          v-if="form.iftarget[0] != 1"
+          v-model="form.notarget"
+          multiple
+          filterable
+          placeholder="请选择受众，可搜索"
+          @change="targetToAccount"
+        >
+          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label">
+            <el-option
+              v-for="item in group.options"
+              :key="item.code"
+              :label="`${item.name}（${item.audienceId}）`"
+              :value="`${item.audienceId}|${group.label}`"
+              v-show="form.target.indexOf(`${item.audienceId}|${group.label}`) == -1"
+            ></el-option>
+          </el-option-group>
         </el-select>
       </el-form-item>
       <el-form-item label="系统版本" class="cline" v-show="form.platform != ''">
@@ -85,12 +139,8 @@
       </el-form-item>
       <el-form-item label="预算" class="cline ctype">
         <el-radio-group v-model="form.moneytype" @change="moneytypeChange">
-          <el-radio label="day_budget">
-            单日预算
-          </el-radio>
-          <el-radio label="total_budget">
-            总预算
-          </el-radio>
+          <el-radio label="day_budget">单日预算</el-radio>
+          <el-radio label="total_budget">总预算</el-radio>
         </el-radio-group>
         <div class="moneyinput">
           <span class="moneyus">$</span>
@@ -98,60 +148,86 @@
         </div>
       </el-form-item>
       <el-form-item label="投放日期" v-show="form.moneytype == 'total_budget'">
-        <el-date-picker v-model="form.date" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-        </el-date-picker>
+        <el-date-picker
+          v-model="form.date"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item label="投放时段" class="cline timerange" v-show="form.moneytype == 'total_budget'">
         <el-radio-group v-model="form.timerange">
-          <el-radio label="allday">
-            全天投放广告
-          </el-radio>
-          <el-radio label="schedule">
-            分时间段投放
-          </el-radio>
+          <el-radio label="allday">全天投放广告</el-radio>
+          <el-radio label="schedule">分时间段投放</el-radio>
         </el-radio-group>
         <div class="moneyinput" v-show="form.timerange == 'schedule'">
           <el-select class="selectsmall" v-model="form.rdate" multiple placeholder="按广告受众所在时区">
             <el-option v-for="(l, index) in week" :key="index" :label="l.name" :value="l.key"></el-option>
           </el-select>
-          <el-time-picker class="timeselect" is-range v-model="form.rtime" range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" placeholder="选择时间范围">
-          </el-time-picker>
+          <el-time-picker
+            class="timeselect"
+            is-range
+            v-model="form.rtime"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围"
+          ></el-time-picker>
         </div>
       </el-form-item>
 
       <el-form-item label="设备" v-show="form.platform != ''">
         <el-checkbox-group v-model="form.equip">
-          <el-checkbox label="Android_Smartphone" name="type" v-if="form.platform == 'google_play'">安卓智能手机</el-checkbox>
+          <el-checkbox
+            label="Android_Smartphone"
+            name="type"
+            v-if="form.platform == 'google_play'"
+          >安卓智能手机</el-checkbox>
           <el-checkbox label="iPhone" name="type" v-if="form.platform == 'itunes'">iPhone</el-checkbox>
           <el-checkbox label="iPad" name="type" v-if="form.platform == 'itunes'">iPad</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="性别" class="cline">
         <el-radio-group v-model="form.sex">
-          <el-radio label="0">
-            全部
-          </el-radio>
-          <el-radio label="1">
-            男
-          </el-radio>
-          <el-radio label="2">
-            女
-          </el-radio>
+          <el-radio label="0">全部</el-radio>
+          <el-radio label="1">男</el-radio>
+          <el-radio label="2">女</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="年龄" class="cline">
         <el-slider v-model="form.age" range :min="13" :max="65" :format-tooltip="formatTooltip"></el-slider>
       </el-form-item>
       <el-form-item label="语言" class="cline">
-        <el-select class="select" v-model="form.language" multiple filterable placeholder="请选择语言，可搜索">
-          <el-option v-for="item in language" :key="item.localeId" :label="item.name" :value="item.localeId.toString()">
-          </el-option>
+        <el-select
+          class="select"
+          v-model="form.language"
+          multiple
+          filterable
+          placeholder="请选择语言，可搜索"
+        >
+          <el-option
+            v-for="item in language"
+            :key="item.localeId"
+            :label="item.name"
+            :value="item.localeId.toString()"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="兴趣" class="cline">
-        <el-select class="select" v-model="form.interest" multiple filterable placeholder="请选择兴趣，可搜索">
-          <el-option v-for="item in interests" :key="item.featureId" :label="item.name" :value="item.featureId">
-          </el-option>
+        <el-select
+          class="select"
+          v-model="form.interest"
+          multiple
+          filterable
+          placeholder="请选择兴趣，可搜索"
+        >
+          <el-option
+            v-for="item in interests"
+            :key="item.featureId"
+            :label="item.name"
+            :value="item.featureId"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="自动版位">
@@ -162,20 +238,28 @@
 
       <el-form-item label="版位" class="verpla" v-show="form.auto[0] != 1">
         <el-checkbox-group v-model="form.verpla">
-          <el-checkbox label="facebook" name="type" :disabled="form.verpla && (form.verpla.indexOf('audience_network') != -1 || form.verpla.indexOf('messenger') != -1)">Facebook</el-checkbox>
+          <el-checkbox
+            label="facebook"
+            name="type"
+            :disabled="form.verpla && (form.verpla.indexOf('audience_network') != -1 || form.verpla.indexOf('messenger') != -1)"
+          >Facebook</el-checkbox>
           <el-checkbox label="instagram" name="type">Instagram</el-checkbox>
-          <el-checkbox label="audience_network" name="type" :disabled="form.verpla && form.verpla.indexOf('facebook') == -1">Audience Network</el-checkbox>
-          <el-checkbox label="messenger" name="type" :disabled="form.verpla && form.verpla.indexOf('facebook') == -1">Messenger</el-checkbox>
+          <el-checkbox
+            label="audience_network"
+            name="type"
+            :disabled="form.verpla && form.verpla.indexOf('facebook') == -1"
+          >Audience Network</el-checkbox>
+          <el-checkbox
+            label="messenger"
+            name="type"
+            :disabled="form.verpla && form.verpla.indexOf('facebook') == -1"
+          >Messenger</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="出价" class="cline">
         <el-radio-group v-model="form.bid" @change="maxbidDefault">
-          <el-radio label="cpi">
-            CPI
-          </el-radio>
-          <el-radio label="cpm">
-            CPM
-          </el-radio>
+          <el-radio label="cpi">CPI</el-radio>
+          <el-radio label="cpm">CPM</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="竞价上限">
@@ -192,7 +276,12 @@
         </el-checkbox-group>
         <div class="moneyinput" v-show="form.filtra && form.filtra.indexOf('2') != -1">
           <el-select class="select" v-model="form.filtrapage" multiple placeholder="请选择要过滤的主页，必选">
-            <el-option v-for="(l, index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
+            <el-option
+              v-for="(l, index) in allpagelist"
+              :key="index"
+              :label="l.name"
+              :value="l.pageId"
+            ></el-option>
           </el-select>
         </div>
       </el-form-item>
@@ -202,23 +291,19 @@
       <span>根据广告组数量、广告组创意数和创意数生成相对应的广告系列数量</span>
     </div>
     <el-form class="elform" label-position="left" label-width="110px" :model="form">
-      <el-form-item label="广告账户" class="cline">
-        <el-select class="select accountselect" v-model="form.account" multiple filterable placeholder="请选择广告账户" @change="accountToAudience">
-          <el-option v-for="item in generaccount" :key="item.code" :label="item.name + '(' + item.fbId + ')'" :value="item.fbId">
-          </el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="广告组数" class="cline ctype">
         <el-input-number v-model="form.adcount" :min="1" label="广告组数"></el-input-number>
-        <div class="countfont">
-          每个广告系列包含的广告组数量，太多也会有内部竞争影响整体效率
-        </div>
+        <div class="countfont">每个广告系列包含的广告组数量，太多也会有内部竞争影响整体效率</div>
       </el-form-item>
       <el-form-item label="广告组创意数" class="cline ctype">
-        <el-input-number v-model="form.count" @change="countChange" :min="1" :max="50" label="广告组创意数"></el-input-number>
-        <div class="countfont">
-          每个广告组包含的创意数量。1-3个为佳，3个以上会有内部竞争影响整体效率
-        </div>
+        <el-input-number
+          v-model="form.count"
+          @change="countChange"
+          :min="1"
+          :max="50"
+          label="广告组创意数"
+        ></el-input-number>
+        <div class="countfont">每个广告组包含的创意数量。1-3个为佳，3个以上会有内部竞争影响整体效率</div>
       </el-form-item>
       <el-form-item label="创意类型" class="cline" v-show="form.type == 'auto'">
         <el-checkbox-group v-model="form.createtype">
@@ -228,36 +313,30 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="创意数量" class="cline ctype" v-show="form.type == 'auto'">
-        <el-input-number v-model="form.createcount" @change="createcountChange" :min="1" label="创意数量"></el-input-number>
-        <div class="countfont">
-          1个创意就会生成1条广告，在已同步的创意中优先选择CTR高的
-        </div>
+        <el-input-number
+          v-model="form.createcount"
+          @change="createcountChange"
+          :min="1"
+          label="创意数量"
+        ></el-input-number>
+        <div class="countfont">1个创意就会生成1条广告，在已同步的创意中优先选择CTR高的</div>
       </el-form-item>
       <el-form-item label="选择策略" class="cline cline-strategy" v-show="form.type == 'auto'">
         <el-radio-group v-model="form.tactics" class="strategy">
-          <el-radio :label="1">
-            新创意优先
-          </el-radio>
-          <el-radio :label="2">
-            完全随机
-          </el-radio>
-          <el-radio :label="3">
-            高点击率优先
-          </el-radio>
-          <el-radio :label="4">
-            视频/图片不同优先
-          </el-radio>
+          <el-radio :label="1">新创意优先</el-radio>
+          <el-radio :label="2">完全随机</el-radio>
+          <el-radio :label="3">高点击率优先</el-radio>
+          <el-radio :label="4">视频/图片不同优先</el-radio>
         </el-radio-group>
-        <el-tooltip class="item" effect="dark" content="不同策略会选到不同的创意，请根据需求选择合适的策略" placement="bottom-start">
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="不同策略会选到不同的创意，请根据需求选择合适的策略"
+          placement="bottom-start"
+        >
           <i class="el-icon-question"></i>
         </el-tooltip>
       </el-form-item>
-      <!-- <el-form-item label="创意" class="cline ctype" v-show="form.type == 'manual'">
-                <el-button type="primary" size="small">选择创意</el-button>
-                <div class="countfont">
-                    未选择创意
-                </div>
-            </el-form-item> -->
     </el-form>
     <div class="elsubmit">
       <el-button type="primary" @click="toSubmit">提 交</el-button>
@@ -320,9 +399,9 @@ export default {
         country: this.createinfo.country,
         platform: this.createinfo.platform,
 
-        target: this.createinfo.includeAudiences,
-        iftarget: this.createinfo.excludedAudiences.length > 0 ? [] : ["1"],
-        notarget: this.createinfo.excludedAudiences,
+        target: this.createinfo.included,
+        iftarget: this.createinfo.excludedAudiences ? [] : ["1"],
+        notarget: this.createinfo.excluded,
         minversion: this.createinfo.version,
         maxversion: this.createinfo.maxVersion
           ? this.createinfo.maxVersion
@@ -441,8 +520,12 @@ export default {
 
     this.toGetsystem();
     // 初始化获取受众已经广告账户列表
-    this.accountToAudience();
-    this.targetToAccount();
+    if (this.form.account.length == 0) {
+      this.SETSTATE({ k: "genertarget", v: [] });
+      return;
+    }
+    let fb_account_ids = this.form.account.join(",");
+    this.$store.dispatch("generTargetList", { fb_account_ids });
   },
   computed: {
     ...mapState([
@@ -587,14 +670,18 @@ export default {
       });
     },
     accountToAudience() {
+      this.form.target = [];
+      this.form.notarget = [];
+
+      if (this.form.account.length == 0) {
+        this.SETSTATE({ k: "genertarget", v: [] });
+        return;
+      }
       let fb_account_ids = this.form.account.join(",");
-      let project_id = this.$route.params.id;
-      this.$store.dispatch("generTargetList", { fb_account_ids, project_id });
+      this.$store.dispatch("generTargetList", { fb_account_ids });
     },
     targetToAccount() {
-      let audience_ids = this.form.target.concat(this.form.notarget).join(",");
-      let project_id = this.$route.params.id;
-      this.$store.dispatch("generAccountList", { audience_ids, project_id });
+
     },
     moneytypeChange() {
       this.form.money = "";
@@ -685,6 +772,25 @@ export default {
       }
     },
     toDispatch() {
+      let target = {},
+        notarget = {};
+      this.form.target.forEach(v => {
+        let k = v.split("|");
+        let account = k[1];
+        if (!target[account]) {
+          target[account] = [];
+        }
+        target[account].push(k[0]);
+      });
+      this.form.notarget.forEach(v => {
+        let k = v.split("|");
+        let account = k[1];
+        if (!notarget[account]) {
+          notarget[account] = [];
+        }
+        notarget[account].push(k[0]);
+      });
+
       // return;
       let option = {
         // planAdaccountVOList: [],
@@ -706,7 +812,7 @@ export default {
             this.form.platform == "itunes"
               ? this.form.equip.filter(v => v == "iPhone" || v == "iPad")
               : this.form.equip.filter(v => v == "Android_Smartphone"),
-          endMinute: this.$timeFormat(this.form.rtime[1], "HH") + ':00',
+          endMinute: this.$timeFormat(this.form.rtime[1], "HH") + ":00",
           endTime: new Date(this.form.date[1]).getTime(),
           filteAttentionUser: this.form.filtrapage,
           filteInstalledUser: this.form.filtra.indexOf("1") != -1 ? "yes" : "",
@@ -721,12 +827,13 @@ export default {
           position: this.form.auto[0] == "1" ? [] : this.form.verpla,
           projectId: this.$route.params.id,
           scheduleType: this.form.timerange,
-          startMinute: this.$timeFormat(this.form.rtime[0], "HH") + ':00',
+          startMinute: this.$timeFormat(this.form.rtime[0], "HH") + ":00",
           startTime: new Date(this.form.date[0]).getTime(),
           totalBudget: parseInt(this.form.money * 100),
           fbAccountIds: this.form.account,
-          includeAudiences: this.form.target,
-          excludedAudiences: this.form.notarget,
+          includeAudiences: JSON.stringify(target),
+          excludedAudiences:
+            this.form.iftarget[0] == 1 ? "" : JSON.stringify(notarget),
           version: this.form.minversion,
           maxVersion: this.form.maxversion ? this.form.maxversion : null,
           adsetNum: this.form.adcount,
@@ -750,7 +857,8 @@ export default {
       if (this.form.minversion == "") return [false, this.msg.version];
       if (this.form.money == "") return [false, this.msg.money];
       if (this.form.moneytype == "total_budget") {
-        if (!this.form.date || this.form.date.length == 0) return [false, this.msg.date];
+        if (!this.form.date || this.form.date.length == 0)
+          return [false, this.msg.date];
         if (this.form.timerange == "schedule" && this.form.rdate.length == 0)
           return [false, this.msg.rdate];
       }

@@ -11,6 +11,7 @@
           filterable
           placeholder="请选择广告系列"
           v-show="!mutil.campaign"
+          @change="accountToAudience"
         >
           <el-option
             v-for="item in createcampaignlist"
@@ -148,6 +149,63 @@
           ></el-option>
         </el-select>
         <p style="font-size: 12px;color: #999;">最高版本为空则无上限</p>
+      </el-form-item>
+      <el-form-item label="受众" class="cline">
+        <p v-if="mutil.target">
+          <span v-show="mutilstatus.target">多项内容，
+            <el-button type="text" @click="mutilstatus.target = !mutilstatus.target">编辑</el-button>
+          </span>
+          <span v-show="!mutilstatus.target">多项内容，已编辑，
+            <el-button type="text" @click="mutilstatus.target = !mutilstatus.target">撤销编辑</el-button>
+          </span>
+        </p>
+        <div class="targettip" v-show="!mutilstatus.target">定位至少符合以下一项条件的用户</div>
+        <el-select
+          class="select accountselect"
+          no-data-text="暂无受众，请修改账户或新增受众"
+          v-model="form.target"
+          v-show="!mutilstatus.target"
+          multiple
+          filterable
+          placeholder="请选择受众，可搜索"
+        >
+          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label">
+            <el-option
+              v-for="item in group.options"
+              :key="item.code"
+              :label="`${item.name}（${item.audienceId}）`"
+              :value="`${item.audienceId}`"
+              v-show="form.notarget.indexOf(`${item.audienceId}`) == -1"
+            ></el-option>
+          </el-option-group>
+        </el-select>
+        <el-checkbox-group v-model="form.iftarget" v-show="!mutilstatus.target">
+          <el-checkbox label="1" name="type">不排除任何受众</el-checkbox>
+        </el-checkbox-group>
+        <div
+          class="targettip"
+          v-if="form.iftarget[0] != 1"
+          v-show="!mutilstatus.target"
+        >排除至少符合以下一项条件的用户</div>
+        <el-select
+          class="select accountselect"
+          no-data-text="暂无受众，请修改账户或新增受众"
+          v-show="!mutilstatus.target && form.iftarget[0] != 1"
+          v-model="form.notarget"
+          multiple
+          filterable
+          placeholder="请选择受众，可搜索"
+        >
+          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label">
+            <el-option
+              v-for="item in group.options"
+              :key="item.code"
+              :label="`${item.name}（${item.audienceId}）`"
+              :value="`${item.audienceId}`"
+              v-show="form.target.indexOf(`${item.audienceId}`) == -1"
+            ></el-option>
+          </el-option-group>
+        </el-select>
       </el-form-item>
       <el-form-item label="预算">
         <p v-if="mutil.moneytype">
@@ -449,6 +507,9 @@ export default {
         platform: "",
         lowversion: "",
         highversion: "",
+        target: [],
+        notarget: [],
+        iftarget: ["1"],
         moneytype: "day_budget",
         money: "",
         date: [],
@@ -477,6 +538,7 @@ export default {
         activecreate: false,
         country: false,
         action: false,
+        target: false,
         platform: false,
         version: false,
         moneytype: false,
@@ -516,6 +578,13 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    accountToAudience() {
+      this.form.target = [];
+      this.form.notarget = [];
+
+      let fb_account_ids = this.form.campaign.split("|")[1];
+      this.$store.dispatch("generTargetList", { fb_account_ids });
+    },
     showBidChart() {
       if (!this.form.country) {
         return;
@@ -649,6 +718,18 @@ export default {
           obj.applicationId = this.form.applicationid;
           obj.dynamicCreative = v.isDynamicCreative;
           /**
+           * 受众
+           * 20190214新增
+           */
+          if (this.mutilstatus.target) {
+            obj.includeAudience = v.included;
+            obj.excludeAudience = v.excluded;
+          } else {
+            obj.includeAudience = this.form.target;
+            obj.excludeAudience =
+              this.form.iftarget[0] == "1" ? [] : this.form.notarget;
+          }
+          /**
            * 竞价 竞价上限
            */
           if (this.mutilstatus.bid) {
@@ -716,6 +797,7 @@ export default {
           obj.country = this.mutilstatus.country
             ? v.country
             : this.form.country;
+
           /**
            * 平台特殊情况，包括系统版本以及设备
            * 如果平台为多种情况
@@ -796,6 +878,7 @@ export default {
     reset() {
       this.SETSTATE({ k: "createcampaignlist", v: [] });
       this.SETSTATE({ k: "adapplist", v: [] });
+      this.SETSTATE({ k: "genertarget", v: [] });
       this.editArray = [];
 
       let action = this.form.action;
@@ -805,6 +888,9 @@ export default {
         country: [],
         action: action,
         platform: "",
+        target: [],
+        notarget: [],
+        iftarget: ["1"],
         lowversion: "",
         highversion: "",
         moneytype: "day_budget",
@@ -897,7 +983,8 @@ export default {
       "system",
       "createplatform",
       "createallpagelist",
-      "editadsetlist"
+      "editadsetlist",
+      "genertarget"
     ]),
     equip() {
       return this.form.platform;
@@ -934,6 +1021,12 @@ export default {
           [...new Set(n.map(v => v.isDynamicCreative))].length > 1
             ? ""
             : n[0].isDynamicCreative;
+        // 20190214新增受众
+        this.form.target = n.length > 1 ? [] : n[0].included;
+        this.form.notarget = n.length > 1 ? [] : n[0].excluded;
+        this.form.iftarget =
+          n.length == 1 && n[0].excluded.length > 0 ? [] : ["1"];
+
         this.form.country = !this.$equalArray(n.map(v => v.country))
           ? []
           : n[0].country;
@@ -1028,6 +1121,7 @@ export default {
           name: !this.form.name ? true : false,
           activecreate: this.form.activecreate === "" ? true : false,
           country: this.form.country.length == 0 ? true : false,
+          target: n.length > 1 ? true : false,
           action: !this.form.action ? true : false,
           platform: !this.form.platform ? true : false,
           version: !this.form.lowversion ? true : false,
@@ -1055,6 +1149,9 @@ export default {
             keyword: n[0].campaignId,
             projectId: this.$route.params.id
           });
+          // 初始化获取受众列表
+          let fb_account_ids = this.form.campaign.split("|")[1];
+          this.$store.dispatch("generTargetList", { fb_account_ids });
         }
         // 先获取应用信息，再添加到列表中，已做显示
         if (this.form.action) {
@@ -1181,6 +1278,9 @@ export default {
   }
   .activecreate {
     width: 110%;
+  }
+  .select {
+    width: 100%;
   }
   .formselect {
     width: 100%;

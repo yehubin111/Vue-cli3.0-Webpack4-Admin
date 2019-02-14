@@ -1,9 +1,9 @@
 <template>
-  <el-dialog :title="`创建${customtype == 1? '应用事件': '客户名单'}自定义受众`" :visible.sync="dialogFormVisible" class="dialog createdialog" @close="toCancel">
+  <el-dialog :title="`${editid?'编辑':'创建'}${customtype == 1? '应用事件': '客户名单'}自定义受众`" :visible.sync="dialogFormVisible" class="dialog createdialog" @close="toCancel">
     <el-form ref="form" :model="form" label-width="80px" class="cform">
       <div class="leftform forleft">
         <el-form-item label="广告账户">
-          <el-select class="search" v-model="form.account" collapse-tags placeholder="请选择广告账户" filterable :disabled="Boolean(editid)">
+          <el-select class="search" v-model="form.account" collapse-tags placeholder="请选择广告账户，可搜索" filterable :disabled="Boolean(editid)">
             <el-option v-for="(l,index) in setapplist" :key="index" :label="l.name + '('+l.fbId.split('_')[1]+')'" :value="l.fbId"></el-option>
           </el-select>
         </el-form-item>
@@ -418,7 +418,6 @@ export default {
     // },
     targetinfo(n, v) {
       if (n) {
-        console.log(n);
         this.form.name = n.name;
         this.form.desc = n.description;
         this.form.account = 'act_' + n.accountId;
@@ -466,7 +465,7 @@ export default {
     editid(n, v) {
       if (n) {
         let audience_id = n;
-        this.$store.dispatch("getTargetInfo", { audience_id });
+        this.$store.dispatch("getTargetInfo", { audience_id, type: 'app' });
       }
     }
   }

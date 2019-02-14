@@ -1696,8 +1696,8 @@ export default {
                 console.log(err);
             })
     },
-    generTargetList({ state, commit }, { fb_account_ids, project_id }) {
-        let url = `${URL.genertarget}fb_account_ids=${fb_account_ids}&project_id=${project_id}`;
+    generTargetList({ state, commit }, { fb_account_ids }) {
+        let url = `${URL.genertarget}adaccount_ids=${fb_account_ids}`;
 
         _axios.get(url)
             .then(res => {
@@ -2269,11 +2269,13 @@ export default {
     createAdset({ state, commit }, option) {
         let url = URL.createadset;
 
-        return _axios.post(url, option, { fullScreen: true })
-            .then(res => res)
-            .catch(err => {
-                console.log(err);
-            })
+        return Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => res
+        })
     },
     getAdsetInfo({ state, commit }, { adsetId, applicationid }) {
         let url = `${URL.adsetinfo}adsetIds=${adsetId.join(',')}`;
@@ -2289,16 +2291,18 @@ export default {
     editAdset({ state, commit, dispatch }, option) {
         let url = URL.editadset;
 
-        return _axios.post(url, option, { fullScreen: true })
-            .then(res => {
+        return Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => {
                 if (!res.data.find(v => v.status == 'failed')) {
                     dispatch('getAdlist', { option: state['set_option'], type: 'adSetName' })
                 }
                 return res;
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     getCreateAdsetlist({ state, commit }, { keyword, projectId }) {
         let url = `${URL.createadsetlist}keyword=${keyword}&project_id=${projectId}`;
@@ -2708,21 +2712,30 @@ export default {
     },
     addTarget({ state, commit, dispatch }, { option, type = '' }) {
         let url = '';
+        let keyname = '';
         switch (type) {
             // 根据自定义受众创建类似受众
             case 'auto':
                 url = URL.autoliketarget;
+                keyname = '类似';
                 break;
             // 根据主页创建类似受众
             case 'page':
                 url = URL.pageliketarget;
+                keyname = '类似';
                 break;
             case 'ad':
                 url = URL.adliketarget;
+                keyname = '类似';
+                break;
+            case 'special':
+                url = URL.specialtarget;
+                keyname = '';
                 break;
             // 创建自定义受众
             default:
                 url = URL.addtarget;
+                keyname = '自定义';
                 break;
         }
 
@@ -2736,62 +2749,30 @@ export default {
                     Msgerror(res.data.errorMsg);
                     //     commit('SAMELIKE');
                 } else {
-                    Msgsuccess(`${type?'类似': '自定义'}受众${option.fbAudienceId ? '编辑' : '创建'}成功`);
+                    Msgsuccess(`${keyname}受众${option.fbAudienceId ? '编辑' : '创建'}成功`);
                     dispatch('getTargetlist', { fullScreen: true });
                 }
                 return res;
             }
         })
     },
-    // editTarget({ state, commit, dispatch }, { option, account }) {
-    //     let url = URL.edittarget;
-
-    //     _axios.post(url, option)
-    //         .then(res => {
-    //             if (account.length == 0) {
-    //                 Msgsuccess('保存成功');
-
-    //                 // commit('SAMELIKE');
-    //             } else {
-    //                 Msgsuccess('自定义受众编辑成功');
-    //             }
-
-    //             dispatch('getTargetlist', { fullScreen: true });
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         })
-    // },
     getAddDetail({ state, commit }) {
         let url = `${URL.targetadddetail}audience_id=${state.resultid}`;
 
-        _axios.get(url)
-            .then(res => {
+        Axios({
+            url,
+            success: res => {
                 commit('TARGETADDDETAIL', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
-    getTargetInfo({ state, commit }, { audience_id }) {
+    getTargetInfo({ state, commit }, { audience_id, type }) {
         // if (!state.audience_id) return;
         let url = `${URL.targetinfo}audience_id=${audience_id}`;
 
         _axios.get(url)
             .then(res => {
-                commit('TARGETINFO', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
-    getLikeTargetInfo({ state, commit }, { audience_id }) {
-        // if (!state.audience_id) return;
-        let url = `${URL.targetinfo}audience_id=${audience_id}`;
-
-        _axios.get(url)
-            .then(res => {
-                commit('LIKETARGETINFO', res);
+                commit('TARGETINFO', { r: res, type });
             })
             .catch(err => {
                 console.log(err);
@@ -2841,18 +2822,6 @@ export default {
                 console.log(err);
             })
     },
-    // getTargetLog({ state, commit }, { plan_id, planName }) {
-    //     let url = URL.planlog;
-    //     url += 'plan_id=' + plan_id;
-
-    //     _axios.get(url)
-    //         .then(res => {
-    //             commit('TARGETLOG', { res, plan_id, planName });
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //         })
-    // },
     getTargetCampaignAccount({ state, commit }, { project_id, batch_id }) {
         let url = `${URL.campaigntoaccount}project_id=${project_id}&batch_id=${batch_id}`;
 

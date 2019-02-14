@@ -66,7 +66,6 @@ export default {
       let obj = this.bidguide.find(
         v => this.maxbid >= v.bidAmountStart && this.maxbid <= v.bidAmountEnd
       );
-      console.log(obj);
       if (obj)
         return obj.cpi.toString().indexOf(".") != -1
           ? "$" + parseFloat(obj.cpi).toFixed(2)

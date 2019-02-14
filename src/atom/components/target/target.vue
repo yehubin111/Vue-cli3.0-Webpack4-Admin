@@ -2,7 +2,7 @@
   <div class="plan">
     <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;受众管理</p>
     <div class="ctrlbutton">
-      <el-select class="selectl" v-model="adaccounts" collapse-tags multiple placeholder="广告账户" @change="toSetAccount">
+      <el-select class="selectl" v-model="adaccounts" collapse-tags filterable multiple placeholder="请选择广告账户，支持名称/编号搜索" @change="toSetAccount">
         <el-option
           v-for="(item, index) in adaccountlist"
           :key="index"
@@ -72,6 +72,7 @@
       <target-list
         @targetEdit="targetEdit"
         @likeEdit="likeEdit"
+        @specialEdit="specialEdit"
         @toDelete="toDelete"
         @toShare="toShare"
         @listSelect="listSelect"
@@ -129,6 +130,7 @@
     <!-- <target-result :status="status3" :newaccount="newaccount" @cancelAddbm="cancelAddbm"></target-result> -->
     <target-delete :status.sync="deletestatus" :deleteids="deleteids" @hideBox="hideDeletebox"></target-delete>
     <target-share :status.sync="sharestatus" :shareids="shareids" @hideBox="hideSharebox"></target-share>
+    <target-special :status.sync="specialstatus" :editid="specialeditid" @hideBox="hideSpecialbox"></target-special>
   </div>
 </template>
 
@@ -138,6 +140,7 @@ import TargetDelete from "./target-delete";
 import TargetList from "./target-list";
 import TargetAdd from "./target-add";
 import TargetLike from "./target-newlike";
+import TargetSpecial from './target-special';
 // import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
 let targetsearch;
@@ -148,7 +151,8 @@ export default {
     TargetLike,
     // TargetResult,
     TargetDelete,
-    TargetShare
+    TargetShare,
+    TargetSpecial
   },
   data() {
     return {
@@ -156,6 +160,7 @@ export default {
       dialogFormVisible: false,
       dialogFormVisible2: false,
       deletestatus: false,
+      specialstatus: false,
       deleteids: [], // 删除ids
       ifdeletetip: false, // 是否显示无法删除提醒文字
       sharestatus: false,
@@ -170,6 +175,7 @@ export default {
       status2: false,
       status3: false,
       editid: "",
+      specialeditid: '',
       likeeditid: "",
       liketype: "",
       customtype: "",
@@ -222,6 +228,13 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    specialEdit(id) {
+      this.specialeditid = id;
+      this.specialstatus = true;
+    },
+    hideSpecialbox() {
+      this.specialstatus = false;
+    },
     handleCommandMutil(command) {
       let ids = this.selectlist.map(v => v.id);
       // 批量新增为特殊情况

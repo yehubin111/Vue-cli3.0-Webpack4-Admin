@@ -92,7 +92,8 @@ export default {
     'adfailreason': 'plan/errorMsg/ad?', // 广告失败原因
     'adsetfailreason': 'plan/errorMsg/adset?', // 广告组失败原因
     'campaignfailreason': 'plan/errorMsg/campaign?', //广告系列失败原因
-    'genertarget': 'plan/getAudienceByAccount?', // 推广计划受众列表
+    // 'genertarget': 'plan/getAudienceByAccount?', // 推广计划受众列表
+    'genertarget': 'v2/audience/usableAudienceList?', // 推广计划受众列表
     'generaccount': 'plan/getAccountByAudience?', // 推广计划广告账户列表
     // 'logcreate': 'plan/createAd', // 创建广告
     'logcreate': 'plan/createAdv2', // 创建广告
@@ -169,6 +170,7 @@ export default {
     'autoliketarget': 'v2/audience/createAudienceWithAudience', // 根据自定义受众创建类似受众
     'pageliketarget': 'v2/audience/createAudienceUsePage', // 根据主页创建类似受众
     'adliketarget': 'v2/audience/createCustomAudienceWithCampaign', // 根据广告创建类似受众
+    'specialtarget': 'v2/audience/editAudience', // 特殊受众
     // 'targetinfo': 'audience/info?', // 编辑时获取受众信息
     'targetinfo': 'v2/audience/getAudienceDetail?', // 编辑时获取受众信息
     'targetcampaigns': 'audience/campaigns?', // 类似受众广告系列

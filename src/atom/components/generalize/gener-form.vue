@@ -24,6 +24,23 @@
         <span class="typetip1">需要手动创建广告和选择创意</span>
         <span class="typetip2">每天11点自动选择创意并创建广告</span>
       </el-form-item>
+      <el-form-item label="广告账户" class="cline">
+        <el-select
+          class="select accountselect"
+          v-model="form.account"
+          multiple
+          filterable
+          placeholder="请选择广告账户"
+          @change="accountToAudience"
+        >
+          <el-option
+            v-for="item in generaccount"
+            :key="item.code"
+            :label="item.name + '(' + item.fbId + ')'"
+            :value="item.fbId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="国家" class="cline">
         <el-select
           class="select"
@@ -72,12 +89,18 @@
           placeholder="请选择受众，可搜索"
           @change="targetToAccount"
         >
-          <el-option
-            v-for="item in generhastarget"
-            :key="item.code"
-            :label="item.name + '（'+item.adaccountNum+'个账户）'"
-            :value="item.id.toString()"
-          ></el-option>
+          <el-option-group
+            v-for="group in genertarget"
+            :key="group.label"
+            :label="group.label">
+            <el-option
+              v-for="item in group.options"
+              :key="item.code"
+              :label="`${item.name}（${item.audienceId}）`"
+              :value="`${item.audienceId}|${group.label}`"
+              v-show="form.notarget.indexOf(`${item.audienceId}|${group.label}`) == -1">
+            </el-option>
+          </el-option-group>
         </el-select>
         <el-checkbox-group v-model="form.iftarget">
           <el-checkbox label="1" name="type">不排除任何受众</el-checkbox>
@@ -93,12 +116,18 @@
           placeholder="请选择受众，可搜索"
           @change="targetToAccount"
         >
-          <el-option
-            v-for="item in genernotarget"
-            :key="item.code"
-            :label="item.name + '（'+item.adaccountNum+'个账户）'"
-            :value="item.id.toString()"
-          ></el-option>
+          <el-option-group
+            v-for="group in genertarget"
+            :key="group.label"
+            :label="group.label">
+            <el-option
+              v-for="item in group.options"
+              :key="item.code"
+              :label="`${item.name}（${item.audienceId}）`"
+              :value="`${item.audienceId}|${group.label}`"
+              v-show="form.target.indexOf(`${item.audienceId}|${group.label}`) == -1">
+            </el-option>
+          </el-option-group>
         </el-select>
       </el-form-item>
       <el-form-item label="系统版本" class="cline" v-show="form.platform != ''">
@@ -271,23 +300,6 @@
       <span>根据广告组数量、广告组创意数和创意数生成相对应的广告系列数量</span>
     </div>
     <el-form class="elform" label-position="left" label-width="110px" :model="form">
-      <el-form-item label="广告账户" class="cline">
-        <el-select
-          class="select accountselect"
-          v-model="form.account"
-          multiple
-          filterable
-          placeholder="请选择广告账户"
-          @change="accountToAudience"
-        >
-          <el-option
-            v-for="item in generaccount"
-            :key="item.code"
-            :label="item.name + '(' + item.fbId + ')'"
-            :value="item.fbId"
-          ></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="广告组数" class="cline ctype">
         <el-input-number v-model="form.adcount" :min="1" label="广告组数"></el-input-number>
         <div class="countfont">每个广告系列包含的广告组数量，太多也会有内部竞争影响整体效率</div>
@@ -334,12 +346,6 @@
           <i class="el-icon-question"></i>
         </el-tooltip>
       </el-form-item>
-      <!-- <el-form-item label="创意" class="cline ctype" v-show="form.type == 'manual'">
-                <el-button type="primary" size="small">选择创意</el-button>
-                <div class="countfont">
-                    未选择创意
-                </div>
-      </el-form-item>-->
     </el-form>
     <div class="elsubmit">
       <el-button type="primary" @click="toSubmit">提 交</el-button>
@@ -470,16 +476,6 @@ export default {
       "genertarget",
       "generaccount"
     ]),
-    genernotarget() {
-      return this.genertarget.filter(
-        v => this.form.target.indexOf(v.id.toString()) == -1
-      );
-    },
-    generhastarget() {
-      return this.genertarget.filter(
-        v => this.form.notarget.indexOf(v.id.toString()) == -1
-      );
-    },
     equip() {
       return this.form.platform;
     },
@@ -607,14 +603,20 @@ export default {
       });
     },
     accountToAudience() {
+      this.form.target = [];
+      this.form.notarget = [];
+
+      if(this.form.account.length == 0) {
+        this.SETSTATE({k: 'genertarget', v: []});
+        return;
+      };
       let fb_account_ids = this.form.account.join(",");
-      let project_id = this.$route.params.id;
-      this.$store.dispatch("generTargetList", { fb_account_ids, project_id });
+      this.$store.dispatch("generTargetList", { fb_account_ids });
     },
     targetToAccount() {
-      let audience_ids = this.form.target.concat(this.form.notarget).join(",");
-      let project_id = this.$route.params.id;
-      this.$store.dispatch("generAccountList", { audience_ids, project_id });
+      // let audience_ids = this.form.target.concat(this.form.notarget).join(",");
+      // let project_id = this.$route.params.id;
+      // this.$store.dispatch("generAccountList", { audience_ids, project_id });
     },
     moneytypeChange() {
       this.form.money = "";
@@ -707,6 +709,24 @@ export default {
       }
     },
     toDispatch() {
+      let target = {}, notarget = {};
+      this.form.target.forEach(v => {
+        let k = v.split('|');
+        let account = k[1];
+        if(!target[account]) {
+          target[account] = [];
+        }
+        target[account].push(k[0]);
+      });
+      this.form.notarget.forEach(v => {
+        let k = v.split('|');
+        let account = k[1];
+        if(!notarget[account]) {
+          notarget[account] = [];
+        }
+        notarget[account].push(k[0]);
+      });
+
       let option = {
         // planAdaccountVOList: [],
         // planCreativeVOList: [],
@@ -746,8 +766,8 @@ export default {
           startTime: new Date(this.form.date[0]).getTime(),
           totalBudget: parseInt(this.form.money * 100),
           fbAccountIds: this.form.account,
-          includeAudiences: this.form.target,
-          excludedAudiences: this.form.notarget,
+          includeAudiences: JSON.stringify(target),
+          excludedAudiences: this.form.iftarget[0] == 1?'':JSON.stringify(notarget),
           version: this.form.minversion,
           maxVersion: this.form.maxversion ? this.form.maxversion : null,
           adsetNum: this.form.adcount,

@@ -405,11 +405,11 @@ export default {
     }
   }
 }
-.tocreate {
-  display: block;
-  padding: 0 20px;
-  color: #333;
-}
+// .tocreate {
+//   display: block;
+//   padding: 0 20px;
+//   color: #333;
+// }
 .plan {
   flex-grow: 1;
   .title {

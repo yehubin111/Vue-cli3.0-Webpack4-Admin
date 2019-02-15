@@ -203,7 +203,7 @@ export default {
          * 20181101新增，把返回的事件相关数据取出到外层
          */
         r.data.pageInfoAll.list.forEach(v => {
-            v.afMinsRate = v.afInstallsNum && v.installsNum ? ((v.afInstallsNum - v.installsNum) * 100 / v.installsNum).toFixed(2) + '%' : '';
+            // v.afMinsRate = v.afInstallsNum && v.installsNum ? ((v.afInstallsNum - v.installsNum) * 100 / v.installsNum).toFixed(2) + '%' : '';
             // v.afRetentionRate = v.afRetentionRate ? v.afRetentionRate + '%' : '';
             v.afReRate1 = v.afReRate1 ? v.afReRate1 + '%' : '';
             v.afReRate2 = v.afReRate2 ? v.afReRate2 + '%' : '';
@@ -217,7 +217,7 @@ export default {
                 v[`${g.eventsName}|uniqueUsers`] = g.uniqueUsers;
                 v[`${g.eventsName}|salesIn`] = g.salesIn;
             })
-            v.gap = v.gap < 0 ? (v.gap * 100).toFixed(2) : '+' + (v.gap * 100).toFixed(2)
+            // v.gap = v.gap < 0 ? (v.gap * 100).toFixed(2) : '+' + (v.gap * 100).toFixed(2)
         });
 
 
@@ -739,9 +739,11 @@ export default {
          * 20181130新增细分数据逻辑
          */
         let caredata = [];
+        let afcaredata = [];
         // 提取细分数据
         res.data.list.forEach((v, i) => {
-            if (v.fbAdPartList) (
+            // 普通细分数据
+            if (v.fbAdPartList) {
                 v.fbAdPartList.forEach((g, q) => {
                     let name = '';
                     let materialId = g.materialId && g.materialId.indexOf('http') != -1 ? `<span class="headpic"><a href="${g.materialId}" target="_blank"><img src="${g.materialId}"/></span></a>` : g.materialId;
@@ -761,13 +763,49 @@ export default {
                     g['careimg'] = g.materialId && g.materialId.indexOf('http') != -1 ? true : false;
                     caredata.push(g);
                 })
-            )
+            }
+            // af细分数据
+            if(v.fbAdAfPartList) {
+                v.fbAdAfPartList.forEach((g, q) => {
+                    let name = '';
+                    name += dateCond && g.insightDate ? ',' + g.insightDate : '';
+                    name += g.country ? ',' + g.country : '';
+
+                    g['parentindex'] = i;
+                    g['iscare'] = true;
+                    g[type] = name.substring(1);
+                    afcaredata.push(g);
+                })
+            }
         })
-        // 按照下标，在列表数组中插入细分数据
+        console.log(caredata);
+        console.log(afcaredata);
+        /**
+         * 2019-02-15新增
+         * 细分数据合并逻辑
+         * 如果条件相同(名称和序号)，则把普通细分数据与af细分数据合并成同一行
+         * 如果没有相同的，则普通细分数据在前，af细分数据在后排列
+         */
         caredata.forEach((v, i) => {
+            let pindex;
+            let sameobj = afcaredata.find((g, p) => {
+                if(g[type] == v[type] && g['parentindex'] == v['parentindex']) {
+                    pindex = p;
+                    return g;
+                }
+            });
+            if(sameobj) {
+                caredata[i] = Object.assign(v, sameobj);
+                afcaredata.splice(pindex, 1);
+            }
+        });
+        let allcare = caredata.concat(afcaredata);
+        console.log(allcare);
+        // 按照下标，在列表数组中插入细分数据
+        allcare.forEach((v, i) => {
             res.data.list.splice(v.parentindex + 1 + i, 0, v);
         })
-
+        
         // 排序情况下，全部数据取的第一个接口
         res.data.list.forEach((v, i) => {
             let kname = '';
@@ -1517,7 +1555,6 @@ export default {
         data.forEach(v => {
             v.checked = '';
         })
-
         state.targetadsetlist = data;
 
         // 下面的暂时用不到

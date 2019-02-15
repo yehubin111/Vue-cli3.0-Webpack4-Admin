@@ -62,13 +62,8 @@
           @click="tabJump(scope.row)"
           :title="item.name != '广告系列名称' && item.name != '广告组名称'?'':scope.row[item.key]"
         >{{scope.row[item.key] || scope.row[item.key] === 0 || scope.row[item.key] === "0"? scope.row[item.key]:'--'}}</p>
-        <!--20190212新增，动态创意图片/视频 细分数据情况，缩略图-->
-        <p
-          v-else-if="scope.row.careimg && (item.name == '广告系列名称' || item.name == '广告组名称' || item.name == '广告名称')"
-          v-html="scope.row[item.key] ? scope.row[item.key]:'--'"
-        ></p>
         <!--20190212新增，广告名称旁边放缩略图-->
-        <p v-else-if="item.name == '广告名称'" class="adname">
+        <p v-else-if="!scope.row.iscare && item.name == '广告名称'" class="adname">
           <span class="headpic">
             <a :href="scope.row.materialText" target="_blank">
               <img :src="scope.row.materialText">
@@ -76,6 +71,11 @@
           </span>
           <span class="name" :title="scope.row[item.key]">{{scope.row[item.key]}}</span>
         </p>
+        <!--20190212新增，动态创意图片/视频 细分数据情况，缩略图-->
+        <p
+          v-else-if="scope.row.careimg && (item.name == '广告系列名称' || item.name == '广告组名称' || item.name == '广告名称')"
+          v-html="scope.row[item.key] ? scope.row[item.key]:'--'"
+        ></p>
         <!--普通数据-->
         <p
           :class="{linedata: true, iscare: scope.row.iscare}"

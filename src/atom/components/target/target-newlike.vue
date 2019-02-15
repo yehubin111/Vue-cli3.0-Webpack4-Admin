@@ -50,6 +50,8 @@
           multiple
           filterable
           collapse-tags
+          remote
+          :remote-method="searchAdset"
         >
           <el-option
             v-for="(item,index) in targetadsetlist"
@@ -170,12 +172,25 @@ export default {
       "TARGETTREECHECK",
       "TARGETPLANLISTCHECK"
     ]),
+    searchAdset(query) {
+      this.getCampaignAdset({
+        type: "adset",
+        key: "fbAdSetId",
+        keyword: query
+      });
+    },
     // 选择广告账户之后
     selectAccount() {
       // 获取该广告账户下的自定义受众
       if (this.liketype == 1) {
         let account = this.form.account;
         this.$store.dispatch("likeTarget", { adaccount: account });
+        this.form.custom = '';
+      }
+      // 获取广告系列列表，广告管理相同接口
+      if (this.liketype == 2) {
+        this.getCampaignAdset({ type: "adset" });
+        this.form.adset = [];
       }
     },
     // 根据条件自动生成受众名称
@@ -277,7 +292,7 @@ export default {
       };
       if (this.liketype == 1) {
         type = "auto";
-        option['originAudienceId'] = this.form.custom;
+        option["originAudienceId"] = this.form.custom;
       }
       if (this.liketype == 2) {
         type = "ad";
@@ -286,11 +301,11 @@ export default {
       }
       if (this.liketype == 3) {
         type = "page";
-        option['pageId'] = this.form.custom;
+        option["pageId"] = this.form.custom;
         rule["page_id"] = this.form.custom;
         rule["conversion_type"] = "page_like";
       }
-      option['lookalikeSpec'] = JSON.stringify(rule);
+      option["lookalikeSpec"] = JSON.stringify(rule);
 
       let res = await this.$store.dispatch("addTarget", { option, type });
 
@@ -298,11 +313,16 @@ export default {
         this.dialogFormVisible = false;
       }
     },
-    getCampaignAdset({ type }) {
+    getCampaignAdset({ type, key = "", keyword = "", adaccount }) {
+      if (!this.form.account) {
+        this.SETSTATE({ k: "targetadsetlist", v: [] });
+        return;
+      }
       let option = {
         groupByClause: type == "campaignName" ? "campaign_id" : "adset_id",
         pageNo: 1,
         pageSize: 1000,
+        accountIdStr: this.form.account.split("_")[1],
         projectId: this.$route.params.id,
         endDate: this.$timeFormat(new Date(), "yyyy-MM-dd"),
         startDate: this.$timeFormat(
@@ -310,6 +330,9 @@ export default {
           "yyyy-MM-dd"
         )
       };
+      if (key && keyword) {
+        option[key] = keyword;
+      }
       this.$store.dispatch("targetAdlist", { option, type });
     },
     formReset() {
@@ -323,9 +346,9 @@ export default {
       this.selectaccount = [];
       this.filterText = "";
 
-      let k = "targetaccount";
-      let v = [];
-      this.SETSTATE({ k, v });
+      // this.SETSTATE({ k: "targetaccount", v: [] });
+      this.SETSTATE({ k: "targetadsetlist", v: [] });
+      this.SETSTATE({ k: "liketarget", v: [] });
     }
   },
   computed: {
@@ -336,7 +359,7 @@ export default {
       "ifmorecampaigns",
       "itemlist",
       "liketargetinfo",
-      "targetaccount",
+      // "targetaccount",
       "targetadsetlist"
     ]),
     ...mapGetters(["setapplist"]),
@@ -353,12 +376,10 @@ export default {
       if (n) {
         // 获取自定义受众列表
         if (this.liketype == 1) {
-          
         }
 
         // 获取广告系列列表，广告管理相同接口
         if (this.liketype == 2) {
-          this.getCampaignAdset({ type: "adset" });
         }
       }
     },
@@ -366,7 +387,10 @@ export default {
       if (n) {
         // 根据受众ID 获取已创建受众信息，包括国家、规模等
         let audience_id = n;
-        this.$store.dispatch("getTargetInfo", { audience_id, type: 'lookalike' });
+        this.$store.dispatch("getTargetInfo", {
+          audience_id,
+          type: "lookalike"
+        });
       }
     },
     // 已创建受众信息

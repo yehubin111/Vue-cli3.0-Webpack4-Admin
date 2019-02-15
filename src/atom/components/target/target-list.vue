@@ -119,7 +119,7 @@
           class="item"
           effect="dark"
           :disabled="scope.row.ifedit"
-          :content="'他人与你共享的受众不可编辑，所属广告账户编号：${scope.row.ownAccountId}'"
+          :content="`他人与你共享的受众不可编辑，所属广告账户编号：${scope.row.ownAccountId}`"
           placement="top-start"
         >
           <span class="ctrlbutton">

@@ -85,6 +85,7 @@
           multiple
           placeholder="请选择国家，可搜索"
           filterable
+          collapse-tags
           @change="setName"
         >
           <el-option
@@ -276,7 +277,7 @@ export default {
       };
       if (this.liketype == 1) {
         type = "auto";
-        option.originAudienceId = this.form.custom;
+        option['originAudienceId'] = this.form.custom;
       }
       if (this.liketype == 2) {
         type = "ad";
@@ -285,11 +286,11 @@ export default {
       }
       if (this.liketype == 3) {
         type = "page";
-        option.pageId = this.form.custom;
+        option['pageId'] = this.form.custom;
         rule["page_id"] = this.form.custom;
         rule["conversion_type"] = "page_like";
       }
-      option.lookalikeSpec = JSON.stringify(rule);
+      option['lookalikeSpec'] = JSON.stringify(rule);
 
       let res = await this.$store.dispatch("addTarget", { option, type });
 

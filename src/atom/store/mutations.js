@@ -1589,7 +1589,7 @@ export default {
                 // 自定义受众
                 default:
                     let tg = targettype.find(g => g.key == v.subtype);
-                    v.childType = tg.name;
+                    v.childType = tg ? tg.name : v.subtype;
                     break;
             }
         })

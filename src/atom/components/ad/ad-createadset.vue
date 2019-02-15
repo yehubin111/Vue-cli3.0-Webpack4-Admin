@@ -935,6 +935,8 @@ export default {
       };
     },
     initData(status) {
+      // 初始化置空受众列表
+      this.SETSTATE({ k: "genertarget", v: [] });
       /**
        * 创建初始化获取已选广告账户
        * 如果已选多个，则显示为空，当前只能单选
@@ -1149,10 +1151,12 @@ export default {
             keyword: n[0].campaignId,
             projectId: this.$route.params.id
           });
-          // 初始化获取受众列表
-          let fb_account_ids = this.form.campaign.split("|")[1];
-          this.$store.dispatch("generTargetList", { fb_account_ids });
         }
+        // 初始化获取受众列表
+        let fb_account_ids = [...new Set(n.map(v => v.accountId))]
+          .map(v => `act_${v}`)
+          .join(",");
+        this.$store.dispatch("generTargetList", { fb_account_ids });
         // 先获取应用信息，再添加到列表中，已做显示
         if (this.form.action) {
           this.$store.dispatch("getAppInfo", this.form.action);

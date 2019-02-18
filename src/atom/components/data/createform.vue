@@ -2,52 +2,120 @@
   <div class="ad">
     <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;创意报表</p>
     <div class="ctrlbutton">
-      <el-select class="select" v-model="form.value1" filterable remote multiple collapse-tags placeholder="广告账户" no-data-text="无数据，请输入或者改变关键字" :remote-method="searchAccount" @blur="clearArr('adaccount')" @change="toSort">
-        <el-option v-for="(item, index) in adaccount" :key="index" :label="item.accountName + (item.fbAccountId?'('+item.fbAccountId+')':'')" :value="item.fbAccountId">
-        </el-option>
+      <el-select
+        class="select"
+        v-model="form.value1"
+        filterable
+        remote
+        multiple
+        collapse-tags
+        placeholder="广告账户"
+        no-data-text="无数据，请输入或者改变关键字"
+        :remote-method="searchAccount"
+        @blur="clearArr('adaccount')"
+        @change="toSort"
+      >
+        <el-option
+          v-for="(item, index) in adaccount"
+          :key="index"
+          :label="item.accountName + (item.fbAccountId?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
+        ></el-option>
       </el-select>
-      <!-- <el-select class="select" v-model="form.value2" filterable remote multiple collapse-tags placeholder="广告系列" no-data-text="无数据，请输入或者改变关键字" :remote-method="searchCampaign" @blur="clearArr('adcampaign')" @change="toSort">
-        <el-option v-for="(item, index) in adcampaign" :key="index" :label="item.campaignName+'('+item.fbAdcampaignId+')'" :value="item.fbAdcampaignId">
-        </el-option>
-        <p class="maxcount">最多显示20条</p>
-      </el-select> -->
       <el-button type="text" class="advanceSelect" @click="advanceFilter">高级筛选</el-button>
       <p class="download">
-        <span @click="outTable"> 导出全部
+        <span @click="outTable">导出全部
           <svg-icon svgname="save" svgclass="save"></svg-icon>
         </span>
       </p>
-      <el-input class="search" v-model="state" placeholder="搜索创意ID/名称" suffix-icon="el-icon-search" @input="dataSearch"></el-input>
-      <!-- <p class="rollswitch">
-        <span>卡片：</span>
-        <el-switch class="switch" v-model="ifroll" active-color="#13ce66" inactive-color="#d7dae2">
-        </el-switch>
-      </p> -->
+      <el-input
+        class="search"
+        v-model="state"
+        placeholder="搜索创意ID/名称"
+        suffix-icon="el-icon-search"
+        @input="dataSearch"
+      ></el-input>
+      <el-date-picker
+        class="datar"
+        v-model="form.value8"
+        type="daterange"
+        range-separator="至"
+        :clearable="false"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        @change="toSort"
+      ></el-date-picker>
     </div>
     <div class="advanceCtr">
-      <el-select v-if="ifadvance" class="select" v-model="form.value3" filterable multiple collapse-tags placeholder="国家" @change="toSort" :disabled="!filter1">
-        <el-option v-for="item in datacountry" :key="item" :label="item" :value="item">
-        </el-option>
+      <el-select
+        v-if="ifadvance"
+        class="select"
+        v-model="form.value3"
+        filterable
+        multiple
+        collapse-tags
+        placeholder="国家"
+        @change="toSort"
+        :disabled="!filter1"
+      >
+        <el-option v-for="item in datacountry" :key="item" :label="item" :value="item"></el-option>
       </el-select>
-      <el-select v-if="ifadvance" class="select" v-model="form.value4" filterable multiple collapse-tags placeholder="年龄" @change="toSort" :disabled="!filter1">
-        <el-option v-for="item in dataage" :key="item" :label="item" :value="item">
-        </el-option>
+      <el-select
+        v-if="ifadvance"
+        class="select"
+        v-model="form.value4"
+        filterable
+        multiple
+        collapse-tags
+        placeholder="年龄"
+        @change="toSort"
+        :disabled="!filter1"
+      >
+        <el-option v-for="item in dataage" :key="item" :label="item" :value="item"></el-option>
       </el-select>
-      <el-select v-if="ifadvance" class="select" v-model="form.value5" filterable multiple collapse-tags placeholder="性别" @change="toSort" :disabled="!filter1">
-        <el-option v-for="item in datasex" :key="item.code" :label="item.name" :value="item.code">
-        </el-option>
+      <el-select
+        v-if="ifadvance"
+        class="select"
+        v-model="form.value5"
+        filterable
+        multiple
+        collapse-tags
+        placeholder="性别"
+        @change="toSort"
+        :disabled="!filter1"
+      >
+        <el-option v-for="item in datasex" :key="item.code" :label="item.name" :value="item.code"></el-option>
       </el-select>
-      <el-date-picker class="datar" v-model="form.value8" type="daterange" range-separator="至" :clearable="false" start-placeholder="开始日期" end-placeholder="结束日期" @change="toSort">
-      </el-date-picker>
     </div>
     <div class="advanceCtr" v-if="ifadvance">
-      <el-select class="selectmul" v-model="form.value6" filterable collapse-tags multiple placeholder="请选择版位" @change="toSort" :disabled="!filter2">
-        <el-option v-for="item in dataplatform" :key="item" :label="item" :value="item == 'Audience Network'?'Audience_Network':item">
-        </el-option>
+      <el-select
+        class="selectmul"
+        v-model="form.value6"
+        filterable
+        collapse-tags
+        multiple
+        placeholder="请选择版位"
+        @change="toSort"
+        :disabled="!filter2"
+      >
+        <el-option
+          v-for="item in dataplatform"
+          :key="item"
+          :label="item"
+          :value="item == 'Audience Network'?'Audience_Network':item"
+        ></el-option>
       </el-select>
-      <el-select class="selectmul" v-model="form.value7" filterable collapse-tags multiple placeholder="请选择设备" @change="toSort" :disabled="!filter2">
-        <el-option v-for="item in dataimpression" :key="item" :label="item" :value="item">
-        </el-option>
+      <el-select
+        class="selectmul"
+        v-model="form.value7"
+        filterable
+        collapse-tags
+        multiple
+        placeholder="请选择设备"
+        @change="toSort"
+        :disabled="!filter2"
+      >
+        <el-option v-for="item in dataimpression" :key="item" :label="item" :value="item"></el-option>
       </el-select>
     </div>
     <el-tabs v-model="activeName" class="activeName" type="card" @tab-click="handleClick">
@@ -56,8 +124,16 @@
           <createform-list ref="dataTable" @tableSort="tableSort"></createform-list>
         </div>
         <div class="pageswitch">
-          <el-pagination background @size-change="pageSizeChange" :page-sizes="[20, 200, 500]" layout="total, sizes, prev, pager, next, jumper" :current-page="pageindex" :total="createformtotal" :page-size="pagesize" @current-change="pageSwitch">
-          </el-pagination>
+          <el-pagination
+            background
+            @size-change="pageSizeChange"
+            :page-sizes="[20, 200, 500]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :current-page="pageindex"
+            :total="createformtotal"
+            :page-size="pagesize"
+            @current-change="pageSwitch"
+          ></el-pagination>
         </div>
       </el-tab-pane>
       <el-tab-pane label="轮播卡片" name="second">
@@ -65,12 +141,19 @@
           <createform-card ref="dataTableCard" @tableSort="tableSort"></createform-card>
         </div>
         <div class="pageswitch">
-          <el-pagination background @size-change="pageSizeChange" :page-sizes="[20, 200, 500]" layout="total, sizes, prev, pager, next, jumper" :current-page="pageindex" :total="createcardtotal" :page-size="pagesize" @current-change="pageSwitch">
-          </el-pagination>
+          <el-pagination
+            background
+            @size-change="pageSizeChange"
+            :page-sizes="[20, 200, 500]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :current-page="pageindex"
+            :total="createcardtotal"
+            :page-size="pagesize"
+            @current-change="pageSwitch"
+          ></el-pagination>
         </div>
       </el-tab-pane>
     </el-tabs>
-
   </div>
 </template>
 
@@ -175,16 +258,16 @@ export default {
       /**
        * 切换的时候清空排序条件
        */
-      this.sort = '';
-      
+      this.sort = "";
+
       if (this.cardname == "first") {
         // this.$store.dispatch("getCreateformList", { option });
-        this.SETSTATE({k: 'createcardlist', v: []})
+        this.SETSTATE({ k: "createcardlist", v: [] });
         // 删除排序
         this.$refs.dataTable.$refs.dataForm.clearSort();
       } else {
         // this.$store.dispatch("getCreatecardList", { option });
-        this.SETSTATE({k: 'createformlist', v: []})
+        this.SETSTATE({ k: "createformlist", v: [] });
         // 删除排序
         this.$refs.dataTableCard.$refs.dataCard.clearSort();
       }
@@ -427,7 +510,7 @@ export default {
     display: flex;
     .select {
       float: left;
-      flex-basis: 180px;
+      flex: 1;
       margin-right: 20px;
     }
     .selectmul {
@@ -445,6 +528,11 @@ export default {
     margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
+    .datar {
+      float: right;
+      width: 280px;
+      margin-right: 20px;
+    }
     .select {
       float: left;
       width: 240px;

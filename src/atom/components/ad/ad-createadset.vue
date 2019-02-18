@@ -169,7 +169,7 @@
           filterable
           placeholder="请选择受众，可搜索"
         >
-          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label">
+          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label.split('_')[1]">
             <el-option
               v-for="item in group.options"
               :key="item.code"
@@ -196,7 +196,7 @@
           filterable
           placeholder="请选择受众，可搜索"
         >
-          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label">
+          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label.split('_')[1]">
             <el-option
               v-for="item in group.options"
               :key="item.code"

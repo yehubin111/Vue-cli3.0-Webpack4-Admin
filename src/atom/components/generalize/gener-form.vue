@@ -92,7 +92,7 @@
           <el-option-group
             v-for="group in genertarget"
             :key="group.label"
-            :label="group.label">
+            :label="group.label.split('_')[1]">
             <el-option
               v-for="item in group.options"
               :key="item.code"
@@ -119,7 +119,7 @@
           <el-option-group
             v-for="group in genertarget"
             :key="group.label"
-            :label="group.label">
+            :label="group.label.split('_')[1]">
             <el-option
               v-for="item in group.options"
               :key="item.code"

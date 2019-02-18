@@ -502,7 +502,7 @@ export default {
       creative.videos =
         this.createType == 0
           ? this.processVIO.map(v => v.videoUrl).join(",")
-          : [];
+          : '';
 
       // creative.imageUrl =
       //   this.createType == 1

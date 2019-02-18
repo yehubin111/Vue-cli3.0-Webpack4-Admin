@@ -418,6 +418,8 @@ export default {
         }
         if (this.liketype == 3) {
           this.form.custom = rule.origin[0].id;
+
+          this.searchAdset(this.form.custom);
         }
       }
     }

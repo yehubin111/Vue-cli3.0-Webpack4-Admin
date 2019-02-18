@@ -486,13 +486,13 @@ export default {
         v => v.pageId == this.form.homepage
       )[0];
       // let action = this.allactions.filter(v => v.code == this.form.actions)[0];
-      creative.callToActionTypes = this.form.actionArr.map(v => v.replace(' ', '_').toLocaleUpperCase()).join(",");
+      creative.callToActionTypes = this.form.actionArr.map(v => v.replace(/\s/g, '_').toLocaleUpperCase()).join(",");
       creative.deeplink = this.form.deeplink;
       creative.pageId = homepage.pageId;
       creative.pageLogo = homepage.picture;
       creative.pageName = homepage.name;
-      creative.bodies = this.form.descarr.join("|");
-      creative.titles = this.form.titlearr.join("|");
+      creative.bodies = this.form.descarr.join("/");
+      creative.titles = this.form.titlearr.join("/");
       creative.adFormats =
         this.createType == 0 ? "AUTOMATIC_FORMAT" : "CAROUSEL_IMAGE";
       creative.token = this.xtoken;

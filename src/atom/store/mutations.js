@@ -1616,7 +1616,7 @@ export default {
                         v.childType = `自定义受众：${lookaliketype.name}`;
                         v.childliketype = 'custom_audience';
                     } else if (lookaliketype.type == "campaign_conversion") {
-                        v.childType = '广告活动';
+                        v.childType = '广告转化';
                         v.childliketype = 'campaign_conversion';
                     } else if (lookaliketype.type == 'page') {
                         v.childType = '主页粉丝';

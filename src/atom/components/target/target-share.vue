@@ -15,7 +15,8 @@
         v-model="adaccounts"
         collapse-tags
         multiple
-        placeholder="暂只支持同BM下的广告账户"
+        filterable
+        placeholder="暂只支持同BM下的广告账户，可搜索"
       >
         <el-option
           v-for="(item, index) in adaccountlist"

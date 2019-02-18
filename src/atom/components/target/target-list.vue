@@ -44,7 +44,7 @@
     <el-table-column prop="audienceType" label="广告账户">
       <template slot-scope="scope">
         <p>{{scope.row.adaccountName}}</p>
-        <p class="childtype">{{scope.row.ownAccountId}}</p>
+        <p class="childtype">{{scope.row.ownAccountId.split('_')[1]}}</p>
       </template>
     </el-table-column>
     <!-- <el-table-column prop="description" label="描述"></el-table-column> -->
@@ -119,7 +119,7 @@
           class="item"
           effect="dark"
           :disabled="scope.row.ifedit"
-          :content="`他人与你共享的受众不可编辑，所属广告账户编号：${scope.row.ownAccountId}`"
+          :content="`他人与你共享的受众不可编辑，所属广告账户编号：${scope.row.accountId}`"
           placement="top-start"
         >
           <span class="ctrlbutton">
@@ -135,7 +135,7 @@
           class="item"
           effect="dark"
           :disabled="scope.row.ifedit"
-          :content="`他人与你共享的受众你不可再次共享，所属广告账户编号：${scope.row.ownAccountId}`"
+          :content="`他人与你共享的受众你不可再次共享，所属广告账户编号：${scope.row.accountId}`"
           placement="top-start"
         >
           <span class="ctrlbutton">

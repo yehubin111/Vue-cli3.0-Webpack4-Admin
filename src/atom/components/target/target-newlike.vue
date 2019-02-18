@@ -401,7 +401,7 @@ export default {
         this.form.account = n.ownAccountId;
 
         let rule = JSON.parse(n.lookalikeSpec);
-        this.form.scale = [rule.starting_ratio * 100, rule.ratio * 100];
+        this.form.scale = [rule.starting_ratio?rule.starting_ratio * 100:0, rule.ratio * 100];
         this.form.country = rule.target_countries
           ? rule.target_countries
           : [rule.country];

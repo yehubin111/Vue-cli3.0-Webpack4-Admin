@@ -807,7 +807,7 @@ export default {
         (isNaN(parseInt(this.form.maxbid)) || this.form.maxbid < 0.02)
       )
         return [false, this.msg.maxbidmax];
-      if (this.form.filtra.length == 0) return [false, this.msg.filtra];
+      // if (this.form.filtra.length == 0) return [false, this.msg.filtra];
       if (this.form.filtra.indexOf("2") != -1) {
         if (this.form.filtrapage.length == 0)
           return [false, this.msg.filtrapage];

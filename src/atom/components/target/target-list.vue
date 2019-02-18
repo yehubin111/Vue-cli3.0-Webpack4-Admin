@@ -193,7 +193,7 @@ export default {
       let ltype = "";
       if (liketype == "custom_audience") {
         ltype = 1;
-      } else if (liketype == "campaign_conversions") {
+      } else if (liketype == "campaign_conversion") {
         ltype = 2;
       } else {
         ltype = 3;

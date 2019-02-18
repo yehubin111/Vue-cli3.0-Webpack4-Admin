@@ -410,7 +410,8 @@ export default {
           this.form.custom = rule.origin[0].id;
 
           // 根据广告账户获取自定义受众列表
-          this.selectAccount();
+          let account = this.form.account;
+          this.$store.dispatch("likeTarget", { adaccount: account });
         }
         if (this.liketype == 2) {
           this.form.adset = rule.origin.map(v => v.id);

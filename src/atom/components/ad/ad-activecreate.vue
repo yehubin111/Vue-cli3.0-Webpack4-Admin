@@ -83,7 +83,7 @@
               <span>{{item.process}}%</span>
             </p>
           </div>
-          <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
+          <!-- <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
           <div class="uploadFmbox" @click="showUploading(item.name)">
             <vue-file-upload
               v-show="!item.fmname"
@@ -116,8 +116,8 @@
               </i>
               <span>{{item.fmprocess}}%</span>
             </p>
-          </div>
-          <i class="el-icon-error processclose processvideo" @click="delIMG(item.file, item.name)"></i>
+          </div>-->
+          <i class="el-icon-error processclose" @click="delIMG(item.file, item.name)"></i>
         </li>
       </ul>
     </el-form-item>
@@ -241,7 +241,7 @@
           v-for="item in allactions"
           :key="item.code"
           :label="item.name"
-          :value="item"
+          :value="item.name"
           :disabled="form.actionArr.length >= 5"
         ></el-option>
       </el-select>
@@ -280,6 +280,7 @@ export default {
         homepage: "请选择主页",
         imgvideo: "请上传图片",
         videoUrl: "请上传视频",
+        matterinfo: "请上传图片或视频",
         desc: "请输入文本",
         title: "请输入标题",
         actions: "请选择行动号召"
@@ -288,14 +289,6 @@ export default {
       fileOption: {
         headers: {
           "X-Token": localStorage.getItem("atom_token")
-        }
-      },
-      fileOptionFM: {
-        headers: {
-          "X-Token": localStorage.getItem("atom_token")
-        },
-        formData: {
-          type: "2"
         }
       },
       // 图片/视频上传格式过滤
@@ -347,34 +340,34 @@ export default {
           console.log("%cwaiting", "color: red");
           this.vm.$emit("checkUploadPic", file);
         }
-      },
-      fmvideoname: "",
-      eventsFM: {
-        onProgressUpload(file, process) {
-          this.vm.$emit("uploadFm", file, process);
-        },
-        onSuccessUpload(file, response, status, headers) {
-          if (response.code != 0) {
-            Msgerror(response.msg);
-            this.vm.$emit("uploadFmError", response, file);
-            return;
-          }
-          this.vm.$emit("uploadFmRes", response);
-        },
-        onAddFileSuccess(file) {
-          let fl = file.file;
-          let md5 = bmf.md5(
-            fl,
-            (err, md5) => {
-              // console.log('md5:', md5);
-              this.vm.$emit("matchMD5", md5, file, "fm");
-            },
-            progress => {
-              // console.log('progress number:', progress);
-            }
-          );
-        }
       }
+      // fmvideoname: "",
+      // eventsFM: {
+      //   onProgressUpload(file, process) {
+      //     this.vm.$emit("uploadFm", file, process);
+      //   },
+      //   onSuccessUpload(file, response, status, headers) {
+      //     if (response.code != 0) {
+      //       Msgerror(response.msg);
+      //       this.vm.$emit("uploadFmError", response, file);
+      //       return;
+      //     }
+      //     this.vm.$emit("uploadFmRes", response);
+      //   },
+      //   onAddFileSuccess(file) {
+      //     let fl = file.file;
+      //     let md5 = bmf.md5(
+      //       fl,
+      //       (err, md5) => {
+      //         // console.log('md5:', md5);
+      //         this.vm.$emit("matchMD5", md5, file, "fm");
+      //       },
+      //       progress => {
+      //         // console.log('progress number:', progress);
+      //       }
+      //     );
+      //   }
+      // }
     };
   },
   computed: {
@@ -432,15 +425,17 @@ export default {
       if (!this.withcreatead) return [false, "图片/视频正在上传中..."];
 
       if (data["homepage"] == "") return [false, this.msg["homepage"]];
-      if (this.createType == 0 && this.processIMG.length == 0)
+      if (this.createType == 1 && this.processIMG.length == 0)
         return [false, this.msg["imginfo"]];
-      if (this.createType == 1 && this.processVIO.length == 0)
-        return [false, this.msg["videoinfo"]];
-      if (this.createType == 1 && !this.processVIO[0].fmname)
-        return [false, this.msg["fminfo"]];
-      if (data["desc"] == "") return [false, this.msg["desc"]];
-      if (data["title"] == "") return [false, this.msg["title"]];
-      if (data["actions"] === "") return [false, this.msg["actions"]];
+      if (
+        this.createType == 0 &&
+        this.processIMG.length == 0 &&
+        this.processVIO.length == 0
+      )
+        return [false, this.msg["matterinfo"]];
+      if (data["descarr"].length == 0) return [false, this.msg["desc"]];
+      if (data["titlearr"].length == 0) return [false, this.msg["title"]];
+      if (data["actionArr"].length == 0) return [false, this.msg["actions"]];
 
       let creative = this.createObject
         ? this.createObject
@@ -477,45 +472,58 @@ export default {
             token: "",
             videoId: "",
             videoName: "",
-            videoUrl: ""
+            videoUrl: "",
+            // 新增字段
+            images: "",
+            videos: "",
+            bodies: "",
+            callToActionTypes: "",
+            titles: "",
+            adFormats: ""
           };
+
       let homepage = this.allpagelist.filter(
         v => v.pageId == this.form.homepage
       )[0];
-      let action = this.allactions.filter(v => v.code == this.form.actions)[0];
+      // let action = this.allactions.filter(v => v.code == this.form.actions)[0];
+      creative.callToActionTypes = this.form.actionArr.map(v => v.replace(' ', '_').toLocaleUpperCase()).join(",");
+      creative.deeplink = this.form.deeplink;
       creative.pageId = homepage.pageId;
       creative.pageLogo = homepage.picture;
       creative.pageName = homepage.name;
-      creative.actionCallOn = action.code;
-      creative.actionCallOnName = action.name;
-      creative.creativityText = this.form.desc;
-      creative.creativityTitle = this.form.title;
+      creative.bodies = this.form.descarr.join("|");
+      creative.titles = this.form.titlearr.join("|");
+      creative.adFormats =
+        this.createType == 0 ? "AUTOMATIC_FORMAT" : "CAROUSEL_IMAGE";
       creative.token = this.xtoken;
-      creative.deeplink = this.form.deeplink;
-      let imgobj, vioobj;
 
       // 创建的时候无需传imagehash videoid，编辑的时候无需传imageurl videourl
+      creative.images = this.processIMG.map(v => v.imageUrl).join(",");
+      creative.videos =
+        this.createType == 0
+          ? this.processVIO.map(v => v.videoUrl).join(",")
+          : [];
 
-      creative.imageUrl =
-        this.createType == 1
-          ? this.processVIO[0].fmUrl
-          : this.processIMG[0].imageUrl;
-      creative.videoUrl =
-        this.createType == 1 ? this.processVIO[0].videoUrl : "";
-      if (!creative.videoUrl) {
-        creative.videoId =
-          this.createType == 1 ? this.processVIO[0].videoId : "";
-      } else {
-        creative.videoId = "";
-      }
-      if (!creative.imageUrl) {
-        creative.imageHash =
-          this.createType == 1
-            ? this.processVIO[0].fmHash
-            : this.processIMG[0].imageHash;
-      } else {
-        creative.imageHash = "";
-      }
+      // creative.imageUrl =
+      //   this.createType == 1
+      //     ? this.processVIO[0].fmUrl
+      //     : this.processIMG[0].imageUrl;
+      // creative.videoUrl =
+      //   this.createType == 1 ? this.processVIO[0].videoUrl : "";
+      // if (!creative.videoUrl) {
+      //   creative.videoId =
+      //     this.createType == 1 ? this.processVIO[0].videoId : "";
+      // } else {
+      //   creative.videoId = "";
+      // }
+      // if (!creative.imageUrl) {
+      //   creative.imageHash =
+      //     this.createType == 1
+      //       ? this.processVIO[0].fmHash
+      //       : this.processIMG[0].imageHash;
+      // } else {
+      //   creative.imageHash = "";
+      // }
 
       return [true, creative];
     },
@@ -586,55 +594,55 @@ export default {
       console.log("this.uploadsize:", this.uploadsize);
     },
     changeFocusaccount() {},
-    uploadFmError(res, file) {
-      this.SETSTATE({ k: "withcreatead", v: true });
-      this.processVIO.forEach(v => {
-        if (v.fmname == file.name) {
-          v.fmname = "";
-          v.fmprocess = "";
-        }
-      });
-    },
-    uploadFmRes(res) {
-      this.SETSTATE({ k: "withcreatead", v: true });
+    // uploadFmError(res, file) {
+    //   this.SETSTATE({ k: "withcreatead", v: true });
+    //   this.processVIO.forEach(v => {
+    //     if (v.fmname == file.name) {
+    //       v.fmname = "";
+    //       v.fmprocess = "";
+    //     }
+    //   });
+    // },
+    // uploadFmRes(res) {
+    //   this.SETSTATE({ k: "withcreatead", v: true });
 
-      this.processVIO.forEach(v => {
-        if (v.fmname == res.data[0].originName) {
-          v.fmUrl = res.data[0].targetName;
-          v.fmHash = res.data[0].md5;
-        }
-      });
+    //   this.processVIO.forEach(v => {
+    //     if (v.fmname == res.data[0].originName) {
+    //       v.fmUrl = res.data[0].targetName;
+    //       v.fmHash = res.data[0].md5;
+    //     }
+    //   });
 
-      // if (uploading) uploading.close();
-      console.log(this.processVIO);
-    },
+    //   // if (uploading) uploading.close();
+    //   console.log(this.processVIO);
+    // },
     showUploading(name) {
       this.fmvideoname = name;
     },
-    uploadFm(file, process) {
-      this.disfile = file;
+    // uploadFm(file, process) {
+    //   this.disfile = file;
 
-      let self = this;
-      this.SETSTATE({ k: "withcreatead", v: false });
+    //   let self = this;
+    //   this.SETSTATE({ k: "withcreatead", v: false });
 
-      // let idx = 0;
-      let obj = null;
-      let oj = null;
-      this.processVIO.forEach((v, i) => {
-        if (v.name == this.fmvideoname) {
-          // idx = i;
-          obj = this.processVIO[i];
-          oj = {
-            ...obj,
-            fmname: file.name,
-            fmprocess: process
-          };
+    //   // let idx = 0;
+    //   let obj = null;
+    //   let oj = null;
+    //   this.processVIO.forEach((v, i) => {
+    //     if (v.name == this.fmvideoname) {
+    //       // idx = i;
+    //       obj = this.processVIO[i];
+    //       oj = {
+    //         ...obj,
+    //         fmname: file.name,
+    //         fmprocess: process
+    //       };
 
-          this.processVIO.splice(i, 1);
-          this.processVIO.splice(i, 0, oj);
-        }
-      });
-    },
+    //       this.processVIO.splice(i, 1);
+    //       this.processVIO.splice(i, 0, oj);
+    //     }
+    //   });
+    // },
     uploadError(res, file) {
       this.SETSTATE({ k: "withcreatead", v: true });
       this.processIMG = this.processIMG.filter(v => v.name != file.name);

@@ -292,7 +292,7 @@ export default {
         let cobj = {
           adName: this.mutilstatus.name ? null : this.form.name,
           creativeVO: createdata,
-          creativeType: this.form.type,
+          creativeType: this.isactive ? "3" : this.form.type,
           projectId: this.$route.params.id
         };
         if (this.editArray.length > 0) {

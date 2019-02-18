@@ -46,7 +46,7 @@
           class="search"
           v-model="form.adset"
           :disabled="likeeditid != ''"
-          placeholder="请选择广告组，可搜索"
+          placeholder="请选择广告组，支持编号搜索"
           multiple
           filterable
           collapse-tags
@@ -56,7 +56,7 @@
           <el-option
             v-for="(item,index) in targetadsetlist"
             :key="index"
-            :label="item.adSetName"
+            :label="`${item.adSetName}(${item.adsetId})`"
             :value="item.adsetId"
           ></el-option>
         </el-select>
@@ -413,10 +413,10 @@ export default {
           this.selectAccount();
         }
         if (this.liketype == 2) {
-          this.form.adset = [];
+          this.form.adset = rule.origin.map(v => v.id);
         }
         if (this.liketype == 3) {
-          this.form.custom = rule.page_id;
+          this.form.custom = rule.origin[0].id;
         }
       }
     }

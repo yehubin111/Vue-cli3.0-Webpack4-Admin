@@ -1615,7 +1615,7 @@ export default {
                     if (lookaliketype.type == 'custom_audience') {
                         v.childType = `自定义受众：${lookaliketype.name}`;
                         v.childliketype = 'custom_audience';
-                    } else if (lookaliketype.type == 'campaign') {
+                    } else if (lookaliketype.type == "campaign_conversion") {
                         v.childType = '广告活动';
                         v.childliketype = 'campaign';
                     } else if (lookaliketype.type == 'page') {

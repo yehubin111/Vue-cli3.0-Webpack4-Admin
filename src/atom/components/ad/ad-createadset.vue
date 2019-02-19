@@ -636,7 +636,7 @@ export default {
         return [false, this.msg.platform];
 
       if (
-        !this.form.platform &&
+        // !this.form.platform &&
         this.form.lowversion == "" &&
         !this.mutilstatus.version
       )

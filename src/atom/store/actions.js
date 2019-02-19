@@ -2767,9 +2767,9 @@ export default {
             }
         })
     },
-    getTargetInfo({ state, commit }, { audience_id, type }) {
+    getTargetInfo({ state, commit }, { id, type }) {
         // if (!state.audience_id) return;
-        let url = `${URL.targetinfo}audience_id=${audience_id}`;
+        let url = `${URL.targetinfo}id=${id}`;
 
         _axios.get(url)
             .then(res => {

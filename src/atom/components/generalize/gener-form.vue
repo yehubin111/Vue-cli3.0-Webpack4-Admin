@@ -37,7 +37,7 @@
             v-for="item in generaccount"
             :key="item.code"
             :label="item.name + '(' + item.fbId.split('_')[1] + ')'"
-            :value="item.fbId.split('_')[1]"
+            :value="item.fbId"
           ></el-option>
         </el-select>
       </el-form-item>

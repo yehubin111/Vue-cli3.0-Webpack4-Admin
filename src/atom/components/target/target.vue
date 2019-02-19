@@ -2,7 +2,15 @@
   <div class="plan">
     <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;受众管理</p>
     <div class="ctrlbutton">
-      <el-select class="selectl" v-model="adaccounts" collapse-tags filterable multiple placeholder="请选择广告账户，支持名称/编号搜索" @change="toSetAccount">
+      <el-select
+        class="selectl"
+        v-model="adaccounts"
+        collapse-tags
+        filterable
+        multiple
+        placeholder="请选择广告账户，支持名称/编号搜索"
+        @change="toSetAccount"
+      >
         <el-option
           v-for="(item, index) in adaccountlist"
           :key="index"
@@ -140,7 +148,7 @@ import TargetDelete from "./target-delete";
 import TargetList from "./target-list";
 import TargetAdd from "./target-add";
 import TargetLike from "./target-newlike";
-import TargetSpecial from './target-special';
+import TargetSpecial from "./target-special";
 // import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
 let targetsearch;
@@ -175,7 +183,7 @@ export default {
       status2: false,
       status3: false,
       editid: "",
-      specialeditid: '',
+      specialeditid: "",
       likeeditid: "",
       liketype: "",
       customtype: "",
@@ -208,7 +216,7 @@ export default {
     let k = "tg_project_id";
     let v = this.$route.params.id;
 
-    this.SETSTATE({ k, v });
+    this.SETSTATE({ k: "tg_projectId", v });
     // express
     // this.$store.dispatch('expressLink');
 
@@ -347,7 +355,10 @@ export default {
       this.$store.dispatch("getTargetlist");
     },
     toSetAccount() {
-      this.SETSTATE({ k: "tg_adaccounts", v: this.adaccounts.map(v => `act_${v}`).join(",") });
+      this.SETSTATE({
+        k: "tg_adaccounts",
+        v: this.adaccounts.map(v => `act_${v}`).join(",")
+      });
       this.SETSTATE({ k: "tg_pageIndex", v: 1 });
       this.getData();
     },

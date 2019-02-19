@@ -2664,6 +2664,7 @@ export default {
         let url = URL.targetlist;
 
         let data = [
+            'projectId',
             'type',
             'keyword',
             'adaccounts',

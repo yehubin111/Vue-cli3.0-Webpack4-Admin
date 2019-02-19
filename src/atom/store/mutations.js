@@ -778,8 +778,8 @@ export default {
                 })
             }
         })
-        console.log(caredata);
-        console.log(afcaredata);
+        // console.log(caredata);
+        // console.log(afcaredata);
         /**
          * 2019-02-15新增
          * 细分数据合并逻辑
@@ -800,7 +800,7 @@ export default {
             }
         });
         let allcare = caredata.concat(afcaredata);
-        console.log(allcare);
+        // console.log(allcare);
         // 按照下标，在列表数组中插入细分数据
         allcare.forEach((v, i) => {
             res.data.list.splice(v.parentindex + 1 + i, 0, v);

@@ -313,6 +313,7 @@ export default {
   videomattertotal: 0,
   // target
   tg_project_id: '',
+  tg_projectId: '',
   tg_pageSize: 20,
   tg_pageIndex: 1,
   tg_keyword: '',

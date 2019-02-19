@@ -357,7 +357,7 @@ export default {
       this.SETSTATE({ k: "sortdefault", v: kdefault.replace(/^,/, "") });
     },
     toGetdata(pageReset) {
-      console.log(pageReset);
+      // console.log(pageReset);
       let batchId = this.$route.params.bid;
       // 从本地缓存获取筛选条件
       let allCondition = localStorage.getItem(adFilterLS.new)

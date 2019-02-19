@@ -386,9 +386,9 @@ export default {
     likeeditid(n, v) {
       if (n) {
         // 根据受众ID 获取已创建受众信息，包括国家、规模等
-        let audience_id = n;
+        let id = n;
         this.$store.dispatch("getTargetInfo", {
-          audience_id,
+          id,
           type: "lookalike"
         });
       }

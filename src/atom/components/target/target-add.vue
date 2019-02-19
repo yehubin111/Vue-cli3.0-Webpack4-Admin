@@ -464,8 +464,8 @@ export default {
     },
     editid(n, v) {
       if (n) {
-        let audience_id = n;
-        this.$store.dispatch("getTargetInfo", { audience_id, type: 'app' });
+        let id = n;
+        this.$store.dispatch("getTargetInfo", { id, type: 'app' });
       }
     }
   }

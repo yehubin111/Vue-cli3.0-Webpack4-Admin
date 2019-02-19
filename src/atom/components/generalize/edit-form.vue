@@ -36,8 +36,8 @@
           <el-option
             v-for="item in generaccount"
             :key="item.code"
-            :label="item.name + '(' + item.fbId + ')'"
-            :value="item.fbId"
+            :label="item.name + '(' + item.fbId.split('_') + ')'"
+            :value="item.fbId.split('_')"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -652,6 +652,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['SETSTATE']),
     showBidChart() {
       if (!this.form.country) {
         return;

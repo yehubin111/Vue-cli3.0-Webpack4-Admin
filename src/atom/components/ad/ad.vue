@@ -340,6 +340,18 @@ import { Msgwarning } from "../../js/message";
 let tab = 0;
 export default {
   beforeRouteLeave(to, from, next) {
+    switch (this.tabname) {
+      case "first":
+        this.$refs["campaignName"].resetCare();
+        break;
+      case "second":
+        this.$refs["adSetName"].resetCare();
+        break;
+      case "third":
+        this.$refs["adName"].resetCare();
+        break;
+    }
+
     clearInterval(jobProcess);
     next();
   },
@@ -440,20 +452,20 @@ export default {
             { cname: "AF_投资回报率", checked: false, key: "afROI" },
             { cname: "AF_单用户平均收益", checked: false, key: "afUserReveue" },
             { cname: "AF_平均eCPI", checked: false, key: "ecpi" },
-            { cname: 'Day 1留存量', checked: false, key: 'retentionNum1' },
-            { cname: 'Day 1留存率', checked: false, key: 'afReRate1' },
-            { cname: 'Day 2留存量', checked: false, key: 'retentionNum2' },
-            { cname: 'Day 2留存率', checked: false, key: 'afReRate2' },
-            { cname: 'Day 3留存量', checked: false, key: 'retentionNum3' },
-            { cname: 'Day 3留存率', checked: false, key: 'afReRate3' },
-            { cname: 'Day 4留存量', checked: false, key: 'retentionNum4' },
-            { cname: 'Day 4留存率', checked: false, key: 'afReRate4' },
-            { cname: 'Day 5留存量', checked: false, key: 'retentionNum5' },
-            { cname: 'Day 5留存率', checked: false, key: 'afReRate5' },
-            { cname: 'Day 6留存量', checked: false, key: 'retentionNum6' },
-            { cname: 'Day 6留存率', checked: false, key: 'afReRate6' },
-            { cname: 'Day 7留存量', checked: false, key: 'retentionNum7' },
-            { cname: 'Day 7留存率', checked: false, key: 'afReRate7' }
+            { cname: "Day 1留存量", checked: false, key: "retentionNum1" },
+            { cname: "Day 1留存率", checked: false, key: "afReRate1" },
+            { cname: "Day 2留存量", checked: false, key: "retentionNum2" },
+            { cname: "Day 2留存率", checked: false, key: "afReRate2" },
+            { cname: "Day 3留存量", checked: false, key: "retentionNum3" },
+            { cname: "Day 3留存率", checked: false, key: "afReRate3" },
+            { cname: "Day 4留存量", checked: false, key: "retentionNum4" },
+            { cname: "Day 4留存率", checked: false, key: "afReRate4" },
+            { cname: "Day 5留存量", checked: false, key: "retentionNum5" },
+            { cname: "Day 5留存率", checked: false, key: "afReRate5" },
+            { cname: "Day 6留存量", checked: false, key: "retentionNum6" },
+            { cname: "Day 6留存率", checked: false, key: "afReRate6" },
+            { cname: "Day 7留存量", checked: false, key: "retentionNum7" },
+            { cname: "Day 7留存率", checked: false, key: "afReRate7" }
           ]
         },
         {
@@ -491,20 +503,20 @@ export default {
             { cname: "AF_投资回报率", checked: false, key: "afROI" },
             { cname: "AF_单用户平均收益", checked: false, key: "afUserReveue" },
             { cname: "AF_平均eCPI", checked: false, key: "ecpi" },
-            { cname: 'Day 1留存量', checked: false, key: 'retentionNum1' },
-            { cname: 'Day 1留存率', checked: false, key: 'afReRate1' },
-            { cname: 'Day 2留存量', checked: false, key: 'retentionNum2' },
-            { cname: 'Day 2留存率', checked: false, key: 'afReRate2' },
-            { cname: 'Day 3留存量', checked: false, key: 'retentionNum3' },
-            { cname: 'Day 3留存率', checked: false, key: 'afReRate3' },
-            { cname: 'Day 4留存量', checked: false, key: 'retentionNum4' },
-            { cname: 'Day 4留存率', checked: false, key: 'afReRate4' },
-            { cname: 'Day 5留存量', checked: false, key: 'retentionNum5' },
-            { cname: 'Day 5留存率', checked: false, key: 'afReRate5' },
-            { cname: 'Day 6留存量', checked: false, key: 'retentionNum6' },
-            { cname: 'Day 6留存率', checked: false, key: 'afReRate6' },
-            { cname: 'Day 7留存量', checked: false, key: 'retentionNum7' },
-            { cname: 'Day 7留存率', checked: false, key: 'afReRate7' }
+            { cname: "Day 1留存量", checked: false, key: "retentionNum1" },
+            { cname: "Day 1留存率", checked: false, key: "afReRate1" },
+            { cname: "Day 2留存量", checked: false, key: "retentionNum2" },
+            { cname: "Day 2留存率", checked: false, key: "afReRate2" },
+            { cname: "Day 3留存量", checked: false, key: "retentionNum3" },
+            { cname: "Day 3留存率", checked: false, key: "afReRate3" },
+            { cname: "Day 4留存量", checked: false, key: "retentionNum4" },
+            { cname: "Day 4留存率", checked: false, key: "afReRate4" },
+            { cname: "Day 5留存量", checked: false, key: "retentionNum5" },
+            { cname: "Day 5留存率", checked: false, key: "afReRate5" },
+            { cname: "Day 6留存量", checked: false, key: "retentionNum6" },
+            { cname: "Day 6留存率", checked: false, key: "afReRate6" },
+            { cname: "Day 7留存量", checked: false, key: "retentionNum7" },
+            { cname: "Day 7留存率", checked: false, key: "afReRate7" }
           ]
         },
         {
@@ -542,20 +554,20 @@ export default {
             { cname: "AF_投资回报率", checked: false, key: "afROI" },
             { cname: "AF_单用户平均收益", checked: false, key: "afUserReveue" },
             { cname: "AF_平均eCPI", checked: false, key: "ecpi" },
-            { cname: 'Day 1留存量', checked: false, key: 'retentionNum1' },
-            { cname: 'Day 1留存率', checked: false, key: 'afReRate1' },
-            { cname: 'Day 2留存量', checked: false, key: 'retentionNum2' },
-            { cname: 'Day 2留存率', checked: false, key: 'afReRate2' },
-            { cname: 'Day 3留存量', checked: false, key: 'retentionNum3' },
-            { cname: 'Day 3留存率', checked: false, key: 'afReRate3' },
-            { cname: 'Day 4留存量', checked: false, key: 'retentionNum4' },
-            { cname: 'Day 4留存率', checked: false, key: 'afReRate4' },
-            { cname: 'Day 5留存量', checked: false, key: 'retentionNum5' },
-            { cname: 'Day 5留存率', checked: false, key: 'afReRate5' },
-            { cname: 'Day 6留存量', checked: false, key: 'retentionNum6' },
-            { cname: 'Day 6留存率', checked: false, key: 'afReRate6' },
-            { cname: 'Day 7留存量', checked: false, key: 'retentionNum7' },
-            { cname: 'Day 7留存率', checked: false, key: 'afReRate7' }
+            { cname: "Day 1留存量", checked: false, key: "retentionNum1" },
+            { cname: "Day 1留存率", checked: false, key: "afReRate1" },
+            { cname: "Day 2留存量", checked: false, key: "retentionNum2" },
+            { cname: "Day 2留存率", checked: false, key: "afReRate2" },
+            { cname: "Day 3留存量", checked: false, key: "retentionNum3" },
+            { cname: "Day 3留存率", checked: false, key: "afReRate3" },
+            { cname: "Day 4留存量", checked: false, key: "retentionNum4" },
+            { cname: "Day 4留存率", checked: false, key: "afReRate4" },
+            { cname: "Day 5留存量", checked: false, key: "retentionNum5" },
+            { cname: "Day 5留存率", checked: false, key: "afReRate5" },
+            { cname: "Day 6留存量", checked: false, key: "retentionNum6" },
+            { cname: "Day 6留存率", checked: false, key: "afReRate6" },
+            { cname: "Day 7留存量", checked: false, key: "retentionNum7" },
+            { cname: "Day 7留存率", checked: false, key: "afReRate7" }
           ]
         },
         {

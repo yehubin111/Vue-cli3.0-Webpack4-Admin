@@ -183,17 +183,19 @@ export default {
     toCopy(option, accountId) {
       this.$emit("wantCopy", this.type, option, accountId);
     },
-    // 清空细分数据
-    clearCare() {
+    // 初始化细分，用于切换页面时初始化细分选项
+    resetCare() {
       this.searchList.forEach(v => {
-        if (v.name == this.firstSearch) {
-          v.list.forEach(g => {
-            g.checked = false;
-          });
-        }
+        v.list.forEach(g => {
+          g.checked = false;
+        });
       });
 
       this.SETSTATE({ k: "careData", v: [] });
+    },
+    // 清空细分数据
+    clearCare() {
+      this.resetCare();
 
       this.toGetdata();
     },
@@ -202,6 +204,9 @@ export default {
       this.firstSearch = "";
     },
     selectCare(key, importkey) {
+      // 排除轮播以外的第一级选项，点击无需请求接口
+      if(!key && !importkey) return;
+      
       this.searchList.forEach(v => {
         if (v.key == this.firstKey) {
           v.list.forEach(g => {

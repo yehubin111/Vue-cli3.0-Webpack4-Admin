@@ -127,7 +127,7 @@
               type="text"
               size="small"
               :disabled="!scope.row.ifedit"
-              @click="toEdit(scope.row.audienceId, scope.row.subtype, scope.row.childliketype)"
+              @click="toEdit(scope.row.id, scope.row.subtype, scope.row.childliketype)"
             >编辑</el-button>
           </span>
         </el-tooltip>

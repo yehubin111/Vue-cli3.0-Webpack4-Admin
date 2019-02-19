@@ -887,6 +887,7 @@ export default {
         name: "",
         country: [],
         action: action,
+        activecreate: false,
         platform: "",
         target: [],
         notarget: [],

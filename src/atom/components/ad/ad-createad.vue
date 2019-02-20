@@ -53,15 +53,28 @@
     </el-form-item>
     <!--动态创意-->
     <el-form-item label="创意" v-if="isactive">
+      <p v-if="mutil.type">
+        <span v-show="mutilstatus.type">
+          多项内容，{{activespecial? '不可同时编辑普通创意和动态创意':''}}
+          <el-button
+            type="text"
+            v-show="!activespecial"
+            @click="mutilstatus.type = !mutilstatus.type"
+          >编辑</el-button>
+        </span>
+        <span v-show="!mutilstatus.type">多项内容，已编辑，将替换旧创意，
+          <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">撤销编辑</el-button>
+        </span>
+      </p>
       <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
         <el-radio :label="0">图片或视频</el-radio>
         <el-radio :label="1">轮播图片</el-radio>
       </el-radio-group>
     </el-form-item>
-    <el-form-item label v-if="isactive">
+    <el-form-item label v-if="isactive" v-show="!mutilstatus.type">
       <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
         <el-tab-pane :label="'创建创意'" name="first">
-          <active-create :createType="form.type" ref="activeCreate"></active-create>
+          <active-create :createType="form.type" :createObject="createObject" ref="activeCreate"></active-create>
         </el-tab-pane>
       </el-tabs>
     </el-form-item>
@@ -132,7 +145,8 @@ export default {
       editArray: [],
       createObject: null, // 创意
       fbAccountId: "",
-      isactive: false, // 是否为动态创意广告组
+      isactive: false, // 是否为动态创意广告
+      activespecial: false, // 同时编辑动态创意广告和非动态创意广告
       form: {
         adset: "",
         name: "",
@@ -211,6 +225,7 @@ export default {
         type: false
       };
       this.isactive = false;
+      this.activespecial = false;
     },
     dataChecked() {
       if (!this.form.adset && !this.mutilstatus.adset) {
@@ -261,6 +276,7 @@ export default {
       let adset = this.createadsetlist.find(
         v => v.adSetId == this.form.adset.split("|")[0]
       );
+
       this.isactive = adset.isDynamicCreative;
       if (adset.isDynamicCreative) {
         this.$store.dispatch("isActiveAd", adset.adSetId);
@@ -383,10 +399,9 @@ export default {
         //当前广告账户
         this.fbAccountId = "act_" + n[0].accountId;
 
+        let adsetId = [...new Set(n.map(v => v.adsetId))];
         this.form.adset =
-          [...new Set(n.map(v => v.adsetId))].length > 1
-            ? ""
-            : n[0].adsetId + "|act_" + n[0].accountId;
+          adsetId.length > 1 ? "" : n[0].adsetId + "|act_" + n[0].accountId;
         this.form.name =
           [...new Set(n.map(v => v.name))].length > 1 ? "" : n[0].name;
 
@@ -400,14 +415,36 @@ export default {
 
         this.mutilstatus = Object.assign({}, this.mutil);
 
-        if (this.form.adset) {
-          // 初始化获取广告系列列表
-          this.$store.dispatch("getCreateAdsetlist", {
-            keyword: n[0].adsetId,
-            projectId: this.$route.params.id
-          });
+        await this.$store.dispatch("getCreateAdsetlist", {
+          keyword: n[0].adsetId,
+          projectId: this.$route.params.id
+        });
+        /**
+         * 20190220新增，初始化判断广告创意类型
+         * @case1 多个动态+普通创意情况
+         * @case2 单个动态创意情况 or 多个动态创意情况
+         * @case2 单个普通创意情况 or 多个普通创意情况
+         */
+        let adsetArr = adsetId.map(g => {
+          let adset = this.createadsetlist.find(v => v.adSetId == g);
+          return adset ? adset.isDynamicCreative : "";
+        });
+        console.log(adsetArr);
+        adsetArr = [...new Set(adsetArr)];
+        switch (true) {
+          case adsetArr.length > 1:
+            this.isactive = true;
+            this.activespecial = true;
+            break;
+          case adsetArr[0]:
+            this.isactive = true;
+            break;
+          default:
+            this.isactive = false;
+            break;
         }
-        // 判断是否动态创意
+        /** end */
+
         let creativearr = n.map(v => v.creativeId);
         let creativeids = [...new Set(creativearr)].join(",");
         // this.$store.dispatch("isDynamicCreate", creativeids);
@@ -424,12 +461,30 @@ export default {
           LOAD.close();
 
           this.createObject = res.data[0];
-          if (this.createObject.cards) {
-            this.form.type = 2;
-          } else if (this.createObject.videoId) {
-            this.form.type = 1;
+          /**
+           * 20190219新增，动态创意判断依据
+           * 有assetFeedSpec的为动态创意
+           */
+          if (this.createObject.assetFeedSpec) {
+            // 动态创意
+            let activecreate = JSON.parse(this.createObject.assetFeedSpec);
+            switch (activecreate.ad_formats[0]) {
+              case "AUTOMATIC_FORMAT":
+                this.form.type = 0;
+                break;
+              case "CAROUSEL_IMAGE":
+                this.form.type = 1;
+                break;
+            }
           } else {
-            this.form.type = 0;
+            // 普通创意
+            if (this.createObject.cards) {
+              this.form.type = 2;
+            } else if (this.createObject.videoId) {
+              this.form.type = 1;
+            } else {
+              this.form.type = 0;
+            }
           }
         }
 

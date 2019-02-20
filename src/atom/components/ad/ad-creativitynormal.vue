@@ -327,7 +327,7 @@ export default {
       // 阻塞 100ms
       await this.$barrageTime(100);
 
-      if (n && !n.cards) {
+      if (n && !n.cards && !n.assetFeedSpec) {
         if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
           this.otherpageid = n.pageId ? n.pageId : "";
           this.otherpagename = n.pageName ? n.pageName : "";

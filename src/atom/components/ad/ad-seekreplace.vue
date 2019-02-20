@@ -13,9 +13,9 @@
     <div class="replacecont">
       <el-radio-group v-model="replaceType" @change="typeChange">
         <el-radio label="Text">名称</el-radio>
-        <el-radio label="Name" v-show="type == 'adName'">标题</el-radio>
-        <el-radio label="Desc" v-show="type == 'adName'">文本</el-radio>
-        <el-radio label="Link" v-show="type == 'adName'">“查看更多”网址</el-radio>
+        <el-radio label="Name" v-show="type == 'adName'" :disabled="tablock">标题</el-radio>
+        <el-radio label="Desc" v-show="type == 'adName'" :disabled="tablock">文本</el-radio>
+        <el-radio label="Link" v-show="type == 'adName'" :disabled="tablock">“查看更多”网址</el-radio>
       </el-radio-group>
     </div>
     <div class="articleList">
@@ -55,6 +55,7 @@ export default {
       oldStr: "",
       newStr: "",
       replaceType: "Text",
+      tablock: true, // 切换锁，防止数据请求的时候，切换报错
       // type: 'campaignName',
       // count: 0,
       appearCount: 0,
@@ -91,6 +92,7 @@ export default {
       });
       this.oldInfoList = oldnow;
       this.newInfoList = newnow;
+      console.log(this.oldInfoList);
     },
     hideReplace() {
       this.dialogFormVisible = false;
@@ -125,7 +127,8 @@ export default {
         Msgwarning("当前输入内容未匹配到相关文本");
         return;
       }
-
+      
+      let res;
       // 区分普通查找替换和创意相关查找替换
       if (this.replaceType == "Text") {
         let data = [];
@@ -145,59 +148,81 @@ export default {
       } else {
         let arr = [];
         this.creativeList.forEach(v => {
-          switch (this.replaceType) {
-            case "Name":
-              arr = this.newNameList.filter(g => g.id == v.fbAdId);
-              if (v.cards) {
-                let card = JSON.parse(v.cards);
-                card.forEach((m, n) => {
-                  m.title = arr[n].key;
-                });
-                v.cards = JSON.stringify(card);
-              } else {
-                v.creativityTitle = arr[0].key;
-              }
-              break;
-            case "Desc":
-              arr = this.newDescList.filter(g => g.id == v.fbAdId);
-              v.creativityText = arr[0].key;
-              break;
-            case "Link":
-              arr = this.newLinkList.filter(g => g.id == v.fbAdId);
-              v.platFromUrl = arr[0].key;
-              break;
+          /**
+           * 20190220 v2.2.1 新增动态创意
+           */
+          if(v.assetFeedSpec && v.assetFeedSpec != 'null') {
+            let active = JSON.parse(v.assetFeedSpec);
+            switch (this.replaceType) {
+              case "Name":
+                arr = this.newNameList.filter(g => g.id == v.fbAdId);
+                active['titles'] = arr.map(m => m.key);
+                break;
+              case "Desc":
+                arr = this.newDescList.filter(g => g.id == v.fbAdId);
+                active['bodies'] = arr.map(m => m.key);
+                break;
+              case "Link":
+                arr = this.newLinkList.filter(g => g.id == v.fbAdId);
+                active['link_urls'][0]['deeplink_url'] = arr[0].key;
+                break;
+            }
+            v.assetFeedSpec = JSON.stringify(active);
+          } else {
+            switch (this.replaceType) {
+              case "Name":
+                arr = this.newNameList.filter(g => g.id == v.fbAdId);
+                if (v.cards) {
+                  let card = JSON.parse(v.cards);
+                  card.forEach((m, n) => {
+                    m.title = arr[n].key;
+                  });
+                  v.cards = JSON.stringify(card);
+                } else {
+                  v.creativityTitle = arr[0].key;
+                }
+                break;
+              case "Desc":
+                arr = this.newDescList.filter(g => g.id == v.fbAdId);
+                v.creativityText = arr[0].key;
+                break;
+              case "Link":
+                arr = this.newLinkList.filter(g => g.id == v.fbAdId);
+                v.platFromUrl = arr[0].key;
+                break;
+            }
           }
         });
 
-        let res = await this.$store.dispatch("seekReplaceCreate", {
+        this.$store.dispatch("seekReplaceCreate", {
           option: this.creativeList
         });
 
-        if (res && res.data) {
-          let errlist = res.data.filter(v => !v.b);
-          if (errlist.length == 0) {
-            Msgsuccess("查找替换创意成功");
-            // 重置列表数据
-            this.$emit("resetPageData");
-          } else {
-            this.$alert(
-              `${errlist
-                .map(
-                  v => `<b style="color: #409eff">${v.fbAdId}</b> ${v.message}`
-                )
-                .join("<br/>")}`,
-              "错误信息",
-              {
-                confirmButtonText: "确定",
-                dangerouslyUseHTMLString: true,
-                callback: () => {
-                  // 重置列表数据
-                  this.$emit("resetPageData");
-                }
-              }
-            );
-          }
-        }
+        // if (res && res.data) {
+        //   let errlist = res.data.filter(v => !v.b);
+        //   if (errlist.length == 0) {
+        //     Msgsuccess("查找替换创意成功");
+        //     // 重置列表数据
+        //     this.$emit("resetPageData");
+        //   } else {
+        //     this.$alert(
+        //       `${errlist
+        //         .map(
+        //           v => `<b style="color: #409eff">${v.fbAdId}</b> ${v.message}`
+        //         )
+        //         .join("<br/>")}`,
+        //       "错误信息",
+        //       {
+        //         confirmButtonText: "确定",
+        //         dangerouslyUseHTMLString: true,
+        //         callback: () => {
+        //           // 重置列表数据
+        //           this.$emit("resetPageData");
+        //         }
+        //       }
+        //     );
+        //   }
+        // }
       }
 
       this.dialogFormVisible = false;
@@ -242,16 +267,20 @@ export default {
       this.newInfoList = this.newTextList;
 
       // 广告查找替换，初始化获取该广告下面创意的详情
-      this.creativeDeal(creativeArr);
+      if (this.type == "adName") {
+        this.creativeDeal(creativeArr);
+      }
     },
     async creativeDeal(creativeArr) {
       let creativeId = creativeArr.map(v => v.creativeId).join(",");
       let adId = creativeArr.map(v => v.adId);
       let fbAccountId = creativeArr.map(v => v.fbAccountId);
       // 广告查找替换，初始化获取该广告下面创意的详情
+      this.tablock = true;
       let res = await this.$store.dispatch("creativeDetail", {
         creativeId
       });
+      this.tablock = false;
       this.creativeList = res.data;
 
       this.creativeList.forEach((v, i) => {
@@ -259,64 +288,105 @@ export default {
         v.fbAdId = adId[i];
         v.fbAccountId = fbAccountId[i];
 
-        let objName = {
-          id: adId[i]
-        };
-        // 区分是否轮播创意，轮播创意的标题在card字段中
-        if (v.cards) {
-          let card = JSON.parse(v.cards);
-          let sidx = 0;
-          card.forEach(g => {
-            objName.name = g.title;
-            objName.key = g.title;
-            objName.old = g.title;
-            objName.update = g.title;
-
+        /**
+         * @case1 动态创意 内容都在assetFeedSpec字段中（20190220 v2.2.1新增）
+         * @case2 轮播创意 轮播创意的标题在cards字段中
+         * @case3 普通创意
+         */
+        if (v.assetFeedSpec && v.assetFeedSpec != 'null') {
+          let active = JSON.parse(v["assetFeedSpec"]);
+          active.titles.forEach(g => {
+            let objName = {
+              id: adId[i],
+              name: g["text"],
+              key: g["text"],
+              old: g["text"],
+              update: g["text"]
+            };
             this.oldNameList.push(Object.assign({}, objName));
             this.newNameList.push(Object.assign({}, objName));
           });
+          active.bodies.forEach(g => {
+            let objDesc = {
+              id: adId[i],
+              name: g["text"],
+              key: g["text"],
+              old: g["text"],
+              update: g["text"]
+            };
+            this.oldDescList.push(Object.assign({}, objDesc));
+            this.newDescList.push(Object.assign({}, objDesc));
+          });
+          let objLink = {
+            id: adId[i],
+            name: active["link_urls"][0]["deeplink_url"],
+            key: active["link_urls"][0]["deeplink_url"],
+            old: active["link_urls"][0]["deeplink_url"],
+            update: active["link_urls"][0]["deeplink_url"]
+          };
+          this.oldLinkList.push(Object.assign({}, objLink));
+          this.newLinkList.push(Object.assign({}, objLink));
         } else {
-          objName.name = v.creativityTitle;
-          objName.key = v.creativityTitle;
-          objName.old = v.creativityTitle;
-          objName.update = v.creativityTitle;
+          let objName = {
+            id: adId[i]
+          };
+          if (v.cards) {
+            let card = JSON.parse(v.cards);
+            let sidx = 0;
+            card.forEach(g => {
+              objName.name = g.title;
+              objName.key = g.title;
+              objName.old = g.title;
+              objName.update = g.title;
 
-          this.oldNameList.push(Object.assign({}, objName));
-          this.newNameList.push(Object.assign({}, objName));
+              this.oldNameList.push(Object.assign({}, objName));
+              this.newNameList.push(Object.assign({}, objName));
+            });
+          } else {
+            objName.name = v.creativityTitle;
+            objName.key = v.creativityTitle;
+            objName.old = v.creativityTitle;
+            objName.update = v.creativityTitle;
+
+            this.oldNameList.push(Object.assign({}, objName));
+            this.newNameList.push(Object.assign({}, objName));
+          }
+
+          let objDesc = {
+            id: adId[i],
+            name: v.creativityText,
+            key: v.creativityText,
+            old: v.creativityText,
+            update: v.creativityText
+          };
+          this.oldDescList.push(Object.assign({}, objDesc));
+          this.newDescList.push(Object.assign({}, objDesc));
+          let objLink = {
+            id: adId[i],
+            name: v.platFromUrl,
+            key: v.platFromUrl,
+            old: v.platFromUrl,
+            update: v.platFromUrl
+          };
+          this.oldLinkList.push(Object.assign({}, objLink));
+          this.newLinkList.push(Object.assign({}, objLink));
         }
-
-        let objDesc = {
-          id: adId[i],
-          name: v.creativityText,
-          key: v.creativityText,
-          old: v.creativityText,
-          update: v.creativityText
-        };
-        this.oldDescList.push(Object.assign({}, objDesc));
-        this.newDescList.push(Object.assign({}, objDesc));
-        let objLink = {
-          id: adId[i],
-          name: v.platFromUrl,
-          key: v.platFromUrl,
-          old: v.platFromUrl,
-          update: v.platFromUrl
-        };
-        this.oldLinkList.push(Object.assign({}, objLink));
-        this.newLinkList.push(Object.assign({}, objLink));
       });
     },
     filterOld() {
-      let oldStr = this.oldStr.replace(/\?/g, '\\?');
+      let oldStr = this.oldStr.replace(/\?/g, "\\?");
       let oldreg = new RegExp(oldStr, "g");
       this.oldInfoList.forEach((v, i) => {
-        v.name = v.old.replace(
-          oldreg,
-          '<span style="color: red;">' + this.oldStr + "</span>"
-        );
-        v.update = i + v.name;
+        if(v.old) {
+          v.name = v.old.replace(
+            oldreg,
+            '<span style="color: red;">' + this.oldStr + "</span>"
+          );
+          v.update = i + v.name;
+        }
       });
       this.appearCount = this.oldInfoList.filter(
-        v => v.old.indexOf(this.oldStr) != -1
+        v => v.old && v.old.indexOf(this.oldStr) != -1
       ).length;
 
       if (!this.oldStr) {
@@ -333,15 +403,17 @@ export default {
       if (!this.oldStr) {
         return;
       }
-      let oldStr = this.oldStr.replace(/\?/g, '\\?');
+      let oldStr = this.oldStr.replace(/\?/g, "\\?");
       let oldreg = new RegExp(oldStr, "g");
       this.newInfoList.forEach((v, i) => {
-        v.name = v.old.replace(
-          oldreg,
-          '<span style="color: red;">' + this.newStr + "</span>"
-        );
-        v.key = v.old.replace(oldreg, this.newStr);
-        v.update = i + v.name;
+        if(v.old) {
+          v.name = v.old.replace(
+            oldreg,
+            '<span style="color: red;">' + this.newStr + "</span>"
+          );
+          v.key = v.old.replace(oldreg, this.newStr);
+          v.update = i + v.name;
+        }
       });
     }
   },

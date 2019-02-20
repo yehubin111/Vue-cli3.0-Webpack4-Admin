@@ -1993,40 +1993,64 @@ export default {
     seekReplace({ state, commit, dispatch }, { data, type }) {
         let url = `${URL.seekreplace}`;
         let opts;
+        let typename = '';
         switch (type) {
             case 'campaignName':
                 url += `adCampaignData=${data}`;
                 opts = 'campain_option';
+                typename = '广告系列';
                 break;
             case 'adSetName':
                 url += `adSetData=${data}`;
                 opts = 'set_option';
+                typename = '广告组';
                 break;
             case 'adName':
                 url += `adData=${data}`;
                 opts = 'ad_option';
+                typename = '广告';
                 break;
         }
 
-        _axios.get(url, { fullScreen: true })
-            .then(res => {
-                Msgsuccess('查找替换成功');
+        Axios({
+            url,
+            fullscreen: true,
+            success: res => {
+                let obj = Object.entries(res.data);
+                let failobj = obj.filter(v => !v[1]);
+                if(failobj.length > 0) {
+                    let failname = failobj.map(v => v[0]).join(',');
+                    Msgerror(`以下${typename}查找替换失败：${failname}`);
+                } else {
+                    Msgsuccess('查找替换成功');
+                }
+
                 dispatch('getAdlist', { option: state[opts], type })
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     seekReplaceCreate({ state, commit, dispatch }, { option }) {
         let url = URL.seekreplacecreate;
 
-        return _axios.post(url, option, { fullScreen: true })
-            .then(res => {
-                return res;
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => {
+                Msgsuccess('提交成功');
+                // 重置定时器
+                clearInterval(jobProcess);
+                dispatch('jobList');
+            }
+        })
+        // _axios.post(url, option, { fullScreen: true })
+        //     .then(res => {
+        //         return res;
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //     })
     },
     adGetCampaignlist({ state, commit }, accountId) {
         let url = `${URL.adcampaignlist}fbAccountId=${accountId}`;

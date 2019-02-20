@@ -438,7 +438,7 @@ export default {
 
       this.$emit("selectSort", arr);
     },
-    toCtrlAll(k) {
+    async toCtrlAll(k) {
       if (this.mutilselect.length == 0) {
         Msgwarning("请先选择要处理的广告系列/广告组/广告");
         return;
@@ -471,21 +471,63 @@ export default {
       adIds = adIds.join(",");
       // 归档
       if (k == "ARCHIVED") {
-        this.$confirm(
-          `确认对${this.mutilselect.length}个${
-            this.typeData.name
-          }执行归档操作？归档后无法恢复`,
-          "提示",
-          {
-            confirmButtonText: "归档",
-            cancelButtonText: "取消",
-            type: "warning"
+        /**
+         * 20190220 v2.2.1 新增
+         * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
+         */
+        if(this.type == 'adName'){
+          let res = await this.$store.dispatch("creativeDetail", {
+            creativeId: this.mutilselect.map(v => v.creativeId).join(',')
+          });
+          if(res.data.find(v => v.assetFeedSpec && v.assetFeedSpec != 'null')) {
+            this.$confirm(
+              `选中了至少一条使用动态创意的广告。归档此类型广告后，广告组也会自动归档`,
+              "提示",
+              {
+                confirmButtonText: "归档",
+                cancelButtonText: "取消",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                // 归档动态创意广告等于归档其广告组
+                this.commandExecuteAdset(this.mutilselect.map(v => v.adsetId).join(','), effectiveStatus);
+              })
+              .catch(() => {});
+          } else {
+            this.$confirm(
+              `确认对${this.mutilselect.length}个${
+                this.typeData.name
+              }执行归档操作？归档后无法恢复`,
+              "提示",
+              {
+                confirmButtonText: "归档",
+                cancelButtonText: "取消",
+                type: "warning"
+              }
+            )
+              .then(() => {
+                this.commandExecute(adIds, effectiveStatus);
+              })
+              .catch(() => {});
           }
-        )
-          .then(() => {
-            this.commandExecute(adIds, effectiveStatus);
-          })
-          .catch(() => {});
+        } else {
+          this.$confirm(
+            `确认对${this.mutilselect.length}个${
+              this.typeData.name
+            }执行归档操作？归档后无法恢复`,
+            "提示",
+            {
+              confirmButtonText: "归档",
+              cancelButtonText: "取消",
+              type: "warning"
+            }
+          )
+            .then(() => {
+              this.commandExecute(adIds, effectiveStatus);
+            })
+            .catch(() => {});
+        }
       } else if (k == "DELETED") {
         // 删除
         this.$confirm(
@@ -558,6 +600,18 @@ export default {
       if (k == "d") {
         this.$emit("changeReplace", this.type, this.mutilselect);
       }
+    },
+    commandExecuteAdset(adsetIds, effectiveStatus) {
+      let option = {
+        effectiveStatus
+      };
+      // console.log(this.typeData);
+      option[this.typeData.effectIds] = adIds;
+      this.$store.dispatch("changeAdstatus", {
+        option,
+        type: 'adSetName',
+        fullScreen: true
+      });
     },
     commandExecute(adIds, effectiveStatus) {
       let option = {

@@ -2,6 +2,7 @@
   <el-form ref="form" :model="form" label-width="100px" class="cform">
     <el-form-item label="主页" class="cline">
       <el-select v-model="form.homepage" filterable placeholder="请选择主页" @change="selectHomepage">
+        <el-option v-if="otherpageid" :label="otherpagename" :value="otherpageid"></el-option>
         <el-option v-for="(l,index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
       </el-select>
     </el-form-item>
@@ -261,7 +262,7 @@ import { Msgwarning, Msgsuccess, Msgerror } from "../../js/message";
 import baseurl from "../../js/baseurl";
 let bmf = new BMF();
 export default {
-  props: ["createType"],
+  props: ["createType", "createObject"],
   components: {
     VueFileUpload
   },
@@ -285,6 +286,8 @@ export default {
         title: "请输入标题",
         actions: "请选择行动号召"
       },
+      otherpageid: "",
+      otherpagename: "",
       disfile: null, // 正在上传的file
       fileOption: {
         headers: {
@@ -371,15 +374,39 @@ export default {
     };
   },
   computed: {
-    ...mapState(["allpagelist", "allactions", "wantupload", "withcreatead"]),
+    ...mapState([
+      "allpagelist",
+      "allactions",
+      "wantupload",
+      "withcreatead",
+      "edittype"
+    ]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
     }
   },
   watch: {
+    async createObject(n, o) {
+      // 阻塞 100ms
+      await this.$barrageTime(100);
+
+      if (n && n.assetFeedSpec) {
+        if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
+          this.otherpageid = n.pageId ? n.pageId : "";
+          this.otherpagename = n.pageName ? n.pageName : "";
+        }
+        // 20190130新增逻辑，编辑单个广告，初始化保存该创意类型，切换的时候数据填充
+        this.SETSTATE({ k: "edittype", v: this.createType });
+        this.dataSet(n);
+      }
+    },
     createType(n, o) {
       // 初始化
       this.reset();
+      // 20190130新增逻辑，如果切回该广告创意原来的类型，则数据继续填充
+      if (this.edittype == n) {
+        this.dataSet(this.createObject);
+      }
     },
     wantupload(n, v) {
       console.log("wantupload:", n);
@@ -391,6 +418,42 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    dataSet(n) {
+      let create = JSON.parse(n.assetFeedSpec);
+      this.form.homepage = n.pageId ? n.pageId : "";
+      this.form.deeplink = create.link_urls[0].deeplink_url;
+      this.form.descarr = create.bodies.map(v => v.text);
+      this.form.titlearr = create.titles.map(v => v.text);
+      this.form.actionArr = create.call_to_action_types;
+
+      if (create.images) {
+        create.images.forEach(v => {
+          this.processIMG.push({
+            name: v.hash,
+            process: 100,
+            size: 0,
+            file: null,
+            imageUrl: v.hash,
+            imageHash: v.hash
+          });
+        });
+      }
+
+      if (this.createType == 0 && create.videos) {
+        create.videos.forEach(v => {
+          // 图片和视频创意
+          this.processVIO.push({
+            name: v.video_id,
+            process: 100,
+            file: null,
+            size: 0,
+            videoUrl: v.video_id,
+            videoHash: "",
+            videoId: v.video_id
+          });
+        });
+      }
+    },
     reset() {
       // 初始化
       // 如果当前file存在且未成功上传且未取消
@@ -486,11 +549,13 @@ export default {
         v => v.pageId == this.form.homepage
       )[0];
       // let action = this.allactions.filter(v => v.code == this.form.actions)[0];
-      creative.callToActionTypes = this.form.actionArr.map(v => v.replace(/\s/g, '_').toLocaleUpperCase()).join(",");
+      creative.callToActionTypes = this.form.actionArr
+        .map(v => v.replace(/\s/g, "_").toLocaleUpperCase())
+        .join(",");
       creative.deeplink = this.form.deeplink;
-      creative.pageId = homepage.pageId;
-      creative.pageLogo = homepage.picture;
-      creative.pageName = homepage.name;
+      creative.pageId = homepage ? homepage.pageId : this.otherpageid;
+      creative.pageLogo = homepage ? homepage.picture : "";
+      creative.pageName = homepage ? homepage.name : this.otherpagename;
       creative.bodies = this.form.descarr.join("/");
       creative.titles = this.form.titlearr.join("/");
       creative.adFormats =
@@ -502,7 +567,7 @@ export default {
       creative.videos =
         this.createType == 0
           ? this.processVIO.map(v => v.videoUrl).join(",")
-          : '';
+          : "";
 
       // creative.imageUrl =
       //   this.createType == 1

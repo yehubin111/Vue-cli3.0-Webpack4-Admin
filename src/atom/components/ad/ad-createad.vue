@@ -465,7 +465,7 @@ export default {
            * 20190219新增，动态创意判断依据
            * 有assetFeedSpec的为动态创意
            */
-          if (this.createObject.assetFeedSpec) {
+          if (this.createObject.assetFeedSpec && this.createObject.assetFeedSpec != 'null') {
             // 动态创意
             let activecreate = JSON.parse(this.createObject.assetFeedSpec);
             switch (activecreate.ad_formats[0]) {

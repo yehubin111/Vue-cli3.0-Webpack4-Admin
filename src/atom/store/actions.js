@@ -1949,8 +1949,10 @@ export default {
         console.log(opts);
         console.log(state[opts]);
 
-        _axios.get(url, { fullScreen })
-            .then(res => {
+        Axios({
+            url,
+            fullscreen: fullScreen,
+            success: res => {
                 if (res.code == 0) {
                     Msgsuccess('更新成功');
                     commit('CHANGESTATUS', option);
@@ -1958,10 +1960,8 @@ export default {
                         dispatch('getAdlist', { option: state[opts], type })
                     }, 2000);
                 }
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     resetName({ state, commit, dispatch }, { id, name, type }) {
         let url = `${URL.resetname}`;
@@ -2074,14 +2074,14 @@ export default {
                 console.log(err);
             })
     },
-    creativeDetail({ state, commit }, { creativeId }) {
+    creativeDetail({ state, commit }, { creativeId, fullScreen = false }) {
         let url = `${URL.creativedetail}fbCreativeIds=${creativeId}`;
 
-        return _axios.get(url)
-            .then(res => res)
-            .catch(err => {
-                console.log(err);
-            })
+        return Axios({
+            url,
+            fullscreen: fullScreen,
+            success: res => res
+        })
     },
     adCopy({ state, commit, dispatch }, { orgId, distId, count, identify, type, projectId }) {
         let url = URL.adcopy;

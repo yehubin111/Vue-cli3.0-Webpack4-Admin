@@ -198,6 +198,7 @@
         type="textarea"
         v-model="form.desc"
         placeholder="请输入文字说明，介绍推广内容"
+        maxlength="1024"
         class="textarea"
         :autosize="{ minRows: 3.5, maxRows: 3.5 }"
       ></el-input>
@@ -219,7 +220,7 @@
           </span>
         </div>
       </div>
-      <el-input v-model="form.title" placeholder="请输入标题"></el-input>
+      <el-input v-model="form.title" placeholder="请输入标题" maxlength="255"></el-input>
       <el-button
         class="moreInfo"
         type="primary"

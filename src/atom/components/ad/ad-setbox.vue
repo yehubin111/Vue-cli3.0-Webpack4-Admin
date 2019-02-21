@@ -205,8 +205,8 @@ export default {
     },
     selectCare(key, importkey) {
       // 排除轮播以外的第一级选项，点击无需请求接口
-      if(!key && !importkey) return;
-      
+      if (!key && !importkey) return;
+
       this.searchList.forEach(v => {
         if (v.key == this.firstKey) {
           v.list.forEach(g => {
@@ -475,65 +475,85 @@ export default {
          * 20190220 v2.2.1 新增
          * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
          */
-        if(this.type == 'adName'){
+        let activead = [];
+        let activeidsarr = [];
+        let activeids = '';
+        let activecreative = [];
+        let activecreativeids = [];
+        let activenotice = "";
+        if (this.type == "adName") {
           let res = await this.$store.dispatch("creativeDetail", {
-            creativeId: this.mutilselect.map(v => v.creativeId).join(',')
+            creativeId: this.mutilselect.map(v => v.creativeId).join(","),
+            fullScreen: true
           });
-          if(res.data.find(v => v.assetFeedSpec && v.assetFeedSpec != 'null')) {
-            this.$confirm(
-              `选中了至少一条使用动态创意的广告。归档此类型广告后，广告组也会自动归档`,
-              "提示",
-              {
-                confirmButtonText: "归档",
-                cancelButtonText: "取消",
-                type: "warning"
-              }
-            )
-              .then(() => {
-                // 归档动态创意广告等于归档其广告组
-                this.commandExecuteAdset(this.mutilselect.map(v => v.adsetId).join(','), effectiveStatus);
-              })
-              .catch(() => {});
-          } else {
-            this.$confirm(
-              `确认对${this.mutilselect.length}个${
+          let activecreative = res.data.filter(
+            v => v.assetFeedSpec && v.assetFeedSpec != "null"
+          );
+          let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
+          let activead = this.mutilselect.filter(v => activecreativeids.indexOf(v['creativeId']) != -1);
+          activeidsarr = activead.map(v => v["adId"]);
+          if (activeidsarr.length > 0) {
+            activenotice =
+              "选中了至少一条使用动态创意的广告。归档此类型广告后，广告组也会自动归档";
+            // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
+            adIds = adIds.split(',').filter(v => activeidsarr.indexOf(v) == -1).join(',');
+            activeids = activeidsarr.join(',');
+          }
+        }
+        this.$confirm(
+          activenotice
+            ? activenotice
+            : `确认对${this.mutilselect.length}个${
                 this.typeData.name
               }执行归档操作？归档后无法恢复`,
-              "提示",
-              {
-                confirmButtonText: "归档",
-                cancelButtonText: "取消",
-                type: "warning"
-              }
-            )
-              .then(() => {
-                this.commandExecute(adIds, effectiveStatus);
-              })
-              .catch(() => {});
+          "提示",
+          {
+            confirmButtonText: "归档",
+            cancelButtonText: "取消",
+            type: "warning"
           }
-        } else {
-          this.$confirm(
-            `确认对${this.mutilselect.length}个${
-              this.typeData.name
-            }执行归档操作？归档后无法恢复`,
-            "提示",
-            {
-              confirmButtonText: "归档",
-              cancelButtonText: "取消",
-              type: "warning"
-            }
-          )
-            .then(() => {
-              this.commandExecute(adIds, effectiveStatus);
-            })
-            .catch(() => {});
-        }
+        )
+          .then(() => {
+            // 归档动态创意广告等于归档其广告组
+            this.commandExecute(adIds, effectiveStatus, activeids);
+          })
+          .catch(() => {});
       } else if (k == "DELETED") {
-        // 删除
+        /**
+         * 20190220 v2.2.1 新增
+         * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
+         */
+        let activead = [];
+        let activeidsarr = [];
+        let activeids = '';
+        let activecreative = [];
+        let activecreativeids = [];
+        let activenotice = "";
+        if (this.type == "adName") {
+          let res = await this.$store.dispatch("creativeDetail", {
+            creativeId: this.mutilselect.map(v => v.creativeId).join(","),
+            fullScreen: true
+          });
+          let activecreative = res.data.filter(
+            v => v.assetFeedSpec && v.assetFeedSpec != "null"
+          );
+          let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
+          let activead = this.mutilselect.filter(v => activecreativeids.indexOf(v['creativeId']) != -1);
+          activeidsarr = activead.map(v => v["adId"]);
+          if (activeidsarr.length > 0) {
+            activenotice =
+              "选中了至少一条使用动态创意的广告。删除此类型广告后，广告组也会自动删除";
+            // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
+            adIds = adIds.split(',').filter(v => activeidsarr.indexOf(v) == -1).join(',');
+            activeids = activeidsarr.join(',');
+          }
+        }
         this.$confirm(
-          `确认对${this.mutilselect.length}个${
-            this.typeData.name
-          }执行删除操作？删除后无法恢复`,
+          activenotice
+            ? activenotice
+            : `确认对${this.mutilselect.length}个${
+                this.typeData.name
+              }执行删除操作？删除后无法恢复`,
           "提示",
           {
             confirmButtonText: "删除",
@@ -542,7 +562,8 @@ export default {
           }
         )
           .then(() => {
-            this.commandExecute(adIds, effectiveStatus);
+            // 删除动态创意广告等于删除其广告组
+            this.commandExecute(adIds, effectiveStatus, activeids);
           })
           .catch(() => {});
       } else if (k == "Copy") {
@@ -601,24 +622,13 @@ export default {
         this.$emit("changeReplace", this.type, this.mutilselect);
       }
     },
-    commandExecuteAdset(adsetIds, effectiveStatus) {
+    commandExecute(adIds, effectiveStatus, activeIds) {
       let option = {
         effectiveStatus
       };
       // console.log(this.typeData);
       option[this.typeData.effectIds] = adIds;
-      this.$store.dispatch("changeAdstatus", {
-        option,
-        type: 'adSetName',
-        fullScreen: true
-      });
-    },
-    commandExecute(adIds, effectiveStatus) {
-      let option = {
-        effectiveStatus
-      };
-      // console.log(this.typeData);
-      option[this.typeData.effectIds] = adIds;
+      option['isActiveAdIds'] = activeIds;
       this.$store.dispatch("changeAdstatus", {
         option,
         type: this.type,

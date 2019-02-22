@@ -135,9 +135,6 @@ export default {
           let adoption = this.$refs.createAd.extractInfo();
           if (!adoption) return;
 
-          console.log(adoption);
-          return;
-
           // 区分创建与编辑
           if (adoption[1] == "select") {
             if (this.editId && this.editId.length > 0) {

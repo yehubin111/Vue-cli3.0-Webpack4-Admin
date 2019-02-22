@@ -565,50 +565,23 @@ export default {
       creative.token = this.xtoken;
 
       // 创建的时候无需传imagehash videoid，编辑的时候无需传imageurl videourl
-      if (this.processIMG.find(v => v.imageUrl)) {
-        creative.images = this.processIMG
-          .map(v => v.imageUrl || v.imageHash)
-          .join(",");
-        creative.imageHashs = "";
-      } else {
-        creative.images = "";
-        creative.imageHashs = this.processIMG.map(v => v.imageHash).join(",");
-      }
+      let newimg = this.processIMG.filter(v => v.imageUrl);
+      let oldimg = this.processIMG.filter(v => !v.imageUrl && v.imageHash);
+      creative.images = newimg.length > 0 ? newimg.map(v => v.imageUrl) : "";
+      creative.imageHashs =
+        oldimg.length > 0 ? oldimg.map(v => v.imageHash) : "";
+
       if (this.createType == 0) {
-        if (this.processIMG.find(v => v.videoUrl)) {
-          creative.videos = this.processVIO
-            .map(v => v.videoUrl || v.videoId)
-            .join(",");
-          creative.videoIds = "";
-        } else {
-          creative.videos = "";
-          creative.videoIds = this.processVIO.map(v => v.videoId).join(",");
-        }
+        let newvideo = this.processVIO.filter(v => v.videoUrl);
+        let oldvideo = this.processVIO.filter(v => !v.videoUrl && v.videoId);
+        creative.videos =
+          newvideo.length > 0 ? newvideo.map(v => v.videoUrl) : "";
+        creative.videoIds =
+          oldvideo.length > 0 ? oldvideo.map(v => v.videoId) : "";
       } else {
         creative.videos = "";
         creative.videoIds = "";
       }
-
-      // creative.imageUrl =
-      //   this.createType == 1
-      //     ? this.processVIO[0].fmUrl
-      //     : this.processIMG[0].imageUrl;
-      // creative.videoUrl =
-      //   this.createType == 1 ? this.processVIO[0].videoUrl : "";
-      // if (!creative.videoUrl) {
-      //   creative.videoId =
-      //     this.createType == 1 ? this.processVIO[0].videoId : "";
-      // } else {
-      //   creative.videoId = "";
-      // }
-      // if (!creative.imageUrl) {
-      //   creative.imageHash =
-      //     this.createType == 1
-      //       ? this.processVIO[0].fmHash
-      //       : this.processIMG[0].imageHash;
-      // } else {
-      //   creative.imageHash = "";
-      // }
 
       return [true, creative];
     },

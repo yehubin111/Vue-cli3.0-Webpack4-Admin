@@ -282,7 +282,7 @@ export default {
         homepage: "请选择主页",
         imgvideo: "请上传图片",
         videoUrl: "请上传视频",
-        imginfo: '请上传至少2张图片',
+        imginfo: "请上传至少2张图片",
         matterinfo: "请上传图片或视频",
         desc: "请输入文本",
         title: "请输入标题",
@@ -435,7 +435,7 @@ export default {
             process: 100,
             size: 0,
             file: null,
-            imageUrl: v.hash,
+            imageUrl: "",
             imageHash: v.hash
           });
         });
@@ -449,7 +449,7 @@ export default {
             process: 100,
             file: null,
             size: 0,
-            videoUrl: v.video_id,
+            videoUrl: "",
             videoHash: "",
             videoId: v.video_id
           });
@@ -565,11 +565,29 @@ export default {
       creative.token = this.xtoken;
 
       // 创建的时候无需传imagehash videoid，编辑的时候无需传imageurl videourl
-      creative.images = this.processIMG.map(v => v.imageUrl).join(",");
-      creative.videos =
-        this.createType == 0
-          ? this.processVIO.map(v => v.videoUrl).join(",")
-          : "";
+      if (this.processIMG.find(v => v.imageUrl)) {
+        creative.images = this.processIMG
+          .map(v => v.imageUrl || v.imageHash)
+          .join(",");
+        creative.imageHashs = "";
+      } else {
+        creative.images = "";
+        creative.imageHashs = this.processIMG.map(v => v.imageHash).join(",");
+      }
+      if (this.createType == 0) {
+        if (this.processIMG.find(v => v.videoUrl)) {
+          creative.videos = this.processVIO
+            .map(v => v.videoUrl || v.videoId)
+            .join(",");
+          creative.videoIds = "";
+        } else {
+          creative.videos = "";
+          creative.videoIds = this.processVIO.map(v => v.videoId).join(",");
+        }
+      } else {
+        creative.videos = "";
+        creative.videoIds = "";
+      }
 
       // creative.imageUrl =
       //   this.createType == 1

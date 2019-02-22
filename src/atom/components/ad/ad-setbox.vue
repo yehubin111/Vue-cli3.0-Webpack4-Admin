@@ -475,12 +475,12 @@ export default {
          * 20190220 v2.2.1 新增
          * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
          */
-        let activead = [];
-        let activeidsarr = [];
-        let activeids = '';
-        let activecreative = [];
-        let activecreativeids = [];
-        let activenotice = "";
+        let activead = []; // 动态创意广告
+        let activeidsarr = []; // 动态创意广告id集合
+        let activeids = ''; // 动态创意广告id（String）
+        let activecreative = []; // 动态创意集合
+        let activecreativeids = []; // 动态创意id集合
+        let activenotice = ""; // confirm提示内容
         if (this.type == "adName") {
           let res = await this.$store.dispatch("creativeDetail", {
             creativeId: this.mutilselect.map(v => v.creativeId).join(","),
@@ -523,12 +523,12 @@ export default {
          * 20190220 v2.2.1 新增
          * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
          */
-        let activead = [];
-        let activeidsarr = [];
-        let activeids = '';
-        let activecreative = [];
-        let activecreativeids = [];
-        let activenotice = "";
+        let activead = []; // 动态创意广告
+        let activeidsarr = []; // 动态创意广告id集合
+        let activeids = ''; // 动态创意广告id（String）
+        let activecreative = []; // 动态创意集合
+        let activecreativeids = []; // 动态创意id集合
+        let activenotice = ""; // confirm提示内容
         if (this.type == "adName") {
           let res = await this.$store.dispatch("creativeDetail", {
             creativeId: this.mutilselect.map(v => v.creativeId).join(","),

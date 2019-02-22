@@ -567,17 +567,17 @@ export default {
       // 创建的时候无需传imagehash videoid，编辑的时候无需传imageurl videourl
       let newimg = this.processIMG.filter(v => v.imageUrl);
       let oldimg = this.processIMG.filter(v => !v.imageUrl && v.imageHash);
-      creative.images = newimg.length > 0 ? newimg.map(v => v.imageUrl) : "";
+      creative.images = newimg.length > 0 ? newimg.map(v => v.imageUrl).join(',') : "";
       creative.imageHashs =
-        oldimg.length > 0 ? oldimg.map(v => v.imageHash) : "";
+        oldimg.length > 0 ? oldimg.map(v => v.imageHash).join(',') : "";
 
       if (this.createType == 0) {
         let newvideo = this.processVIO.filter(v => v.videoUrl);
         let oldvideo = this.processVIO.filter(v => !v.videoUrl && v.videoId);
         creative.videos =
-          newvideo.length > 0 ? newvideo.map(v => v.videoUrl) : "";
+          newvideo.length > 0 ? newvideo.map(v => v.videoUrl).join(',') : "";
         creative.videoIds =
-          oldvideo.length > 0 ? oldvideo.map(v => v.videoId) : "";
+          oldvideo.length > 0 ? oldvideo.map(v => v.videoId).join(',') : "";
       } else {
         creative.videos = "";
         creative.videoIds = "";

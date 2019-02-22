@@ -192,6 +192,7 @@ export default {
                 break;
             }
           }
+          v.projectId = this.$route.params.id;
         });
 
         this.$store.dispatch("seekReplaceCreate", {

@@ -417,28 +417,44 @@ export default {
 
         this.mutilstatus = Object.assign({}, this.mutil);
 
-        await this.$store.dispatch("getCreateAdsetlist", {
-          keyword: n.length > 1 ? '' : n[0].adsetId,
-          projectId: this.$route.params.id
+        if (n.length == 1) {
+          this.$store.dispatch("getCreateAdsetlist", {
+            keyword: n[0].adsetId,
+            projectId: this.$route.params.id
+          });
+        }
+
+        let creativearr = n.map(v => v.creativeId);
+        let creativeids = [...new Set(creativearr)].join(",");
+        // this.$store.dispatch("isDynamicCreate", creativeids);
+
+        let LOAD = Loading.service({ fullscreen: true });
+        let res = await this.$store.dispatch("creativeDetail", {
+          creativeId: creativeids
         });
+        LOAD.close();
+
         /**
          * 20190220新增，初始化判断广告创意类型
          * @case1 多个动态+普通创意情况
          * @case2 单个动态创意情况 or 多个动态创意情况
          * @case2 单个普通创意情况 or 多个普通创意情况
          */
-        let adsetArr = adsetId.map(g => {
-          let adset = this.createadsetlist.find(v => v.adSetId == g);
-          return adset ? adset.isDynamicCreative : "";
-        });
-        console.log(adsetArr);
-        adsetArr = [...new Set(adsetArr)];
+        let activecreateArr = res.data.find(v => v.assetFeedSpec);
+        let normalArr = res.data.find(v => !v.assetFeedSpec);
+
+        // let adsetArr = adsetId.map(g => {
+        //   let adset = this.createadsetlist.find(v => v.adSetId == g);
+        //   return adset ? adset.isDynamicCreative : "";
+        // });
+        // console.log(adsetArr);
+        // adsetArr = [...new Set(adsetArr)];
         switch (true) {
-          case adsetArr.length > 1:
+          case Boolean(activecreateArr) && Boolean(normalArr):
             this.isactive = true;
             this.activespecial = true;
             break;
-          case adsetArr[0]:
+          case Boolean(activecreateArr):
             this.isactive = true;
             break;
           default:
@@ -447,27 +463,21 @@ export default {
         }
         /** end */
 
-        let creativearr = n.map(v => v.creativeId);
-        let creativeids = [...new Set(creativearr)].join(",");
-        // this.$store.dispatch("isDynamicCreate", creativeids);
         /**
          * 如果所编辑的广告只有相同的一个创意（包含单个广告和多个创意相同的广告两种情况）
          * 则需要获取该创意详情，用于展示
          * 否则不需要，因为多个不同的创意不需要展示，也无法提交
          */
         if (creativearr.length == 1) {
-          let LOAD = Loading.service({ fullscreen: true });
-          let res = await this.$store.dispatch("creativeDetail", {
-            creativeId: creativeids
-          });
-          LOAD.close();
-
           this.createObject = res.data[0];
           /**
            * 20190219新增，动态创意判断依据
            * 有assetFeedSpec的为动态创意
            */
-          if (this.createObject.assetFeedSpec && this.createObject.assetFeedSpec != 'null') {
+          if (
+            this.createObject.assetFeedSpec &&
+            this.createObject.assetFeedSpec != "null"
+          ) {
             // 动态创意
             let activecreate = JSON.parse(this.createObject.assetFeedSpec);
             switch (activecreate.ad_formats[0]) {

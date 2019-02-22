@@ -418,7 +418,7 @@ export default {
         this.mutilstatus = Object.assign({}, this.mutil);
 
         await this.$store.dispatch("getCreateAdsetlist", {
-          keyword: n[0].adsetId,
+          keyword: n.length > 1 ? '' : n[0].adsetId,
           projectId: this.$route.params.id
         });
         /**

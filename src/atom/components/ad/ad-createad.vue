@@ -303,8 +303,7 @@ export default {
        * 如果是多项未编辑状态，则获取各自原始数据
        * 20180116新增，如果createdata存在，则表示是通过创建创意创建/编辑广告
        */
-      console.log(createdata, this.fbAccountId);
-      return;
+
       if (createdata) {
         createdata.fbAccountId = this.fbAccountId;
         let cobj = {
@@ -369,6 +368,7 @@ export default {
               this.setsortlist[0].accountId;
       }
       if (this.form.adset) {
+        this.fbAccountId = this.form.adset.split("|")[1];
         // 初始化获取广告组列表
         await this.$store.dispatch("getCreateAdsetlist", {
           keyword: this.setsortlist[0].adsetId,

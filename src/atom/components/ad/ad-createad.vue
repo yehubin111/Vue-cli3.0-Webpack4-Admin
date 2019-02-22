@@ -468,8 +468,8 @@ export default {
          * 则需要获取该创意详情，用于展示
          * 否则不需要，因为多个不同的创意不需要展示，也无法提交
          */
-        this.$barrageTime(1000);
-        
+        await this.$barrageTime(1000);
+
         if (creativearr.length == 1) {
           this.createObject = res.data[0];
           /**

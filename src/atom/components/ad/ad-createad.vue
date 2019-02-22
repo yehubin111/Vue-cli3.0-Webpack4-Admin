@@ -434,33 +434,33 @@ export default {
         });
         LOAD.close();
 
-        /**
-         * 20190220新增，初始化判断广告创意类型
-         * @case1 多个动态+普通创意情况
-         * @case2 单个动态创意情况 or 多个动态创意情况
-         * @case2 单个普通创意情况 or 多个普通创意情况
-         */
-        let activecreateArr = res.data.find(v => v.assetFeedSpec && v.assetFeedSpec != 'null');
-        let normalArr = res.data.find(v => !v.assetFeedSpec || v.assetFeedSpec == 'null');
+        // /**
+        //  * 20190220新增，初始化判断广告创意类型
+        //  * @case1 多个动态+普通创意情况
+        //  * @case2 单个动态创意情况 or 多个动态创意情况
+        //  * @case2 单个普通创意情况 or 多个普通创意情况
+        //  */
+        // let activecreateArr = res.data.find(v => v.assetFeedSpec && v.assetFeedSpec != 'null');
+        // let normalArr = res.data.find(v => !v.assetFeedSpec || v.assetFeedSpec == 'null');
 
-        // let adsetArr = adsetId.map(g => {
-        //   let adset = this.createadsetlist.find(v => v.adSetId == g);
-        //   return adset ? adset.isDynamicCreative : "";
-        // });
-        // console.log(adsetArr);
-        // adsetArr = [...new Set(adsetArr)];
-        switch (true) {
-          case Boolean(activecreateArr) && Boolean(normalArr):
-            this.isactive = true;
-            this.activespecial = true;
-            break;
-          case Boolean(activecreateArr):
-            this.isactive = true;
-            break;
-          default:
-            this.isactive = false;
-            break;
-        }
+        // // let adsetArr = adsetId.map(g => {
+        // //   let adset = this.createadsetlist.find(v => v.adSetId == g);
+        // //   return adset ? adset.isDynamicCreative : "";
+        // // });
+        // // console.log(adsetArr);
+        // // adsetArr = [...new Set(adsetArr)];
+        // switch (true) {
+        //   case Boolean(activecreateArr) && Boolean(normalArr):
+        //     this.isactive = true;
+        //     this.activespecial = true;
+        //     break;
+        //   case Boolean(activecreateArr):
+        //     this.isactive = true;
+        //     break;
+        //   default:
+        //     this.isactive = false;
+        //     break;
+        // }
         /** end */
 
         /**
@@ -469,6 +469,12 @@ export default {
          * 否则不需要，因为多个不同的创意不需要展示，也无法提交
          */
         if (creativearr.length == 1) {
+          let LOAD = Loading.service({ fullscreen: true });
+        let res = await this.$store.dispatch("creativeDetail", {
+          creativeId: creativeids
+        });
+        LOAD.close();
+        
           this.createObject = res.data[0];
           /**
            * 20190219新增，动态创意判断依据

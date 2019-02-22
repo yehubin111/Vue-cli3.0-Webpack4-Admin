@@ -440,8 +440,8 @@ export default {
          * @case2 单个动态创意情况 or 多个动态创意情况
          * @case2 单个普通创意情况 or 多个普通创意情况
          */
-        let activecreateArr = res.data.find(v => v.assetFeedSpec);
-        let normalArr = res.data.find(v => !v.assetFeedSpec);
+        let activecreateArr = res.data.find(v => v.assetFeedSpec && v.assetFeedSpec != 'null');
+        let normalArr = res.data.find(v => !v.assetFeedSpec || v.assetFeedSpec == 'null');
 
         // let adsetArr = adsetId.map(g => {
         //   let adset = this.createadsetlist.find(v => v.adSetId == g);

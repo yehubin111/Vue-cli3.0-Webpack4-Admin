@@ -278,6 +278,7 @@ export default {
       );
 
       this.isactive = adset.isDynamicCreative;
+      this.SETSTATE({ k: "hascreatead", v: false });
       if (adset.isDynamicCreative) {
         this.$store.dispatch("isActiveAd", adset.adSetId);
       }

@@ -718,8 +718,8 @@ export default {
       } else {
         this.processVIO.forEach(v => {
           if (v.name == res.data[0].originName) {
-            v.imageUrl = res.data[0].targetName;
-            v.imageHash = res.data[0].md5;
+            v.videoUrl = res.data[0].targetName;
+            v.videoHash = res.data[0].md5;
           }
         });
       }

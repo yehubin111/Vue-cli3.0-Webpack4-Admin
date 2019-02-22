@@ -282,6 +282,7 @@ export default {
         homepage: "请选择主页",
         imgvideo: "请上传图片",
         videoUrl: "请上传视频",
+        imginfo: '请上传至少2张图片',
         matterinfo: "请上传图片或视频",
         desc: "请输入文本",
         title: "请输入标题",
@@ -489,7 +490,7 @@ export default {
       if (!this.withcreatead) return [false, "图片/视频正在上传中..."];
 
       if (data["homepage"] == "") return [false, this.msg["homepage"]];
-      if (this.createType == 1 && this.processIMG.length == 0)
+      if (this.createType == 1 && this.processIMG.length < 2)
         return [false, this.msg["imginfo"]];
       if (
         this.createType == 0 &&

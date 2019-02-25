@@ -50,7 +50,8 @@ export default {
       console.log(urlArr);
 
       urlArr.forEach(v => {
-        this.downloadFile(v);
+        if(v)
+          this.downloadFile(v);
       })
     },
     showBig(url) {

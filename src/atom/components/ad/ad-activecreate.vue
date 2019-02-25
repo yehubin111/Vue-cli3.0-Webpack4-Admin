@@ -505,9 +505,17 @@ export default {
        * 20190225新增，对于动态创意素材总数的限制，图片+视频+文本+标题+行动号召+deeplink == 28（加上ad_Format和link_url是30）
        * 轮播图片类型不会超过
        */
-      let matterall = this.processIMG.length + this.processVIO.length + this.form.descarr.length + this.form.titlearr.length + this.form.actionArr.length;
-      if(this.createType == 0 && matterall > 28) {
-        return [false, '图片+视频+文本+标题+行动号召+deeplink总数不能超过28'];
+      let matterall =
+        this.processIMG.length +
+        this.processVIO.length +
+        this.form.descarr.length +
+        this.form.titlearr.length +
+        this.form.actionArr.length +
+        this.form.deeplink
+          ? 1
+          : 0;
+      if (this.createType == 0 && matterall > 28) {
+        return [false, "图片+视频+文本+标题+行动号召+deeplink总数不能超过28"];
       }
 
       let creative = this.createObject
@@ -575,17 +583,18 @@ export default {
       // 创建的时候无需传imagehash videoid，编辑的时候无需传imageurl videourl
       let newimg = this.processIMG.filter(v => v.imageUrl);
       let oldimg = this.processIMG.filter(v => !v.imageUrl && v.imageHash);
-      creative.images = newimg.length > 0 ? newimg.map(v => v.imageUrl).join(',') : "";
+      creative.images =
+        newimg.length > 0 ? newimg.map(v => v.imageUrl).join(",") : "";
       creative.imageHashs =
-        oldimg.length > 0 ? oldimg.map(v => v.imageHash).join(',') : "";
+        oldimg.length > 0 ? oldimg.map(v => v.imageHash).join(",") : "";
 
       if (this.createType == 0) {
         let newvideo = this.processVIO.filter(v => v.videoUrl);
         let oldvideo = this.processVIO.filter(v => !v.videoUrl && v.videoId);
         creative.videos =
-          newvideo.length > 0 ? newvideo.map(v => v.videoUrl).join(',') : "";
+          newvideo.length > 0 ? newvideo.map(v => v.videoUrl).join(",") : "";
         creative.videoIds =
-          oldvideo.length > 0 ? oldvideo.map(v => v.videoId).join(',') : "";
+          oldvideo.length > 0 ? oldvideo.map(v => v.videoId).join(",") : "";
       } else {
         creative.videos = "";
         creative.videoIds = "";

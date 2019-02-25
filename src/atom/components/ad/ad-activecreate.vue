@@ -487,7 +487,7 @@ export default {
     getCheckData() {
       let data = this.form;
 
-      // if (!this.withcreatead) return [false, "图片/视频正在上传中..."];
+      if (!this.withcreatead) return [false, "图片/视频正在上传中..."];
 
       if (data["homepage"] == "") return [false, this.msg["homepage"]];
       if (this.createType == 1 && this.processIMG.length < 2)

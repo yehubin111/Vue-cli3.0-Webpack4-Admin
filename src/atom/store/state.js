@@ -228,7 +228,7 @@ export default {
   adcreateadd: true,  // 新增单个创意，资源是否正在上传 true 否 false 是，创建广告用
   calendardate: [], // 导入af数据日历
   hascreatead: false, // 动态创意广告组是否包含广告，创建广告用
-  withcreatead: '', // 新增动态创意，资源是否正在上传 true 否 false 是，创建广告用
+  withcreatead: true, // 新增动态创意，资源是否正在上传 true 否 false 是，创建广告用
   imgspwant: 0, // 非素材库将要上传的文件数量，创建广告用
   viospwant: 0, // 非素材库将要上传的文件数量，创建广告用
   edittype: 0, // 编辑广告组初始类型

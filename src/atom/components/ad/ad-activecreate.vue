@@ -406,7 +406,7 @@ export default {
       // 初始化
       this.reset();
       // 20190130新增逻辑，如果切回该广告创意原来的类型，则数据继续填充
-      if (this.edittype == n) {
+      if (this.edittype == n && this.createObject) {
         this.dataSet(this.createObject);
       }
     },
@@ -501,6 +501,14 @@ export default {
       if (data["descarr"].length == 0) return [false, this.msg["desc"]];
       if (data["titlearr"].length == 0) return [false, this.msg["title"]];
       if (data["actionArr"].length == 0) return [false, this.msg["actions"]];
+      /**
+       * 20190225新增，对于动态创意素材总数的限制，图片+视频+文本+标题+行动号召+deeplink == 28（加上ad_Format和link_url是30）
+       * 轮播图片类型不会超过
+       */
+      let matterall = this.processIMG.length + this.processVIO.length + this.form.descarr.length + this.form.titlearr.length + this.form.actionArr.length;
+      if(this.createType == 0 && matterall > 28) {
+        return [false, '图片+视频+文本+标题+行动号召+deeplink总数不能超过28'];
+      }
 
       let creative = this.createObject
         ? this.createObject

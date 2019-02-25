@@ -341,7 +341,7 @@ export default {
       // 初始化
       this.reset();
       // 20190130新增逻辑，如果切回该广告创意原来的类型，则数据继续填充
-      if (this.edittype == n) {
+      if (this.edittype == n && this.createObject) {
         this.dataSet(this.createObject);
       }
     },

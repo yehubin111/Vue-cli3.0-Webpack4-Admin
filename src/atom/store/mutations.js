@@ -1147,6 +1147,7 @@ export default {
                 case "复制广告":
                 case "创建广告":
                 case "编辑广告":
+                case "替换创意":
                     state.taskadfaildetail = v.tasks ? v.tasks : [];
                     state.taskadsucess = v.success;
                     break;

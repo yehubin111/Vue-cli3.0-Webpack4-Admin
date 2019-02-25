@@ -47,7 +47,7 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane
-        :label="`创意${taskadsucess}/${taskadfaildetail.length}`"
+        :label="`创意${taskcreatesucess}/${taskcreatefaildetail.length}`"
         :name="tasktabcreate"
         empty-text="全部完成"
         v-if="taskcreatesucess > 0 || taskcreatefaildetail.length > 0"

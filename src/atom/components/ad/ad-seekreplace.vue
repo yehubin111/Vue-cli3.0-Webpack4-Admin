@@ -127,7 +127,7 @@ export default {
         Msgwarning("当前输入内容未匹配到相关文本");
         return;
       }
-      
+
       let res;
       // 区分普通查找替换和创意相关查找替换
       if (this.replaceType == "Text") {
@@ -151,30 +151,20 @@ export default {
           /**
            * 20190220 v2.2.1 新增动态创意
            */
-          if(v.assetFeedSpec && v.assetFeedSpec != 'null') {
+          if (v.assetFeedSpec && v.assetFeedSpec != "null") {
             let active = JSON.parse(v.assetFeedSpec);
             switch (this.replaceType) {
               case "Name":
                 arr = this.newNameList.filter(g => g.id == v.fbAdId);
-                active['titles'] = [];
-                arr.forEach(v => {
-                  active['titles'].push({
-                    text: v.key
-                  }); 
-                })
+                active["titles"] = arr.map(v => ({ text: v.key }));
                 break;
               case "Desc":
                 arr = this.newDescList.filter(g => g.id == v.fbAdId);
-                active['bodies'] = [];
-                arr.forEach(v => {
-                  active['bodies'].push({
-                    text: v.key
-                  }); 
-                })
+                active["bodies"] = arr.map(v => ({ text: v.key }));
                 break;
               case "Link":
                 arr = this.newLinkList.filter(g => g.id == v.fbAdId);
-                active['link_urls'][0]['deeplink_url'] = arr[0].key;
+                active["link_urls"][0]["deeplink_url"] = arr[0].key;
                 break;
             }
             // delete active['descriptions'];
@@ -306,7 +296,7 @@ export default {
          * @case2 轮播创意 轮播创意的标题在cards字段中
          * @case3 普通创意
          */
-        if (v.assetFeedSpec && v.assetFeedSpec != 'null') {
+        if (v.assetFeedSpec && v.assetFeedSpec != "null") {
           let active = JSON.parse(v["assetFeedSpec"]);
           active.titles.forEach(g => {
             let objName = {
@@ -390,7 +380,7 @@ export default {
       let oldStr = this.oldStr.replace(/\?/g, "\\?");
       let oldreg = new RegExp(oldStr, "g");
       this.oldInfoList.forEach((v, i) => {
-        if(v.old) {
+        if (v.old) {
           v.name = v.old.replace(
             oldreg,
             '<span style="color: red;">' + this.oldStr + "</span>"
@@ -419,7 +409,7 @@ export default {
       let oldStr = this.oldStr.replace(/\?/g, "\\?");
       let oldreg = new RegExp(oldStr, "g");
       this.newInfoList.forEach((v, i) => {
-        if(v.old) {
+        if (v.old) {
           v.name = v.old.replace(
             oldreg,
             '<span style="color: red;">' + this.newStr + "</span>"

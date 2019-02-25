@@ -765,7 +765,7 @@ export default {
                 })
             }
             // af细分数据
-            if(v.fbAdAfPartList) {
+            if (v.fbAdAfPartList) {
                 v.fbAdAfPartList.forEach((g, q) => {
                     let name = '';
                     name += dateCond && g.insightDate ? ',' + g.insightDate : '';
@@ -789,12 +789,12 @@ export default {
         caredata.forEach((v, i) => {
             let pindex;
             let sameobj = afcaredata.find((g, p) => {
-                if(g[type] == v[type] && g['parentindex'] == v['parentindex']) {
+                if (g[type] == v[type] && g['parentindex'] == v['parentindex']) {
                     pindex = p;
                     return g;
                 }
             });
-            if(sameobj) {
+            if (sameobj) {
                 caredata[i] = Object.assign(v, sameobj);
                 afcaredata.splice(pindex, 1);
             }
@@ -805,7 +805,7 @@ export default {
         allcare.forEach((v, i) => {
             res.data.list.splice(v.parentindex + 1 + i, 0, v);
         })
-        
+
         // 排序情况下，全部数据取的第一个接口
         res.data.list.forEach((v, i) => {
             let kname = '';
@@ -1134,37 +1134,32 @@ export default {
         state.copyjoblistdetail = [];
     },
     JOBLISTDETAIL(state, r) {
-        r.forEach(v => {
-            switch (v.taskName) {
-                case "复制广告系列":
-                    state.taskcampaignfaildetail = v.tasks ? v.tasks : [];
-                    state.taskcampaignsucess = v.success;
-                    break;
-                case "复制广告组":
-                    state.taskadsetfaildetail = v.tasks ? v.tasks : [];
-                    state.taskadsetsucess = v.success;
-                    break;
-                case "复制广告":
-                case "创建广告":
-                case "编辑广告":
-                    state.taskadfaildetail = v.tasks ? v.tasks : [];
-                    state.taskadsucess = v.success;
-                    break;
-                case "替换创意":
-                    state.taskcreatefaildetail = v.tasks ? v.tasks : [];
-                    state.taskcreatesucess = v.success;
-                    break;
-            }
-        })
-        if (state.taskcampaignfaildetail.length > 0 || state.taskcampaignsucess > 0) {
-            state.tasktabcampaign = 'first';
-        } else if (state.taskadsetfaildetail.length > 0 || state.taskadsetsucess > 0) {
-            state.tasktabadset = 'first';
-        } else if (state.taskadfaildetail.length > 0 || state.taskadsucess > 0) {
-            state.tasktabad = 'first';
-        } else if (state.taskcreatefaildetail.length > 0 || state.taskcreatesucess > 0) {
-            state.tasktabcreate = 'first';
-        }
+        state.taskresult = [];
+        
+        let tabcampaign = r.find(v => v.taskName == '复制广告系列');
+        if (tabcampaign)
+            state.taskresult.push({
+                tabname: `广告系列${tabcampaign['tasks'].length}/${tabcampaign['success']}`,
+                tasks: tabcampaign['tasks']
+            })
+        let tabadset = r.find(v => v.taskName == '复制广告组');
+        if (tabadset)
+            state.taskresult.push({
+                tabname: `广告组${tabadset['tasks'].length}/${tabadset['success']}`,
+                tasks: tabadset['tasks']
+            })
+        let tabad = r.find(v => v.taskName == '复制广告' || v.taskName == '创建广告' || v.taskName == '编辑广告');
+        if (tabad)
+            state.taskresult.push({
+                tabname: `广告${tabad['tasks'].length}/${tabad['success']}`,
+                tasks: tabad['tasks']
+            })
+        let tabcreate = r.find(v => v.taskName == '替换创意');
+        if (tabcreate)
+            state.taskresult.push({
+                tabname: `创意${tabcreate['tasks'].length}/${tabcreate['success']}`,
+                tasks: tabcreate['tasks']
+            })
     },
     CALENDARDATE(state, r) {
         state.calendardate = r.data;

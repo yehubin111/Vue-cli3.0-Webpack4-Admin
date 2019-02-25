@@ -257,23 +257,7 @@ export default {
   tasknamedetail: '', // task名称 详情弹框用
   taskfaildetail: 0, // task失败数量 详情弹框用
   tasksuccessdetail: 0, // task成功数量 详情弹框用
-  taskcampaignsucess: 0, // job任务失败详情弹框广告系列成功数据数量
-  taskadsetsucess: 0, // job任务失败详情弹框广告系列成功数据数量
-  taskadsucess: 0, // job任务失败详情弹框广告系列成功数据数量
-  taskcreatesucess: 0,
-  taskcampaignfaildetail: [], // job任务失败详情弹框广告系列失败数据
-  taskadsetfaildetail: [], // job任务失败详情弹框广告组失败数据
-  taskadfaildetail: [], // job任务失败详情弹框广告失败数据
-  taskcreatefaildetail: [], // job任务失败详情弹框广告失败数据
-  tasktabcampaign: 'first',
-  tasktabadset: 'second',
-  tasktabad: 'third',
-  tasktabcreate: 'forth',
-  // joberrormsg: '', // job错误信息
-
-  // campaignjob: [], // job中的campaignid
-  // adsetjob: [], // job中adsetid
-  // adjob: [], // job中的adid
+  taskresult: [], // job 失败详情
   adtab: 'campaignName',
 
   adalllist: [], //广告管理列表所有数据，用于导出全部

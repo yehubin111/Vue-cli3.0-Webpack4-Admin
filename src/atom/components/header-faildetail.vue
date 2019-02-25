@@ -46,6 +46,21 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
+      <el-tab-pane
+        :label="`创意${taskadsucess}/${taskadfaildetail.length}`"
+        :name="tasktabcreate"
+        empty-text="全部完成"
+        v-if="taskcreatesucess > 0 || taskcreatefaildetail.length > 0"
+      >
+        <el-table :data="taskcreatefaildetail" style="width: 100%" max-height="250">
+          <el-table-column prop="extraInfo" label="创意名称">
+            <template slot-scope="scope">{{scope.row.extraInfo?scope.row.extraInfo:'--'}}</template>
+          </el-table-column>
+          <el-table-column prop="result" label="错误信息">
+            <template slot-scope="scope">{{scope.row.result}}</template>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
     </el-tabs>
     <div slot="footer" class="dialog-footer">
       <el-button @click="toCancel" type="primary">确 定</el-button>
@@ -68,15 +83,22 @@ export default {
       "taskcampaignfaildetail",
       "taskadsetfaildetail",
       "taskadfaildetail",
+      "taskcreatefaildetail",
+
       "taskcampaignsucess",
       "taskadsetsucess",
       "taskadsucess",
+      "taskcreatesucess",
+
       "taskfaildetail",
       "tasksuccessdetail",
       "tasknamedetail",
+      "tasknamedetail",
+      
       "tasktabcampaign",
       "tasktabadset",
       "tasktabad",
+      "tasktabcreate",
 
       "jobfailkey"
     ])
@@ -89,15 +111,21 @@ export default {
       this.SETSTATE({ k: "taskcampaignfaildetail", v: [] });
       this.SETSTATE({ k: "taskadsetfaildetail", v: [] });
       this.SETSTATE({ k: "taskadfaildetail", v: [] });
+      this.SETSTATE({ k: "taskcreatefaildetail", v: [] });
+
       this.SETSTATE({ k: "taskcampaignsucess", v: 0 });
       this.SETSTATE({ k: "taskadsetsucess", v: 0 });
       this.SETSTATE({ k: "taskadsucess", v: 0 });
+      this.SETSTATE({ k: "taskcreatesucess", v: 0 });
+
       this.SETSTATE({ k: "taskfaildetail", v: 0 });
       this.SETSTATE({ k: "tasksuccessdetail", v: 0 });
       this.SETSTATE({ k: "tasknamedetail", v: "" });
+
       this.SETSTATE({ k: "tasktabcampaign", v: "first" });
       this.SETSTATE({ k: "tasktabadset", v: "second" });
       this.SETSTATE({ k: "tasktabad", v: "third" });
+      this.SETSTATE({ k: "tasktabcreate", v: "forth" });
     }
   },
   watch: {

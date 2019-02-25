@@ -1147,9 +1147,12 @@ export default {
                 case "复制广告":
                 case "创建广告":
                 case "编辑广告":
-                case "替换创意":
                     state.taskadfaildetail = v.tasks ? v.tasks : [];
                     state.taskadsucess = v.success;
+                    break;
+                case "替换创意":
+                    state.taskcreatefaildetail = v.tasks ? v.tasks : [];
+                    state.taskcreatesucess = v.success;
                     break;
             }
         })
@@ -1159,6 +1162,8 @@ export default {
             state.tasktabadset = 'first';
         } else if (state.taskadfaildetail.length > 0 || state.taskadsucess > 0) {
             state.tasktabad = 'first';
+        } else if (state.taskcreatefaildetail.length > 0 || state.taskcreatesucess > 0) {
+            state.tasktabcreate = 'first';
         }
     },
     CALENDARDATE(state, r) {

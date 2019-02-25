@@ -260,12 +260,15 @@ export default {
   taskcampaignsucess: 0, // job任务失败详情弹框广告系列成功数据数量
   taskadsetsucess: 0, // job任务失败详情弹框广告系列成功数据数量
   taskadsucess: 0, // job任务失败详情弹框广告系列成功数据数量
+  taskcreatesucess: 0,
   taskcampaignfaildetail: [], // job任务失败详情弹框广告系列失败数据
   taskadsetfaildetail: [], // job任务失败详情弹框广告组失败数据
   taskadfaildetail: [], // job任务失败详情弹框广告失败数据
+  taskcreatefaildetail: [], // job任务失败详情弹框广告失败数据
   tasktabcampaign: 'first',
   tasktabadset: 'second',
   tasktabad: 'third',
+  tasktabcreate: 'forth',
   // joberrormsg: '', // job错误信息
 
   // campaignjob: [], // job中的campaignid

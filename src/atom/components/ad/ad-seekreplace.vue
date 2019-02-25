@@ -156,18 +156,28 @@ export default {
             switch (this.replaceType) {
               case "Name":
                 arr = this.newNameList.filter(g => g.id == v.fbAdId);
-                active['titles'] = arr.map(m => m.key);
+                active['titles'] = [];
+                arr.forEach(v => {
+                  active['titles'].push({
+                    text: v.key
+                  }); 
+                })
                 break;
               case "Desc":
                 arr = this.newDescList.filter(g => g.id == v.fbAdId);
-                active['bodies'] = arr.map(m => m.key);
+                active['bodies'] = [];
+                arr.forEach(v => {
+                  active['bodies'].push({
+                    text: v.key
+                  }); 
+                })
                 break;
               case "Link":
                 arr = this.newLinkList.filter(g => g.id == v.fbAdId);
                 active['link_urls'][0]['deeplink_url'] = arr[0].key;
                 break;
             }
-            delete active['descriptions'];
+            // delete active['descriptions'];
             v.assetFeedSpec = JSON.stringify(active);
             v.creativityType = 3;
           } else {

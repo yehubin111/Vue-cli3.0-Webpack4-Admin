@@ -1135,29 +1135,29 @@ export default {
     },
     JOBLISTDETAIL(state, r) {
         state.taskresult = [];
-        
+
         let tabcampaign = r.find(v => v.taskName == '复制广告系列');
         if (tabcampaign)
             state.taskresult.push({
-                tabname: `广告系列${tabcampaign['tasks'].length}/${tabcampaign['success']}`,
+                tabname: `广告系列${tabcampaign['success']}/${tabcampaign['tasks'].length}`,
                 tasks: tabcampaign['tasks']
             })
         let tabadset = r.find(v => v.taskName == '复制广告组');
         if (tabadset)
             state.taskresult.push({
-                tabname: `广告组${tabadset['tasks'].length}/${tabadset['success']}`,
+                tabname: `广告组${tabadset['success']}/${tabadset['tasks'].length}`,
                 tasks: tabadset['tasks']
             })
         let tabad = r.find(v => v.taskName == '复制广告' || v.taskName == '创建广告' || v.taskName == '编辑广告');
         if (tabad)
             state.taskresult.push({
-                tabname: `广告${tabad['tasks'].length}/${tabad['success']}`,
+                tabname: `广告${tabad['success']}/${tabad['tasks'].length}`,
                 tasks: tabad['tasks']
             })
         let tabcreate = r.find(v => v.taskName == '替换创意');
         if (tabcreate)
             state.taskresult.push({
-                tabname: `创意${tabcreate['tasks'].length}/${tabcreate['success']}`,
+                tabname: `创意${tabcreate['success']}/${tabcreate['tasks'].length}`,
                 tasks: tabcreate['tasks']
             })
     },

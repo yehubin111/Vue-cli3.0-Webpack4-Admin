@@ -47,6 +47,15 @@ export default {
   },
   mounted() {},
   methods: {
+    downMatter() {
+      let urlArr = this.videomatterlist.map(v => v.materialId);
+      console.log(urlArr);
+
+      urlArr.forEach(async v => {
+        let res = await this.$store.dispatch("getVideoLink", v);
+        await this.$fileDownload(res.data);
+      })
+    },
     async showBig(id){
       // 先获取视频地址
       let res = await this.$store.dispatch("getVideoLink", id);

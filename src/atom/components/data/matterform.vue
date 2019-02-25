@@ -62,42 +62,45 @@
         <el-option v-for="item in datasex" :key="item.code" :label="item.name" :value="item.code"></el-option>
       </el-select>
     </div>
-    <el-tabs v-model="activeName" class="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="图片" name="first">
-        <div class="list">
-          <image-list ref="imageList" @tableSort="tableSort"></image-list>
-        </div>
-        <div class="pageswitch">
-          <el-pagination
-            background
-            @size-change="pageSizeChange"
-            :page-sizes="[20, 200, 500]"
-            layout="total, sizes, prev, pager, next, jumper"
-            :current-page="pageindex"
-            :total="imagemattertotal"
-            :page-size="pagesize"
-            @current-change="pageSwitch"
-          ></el-pagination>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="视频" name="second">
-        <div class="list">
-          <video-list ref="videoList" @tableSort="tableSort"></video-list>
-        </div>
-        <div class="pageswitch">
-          <el-pagination
-            background
-            @size-change="pageSizeChange"
-            :page-sizes="[20, 200, 500]"
-            layout="total, sizes, prev, pager, next, jumper"
-            :current-page="pageindex"
-            :total="videomattertotal"
-            :page-size="pagesize"
-            @current-change="pageSwitch"
-          ></el-pagination>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
+    <div class="tablist">
+      <span class="downmatter" @click="downMatter">下载所有素材</span>
+      <el-tabs v-model="activeName" class="activeName" type="card" @tab-click="handleClick">
+        <el-tab-pane label="图片" name="first">
+          <div class="list">
+            <image-list ref="imageList" @tableSort="tableSort"></image-list>
+          </div>
+          <div class="pageswitch">
+            <el-pagination
+              background
+              @size-change="pageSizeChange"
+              :page-sizes="[20, 200, 500]"
+              layout="total, sizes, prev, pager, next, jumper"
+              :current-page="pageindex"
+              :total="imagemattertotal"
+              :page-size="pagesize"
+              @current-change="pageSwitch"
+            ></el-pagination>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="视频" name="second">
+          <div class="list">
+            <video-list ref="videoList" @tableSort="tableSort"></video-list>
+          </div>
+          <div class="pageswitch">
+            <el-pagination
+              background
+              @size-change="pageSizeChange"
+              :page-sizes="[20, 200, 500]"
+              layout="total, sizes, prev, pager, next, jumper"
+              :current-page="pageindex"
+              :total="videomattertotal"
+              :page-size="pagesize"
+              @current-change="pageSwitch"
+            ></el-pagination>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -164,6 +167,13 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    downMatter() {
+      if(this.activeName == 'first') {
+        this.$refs.imageList.downMatter();
+      } else {
+        this.$refs.videoList.downMatter();
+      }
+    },
     handleClick(card) {
       console.log(card.name);
       this.cardname = card.name;
@@ -357,6 +367,18 @@ export default {
   }
   .activeName {
     margin-left: 40px;
+  }
+  .tablist{
+    position: relative;
+    .downmatter{
+      position: absolute;
+      font-size: 14px;
+      line-height: 40px;
+      left: 200px;
+      color: #3297ff;
+      cursor: pointer;
+      z-index: 90;
+    }
   }
   .advanceCtr {
     margin-left: 40px;

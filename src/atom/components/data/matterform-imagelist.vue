@@ -45,6 +45,14 @@ export default {
   },
   mounted() {},
   methods: {
+    downMatter() {
+      let urlArr = this.imagematterlist.map(v => v.materialUrl);
+      console.log(urlArr);
+
+      urlArr.forEach(v => {
+        this.downloadFile(v);
+      })
+    },
     showBig(url) {
       window.open(url);
     },

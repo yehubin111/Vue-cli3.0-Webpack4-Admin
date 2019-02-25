@@ -168,6 +168,7 @@ export default {
                 break;
             }
             v.assetFeedSpec = JSON.stringify(active);
+            v.creativityType = 3;
           } else {
             switch (this.replaceType) {
               case "Name":

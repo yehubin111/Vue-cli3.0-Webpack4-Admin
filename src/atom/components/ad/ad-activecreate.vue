@@ -511,9 +511,7 @@ export default {
         this.form.descarr.length +
         this.form.titlearr.length +
         this.form.actionArr.length +
-        this.form.deeplink
-          ? 1
-          : 0;
+        (this.form.deeplink ? 1 : 0);
       if (this.createType == 0 && matterall > 28) {
         return [false, "图片+视频+文本+标题+行动号召+deeplink总数不能超过28"];
       }

@@ -167,6 +167,7 @@ export default {
                 active['link_urls'][0]['deeplink_url'] = arr[0].key;
                 break;
             }
+            delete active['descriptions'];
             v.assetFeedSpec = JSON.stringify(active);
             v.creativityType = 3;
           } else {

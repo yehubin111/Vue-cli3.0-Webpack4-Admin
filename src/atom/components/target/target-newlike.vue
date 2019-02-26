@@ -41,7 +41,7 @@
         </el-select>
         <p class="info">至少拥有100个用户</p>
       </el-form-item>
-      <el-form-item label="选择广告" v-show="liketype == 2">
+      <el-form-item label="选择广告组" v-show="liketype == 2">
         <el-select
           class="search"
           v-model="form.adset"

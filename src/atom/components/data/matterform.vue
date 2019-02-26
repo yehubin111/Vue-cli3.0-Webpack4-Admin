@@ -60,7 +60,7 @@
       </el-select>
     </div>
     <div class="tablist">
-      <span class="downmatter" @click="downMatter">下载所有素材</span>
+      <span class="downmatter" @click="downMatter">下载当页素材</span>
       <el-tabs v-model="activeName" class="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane label="图片" name="first">
           <div class="list">

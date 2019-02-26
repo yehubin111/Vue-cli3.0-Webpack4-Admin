@@ -11,15 +11,13 @@
         collapse-tags
         placeholder="广告账户"
         no-data-text="无数据，请输入或者改变关键字"
-        :remote-method="searchAccount"
-        @blur="clearArr('adaccount')"
         @change="toSort"
       >
         <el-option
-          v-for="(item, index) in adaccount"
-          :key="index"
-          :label="item.accountName + (item.fbAccountId?'('+item.fbAccountId+')':'')"
-          :value="item.fbAccountId"
+          v-for="item in adaccountlist"
+          :key="item.fbId"
+          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
+          :value="item.fbId"
         ></el-option>
       </el-select>
       <p class="download">
@@ -164,6 +162,8 @@ export default {
     };
 
     this.$store.dispatch("getMatterList", { option });
+
+    this.$store.dispatch("getAdaccount", projectId);
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -308,7 +308,8 @@ export default {
   computed: {
     ...mapState([
       "itemlist",
-      "adaccount",
+      // "adaccount",
+      "adaccountlist",
       "adcampaign",
       "dataage",
       "imagemattertotal",

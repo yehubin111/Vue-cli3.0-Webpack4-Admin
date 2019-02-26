@@ -6,7 +6,6 @@
         class="select"
         v-model="form.value1"
         filterable
-        remote
         multiple
         collapse-tags
         placeholder="广告账户"
@@ -198,17 +197,17 @@ export default {
       let v = [];
       this.SETSTATE({ k, v });
     },
-    searchAccount(kword) {
-      let accountKeyword = kword;
-      clearTimeout(moreoption);
+    // searchAccount(kword) {
+    //   let accountKeyword = kword;
+    //   clearTimeout(moreoption);
 
-      moreoption = setTimeout(() => {
-        this.$store.dispatch("getOptionMore", {
-          projectId: this.$route.params.id,
-          accountKeyword
-        });
-      }, 300);
-    },
+    //   moreoption = setTimeout(() => {
+    //     this.$store.dispatch("getOptionMore", {
+    //       projectId: this.$route.params.id,
+    //       accountKeyword
+    //     });
+    //   }, 300);
+    // },
     tableSort(sort) {
       this.sort = sort;
       this.toGetdata();

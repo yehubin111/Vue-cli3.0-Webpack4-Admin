@@ -127,7 +127,9 @@ export default {
                     if (arrayBuffer) {
                         downloadFile(fileName, arrayBuffer);
 
-                        resolve('download');
+                        setTimeout(() => {
+                            resolve('download');
+                        }, 2000);
                     }
                 }
                 oReq.send();

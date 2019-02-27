@@ -52,7 +52,7 @@ export default {
       urlArr.forEach(async (v, i) => {
         if (v) {
           console.log(i);
-          await this.downloadFile(v);
+          await this.$fileDownload(url);
         }
       });
     },
@@ -60,7 +60,7 @@ export default {
       window.open(url);
     },
     downloadFile(url) {
-      return this.$fileDownload(url);
+      this.$fileDownload(url);
     },
     sortChange({ column, prop, order }) {
       let sort = "";

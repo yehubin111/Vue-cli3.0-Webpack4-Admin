@@ -45,7 +45,7 @@ export default {
   },
   mounted() {},
   methods: {
-    downMatter() {
+    async downMatter() {
       let urlArr = this.imagematterlist.map(v => v.materialUrl);
       console.log(urlArr);
 

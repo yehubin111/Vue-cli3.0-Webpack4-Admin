@@ -49,12 +49,13 @@ export default {
       let urlArr = this.imagematterlist.map(v => v.materialUrl);
       console.log(urlArr);
 
-      urlArr.forEach(async (v, i) => {
+      for(let i = 1;i<urlArr.length;i++) {
+        let v = urlArr[i];
         if (v) {
-          console.log(i);
+          console.log(i + 1);
           await this.$fileDownload(v);
         }
-      });
+      }
     },
     showBig(url) {
       window.open(url);

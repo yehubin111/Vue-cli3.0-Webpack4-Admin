@@ -1,4 +1,7 @@
-const path = require('path')
+const path = require('path');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CompressionPlugin = require('compression-webpack-plugin');
+
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -45,6 +48,19 @@ module.exports = {
       alias: {
         'vue$': 'vue/dist/vue.esm.js',
         '@': resolve('src')
+      }
+    };
+    // 可视化性能分析
+    if (process.env.NODE_ENV === 'production') {
+      return {
+        plugins: [
+          new CompressionPlugin({
+            test: /\.js$|\.html$|\.css/,
+            threshold: 10240,
+            deleteOriginalAssets: false
+          }),
+          // new BundleAnalyzerPlugin()
+        ]
       }
     }
   },

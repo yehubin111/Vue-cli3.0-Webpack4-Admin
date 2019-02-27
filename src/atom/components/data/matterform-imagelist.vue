@@ -47,12 +47,10 @@ export default {
   methods: {
     async downMatter() {
       let urlArr = this.imagematterlist.map(v => v.materialUrl);
-      console.log(urlArr);
 
       for(let i = 1;i<urlArr.length;i++) {
         let v = urlArr[i];
         if (v) {
-          console.log(i + 1);
           await this.$fileDownload(v);
         }
       }

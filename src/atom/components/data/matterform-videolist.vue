@@ -51,12 +51,13 @@ export default {
       let urlArr = this.videomatterlist.map(v => v.materialId);
       console.log(urlArr);
 
-      urlArr.forEach(async v => {
+      for(let i = 1;i<urlArr.length;i++) {
+        let v = urlArr[i];
         if (v) {
           let res = await this.$store.dispatch("getVideoLink", v);
           await this.$fileDownload(res.data);
         }
-      });
+      }
     },
     async showBig(id) {
       // 先获取视频地址

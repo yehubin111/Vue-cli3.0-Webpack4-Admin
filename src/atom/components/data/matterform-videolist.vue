@@ -47,7 +47,7 @@ export default {
   },
   mounted() {},
   methods: {
-    downMatter() {
+    async downMatter() {
       let urlArr = this.videomatterlist.map(v => v.materialId);
       console.log(urlArr);
 

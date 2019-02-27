@@ -52,7 +52,7 @@ export default {
       urlArr.forEach(async (v, i) => {
         if (v) {
           console.log(i);
-          await this.$fileDownload(url);
+          await this.$fileDownload(v);
         }
       });
     },

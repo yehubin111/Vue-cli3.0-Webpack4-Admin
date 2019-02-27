@@ -102,7 +102,7 @@
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 export default {
-  props: ["status", "editid", "customtype"],
+  props: ["status", "editid", "customtype", "audienceId"],
   data() {
     return {
       dialogFormVisible: false,
@@ -279,7 +279,7 @@ export default {
       }
 
       let option = {
-        fbAudienceId: this.editid ? this.editid : "",
+        fbAudienceId: this.audienceId ? this.audienceId : "",
         // applicationId: this.form.app,
         // audienceType: "app",
         description: this.form.desc,
@@ -290,7 +290,7 @@ export default {
       };
 
       let k = "resultid";
-      let v = this.editid;
+      let v = this.audienceId;
       this.SETSTATE({ k, v });
 
       // 创建与编辑用同一逻辑

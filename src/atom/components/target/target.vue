@@ -124,6 +124,7 @@
     <target-add
       :status="status"
       :editid="editid"
+      :audienceId="audienceId"
       @showResult="showResult"
       :customtype="customtype"
       @cancelAddbm="cancelAddbm"
@@ -131,6 +132,7 @@
     <target-like
       :status="status2"
       :likeeditid="likeeditid"
+      :audienceId="audienceId"
       :liketype="liketype"
       @cancelAddbm="cancelAddbm"
       @showResult="showResult"
@@ -138,7 +140,7 @@
     <!-- <target-result :status="status3" :newaccount="newaccount" @cancelAddbm="cancelAddbm"></target-result> -->
     <target-delete :status.sync="deletestatus" :deleteids="deleteids" @hideBox="hideDeletebox"></target-delete>
     <target-share :status.sync="sharestatus" :shareids="shareids" @hideBox="hideSharebox"></target-share>
-    <target-special :status.sync="specialstatus" :editid="specialeditid" @hideBox="hideSpecialbox"></target-special>
+    <target-special :status.sync="specialstatus" :editid="specialeditid" :audienceId="audienceId" @hideBox="hideSpecialbox"></target-special>
   </div>
 </template>
 
@@ -185,6 +187,7 @@ export default {
       editid: "",
       specialeditid: "",
       likeeditid: "",
+      audienceId: "",
       liketype: "",
       customtype: "",
       // totalcount: 0,
@@ -236,8 +239,9 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
-    specialEdit(id) {
+    specialEdit(id, audienceId) {
       this.specialeditid = id;
+      this.audienceId = audienceId;
       this.specialstatus = true;
     },
     hideSpecialbox() {
@@ -289,13 +293,15 @@ export default {
       // this.totalcount = total;
       this.newaccount = account;
     },
-    likeEdit(id, ltype) {
+    likeEdit(id, ltype, audienceId) {
       this.likeeditid = id;
+      this.audienceId = audienceId;
       this.status2 = true;
       this.liketype = ltype;
     },
-    targetEdit(id) {
+    targetEdit(id, audienceId) {
       this.editid = id;
+      this.audienceId = audienceId;
       this.status = true;
     },
     selectCustom(key) {
@@ -315,6 +321,7 @@ export default {
       }
       if (key == "status2") {
         this.likeeditid = "";
+        this.audienceId = "";
       }
     },
     handleCommand(command) {

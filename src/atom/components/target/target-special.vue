@@ -20,7 +20,7 @@ import { mapState } from "vuex";
 import { Msgwarning } from "../../js/message";
 
 export default {
-  props: ["status", "editid"],
+  props: ["status", "editid", "audienceId"],
   data() {
     return {
       form: {
@@ -44,7 +44,7 @@ export default {
       }
       let option = {
         description: this.form.desc,
-        fbAudienceId: this.editid,
+        fbAudienceId: this.audienceId,
         name: this.form.name
       };
       let res = await this.$store.dispatch("addTarget", {

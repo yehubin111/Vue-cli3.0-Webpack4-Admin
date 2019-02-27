@@ -127,7 +127,7 @@
               type="text"
               size="small"
               :disabled="!scope.row.ifedit"
-              @click="toEdit(scope.row.id, scope.row.subtype, scope.row.childliketype)"
+              @click="toEdit(scope.row.id, scope.row.subtype, scope.row.childliketype, scope.row.audienceId)"
             >编辑</el-button>
           </span>
         </el-tooltip>
@@ -189,7 +189,7 @@ export default {
     toShare(id) {
       this.$emit("toShare", [id]);
     },
-    toEdit(id, type, liketype) {
+    toEdit(id, type, liketype, audienceId) {
       let ltype = "";
       if (liketype == "custom_audience") {
         ltype = 1;
@@ -201,13 +201,13 @@ export default {
 
       switch (type) {
         case "LOOKALIKE":
-          this.$emit("likeEdit", id, ltype);
+          this.$emit("likeEdit", id, ltype, audienceId);
           break;
         case "APP":
-          this.$emit("targetEdit", id);
+          this.$emit("targetEdit", id, audienceId);
           break;
         default:
-          this.$emit("specialEdit", id);
+          this.$emit("specialEdit", id, audienceId);
           break;
       }
     }

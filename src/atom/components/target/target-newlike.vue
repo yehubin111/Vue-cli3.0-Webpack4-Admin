@@ -132,7 +132,7 @@ import Clickoutside from "element-ui/src/utils/clickoutside";
 let timeout;
 let campaignaccount;
 export default {
-  props: ["status", "liketype", "likeeditid"], //liketype
+  props: ["status", "liketype", "likeeditid", "audienceId"], //liketype
   directives: {
     Clickoutside
   },
@@ -287,7 +287,7 @@ export default {
       let option = {
         adaccountId: this.form.account,
         description: this.form.desc,
-        fbAudienceId: this.likeeditid ? this.likeeditid : "",
+        fbAudienceId: this.audienceId ? this.audienceId : "",
         name: this.form.name
       };
       if (this.liketype == 1) {

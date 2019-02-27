@@ -34,7 +34,7 @@
 <script>
 import ReguformList from "./reguform-list";
 import { mapState } from "vuex";
-import echarts from "echarts";
+import echarts from "@echarts/js/charts.require.js";
 export default {
   components: {
     ReguformList

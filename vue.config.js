@@ -47,19 +47,20 @@ module.exports = {
       extensions: ['.js', '.vue', '.json', '.css', 'svg'],
       alias: {
         'vue$': 'vue/dist/vue.esm.js',
-        '@': resolve('src')
+        '@': resolve('src'),
+        '@echarts': resolve('src/atom')
       }
     };
     // 可视化性能分析
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.SPE_ENV === 'analyz') {
       return {
         plugins: [
-          new CompressionPlugin({
-            test: /\.js$|\.html$|\.css/,
-            threshold: 10240,
-            deleteOriginalAssets: false
-          }),
-          // new BundleAnalyzerPlugin()
+          // new CompressionPlugin({
+          //   test: /\.js$|\.html$|\.css/,
+          //   threshold: 10240,
+          //   deleteOriginalAssets: false
+          // }),
+          new BundleAnalyzerPlugin()
         ]
       }
     }

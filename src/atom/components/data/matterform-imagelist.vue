@@ -49,16 +49,18 @@ export default {
       let urlArr = this.imagematterlist.map(v => v.materialUrl);
       console.log(urlArr);
 
-      urlArr.forEach(v => {
-        if(v)
-          this.downloadFile(v);
-      })
+      urlArr.forEach(async (v, i) => {
+        if (v) {
+          console.log(i);
+          await this.downloadFile(v);
+        }
+      });
     },
     showBig(url) {
       window.open(url);
     },
     downloadFile(url) {
-      this.$fileDownload(url);
+      return this.$fileDownload(url);
     },
     sortChange({ column, prop, order }) {
       let sort = "";

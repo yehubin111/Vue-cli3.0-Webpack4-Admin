@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import echarts from "echarts";
+import echarts from "@echarts/js/charts.require.js";
 import { mapState } from "vuex";
 
 export default {

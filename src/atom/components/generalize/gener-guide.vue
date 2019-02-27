@@ -40,7 +40,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import echarts from "echarts";
+import echarts from "@echarts/js/charts.require.js";
 export default {
   props: ["bid", "maxbid", "moneytype", "money"],
   data() {

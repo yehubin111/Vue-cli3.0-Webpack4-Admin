@@ -204,8 +204,9 @@ export default {
       this.firstSearch = "";
     },
     selectCare(key, importkey) {
+      console.log(key, importkey);
       // 排除轮播以外的第一级选项，点击无需请求接口
-      if (!key && !importkey) return;
+      // if (!key && !importkey) return;
 
       this.searchList.forEach(v => {
         if (v.key == this.firstKey) {

@@ -48,7 +48,7 @@ export default {
     async downMatter() {
       let urlArr = this.imagematterlist.map(v => v.materialUrl);
 
-      for(let i = 1;i<urlArr.length;i++) {
+      for(let i = 0;i<urlArr.length;i++) {
         let v = urlArr[i];
         if (v) {
           await this.$fileDownload(v);

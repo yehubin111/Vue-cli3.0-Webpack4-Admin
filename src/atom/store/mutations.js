@@ -1532,11 +1532,19 @@ export default {
             cm.exportEXCEL("outAdList", name, str, 'xls');
         } else if (type == 0) {
             state.imagematterlist = res.data.list;
+            state.imagematterlist.forEach(v => {
+                v.ctr = v.ctr * 100 + '%';
+                v.cvr = v.cvr * 100 + '%';
+            })
             state.imagemattersum = res.data;
             state.imagemattertotal = res.data.count;
             delete (state.imagemattersum, 'list');
         } else {
             state.videomatterlist = res.data.list;
+            state.videomatterlist.forEach(v => {
+                v.ctr = v.ctr * 100 + '%';
+                v.cvr = v.cvr * 100 + '%';
+            })
             state.videomattersum = res.data;
             state.videomattertotal = res.data.count;
             delete (state.videomattersum, 'list');

@@ -68,7 +68,7 @@
               :class="{list: true, selected: scd.checked}"
               v-for="(scd, sindex) in secondSearchList"
               :key="sindex"
-              @click="selectCare(scd.key)"
+              @click="selectCare(scd.key, scd.key)"
             >{{scd.cname}}</div>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default {
     selectCare(key, importkey) {
       console.log(key, importkey);
       // 排除轮播以外的第一级选项，点击无需请求接口
-      // if (!key && !importkey) return;
+      if (!key && importkey === undefined) return;
 
       this.searchList.forEach(v => {
         if (v.key == this.firstKey) {

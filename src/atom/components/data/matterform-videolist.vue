@@ -18,7 +18,7 @@
           <i
             class="el-icon-download download"
             @click="downloadFile(scope.row.materialId)"
-            v-show="scope.row.materialUrl"
+            v-show="scope.row.materialId"
           ></i>
         </div>
       </template>
@@ -63,7 +63,10 @@ export default {
     async showBig(id) {
       // 先获取视频地址
       let res = await this.$store.dispatch("getVideoLink", id);
-      window.open(res.data);
+      if(res.data)
+        window.open(res.data);
+      else
+        Msgwarning('无视频');
     },
     async downloadFile(id) {
       //   let loading = Loading.service({ fullscreen: true });

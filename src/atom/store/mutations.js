@@ -226,6 +226,7 @@ export default {
     },
     APPINFOTABLETOTAL(state, r) {
         state.appcpitotal = r.data;
+        state.appcpitotal['2d_rr_user|uniqueUsers'] = state.appcpitotal['afUniqueUsers'];
     },
     APPINFOTABLEOUT(state, { res, name }) {
         state.appdataall = res.data.pageInfoAll.list;
@@ -959,6 +960,7 @@ export default {
     },
     ADLISTTOTAL(state, r) {
         state.adlisttotal = r.data;
+        // state.adlisttotal['2d_rr_user|uniqueUsers'] = state.appcpitotal['afUniqueUsers'];
     },
     ADLISTTIMEOUT(state) {
         state.adlisttimeout = true;

@@ -1851,6 +1851,7 @@ export default {
         if (!editType) {
             // 获取合计数据
             let totalurl = URL.adlisttotal;
+            commit('SETSTATE', { k: 'adlisttotal', v: {} })
             Axios({
                 url: totalurl,
                 method: 'post',
@@ -2018,7 +2019,7 @@ export default {
             success: res => {
                 let obj = Object.entries(res.data);
                 let failobj = obj.filter(v => !v[1]);
-                if(failobj.length > 0) {
+                if (failobj.length > 0) {
                     let failname = failobj.map(v => v[0]).join(',');
                     Msgerror(`以下${typename}查找替换失败：${failname}`);
                 } else {

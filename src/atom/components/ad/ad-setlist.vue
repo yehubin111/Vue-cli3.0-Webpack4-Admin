@@ -221,7 +221,7 @@ export default {
                 ? this.adlisttotal[column.property]
                 : "";
             sums[index] =
-              d + (persentArray.indexOf(column.property) != -1 ? "%" : "");
+              d + (d && persentArray.indexOf(column.property) != -1 ? "%" : "");
             break;
         }
       });

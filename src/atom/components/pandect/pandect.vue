@@ -63,7 +63,8 @@ export default {
       "appdatatotal",
       "countryfilter",
       "appcount",
-      "ifaccount"
+      "ifaccount",
+      "appdataindex"
     ])
   },
   created() {

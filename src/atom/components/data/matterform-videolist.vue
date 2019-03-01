@@ -55,7 +55,8 @@ export default {
         let v = urlArr[i];
         if (v) {
           let res = await this.$store.dispatch("getVideoLink", v);
-          await this.$fileDownload(res.data);
+          if(res.data)
+            await this.$fileDownload(res.data);
         }
       }
     },
@@ -69,7 +70,8 @@ export default {
       Msgwarning("视频素材正在下载中...");
       // 先获取视频地址
       let res = await this.$store.dispatch("getVideoLink", id);
-      let down = await this.$fileDownload(res.data);
+      if(res.data)
+        await this.$fileDownload(res.data);
       //   loading.close();
     },
     sortChange({ column, prop, order }) {

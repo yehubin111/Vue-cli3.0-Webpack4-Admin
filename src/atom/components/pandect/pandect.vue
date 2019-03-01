@@ -25,6 +25,7 @@
             @size-change="pageSizeChange"
             layout="total, sizes, prev, pager, next, jumper"
             :total="appdatatotal"
+            :current-page="appdataindex"
             :page-sizes="[20, 200, 500]"
             :page-size="20"
             @current-change="pageSwitch"

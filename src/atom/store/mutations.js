@@ -801,8 +801,8 @@ export default {
         });
         let allcare = caredata.concat(afcaredata);
         allcare.forEach(v => {
-            v['afMinsRate'] = v['installNum'] ? ((v['afInstallsNum'] - v['installNum']) * 100 / v['installNum']).toFixed(2) : null;
-            v['afCpi'] = v['afInstallsNum'] ? (v['spend'] / v['afInstallsNum']).toFixed(2) : null;
+            v['afMinsRate'] = v['installNum'] && v['afInstallsNum'] ? ((v['afInstallsNum'] - v['installNum']) * 100 / v['installNum']).toFixed(2) : null;
+            v['afCpi'] = v['afInstallsNum'] && v['spend'] ? (v['spend'] / v['afInstallsNum']).toFixed(2) : null;
         })
         // console.log(allcare);
         // 按照下标，在列表数组中插入细分数据

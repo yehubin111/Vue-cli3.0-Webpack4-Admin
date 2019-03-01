@@ -274,7 +274,7 @@ export default {
 
       this.SETSTATE({ k, v });
 
-      this.SETSTATE({k: 'appdataindex', v: 1});
+      // this.SETSTATE({k: 'appdataindex', v: 1});
 
       this.$store.dispatch("selectApp");
     },

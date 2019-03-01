@@ -274,6 +274,8 @@ export default {
 
       this.SETSTATE({ k, v });
 
+      this.SETSTATE({k: 'appdataindex', v: 1});
+
       this.$store.dispatch("selectApp");
     },
     toFilter(filters) {
@@ -304,6 +306,8 @@ export default {
       k = "appdataimporession";
       v = imporessionar.join(",");
       this.SETSTATE({ k, v });
+
+      this.SETSTATE({k: 'appdataindex', v: 1});
 
       this.$store.dispatch("selectApp");
     },

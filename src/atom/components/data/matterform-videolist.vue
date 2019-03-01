@@ -75,6 +75,8 @@ export default {
       let res = await this.$store.dispatch("getVideoLink", id);
       if(res.data)
         await this.$fileDownload(res.data);
+      else 
+        Msgwarning('无视频');
       //   loading.close();
     },
     sortChange({ column, prop, order }) {

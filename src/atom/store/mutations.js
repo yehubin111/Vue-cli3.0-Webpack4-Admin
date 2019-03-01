@@ -800,6 +800,7 @@ export default {
             }
         });
         let allcare = caredata.concat(afcaredata);
+        console.log(allcare);
         allcare.forEach(v => {
             allcare['afMinsRate'] = allcare['installNum'] ? (allcare['afInstallsNum'] - allcare['installNum']) / allcare['installNum'] : null;
             allcare['afCpi'] = allcare['afInstallsNum'] ? allcare['spend'] / allcare['afInstallsNum'] : null;

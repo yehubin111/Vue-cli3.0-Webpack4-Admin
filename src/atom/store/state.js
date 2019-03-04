@@ -201,6 +201,7 @@ export default {
       name: '按轮播卡片', key: 'partOptions', importkey: 'material_id', list:[]
     }
   ],
+  adapplicationid: '', // appid 保存广告管理自定义列
   adlisttimeout: false, // 广告管理列表超时情况处理
   adcount: 0,
   adsetcount: 0,

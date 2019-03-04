@@ -708,6 +708,8 @@ export default {
         v => v.id == projectId
       ).applicationId;
 
+      this.SETSTATE({k: 'adapplicationid', v: this.applicationid});
+
       this.initData(this.applicationid);
     }
     // 初始化获取已保存筛选条件

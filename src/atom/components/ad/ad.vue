@@ -707,7 +707,7 @@ export default {
       this.applicationid = this.itemlist.find(
         v => v.id == projectId
       ).applicationId;
-
+  
       this.SETSTATE({k: 'adapplicationid', v: this.applicationid});
 
       this.initData(this.applicationid);

@@ -1802,9 +1802,10 @@ export default {
                 console.log(err);
             })
     },
-    async getAdlist({ state, commit, dispatch }, { option, loading = false, fullScreen = true, type, applicationid = state.adapplicationid, editType = '', name = '', customOption = null, outNotify = null }) {
+    async getAdlist({ state, commit, dispatch }, { option, loading = false, fullScreen = true, type, applicationid, editType = '', name = '', customOption = null, outNotify = null }) {
         let url = URL.adlistnew;
         let load;
+        applicationid = applicationid ? applicationid : state.adapplicationid;
         console.log(adEventLS.new);
         console.log(applicationid);
         let eventsName = localStorage.getItem(adEventLS.new) && JSON.parse(localStorage.getItem(adEventLS.new))[applicationid] ? JSON.parse(localStorage.getItem(adEventLS.new))[applicationid].join(',') : '';

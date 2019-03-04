@@ -667,13 +667,6 @@ export default {
     }
 
     let dt = this.date;
-    // 初始化从本地缓存获取筛选条件
-    this.allCondition = localStorage.getItem(adFilterLS.new)
-      ? JSON.parse(localStorage.getItem(adFilterLS.new))
-      : {};
-    this.disCondition = this.allCondition[this.$route.params.id]
-      ? this.allCondition[this.$route.params.id]
-      : [];
     // 初始化从本地缓存获取广告账户
     this.accountStorage = localStorage.getItem("ad-account")
       ? JSON.parse(localStorage.getItem("ad-account"))
@@ -706,6 +699,14 @@ export default {
       this.applicationid = this.itemlist.find(
         v => v.id == projectId
       ).applicationId;
+
+      // 初始化从本地缓存获取筛选条件
+      this.allCondition = localStorage.getItem(adFilterLS.new)
+        ? JSON.parse(localStorage.getItem(adFilterLS.new))
+        : {};
+      this.disCondition = this.allCondition[this.applicationid]
+        ? this.allCondition[this.applicationid]
+        : [];
 
       this.initData(this.applicationid);
     }

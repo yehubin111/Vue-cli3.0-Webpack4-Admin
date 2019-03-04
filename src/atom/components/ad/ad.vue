@@ -775,6 +775,7 @@ export default {
       } else pandectEvent = JSON.parse(pandectEvent);
 
       pandectEvent[applicationid] = localEvent;
+      console.log(localEvent);
       localStorage.setItem(adEventLS.new, JSON.stringify(pandectEvent));
 
       this.resetPageData();

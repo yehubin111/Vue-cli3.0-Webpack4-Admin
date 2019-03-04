@@ -708,8 +708,6 @@ export default {
         v => v.id == projectId
       ).applicationId;
 
-      console.log(this.applicationid);
-  
       this.SETSTATE({k: 'adapplicationid', v: this.applicationid});
 
       this.initData(this.applicationid);
@@ -1369,6 +1367,8 @@ export default {
         let applicationid = n.find(v => v.id == this.$route.params.id)
           .applicationId;
 
+        this.SETSTATE({k: 'adapplicationid', v: applicationid});
+
         this.initData(applicationid);
       }
     },
@@ -1391,6 +1391,7 @@ export default {
         this.tabname = "first";
         this.SETSTATE({ k: "adtab", v: "campaignName" });
         let applicationid = this.itemlist.find(v => v.id == n).applicationId;
+        this.SETSTATE({k: 'adapplicationid', v: applicationid});
         // 重置开关
         // this.$refs["campaignName"].changeFilterSwitch(true);
         // this.$refs["adSetName"].changeFilterSwitch(true);

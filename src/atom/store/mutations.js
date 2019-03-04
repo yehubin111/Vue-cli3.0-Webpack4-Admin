@@ -960,7 +960,7 @@ export default {
     },
     ADLISTTOTAL(state, r) {
         state.adlisttotal = r.data;
-        // state.adlisttotal['2d_rr_user|uniqueUsers'] = state.appcpitotal['afUniqueUsers'];
+        state.adlisttotal['2d_rr_user|uniqueUsers'] = state.adlisttotal['afUniqueUsers'];
     },
     ADLISTTIMEOUT(state) {
         state.adlisttimeout = true;

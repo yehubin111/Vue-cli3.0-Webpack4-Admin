@@ -37,7 +37,7 @@ export default {
 }
 .slide-right-enter {
   opacity: 0;
-  transform: translate3d(-100%, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 .slide-right-leave-active {
   opacity: 0;
@@ -49,7 +49,7 @@ export default {
 }
 .slide-left-leave-active {
   opacity: 0;
-  transform: translate3d(-100%, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 </style>
 

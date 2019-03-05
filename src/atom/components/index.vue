@@ -3,9 +3,7 @@
     <el-header>
       <top-header></top-header>
     </el-header>
-    <!-- <transition name="bottom-slide-fade"> -->
-      <router-view></router-view>
-    <!-- </transition> -->
+    <router-view></router-view>
   </el-container>
 </template>
 <script>

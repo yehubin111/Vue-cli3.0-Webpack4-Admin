@@ -28,9 +28,10 @@ export default {
 </script>
 <style>
 .slide-right-enter-active,
-.slide-right-leave-active,
+/* .slide-right-leave-active, */
 .slide-left-enter-active,
-.slide-left-leave-active {
+/* .slide-left-leave-active */
+ {
   will-change: transform;
   transition: all 500ms;
   position: absolute;

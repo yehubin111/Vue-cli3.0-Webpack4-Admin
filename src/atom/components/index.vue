@@ -1,11 +1,12 @@
 <template>
-
-<el-container>
-  <el-header>
-    <top-header></top-header>
-  </el-header> 
-  <router-view></router-view>
-</el-container> 
+  <el-container>
+    <el-header>
+      <top-header></top-header>
+    </el-header>
+    <!-- <transition name="bottom-slide-fade"> -->
+      <router-view></router-view>
+    <!-- </transition> -->
+  </el-container>
 </template>
 <script>
 import TopHeader from "./header";

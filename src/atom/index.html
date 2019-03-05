@@ -20,7 +20,7 @@
     <div id="app"></div>
     <script>
         function taskDetail() {
-            
+
         }
 
         var myChart;
@@ -110,7 +110,7 @@
             font-size: 14px;
         }
 
-        .el-icon-success{
+        .el-icon-success {
             font-size: 14px;
             color: #67c23a;
         }
@@ -127,6 +127,37 @@
 
         .el-message-box__message p {
             word-break: break-all;
+        }
+
+        .right-slide-fade-enter-active {
+            will-change: transform;
+            transition: all 500ms;
+            position: absolute;
+        }
+
+        .right-slide-fade-enter-to {
+            opacity: 1;
+            transform: translate3d(200px, 0, 0);
+        }
+
+        .right-slide-fade-enter {
+            opacity: 0;
+            transform: translate3d(200px, 0, 0);
+        }
+        .bottom-slide-fade-enter-active {
+            will-change: transform;
+            transition: all 500ms;
+            position: absolute;
+        }
+
+        .bottom-slide-fade-enter-to {
+            opacity: 1;
+            transform: translate3d(0, 60px, 0);
+        }
+
+        .bottom-slide-fade-enter {
+            opacity: 0;
+            transform: translate3d(0, 60px, 0);
         }
 
         /* body .el-table th.gutter {

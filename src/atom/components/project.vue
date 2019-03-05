@@ -7,7 +7,7 @@
       <el-aside width="200px" class="aside">
         <left-nav></left-nav>
       </el-aside>
-      <transition name="slide-left">
+      <transition name="right-slide-fade">
         <router-view></router-view>
       </transition>
     </el-container>
@@ -26,33 +26,6 @@ export default {
   }
 };
 </script>
-<style>
-.slide-right-enter-active,
-/* .slide-right-leave-active, */
-.slide-left-enter-active
-/* .slide-left-leave-active */
- {
-  will-change: transform;
-  transition: all 30000ms;
-  position: absolute;
-}
-.slide-right-enter {
-  opacity: 0;
-  transform: translate3d(0, 0, 0);
-}
-.slide-right-leave-active {
-  opacity: 0;
-  transform: translate3d(100%, 0, 0);
-}
-.slide-left-enter {
-  opacity: 0;
-  transform: translate3d(100%, 0, 0);
-}
-.slide-left-leave-active {
-  opacity: 0;
-  transform: translate3d(0, 0, 0);
-}
-</style>
 
 <style lang="less" scoped>
 .el-header {
@@ -67,6 +40,7 @@ export default {
     margin-right: 0;
     text-align: center;
     margin-top: 20px;
+    width: 200px;
   }
 }
 </style>

@@ -612,7 +612,6 @@ export default {
     },
     saveList() {
       let option = this.cantDeleteOption.concat(this.selectOption);
-      console.log(this.localEvent);
       this.$emit("outOption", option, this.selectOption, this.localEvent);
 
       this.dialogFormVisible = false;

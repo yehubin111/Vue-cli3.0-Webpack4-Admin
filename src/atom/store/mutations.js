@@ -1016,7 +1016,6 @@ export default {
         state.createcampaignlist = res.data;
     },
     ADSETINFO(state, { res, applicationid }) {
-        console.log(applicationid);
         state.editadsetlist = res.data;
         state.editadsetlist.forEach(v => {
             let userOs = v.userOs.split('_');
@@ -1539,8 +1538,8 @@ export default {
         } else if (type == 0) {
             state.imagematterlist = res.data.list;
             state.imagematterlist.forEach(v => {
-                v.ctr = v.ctr * 100 + '%';
-                v.cvr = v.cvr * 100 + '%';
+                v.ctr = (v.ctr * 100).toFixed(2) + '%';
+                v.cvr = (v.cvr * 100).toFixed(2) + '%';
             })
             state.imagemattersum = res.data;
             state.imagemattertotal = res.data.count;
@@ -1548,8 +1547,8 @@ export default {
         } else {
             state.videomatterlist = res.data.list;
             state.videomatterlist.forEach(v => {
-                v.ctr = v.ctr * 100 + '%';
-                v.cvr = v.cvr * 100 + '%';
+                v.ctr = (v.ctr * 100).toFixed(2) + '%';
+                v.cvr = (v.cvr * 100).toFixed(2) + '%';
             })
             state.videomattersum = res.data;
             state.videomattertotal = res.data.count;

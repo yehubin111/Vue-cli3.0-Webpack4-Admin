@@ -1806,8 +1806,6 @@ export default {
         let url = URL.adlistnew;
         let load;
         applicationid = applicationid ? applicationid : state.adapplicationid;
-        console.log(adEventLS.new);
-        console.log(applicationid);
         let eventsName = localStorage.getItem(adEventLS.new) && JSON.parse(localStorage.getItem(adEventLS.new))[applicationid] ? JSON.parse(localStorage.getItem(adEventLS.new))[applicationid].join(',') : '';
         /*
          * 如果广告系列有勾选，则广告组以及广告根据筛选条件来获取数据
@@ -1949,9 +1947,6 @@ export default {
                 opts = 'ad_option';
                 break;
         }
-
-        console.log(opts);
-        console.log(state[opts]);
 
         Axios({
             url,

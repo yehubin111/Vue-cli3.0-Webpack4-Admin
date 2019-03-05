@@ -29,7 +29,7 @@ export default {
 <style>
 .slide-right-enter-active,
 /* .slide-right-leave-active, */
-.slide-left-enter-active,
+.slide-left-enter-active
 /* .slide-left-leave-active */
  {
   will-change: transform;

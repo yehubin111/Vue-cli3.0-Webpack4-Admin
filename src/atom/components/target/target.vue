@@ -153,6 +153,7 @@ import TargetLike from "./target-newlike";
 import TargetSpecial from "./target-special";
 // import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
+import { setTimeout } from 'timers';
 let targetsearch;
 export default {
   components: {
@@ -306,8 +307,11 @@ export default {
     },
     selectCustom(key) {
       this.customtype = key;
-      this.status = true;
       this.dialogFormVisible2 = false;
+
+      setTimeout(() => {
+        this.status = true;
+      }, 300);
     },
     selectLike(key) {
       this.liketype = key;

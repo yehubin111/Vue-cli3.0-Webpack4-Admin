@@ -315,8 +315,11 @@ export default {
     },
     selectLike(key) {
       this.liketype = key;
-      this.status2 = true;
       this.dialogFormVisible = false;
+
+      setTimeout(() => {
+        this.status2 = true;
+      }, 300);
     },
     cancelAddbm(key) {
       this[key] = false;

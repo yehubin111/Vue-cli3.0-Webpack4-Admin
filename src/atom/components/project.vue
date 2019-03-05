@@ -7,7 +7,7 @@
       <el-aside width="200px" class="aside">
         <left-nav></left-nav>
       </el-aside>
-      <transition name="slide">
+      <transition name="slide-left">
         <router-view></router-view>
       </transition>
     </el-container>

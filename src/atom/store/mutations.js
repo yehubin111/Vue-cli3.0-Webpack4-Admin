@@ -1212,7 +1212,16 @@ export default {
     },
     DATALIST(state, r) {
         state.datalist = r.data.list;
+        state.datalist.forEach(v => {
+            v['ctr'] = v['ctr'] ? (v['ctr'] * 100).toFixed(2) + '%' : v['ctr'];
+            v['cvr'] = v['cvr'] ? (v['cvr'] * 100).toFixed(2) + '%' : v['cvr'];
+        });
         state.datatotal = r.data.total;
+        state.datasum = r.data;
+        delete (state.datasum, 'list');
+
+        state.datasum['ctr'] = state.datasum['ctr'] ? (state.datasum['ctr'] * 100).toFixed(2) + '%' : state.datasum['ctr'];
+        state.datasum['cvr'] = state.datasum['cvr'] ? (state.datasum['cvr'] * 100).toFixed(2) + '%' : state.datasum['cvr'];
     },
     DATALISTOUT(state, { res, name }) {
         let dt = res.data.list;
@@ -1316,6 +1325,7 @@ export default {
             if (v.imageUrl)
                 v.img = eval('(' + v.imageUrl + ')').imageUrl;
         })
+        state.createformsum = r.data.createSum ? r.data.createSum : {};
     },
     CREATECARD(state, r) {
         state.createcardlist = r.data.list;
@@ -1544,6 +1554,9 @@ export default {
             state.imagemattersum = res.data;
             state.imagemattertotal = res.data.count;
             delete (state.imagemattersum, 'list');
+
+            state.imagemattersum['ctr'] = state.imagemattersum['ctr'] ? (state.imagemattersum['ctr'] * 100).toFixed(2) + '%' : state.imagemattersum['ctr'];
+            state.imagemattersum['cvr'] = state.imagemattersum['cvr'] ? (state.imagemattersum['cvr'] * 100).toFixed(2) + '%' : state.imagemattersum['cvr'];
         } else {
             state.videomatterlist = res.data.list;
             state.videomatterlist.forEach(v => {
@@ -1553,6 +1566,9 @@ export default {
             state.videomattersum = res.data;
             state.videomattertotal = res.data.count;
             delete (state.videomattersum, 'list');
+
+            state.videomattersum['ctr'] = state.videomattersum['ctr'] ? (state.videomattersum['ctr'] * 100).toFixed(2) + '%' : state.videomattersum['ctr'];
+            state.videomattersum['cvr'] = state.videomattersum['cvr'] ? (state.videomattersum['cvr'] * 100).toFixed(2) + '%' : state.videomattersum['cvr'];
         }
     },
     // target 

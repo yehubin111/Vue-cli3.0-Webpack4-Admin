@@ -14,38 +14,38 @@
     <el-table-column prop="clicksNum" label="点击" sortable="custom" width="90"></el-table-column>
     <el-table-column prop="ctr" label="CTR" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.ctr?parseFloat(scope.row.ctr).toFixed(2):'--'}}</span>
+        <span>{{scope.row.ctr}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="cvr" label="CVR" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.cvr?parseFloat(scope.row.cvr).toFixed(2):'--'}}</span>
+        <span>{{scope.row.cvr?scope.row.cvr:'--'}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="cpm" label="CPM" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.cpm?parseFloat(scope.row.cpm).toFixed(2):'--'}}</span>
+        <span>{{scope.row.cpm?scope.row.cpm:'--'}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="cpc" label="CPC" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.cpc?parseFloat(scope.row.cpc).toFixed(2):'--'}}</span>
+        <span>{{scope.row.cpc?scope.row.cpc:'--'}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="relevanceScore" label="相关度" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.relevanceScore?parseFloat(scope.row.relevanceScore).toFixed(2):'--'}}</span>
+        <span>{{scope.row.relevanceScore?scope.row.relevanceScore:'--'}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="installsNum" label="安装" sortable="custom" width="90"></el-table-column>
     <el-table-column prop="spend" label="花费" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.spend?parseFloat(scope.row.spend).toFixed(2):'--'}}</span>
+        <span>{{scope.row.spend?scope.row.spend:'--'}}</span>
       </template>
     </el-table-column>
     <el-table-column prop="cpi" label="CPI" sortable="custom" width="90">
       <template slot-scope="scope">
-        <span>{{scope.row.cpi?parseFloat(scope.row.cpi).toFixed(2):'--'}}</span>
+        <span>{{scope.row.cpi?scope.row.cpi:'--'}}</span>
       </template>
     </el-table-column>
   </el-table>
@@ -114,43 +114,32 @@ export default {
       this.$emit("tableSort", sort);
     },
     getSummaries(param) {
-      const { columns, data } = param;
-      const sums = [];
+      let { columns, data } = param;
+      let sums = [];
+      let keyarr = [
+        "reachNum",
+        "showNum",
+        "clicksNum",
+        "ctr",
+        "cvr",
+        "cpm",
+        "cpc",
+        "relevanceScore",
+        "installsNum",
+        "spend",
+        "cpi"
+      ];
       columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = "合计";
-          return;
-        } else if (
-          index === 1 ||
-          index === 8 ||
-          index === 5 ||
-          index === 6 ||
-          index === 7
-        ) {
-          sums[index] = "";
-          return;
-        } else if (index === 12) {
-          sums[12] = isNaN((sums[11] / sums[10]).toFixed(2))
-            ? ""
-            : (sums[11] / sums[10]).toFixed(2);
-          return;
-        }
-        const values = data.map(item => Number(item[column.property]));
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          }, 0);
-          sums[index] =
-            sums[index].toString().indexOf(".") != -1
-              ? sums[index].toFixed(2)
-              : sums[index];
-        } else {
-          sums[index] = "";
+        switch (index) {
+          case 0:
+            sums[index] = "合计";
+            break;
+          case 1:
+            sums[index] = "";
+            break;
+          default:
+            sums[index] = this.datasum[keyarr[index - 2]];
+            break;
         }
       });
 
@@ -158,7 +147,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["datalist"])
+    ...mapState(["datalist", "datasum"])
   }
 };
 </script>

@@ -282,11 +282,13 @@ export default {
   dataimpression: [], // 版位
   datalist: [], // 账户报表列表
   datatotal: 0,
+  datasum: {},
   datasort: '', // 排序
   adformlist: [],
   adformtotal: 0,
   createformlist: [],
   createformtotal: 0,
+  createformsum: {},
   createcardlist: [],
   createcardtotal: 0,
   daycpilist: [],

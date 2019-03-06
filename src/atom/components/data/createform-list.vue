@@ -103,45 +103,34 @@ export default {
       this.$emit("tableSort", sort);
     },
     getSummaries(param) {
-      const { columns, data } = param;
-      const sums = [];
+      let { columns, data } = param;
+      let sums = [];
+      let keyarr = [
+        "reachNum",
+        "showNum",
+        "clicksNum",
+        "ctr",
+        "cvr",
+        "cpm",
+        "cpc",
+        "relevanceScore",
+        "installsNum",
+        "spend",
+        "cpi"
+      ];
       columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = "合计";
-          return;
-        } else if (
-          index === 1 ||
-          index === 2 ||
-          index === 3 ||
-          index === 8 ||
-          index === 9 ||
-          index === 10 ||
-          index === 7
-        ) {
-          sums[index] = "";
-          return;
-        } else if (index === 14) {
-          sums[14] = isNaN((sums[13] / sums[12]).toFixed(2))
-            ? ""
-            : (sums[13] / sums[12]).toFixed(2);
-          return;
-        }
-        const values = data.map(item => Number(item[column.property]));
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          }, 0);
-          sums[index] =
-            sums[index].toString().indexOf(".") != -1
-              ? sums[index].toFixed(2)
-              : sums[index];
-        } else {
-          sums[index] = "";
+        switch (index) {
+          case 0:
+            sums[index] = "合计";
+            break;
+          case 1:
+          case 2:
+          case 3:
+            sums[index] = "";
+            break;
+          default:
+            sums[index] = this.createformsum[keyarr[index - 4]];
+            break;
         }
       });
 
@@ -149,7 +138,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["createformlist"])
+    ...mapState(["createformlist", "createformsum"])
   }
 };
 </script>

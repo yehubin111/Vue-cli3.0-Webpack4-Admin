@@ -49,7 +49,7 @@ export default {
   methods: {
     async downMatter() {
       let urlArr = this.videomatterlist.map(v => v.materialId);
-      console.log(urlArr);
+      // console.log(urlArr);
 
       for(let i = 0;i<urlArr.length;i++) {
         let v = urlArr[i];

@@ -1216,7 +1216,7 @@ export default {
             v['ctr'] = v['ctr'] ? (v['ctr'] * 100).toFixed(2) + '%' : v['ctr'];
             v['cvr'] = v['cvr'] ? (v['cvr'] * 100).toFixed(2) + '%' : v['cvr'];
         });
-        state.datatotal = r.data.total;
+        state.datatotal = r.data.count;
         state.datasum = r.data;
         delete (state.datasum, 'list');
 

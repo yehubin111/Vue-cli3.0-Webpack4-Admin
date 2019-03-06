@@ -1369,7 +1369,7 @@ export default {
 
         dt.forEach(v => {
             str += "<tr>";
-            str += `<td style="mso-number-format:'\\@'">${v['fbAdCreativeId']}</td>`;
+            str += `<td style="mso-number-format:'\\@'">${v['creativeId']}</td>`;
             str += `<td>${v['adCreativeName']}</td>`;
             str += `<td>${v.imageUrl ? eval('(' + v.imageUrl + ')').imageUrl : ''}</td>`;
             str += `<td>${v['country'] ? v['country'] : ''}</td>`;

@@ -7,7 +7,7 @@ export default {
         BASE_URL: 'http://172.31.1.45/api', //http://172.31.1.45
         UPLOAD_URL: 'http://172.31.1.45/api',
         WEBSOCKET_URL: '172.31.1.45:9600',
-        MD5_URL: 'http://172.31.1.45'
+        MD5_URL: 'http://172.31.1.45/api'
 
         // BASE_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.17.190:9600/', // wuhonggang
         // BASE_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.5.226:9600',

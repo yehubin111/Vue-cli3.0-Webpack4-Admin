@@ -1,7 +1,6 @@
 // import dt from '../js/data.js'
 import _axios from '../js/axiospack';
 import AX from '../js/axiosclass';
-// import AXIOS from '../js/axiospack2.0';
 // import axios from 'axios';
 import URL from '../js/url.js'
 import WS from '../js/websocket'

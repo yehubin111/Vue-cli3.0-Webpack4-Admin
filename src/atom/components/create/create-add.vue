@@ -740,6 +740,9 @@ export default {
         videoUrl: videoobj ? JSON.stringify(videoobj) : ""
       };
 
+      console.log(option);
+      return;
+
       this.$store.dispatch("toAddCreate", {
         option,
         id: this.$route.params.id

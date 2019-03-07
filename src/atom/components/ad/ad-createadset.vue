@@ -952,6 +952,8 @@ export default {
             : this.campainsortlist[0].campaignId +
               "|act_" +
               this.campainsortlist[0].accountId;
+        // 初始化获取受众列表
+        this.accountToAudience();
       }
 
       if (this.form.campaign) {

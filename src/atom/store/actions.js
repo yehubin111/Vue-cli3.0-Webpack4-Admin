@@ -2648,14 +2648,16 @@ export default {
     },
     getMatterList({ state, commit }, { option, name = '' }) {
         let url = URL.matterlist;
-
-        _axios.post(url, option, { fullScreen: true })
-            .then(res => {
+        
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => {
                 commit('MATTERLIST', { res, type: option.materialType, name });
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     getVideoLink({ state, commit }, videoid) {
         let url = `${URL.getvideourl}videoId=${videoid}`;

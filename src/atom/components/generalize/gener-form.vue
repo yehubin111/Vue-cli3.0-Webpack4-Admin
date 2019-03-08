@@ -402,7 +402,7 @@ export default {
         name: "",
         type: this.$route.params.fid == 1 ? "manual" : "auto",
         country: "",
-        platform: "",
+        platform: "google_play",
 
         target: this.targetid ? [this.targetid] : [],
         iftarget: ["1"],

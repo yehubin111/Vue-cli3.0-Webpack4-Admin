@@ -563,6 +563,10 @@ export default {
         this.$store.dispatch("getCreatePlatform", { applicationid });
       }
     },
+    equip(n, o) {
+      this.form.equip =
+        n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];
+    },
     "form.name": {
       handler(n, o) {
         this.$emit("changeEdit", false);

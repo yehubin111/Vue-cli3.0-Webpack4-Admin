@@ -402,7 +402,7 @@ export default {
         name: "",
         type: this.$route.params.fid == 1 ? "manual" : "auto",
         country: "",
-        platform: "google_play",
+        platform: "",
 
         target: this.targetid ? [this.targetid] : [],
         iftarget: ["1"],
@@ -418,7 +418,7 @@ export default {
           new Date(2016, 9, 10, 0, 0, 0),
           new Date(2016, 9, 10, 23, 0, 0)
         ],
-        equip: ["Android_Smartphone"],
+        equip: [],
         sex: "0",
         age: [13, 65],
         language: [],

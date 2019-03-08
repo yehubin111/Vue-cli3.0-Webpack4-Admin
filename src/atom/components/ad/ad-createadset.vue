@@ -654,7 +654,7 @@ export default {
       }
       if (
         !this.form.platform &&
-        this.form.equip.length == 0 &&
+        this.form.equip.filter(v => v).length == 0 &&
         !this.mutilstatus.equip
       )
         return [false, this.msg.equip];

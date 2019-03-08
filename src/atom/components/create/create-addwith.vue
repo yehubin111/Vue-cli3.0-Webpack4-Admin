@@ -1205,9 +1205,9 @@ export default {
                  * 暂时做强制排除处理
                  */
                 if (item.imageUrl.length < 10)
-                  Msgerror(`imageName: ${imgname} 创建失败，请重新创新`);
-                else if (item.videoUrl.length < 10)
-                  Msgerror(`videoName: ${imgname} 创建失败，请重新创新`);
+                  Msgerror(`imageName: ${imgname} 创建失败，请联系开发人员，并重新创建`);
+                else if (self.form.type == "1" && item.videoUrl.length < 10)
+                  Msgerror(`videoName: ${imgname} 创建失败，请联系开发人员，并重新创建`);
                 else option.push(item);
               });
             });

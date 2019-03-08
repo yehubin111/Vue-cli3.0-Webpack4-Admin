@@ -540,6 +540,9 @@ export default {
       "genertarget",
       "generaccount"
     ]),
+    equip() {
+      return this.form.platform;
+    },
     genernotarget() {
       return this.genertarget.filter(
         v => this.form.target.indexOf(v.id.toString()) == -1

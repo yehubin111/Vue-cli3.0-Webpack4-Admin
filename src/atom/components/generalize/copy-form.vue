@@ -700,7 +700,7 @@ export default {
       }
     },
     toSubmit() {
-      //   console.log(this.form);
+        console.log(this.form);
       let self = this;
 
       let check = this.dataChecked();

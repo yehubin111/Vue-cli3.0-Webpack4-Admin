@@ -540,6 +540,9 @@ export default {
       "genertarget",
       "generaccount"
     ]),
+    equip() {
+      return this.form.platform;
+    },
     genernotarget() {
       return this.genertarget.filter(
         v => this.form.target.indexOf(v.id.toString()) == -1
@@ -562,6 +565,10 @@ export default {
         let applicationid = n;
         this.$store.dispatch("getCreatePlatform", { applicationid });
       }
+    },
+    equip(n, o) {
+      this.form.equip =
+        n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];
     },
     "form.name": {
       handler(n, o) {
@@ -700,7 +707,7 @@ export default {
       }
     },
     toSubmit() {
-      //   console.log(this.form);
+        console.log(this.form);
       let self = this;
 
       let check = this.dataChecked();
@@ -863,7 +870,7 @@ export default {
         if (this.form.timerange == "schedule" && this.form.rdate.length == 0)
           return [false, this.msg.rdate];
       }
-      if (this.form.equip.length == 0) return [false, this.msg.equip];
+      if (this.form.equip.filter(v => v).length == 0) return [false, this.msg.equip];
       if (this.form.language.length == 0) return [false, this.msg.language];
       //   if (this.form.interest.length == 0) return [false, this.msg.interest];
       if (this.form.auto.length == 0 && this.form.verpla.length == 0)

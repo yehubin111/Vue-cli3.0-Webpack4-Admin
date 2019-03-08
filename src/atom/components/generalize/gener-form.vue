@@ -418,7 +418,7 @@ export default {
           new Date(2016, 9, 10, 0, 0, 0),
           new Date(2016, 9, 10, 23, 0, 0)
         ],
-        equip: [],
+        equip: ["Android_Smartphone"],
         sex: "0",
         age: [13, 65],
         language: [],

@@ -154,7 +154,7 @@ import TargetSpecial from "./target-special";
 // import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
 import { setTimeout } from 'timers';
-// let Base64 = require('js-base64').Base64;
+let Base64 = require('js-base64').Base64;
 let targetsearch;
 export default {
   components: {
@@ -354,7 +354,7 @@ export default {
     targetSearch() {
       // console.log(Base64.encode('类似受众（SA,3%-20%）- TikTok Advertising'));
       let k = "tg_keyword";
-      let v = encodeURIComponent(this.state);
+      let v = Base64.encode(this.state);
       console.log(v);
       let self = this;
       this.SETSTATE({ k, v });

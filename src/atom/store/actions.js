@@ -2707,7 +2707,7 @@ export default {
         let str = '';
         data.forEach(v => {
             if (state['tg_' + v])
-                str += '&' + v + '=' + (v == 'keyword' ? state['tg_' + v].replace('+', '%2B') : state['tg_' + v]);
+                str += '&' + v + '=' + state['tg_' + v];
         });
 
         url = url + str.substr(1);

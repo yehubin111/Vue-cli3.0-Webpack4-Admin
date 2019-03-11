@@ -354,7 +354,7 @@ export default {
     targetSearch() {
       // console.log(Base64.encode('类似受众（SA,3%-20%）- TikTok Advertising'));
       let k = "tg_keyword";
-      let v = Base64.encode(this.state);
+      let v = Base64.encode(this.state).replace('+', '%2B');
       console.log(v);
       let self = this;
       this.SETSTATE({ k, v });

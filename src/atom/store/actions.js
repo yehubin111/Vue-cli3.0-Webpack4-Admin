@@ -1016,6 +1016,15 @@ export default {
             load = Loading.service({ target: document.getElementById(loading) });
         }
 
+        // fetch(url, { headers: {'X-Token': localStorage.getItem('atom_token')} })
+        //     .then(data => {
+        //         console.log(data);
+        //         data.json().then(r => {
+        //             console.log(r);
+        //         })
+        //     })
+        //     .catch(err => console.log(err));
+
         _axios.get(url)
             .then(res => {
                 if (load)

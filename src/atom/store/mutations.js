@@ -1530,9 +1530,9 @@ export default {
                 let content = ''
                 titlearr.forEach(v => {
                     if (v.key == 'materialId')
-                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"\t' : '--'}`;
+                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? data[i][v.key] + '\t' : '--'}`;
                     else
-                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"' : '--'}`;
+                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? data[i][v.key] : '--'}`;
                 })
                 content = content.substr(1);
                 str += content;

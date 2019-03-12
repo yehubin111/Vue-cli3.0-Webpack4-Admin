@@ -1529,7 +1529,10 @@ export default {
             for (let i = 0; i < data.length; i++) {
                 let content = ''
                 titlearr.forEach(v => {
-                    content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"' : '--'}`;
+                    if (v.key == 'materialId')
+                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"\t' : '--'}`;
+                    else
+                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"' : '--'}`;
                 })
                 content = content.substr(1);
                 str += content;

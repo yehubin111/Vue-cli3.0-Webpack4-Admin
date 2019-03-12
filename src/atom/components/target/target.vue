@@ -352,7 +352,7 @@ export default {
     },
     targetSearch() {
       let k = "tg_keyword";
-      let v = this.state;
+      let v = encodeURIComponent(this.state);
       let self = this;
       this.SETSTATE({ k, v });
 

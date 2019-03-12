@@ -142,7 +142,7 @@ export default {
     },
     toSort() {
       let option = {
-        keyWords: this.state,
+        keyWords: encodeURIComponent(this.state),
         status: this.value2 == "-1" ? "" : this.value2,
         fbAccountId: this.value == "-1" ? "" : this.value,
         pageSize: this.pagesize,

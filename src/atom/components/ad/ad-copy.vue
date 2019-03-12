@@ -1,6 +1,16 @@
 <template>
   <el-dialog :title="`复制${typeData.name}`" :visible.sync="dialogFormVisible" @close="hideCopy">
     <el-form v-if="type == 'campaignName'" label-position="left">
+      <el-form-item label="目标广告账户" label-width="170px">
+        <el-select v-model="account" class="accountselect" filterable placeholder="选择广告账户，可搜索">
+          <el-option
+            v-for="item in copyAdset"
+            :key="item.adsetId"
+            :label="`${item.name}(${item.adsetId})`"
+            :value="item.adsetId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="每个广告系列副本数量" label-width="170px">
         <el-input-number v-model="everyCount" :min="1" :step="1" label="描述文字"></el-input-number>
       </el-form-item>
@@ -29,6 +39,16 @@
           <el-radio v-model="targetArea" :label="3">新广告系列</el-radio>
           <p v-show="targetArea == 3">
             <el-input v-model="newName" class="alreadyHas" placeholder="请输入内容"></el-input>
+            <el-form-item label="目标广告账户" label-width="100px">
+              <el-select v-model="account" class="accountselect" filterable placeholder="选择广告账户，可搜索">
+                <el-option
+                  v-for="item in copyAdset"
+                  :key="item.adsetId"
+                  :label="`${item.name}(${item.adsetId})`"
+                  :value="item.adsetId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
           </p>
         </div>
       </el-form-item>
@@ -79,6 +99,7 @@ export default {
       // type: 'adName',
       state: "",
       newName: "",
+      account: '',
       everyCount: 1,
       originId: "",
       originName: "",
@@ -231,7 +252,11 @@ export default {
     line-height: 30px;
     .alreadyHas {
       width: 400px;
+      margin-bottom: 10px;
     }
   }
+}
+.accountselect{
+  width: 300px;
 }
 </style>

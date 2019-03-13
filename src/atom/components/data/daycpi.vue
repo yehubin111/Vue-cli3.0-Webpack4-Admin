@@ -53,7 +53,7 @@ export default {
       pageNo: 1,
       pageSize: 20,
       startDate: this.$timeFormat(
-        new Date().getTime() - 7 * 24 * 3600 * 1000,
+        new Date().getTime() - 6 * 24 * 3600 * 1000,
         "yyyy-MM-dd"
       ),
       // impressionDeviceList: this.filtercompress,
@@ -101,7 +101,7 @@ export default {
           this.form.value.length > 0
             ? this.$timeFormat(this.form.value[0], "yyyy-MM-dd")
             : this.$timeFormat(
-                new Date().getTime() - 7 * 24 * 3600 * 1000,
+                new Date().getTime() - 6 * 24 * 3600 * 1000,
                 "yyyy-MM-dd"
               ),
         projectId: this.$route.params.id

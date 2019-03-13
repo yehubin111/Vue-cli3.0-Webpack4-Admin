@@ -2,7 +2,7 @@
   <div class="rule">
     <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;规则管理</p>
     <div class="ctrlline">
-      <el-select class="select" v-model="account" filterable placeholder="广告账户，可多选，支持编号和名称搜索" @change="toSort">
+      <el-select class="select" v-model="account" filterable placeholder="广告账户，可多选，支持编号和名称搜索" @change="selectCondition">
         <el-option :label="111" :value="111"></el-option>
       </el-select>
       <el-button type="primary">创建</el-button>
@@ -55,6 +55,9 @@ export default {
     }
   },
   methods: {
+    selectCondition() {
+
+    },
     switchChange(id) {
       let status = this.rulelist.find(v => v.id == id).status;
 

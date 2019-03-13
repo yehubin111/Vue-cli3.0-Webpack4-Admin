@@ -26,8 +26,8 @@
         @size-change="pageSizeChange"
         :page-sizes="[20, 200, 500]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="optotal"
-        :page-size="oppagesize"
+        :total="10"
+        :page-size="20"
         @current-change="pageSwitch"
       ></el-pagination>
     </div>
@@ -46,6 +46,11 @@ export default {
   },
   computed: {
     ...mapState(["optimizelist"])
+  },
+  methods: {
+    switchChange() {},
+    pageSwitch() {},
+    pageSizeChange() {}
   }
 };
 </script>

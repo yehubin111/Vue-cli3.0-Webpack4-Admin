@@ -6,13 +6,26 @@
         <div class="ctrl">
           <el-button class="add" type="primary" @click="status = true">创建项目</el-button>
           <router-link class="cantmanage" to="/notmanage">已归档项目</router-link>
-          <el-input class="search" v-model="state4" placeholder="搜索项目ID/名称" suffix-icon="el-icon-search" @input="projectSearch"></el-input>
+          <el-input
+            class="search"
+            v-model="state4"
+            placeholder="搜索项目ID/名称"
+            suffix-icon="el-icon-search"
+            @input="projectSearch"
+          ></el-input>
         </div>
         <manage-list @editProject="editProject" @overProject="overProject"></manage-list>
         <manage-over :id="overid" :status="status2" @cancelAddbm="cancelAddbm"></manage-over>
         <div class="pageswitch">
-          <el-pagination background @size-change="pageSizeChange" :page-sizes="[20, 200, 500]" layout="total, sizes, prev, pager, next, jumper" :total="total" :page-size="pagesize" @current-change="pageSwitch">
-          </el-pagination>
+          <el-pagination
+            background
+            @size-change="pageSizeChange"
+            :page-sizes="[20, 200, 500]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            :page-size="pagesize"
+            @current-change="pageSwitch"
+          ></el-pagination>
         </div>
       </div>
     </div>
@@ -49,7 +62,7 @@ export default {
   },
   created() {},
   mounted() {
-    this.SETSTATE({k: 'managelist', v: []});
+    this.SETSTATE({ k: "managelist", v: [] });
   },
   watch: {},
   methods: {

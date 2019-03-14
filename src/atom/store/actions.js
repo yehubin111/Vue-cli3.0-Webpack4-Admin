@@ -1449,7 +1449,7 @@ export default {
                 console.log(err);
             })
     },
-    autoSelect({ state, commit, dispatch }, { plan_id, creative_type, creative_num, creative_strategy }) {
+    autoSelect({ state, commit, dispatch }, { plan_id, creative_type, creative_num, creative_strategy, creative_classify }) {
         let url = URL.autoselect;
 
         let str = '';
@@ -1457,6 +1457,7 @@ export default {
         str += '&creative_type=' + creative_type;
         str += '&creative_num=' + creative_num;
         str += '&creative_strategy=' + creative_strategy;
+        str += '&creative_classify=' + creative_classify;
 
         url += str;
 
@@ -1728,6 +1729,37 @@ export default {
                 console.log(err);
             })
     },
+    getClassifyForPlan({ state, commit }, projectid) {
+        let url = URL.classify.replace('{projectid}', projectid);
+
+        Axios({
+            url,
+            success: res => {
+                commit('CLASSIFYFORPLAN', res);
+            }
+        })
+    },
+    classifyFilterCount({state, commit}, {planid, creativetype, classify}) {
+        let url = `${URL.classifyfilter}plan_id=${planid}&creative_type=${creativetype}&classify=${classify}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('CLASSIFYFILTERCOUNT', res);
+            }
+        })
+    },
+    classifyFilterCountNoPlan({state, commit}, {country, gender, projectId, creativetype, classify}) {
+        let url = `${URL.classifyfilternoplan}country=${country}&gender=${gender}&projectId=${projectId}&creative_type=${creativetype}&classify=${classify}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('CLASSIFYFILTERCOUNT', res);
+            }
+        })
+    },
+
     // ad
     getAdPlanlist({ state, commit }, projectid) {
         let url = `${URL.planlist}project_id=${projectid}&pageIndex=1&pageSize=1000`;

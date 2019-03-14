@@ -779,8 +779,6 @@ export default {
       color: #fff;
       text-align: center;
       cursor: pointer;
-      span {
-      }
     }
     .droplist {
       position: absolute;

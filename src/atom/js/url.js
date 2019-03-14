@@ -103,6 +103,8 @@ export default {
     'openplan': 'plan/openPlan', //开启智能推广计划
     'closeplan': 'plan/closePlan', //关闭智能推广计划
     'bidguide': 'plan/priceGuide?', // 出价指南
+    'classifyfilter': 'plan/usableCreativeCountWithPlan?', // 智能选择符合条件数量
+    'classifyfilternoplan': 'plan/usableCreativeCount?', // 智能选择符合条件数量(创建推广计划情况，无planid)
     // ad
     'adlisttotal': 'projectad/sumFbAdList', // 广告管理列表合计
     'adlist': 'projectad/getProjectsAd?', // 广告列表

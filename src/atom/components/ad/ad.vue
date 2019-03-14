@@ -1495,9 +1495,6 @@ export default {
     width: 960px;
     overflow: hidden;
     position: relative;
-    // height: 808px;
-    .eltabs {
-    }
     .updatetime {
       position: absolute;
       top: 0;
@@ -1620,8 +1617,6 @@ export default {
         color: #fff;
         text-align: center;
         cursor: pointer;
-        span {
-        }
       }
       .droplist {
         position: absolute;

@@ -20,7 +20,7 @@
     <el-table-column label="操作" width="140">
       <template slot-scope="scope">
         <el-button type="text" size="small">
-          <router-link class="detail" :to="'/project/' + scope.row.id + '/plan'">详情</router-link>
+          <router-link class="detail" :to="'/project/' + scope.row.id">详情</router-link>
         </el-button>
         <el-button type="text" size="small" @click="toEdit(scope.row.id)">编辑</el-button>
         <el-button type="text" size="small" @click="toOver(scope.row.id)">归档</el-button>

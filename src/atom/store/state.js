@@ -154,6 +154,8 @@ export default {
   genertarget: [], // 创建推广计划受众列表
   generaccount: [], // 创建推广计划广告账户列表
   ifadcreate: false, // 创建广告是否成功，影响是否显示创建详情
+  classifyforplan: [], // 智能选择分类列表
+  classifyfiltercount: 0, // 智能选择符合分类创意数量
   // ad
   adplanlist: [],
   nowtime: '', // 服务器时间

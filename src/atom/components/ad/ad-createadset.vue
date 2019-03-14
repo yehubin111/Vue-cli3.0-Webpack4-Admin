@@ -660,8 +660,8 @@ export default {
         return [false, this.msg.equip];
       if (this.form.sex === null && !this.mutilstatus.sex)
         return [false, this.msg.sex];
-      if (this.form.language.length == 0 && !this.mutilstatus.language)
-        return [false, this.msg.language];
+      // if (this.form.language.length == 0 && !this.mutilstatus.language)
+      //   return [false, this.msg.language];
       //   if (this.form.interest.length == 0) return [false, this.msg.interest];
       if (
         this.form.auto.length == 0 &&
@@ -1312,9 +1312,6 @@ export default {
       z-index: 9;
       left: 8px;
       font-size: 18px;
-    }
-    .minput {
-      // width: 200px;
     }
   }
 }

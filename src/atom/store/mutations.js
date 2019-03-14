@@ -683,6 +683,12 @@ export default {
         myChart9.setOption(chart.bidGuide(x, y2));
         myChart10.setOption(chart.bidGuide(x, y3));
     },
+    CLASSIFYFORPLAN(state, r) {
+        state.classifyforplan = r.data;
+    },
+    CLASSIFYFILTERCOUNT(state, r) {
+        state.classifyfiltercount = r.data;
+    },
     //ad
     ADPLANLIST(state, r) {
         state.adplanlist = r.data.list;

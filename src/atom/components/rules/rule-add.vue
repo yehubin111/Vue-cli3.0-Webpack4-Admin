@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="创建规则" :visible="status" @close="hideBox">
+  <el-dialog class="dialogrule" title="创建规则" :visible="status" @close="hideBox">
     <el-form label-position="left">
       <el-form-item label="广告账户" label-width="110px">
         <el-select
@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import RuleCondition from './rule-condition';
+import RuleCondition from "./rule-condition";
 
 export default {
   components: {
@@ -427,6 +427,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.dialogrule .el-dialog {
+  width: 60%;
+}
+</style>
 
 <style lang="less" scoped>
 .select {

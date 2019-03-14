@@ -15,22 +15,56 @@
       placeholder="运算"
       @change="selectOperation"
     >
-      <el-option :label="111" :value="222"></el-option>
+      <el-option v-for="item in operationlist" :key="item.key" :label="item.name" :value="item.key"></el-option>
     </el-select>
     <!-- 类型1 大于、小于、介于、不介于 数值-->
+    <el-input-number
+      class="numberinput"
+      v-model="indicatornum"
+      size="mini"
+      :precision="2"
+      :min="0"
+      :step="0.1"
+      v-show="indicatortype == '1'"
+    ></el-input-number>
+    <!-- <span class="unit" v-if="specilkey100.indexOf(conditionSelkey) != -1">%</span>
+    <el-input-number
+      class="numberinput"
+      v-model="conditionState2"
+      v-show="conditiondeal == 3 || conditiondeal == 4"
+      size="mini"
+      :precision="2"
+      :min="0"
+      :step="0.1"
+    ></el-input-number>-->
     <!-- 类型2 包含、不包含 字符 -->
-    <el-input class="select" size="mini" v-show="indicatortype == '1' || indicatortype == '2'" v-model="indicatornum" placeholder></el-input>
+    <el-input
+      class="select"
+      size="mini"
+      v-show="indicatortype == '2'"
+      v-model="indicatornum"
+      placeholder
+    ></el-input>
     <!-- 类型3 枚举 多选 -->
     <el-select
       class="select"
       size="mini"
       v-model="indicatorselect"
       multiple
-      placeholder=""
+      placeholder
+      v-show="indicatortype == '3'"
     >
       <el-option :label="111" :value="222"></el-option>
     </el-select>
     <!-- 类型4 大于、小于、介于、不介于 时间点 多选 -->
+    <el-date-picker
+      v-model="indicatornum"
+      v-show="indicatortype == '4'"
+      size="mini"
+      class="timeselect"
+      type="datetime"
+      placeholder="选择日期时间"
+    ></el-date-picker>
     <el-button type="success" icon="el-icon-check" circle size="mini" @click="determineSearch"></el-button>
     <el-button type="danger" icon="el-icon-close" circle size="mini" @click="cancelSearch"></el-button>
   </div>
@@ -40,11 +74,14 @@
 export default {
   data() {
     return {
-      operation: "",
       indicator: "",
+      indicatortype: "",
+      indicatorval: "",
+      operation: "",
+      operationlist: [], // 运算方式列表
+
       indicatornum: "",
       indicatorselect: [],
-      indicatortype: '',
 
       indicatorOption: [
         {
@@ -71,7 +108,7 @@ export default {
           children: [
             { label: "广告系列名称", value: "1_2" },
             { label: "广告组名称", value: "2_2" },
-            { label: "版位", value: "3_3" },
+            { label: "版位", value: "bw_3" },
             { label: "总预算", value: "4_1" },
             { label: "单日预算", value: "5_1" },
             { label: "竞价金额", value: "6_1" },
@@ -184,7 +221,49 @@ export default {
     };
   },
   methods: {
-    selectIndicator() {},
+    selectIndicator() {
+      let condition = this.indicator[1].split("_");
+      this.indicatortype = condition[1];
+      this.indicatorval = condition[0];
+
+      switch (this.indicatortype) {
+        case "1":
+          this.operationlist = [
+            { name: "大于", key: "1" },
+            { name: "小于", key: "2" },
+            { name: "介于", key: "3" },
+            { name: "不介于", key: "4" }
+          ];
+          break;
+        case "2":
+          this.operationlist = [
+            { name: "包含", key: "1" },
+            { name: "不包含", key: "2" }
+          ];
+          break;
+        case "3":
+          if (this.indicatorval == "bw")
+            this.operationlist = [
+              { name: "包含任意", key: "1" },
+              { name: "包含所有", key: "2" },
+              { name: "不包含", key: "3" }
+            ];
+          else
+            this.operationlist = [
+              { name: "是", key: "1" },
+              { name: "不是", key: "2" }
+            ];
+          break;
+        case "4":
+          this.operationlist = [
+            { name: "大于", key: "1" },
+            { name: "小于", key: "2" },
+            { name: "介于", key: "3" },
+            { name: "不介于", key: "4" }
+          ];
+          break;
+      }
+    },
     determineSearch() {},
     cancelSearch() {}
   }
@@ -205,6 +284,12 @@ export default {
   }
   .select {
     width: 100px;
+    margin-right: 10px;
+  }
+  .numberinput{
+    margin-right: 10px;
+  }
+  .timeselect{
     margin-right: 10px;
   }
 }

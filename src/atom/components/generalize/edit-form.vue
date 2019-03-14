@@ -486,7 +486,7 @@ export default {
         account: this.createinfo.fbAccountIds,
         adcount: this.createinfo.adsetNum,
         count: this.createinfo.adNum,
-        createtype: this.createinfo.creativeType,
+        createtype: this.createinfo.creativeType?this.createinfo.creativeType:[],
         classify: this.createinfo.creativeClassify?this.createinfo.creativeClassify:[],
         createcount: this.createinfo.creativeNum,
         tactics: this.createinfo.creativeStrategy

@@ -14,7 +14,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="选择分类" class="cline">
-        <el-select class="accountinput" multiple v-model="form.classify" placeholder="选择分类" @change="getFilterCount">
+        <el-select class="accountinput" multiple v-model="form.classify" placeholder="选填，为空则不限制分类" @change="getFilterCount">
           <el-option v-for="(item, index) in classifyforplan" :key="index" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>
@@ -94,6 +94,12 @@ export default {
       let classify = this.form.classify.join(',');
       this.$store.dispatch('classifyFilterCount', {planid, creativetype, classify})
     },
+    reset() {
+      this.form.type = [];
+      this.form.count = "";
+      this.form.tactics = '1';
+      this.form.classify = [];
+    },
     toSave() {
       if (this.form.type.length == 0) {
         Msgwarning("请选择创意类型");
@@ -127,6 +133,7 @@ export default {
       this.SETSTATE({k: 'classifyfiltercount', v: 0});
 
       this.$emit("cancelAddbm", "status2");
+      this.reset();
     }
   }
 };

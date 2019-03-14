@@ -323,7 +323,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="选择分类" class="cline" v-show="form.type == 'auto'">
-        <el-select class="accountinput" multiple v-model="form.classify" placeholder="选择分类" @change="getFilterCount">
+        <el-select class="select" multiple v-model="form.classify" placeholder="选填，为空则不限制分类" @change="getFilterCount">
           <el-option v-for="(item, index) in classifyforplan" :key="index" :label="item" :value="item"></el-option>
         </el-select>
       </el-form-item>

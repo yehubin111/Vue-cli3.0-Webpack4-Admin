@@ -126,7 +126,8 @@
             :label="l.os + ' ' + l.version"
             :value="l.version"
           ></el-option>
-        </el-select>--
+        </el-select>
+        --
         <el-select class="selectHalf" v-model="form.maxversion" placeholder="最高版本">
           <el-option
             v-for="(l, index) in system"

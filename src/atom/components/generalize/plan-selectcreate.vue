@@ -1,24 +1,46 @@
 <template>
   <el-dialog title="选择创意" :visible.sync="dialogFormVisible" class="dialog" @close="toCancel">
     <div class="set">
-      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelectNav">
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo"
+        mode="horizontal"
+        @select="handleSelectNav"
+      >
         <el-menu-item index="1">已选</el-menu-item>
         <el-menu-item index="2">未选</el-menu-item>
       </el-menu>
       <el-button class="button" type="text" @click="toAutoSelect">智能选择</el-button>
-      <el-input class="search" v-model="state" placeholder="搜索创意ID" suffix-icon="el-icon-search" @input="createSearch"></el-input>
+      <el-input
+        class="search"
+        v-model="state"
+        placeholder="搜索创意ID"
+        suffix-icon="el-icon-search"
+        @input="createSearch"
+      ></el-input>
       <div class="sortline">
-        <p class="total">已选
+        <p class="total">
+          已选
           <span>{{inusetotal}}</span> 个创意，其中
-          <span>{{canselectcreatelength}}</span> 个不可用（不生成广告）</p>
+          <span>{{canselectcreatelength}}</span> 个不可用（不生成广告）
+        </p>
 
-        <el-select class="select" v-if="activeIndex == 1" v-model="value2" placeholder="启用/停用" @change="statusChange">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
+        <el-select
+          class="select"
+          v-if="activeIndex == 1"
+          v-model="value2"
+          placeholder="启用/停用"
+          @change="statusChange"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
         </el-select>
         <el-select class="select" v-model="value" placeholder="分类" @change="classifyChange">
-          <el-option v-for="item in classify" :key="item" :label="item" :value="item">
-          </el-option>
+          <el-option v-for="item in classify" :key="item" :label="item" :value="item"></el-option>
         </el-select>
         <el-button class="obutton" type="text" v-if="activeIndex == 1" @click="cancelAll">删除全部</el-button>
         <el-button class="obutton" type="text" v-if="activeIndex == 2" @click="selectAll">选择全部</el-button>
@@ -71,22 +93,13 @@ export default {
       let plan_id = this.id;
       let loadDom = "planon";
       if (n == true) {
-        let k = "plcreatekeyword";
-        let v = "";
-        this.SETSTATE({ k, v });
-
         this.$store.dispatch("getInuseCreate", { plan_id, loadDom });
         this.$store.dispatch("getNouseCreate", { plan_id });
       }
-      // if (n == false) {
-      //   this.load1 = true;
-      // }
     },
     id(n, v) {
       if (n) {
         let plan_id = n;
-        // this.$store.dispatch("getInuseCreate", { plan_id });
-        // this.$store.dispatch("getNouseCreate", { plan_id });
       }
     }
   },
@@ -146,10 +159,19 @@ export default {
       this.activeIndex = idx;
     },
     toCancel() {
-      this.state = "";
+      this.reset();
+
       this.$emit("cancelAddbm", "status1");
     },
-    selectChange() {}
+    reset() {
+      this.state = "";
+      this.value = "";
+      this.value2 = "";
+      this.activeIndex = "1";
+      this.SETSTATE({ k: "plcreatestatus", v: "" });
+      this.SETSTATE({ k: "plcreateclassify", v: "" });
+      this.SETSTATE({ k: "plcreatekeyword", v: "" });
+    }
   }
 };
 </script>

@@ -190,7 +190,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="性别" class="cline">
-        <el-radio-group v-model="form.sex">
+        <el-radio-group v-model="form.sex" @change="getFilterCount">
           <el-radio label="0">全部</el-radio>
           <el-radio label="1">男</el-radio>
           <el-radio label="2">女</el-radio>

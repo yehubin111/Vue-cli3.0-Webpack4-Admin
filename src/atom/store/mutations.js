@@ -1624,6 +1624,10 @@ export default {
                 case 400:
                     v.statusName = '警告';
                     break;
+                case 441:
+                    v.statusName = '准备中';
+                    v.deliveryStatusDescription = '正在寻找符合标准的受众。您可以立即开始与这些受众群体投放广告，但请注意，随着受众群体的填充，您的受众群体规模会增加';
+                    break;
                 case '':
                 case null:
                 case undefined:
@@ -1691,6 +1695,9 @@ export default {
                     break;
                 case 400:
                     v.statusName = '警告';
+                    break;
+                case 441:
+                    v.statusName = '准备中';
                     break;
                 case '':
                 case null:

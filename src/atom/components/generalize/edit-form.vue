@@ -671,11 +671,24 @@ export default {
         return
       };
 
-      let planid = this.$route.params.pid;
+      let country = this.form.country;
+      let gender = this.form.sex;
+      let projectId = this.$route.params.id;
       let creativetype = this.form.createtype.join(',');
       let classify = this.form.classify.join(',');
-      this.$store.dispatch('classifyFilterCount', {planid, creativetype, classify})
+      this.$store.dispatch('classifyFilterCountNoPlan', {country, gender, projectId, creativetype, classify})
     },
+    // getFilterCount() {
+    //   if(this.form.createtype.length == 0) {
+    //     this.SETSTATE({k: 'classifyfiltercount', v: 0});
+    //     return
+    //   };
+
+    //   let planid = this.$route.params.pid;
+    //   let creativetype = this.form.createtype.join(',');
+    //   let classify = this.form.classify.join(',');
+    //   this.$store.dispatch('classifyFilterCount', {planid, creativetype, classify})
+    // },
     showBidChart() {
       if (!this.form.country) {
         return;

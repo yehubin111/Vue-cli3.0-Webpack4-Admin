@@ -1617,6 +1617,8 @@ export default {
             // 是否可以删除
             v.ifdelete = v.lookalikeAudienceIds ? false : true;
 
+            v.approximateCount = v.approximateCount == 1000 ? '<1000' : v.approximateCount;
+
             switch (v.deliveryStatusCode) {
                 case 200:
                     v.statusName = '正常';
@@ -1626,7 +1628,6 @@ export default {
                     break;
                 case 441:
                     v.statusName = '准备中';
-                    v.deliveryStatusDescription = '正在寻找符合标准的受众。您可以立即开始与这些受众群体投放广告，但请注意，随着受众群体的填充，您的受众群体规模会增加';
                     break;
                 case '':
                 case null:

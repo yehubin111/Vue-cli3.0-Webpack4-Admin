@@ -20,7 +20,7 @@
     <el-table-column prop="audienceType" label="类型" width="100">
       <template slot-scope="scope">
         <p>{{scope.row.subtype == 'LOOKALIKE'? '类似受众': '自定义受众'}}</p>
-        <p class="childtype">{{scope.row.childType}}</p>
+        <p class="childtype" v-show="scope.row.childType">{{scope.row.childType}}</p>
       </template>
     </el-table-column>
     <el-table-column prop="audienceType" label="状态/规模" width="100">

@@ -138,7 +138,7 @@
             class="wid200"
             v-model="frequency"
             filterable
-            placeholder="选择排期"
+            placeholder="操作频率"
             @change="toSort"
           >
             <el-option
@@ -150,14 +150,17 @@
           </el-select>
         </el-form-item>
       </el-form-item>
-      <el-form-item label="排期" label-width="110px">
-        <el-select class="select" v-model="schedule" filterable placeholder="选择排期" @change="toSort">
-          <el-option :label="111" :value="222"></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="条件" label-width="110px">
-        <rule-condition></rule-condition>
-        <el-button type="primary" icon="el-icon-plus" circle></el-button>
+        <rule-condition :status.sync="conditionStatus"></rule-condition>
+        <p>
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            circle
+            v-show="!conditionStatus"
+            @click="conditionStatus = true"
+          ></el-button>
+        </p>
         <el-form-item label="时间范围" label-width="110px">
           <el-cascader
             class="ctrlselect"
@@ -168,11 +171,47 @@
         </el-form-item>
         <el-form-item label="统计时间窗" label-width="110px">
           <el-radio-group v-model="timewindow">
-            <el-radio :label="3">账号默认设置</el-radio>
-            <el-radio :label="6">自定义</el-radio>
+            <el-radio :label="1">账号默认设置</el-radio>
+            <el-radio :label="2">自定义</el-radio>
           </el-radio-group>
-          <!-- <div class="windowdeploy">浏览广告后</div> -->
+          <div class="windowdeploy" v-show="timewindow == 2">浏览广告后
+            <el-select
+              class="wid100"
+              v-model="timecustom1"
+              filterable
+              placeholder
+              size="mini"
+              @change="toSort"
+            >
+              <el-option
+                v-for="item in timecustomlist"
+                :key="item.key"
+                :label="item.name"
+                :value="item.key"
+              ></el-option>
+            </el-select>点击广告后
+            <el-select
+              class="wid100"
+              v-model="timecustom2"
+              filterable
+              placeholder
+              size="mini"
+              @change="toSort"
+            >
+              <el-option
+                v-for="item in timecustomlist"
+                :key="item.key"
+                :label="item.name"
+                :value="item.key"
+              ></el-option>
+            </el-select>
+          </div>
         </el-form-item>
+      </el-form-item>
+      <el-form-item label="排期" label-width="110px">
+        <el-select class="select" v-model="schedule" filterable placeholder="选择排期" @change="toSort">
+          <el-option :label="111" :value="222"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="规则名称" label-width="110px">
         <el-input class="select" v-model="rulename" placeholder="请输入名称"></el-input>
@@ -189,12 +228,12 @@
 import RuleCondition from "./rule-condition";
 
 export default {
+  props: ['status'],
   components: {
     RuleCondition
   },
   data() {
     return {
-      status: true,
       objectOption: [
         { name: "投放中的全部广告系列", key: "campaign" },
         { name: "投放中的全部广告组", key: "adset" },
@@ -263,7 +302,7 @@ export default {
           ]
         }
       ],
-      account: "",
+      account: [],
       ctrlmethod: [],
       ctrlmethodkey: "",
       ctrlmethodname: "",
@@ -305,7 +344,7 @@ export default {
       ],
       schedule: "",
       rulename: "",
-      timerange: "",
+      timerange: [],
       timeOption: [
         { label: "广告发布期间", value: "1" },
         { label: "今天", value: "2" },
@@ -351,7 +390,16 @@ export default {
           ]
         }
       ],
-      timewindow: ""
+      conditionStatus: false,
+      timewindow: 1,
+      timecustomlist: [
+        { name: "无（不计算浏览的转化）", key: "1" },
+        { name: "1天", key: "2" },
+        { name: "7天", key: "3" },
+        { name: "28天", key: "4" }
+      ],
+      timecustom1: "2",
+      timecustom2: "2"
     };
   },
   mounted() {
@@ -418,7 +466,9 @@ export default {
 
       this.resetCtrlSelect();
     },
-    hideBox() {},
+    hideBox() {
+      this.$emit('update:status', false);
+    },
     toSort() {
       console.log(this.ctrlmethod);
     },
@@ -430,7 +480,7 @@ export default {
 
 <style>
 .dialogrule .el-dialog {
-  width: 60%;
+  width: 65%;
 }
 </style>
 

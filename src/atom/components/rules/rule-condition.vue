@@ -1,10 +1,11 @@
 <template>
-  <div class="condition">
+  <div class="condition" v-show="status">
     <el-cascader
       class="ctrlselect"
       :options="indicatorOption"
       :show-all-levels="false"
       size="mini"
+      placeholder="指标名称"
       v-model="indicator"
       @change="selectIndicator"
     ></el-cascader>
@@ -12,6 +13,7 @@
       class="select"
       size="mini"
       v-model="operation"
+      no-data-text="请先选择指标名称"
       placeholder="运算"
       @change="selectOperation"
     >
@@ -25,45 +27,63 @@
       :precision="2"
       :min="0"
       :step="0.1"
-      v-show="indicatortype == '1'"
+      v-show="indicatortype == 1"
     ></el-input-number>
-    <!-- <span class="unit" v-if="specilkey100.indexOf(conditionSelkey) != -1">%</span>
+    <!-- <span class="unit" v-if="specilkey100.indexOf(conditionSelkey) != -1">%</span> -->
     <el-input-number
       class="numberinput"
-      v-model="conditionState2"
-      v-show="conditiondeal == 3 || conditiondeal == 4"
+      v-model="indicatornumend"
+      v-show="indicatortype == 1 && (operation == 3 || operation == 4)"
       size="mini"
       :precision="2"
       :min="0"
       :step="0.1"
-    ></el-input-number>-->
+    ></el-input-number>
     <!-- 类型2 包含、不包含 字符 -->
     <el-input
       class="select"
       size="mini"
-      v-show="indicatortype == '2'"
-      v-model="indicatornum"
+      v-show="indicatortype == 2"
+      v-model="indicatordata"
       placeholder
     ></el-input>
     <!-- 类型3 枚举 多选 -->
     <el-select
-      class="select"
+      class="selectcontent"
       size="mini"
       v-model="indicatorselect"
+      collapse-tags
       multiple
       placeholder
-      v-show="indicatortype == '3'"
+      v-show="indicatortype == 3"
     >
-      <el-option :label="111" :value="222"></el-option>
+      <el-option
+        v-for="item in indicatorselectlist"
+        :key="item.key"
+        :label="item.name"
+        :value="item.key"
+      ></el-option>
     </el-select>
     <!-- 类型4 大于、小于、介于、不介于 时间点 多选 -->
     <el-date-picker
-      v-model="indicatornum"
-      v-show="indicatortype == '4'"
+      v-model="indicatortime"
+      v-show="indicatortype == 4 && (operation == 1 || operation == 2)"
       size="mini"
       class="timeselect"
       type="datetime"
+      :clearable="false"
       placeholder="选择日期时间"
+    ></el-date-picker>
+    <el-date-picker
+      v-model="indicatortimerange"
+      type="datetimerange"
+      class="timerange"
+      v-show="indicatortype == 4 && (operation == 3 || operation == 4)"
+      range-separator="至"
+      size="mini"
+      :clearable="false"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期"
     ></el-date-picker>
     <el-button type="success" icon="el-icon-check" circle size="mini" @click="determineSearch"></el-button>
     <el-button type="danger" icon="el-icon-close" circle size="mini" @click="cancelSearch"></el-button>
@@ -72,16 +92,22 @@
 
 <script>
 export default {
+  props: ["status"],
   data() {
     return {
-      indicator: "",
+      indicator: [],
       indicatortype: "",
       indicatorval: "",
       operation: "",
       operationlist: [], // 运算方式列表
 
-      indicatornum: "",
+      indicatornum: 0,
+      indicatornumend: 0,
+      indicatordata: "",
+      indicatortime: "",
+      indicatortimerange: [],
       indicatorselect: [],
+      indicatorselectlist: [], // 枚举列表
 
       indicatorOption: [
         {
@@ -112,8 +138,8 @@ export default {
             { label: "总预算", value: "4_1" },
             { label: "单日预算", value: "5_1" },
             { label: "竞价金额", value: "6_1" },
-            { label: "付费事件", value: "7_3" },
-            { label: "优化目标", value: "8_3" }
+            { label: "付费事件", value: "ffsj_3" },
+            { label: "优化目标", value: "yhmb_3" }
           ]
         },
         {
@@ -225,6 +251,48 @@ export default {
       let condition = this.indicator[1].split("_");
       this.indicatortype = condition[1];
       this.indicatorval = condition[0];
+      let selectOption = {
+        bw: [
+          { name: "Facebook动态（桌面版）", key: "1" },
+          { name: "Facebook动态（移动版）", key: "2" },
+          { name: "Facebook右边栏", key: "3" },
+          { name: "Instagram动态", key: "4" },
+          { name: "Instagram快拍", key: "5" },
+          { name: "Audience Network", key: "6" },
+          { name: "Messenger收件箱", key: "7" },
+          { name: "Facebook Marketplace", key: "8" }
+        ],
+        ffsj: [
+          { name: "展示次数", key: "1" },
+          { name: "应用安装", key: "2" },
+          { name: "点击", key: "3" },
+          { name: "链接点击量（单次点击费用）", key: "4" },
+          { name: "领取优惠", key: "5" },
+          { name: "主页赞", key: "6" },
+          { name: "帖文互动", key: "7" },
+          { name: "观看视频达10秒的次数", key: "8" }
+        ],
+        yhmb: [
+          { name: "应用安装量", key: "1" },
+          { name: "品牌知名度", key: "2" },
+          { name: "广告点击量", key: "3" },
+          { name: "互动用户", key: "4" },
+          { name: "FBX使用率", key: "5" },
+          { name: "活动响应", key: "6" },
+          { name: "展示次数", key: "7" },
+          { name: "开发潜在客户", key: "8" },
+          { name: "链接点击量", key: "9" },
+          { name: "优惠领取", key: "10" },
+          { name: "转化量", key: "11" },
+          { name: "主页互动", key: "12" },
+          { name: "主页赞", key: "13" },
+          { name: "帖文互动", key: "14" },
+          { name: "单日独立覆盖人数", key: "15" },
+          { name: "回复次数", key: "16" },
+          { name: "社交展示次数", key: "17" },
+          { name: "观看视频达10秒的次数", key: "18" }
+        ]
+      };
 
       switch (this.indicatortype) {
         case "1":
@@ -242,17 +310,19 @@ export default {
           ];
           break;
         case "3":
-          if (this.indicatorval == "bw")
+          if (this.indicatorval == "bw") {
             this.operationlist = [
               { name: "包含任意", key: "1" },
               { name: "包含所有", key: "2" },
               { name: "不包含", key: "3" }
             ];
-          else
+          } else {
             this.operationlist = [
               { name: "是", key: "1" },
               { name: "不是", key: "2" }
             ];
+          }
+          this.indicatorselectlist = selectOption[this.indicatorval];
           break;
         case "4":
           this.operationlist = [
@@ -263,9 +333,17 @@ export default {
           ];
           break;
       }
+      this.operation = "1";
+      this.indicatorselect = [];
     },
-    determineSearch() {},
-    cancelSearch() {}
+    determineSearch() {
+      console.log(this.indicator);
+      console.log(this.operation);
+    },
+    cancelSearch() {
+      this.$emit("update:status", false);
+    },
+    selectOperation() {}
   }
 };
 </script>
@@ -278,19 +356,29 @@ export default {
   border-radius: 4px;
   background-color: #f5f5f5;
   margin-bottom: 10px;
+  display: inline-block;
   .ctrlselect {
-    width: 150px;
+    width: 140px;
     margin-right: 10px;
   }
   .select {
     width: 100px;
     margin-right: 10px;
   }
-  .numberinput{
+  .selectcontent {
+    width: 260px;
     margin-right: 10px;
   }
-  .timeselect{
+  .numberinput {
     margin-right: 10px;
+  }
+  .timeselect {
+    margin-right: 10px;
+    width: 180px;
+  }
+  .timerange {
+    margin-right: 10px;
+    width: 320px;
   }
 }
 </style>

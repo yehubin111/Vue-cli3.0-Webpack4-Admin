@@ -31,17 +31,26 @@
         @current-change="pageSwitch"
       ></el-pagination>
     </div>
+    <rule-execute :status.sync="executeStatus"></rule-execute>
+    <rule-objdetail :status.sync="objStatus"></rule-objdetail>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-
+import RuleExecute from './rule-execute';
+import RuleObjdetail from './rule-objdetail';
 export default {
+  components: {
+    RuleExecute,
+    RuleObjdetail
+  },
   data() {
     return {
       setapplist: [],
       switchstatus: true,
+      executeStatus: false,
+      objStatus: false
     };
   },
   computed: {

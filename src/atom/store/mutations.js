@@ -1652,7 +1652,7 @@ export default {
                 case 'LOOKALIKE':
                     let lookaliketype = JSON.parse(v.lookalikeSpec).origin[0];
                     if (lookaliketype.type == 'custom_audience') {
-                        v.childType = `自定义受众：${lookaliketype.name}`;
+                        v.childType = lookaliketype.name?`自定义受众：${lookaliketype.name}`: '';
                         v.childliketype = 'custom_audience';
                     } else if (lookaliketype.type == "campaign_conversion") {
                         v.childType = '广告转化';

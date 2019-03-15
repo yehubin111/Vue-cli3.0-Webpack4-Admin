@@ -20,7 +20,7 @@
     <el-table-column prop="audienceType" label="类型" width="100">
       <template slot-scope="scope">
         <p>{{scope.row.subtype == 'LOOKALIKE'? '类似受众': '自定义受众'}}</p>
-        <p class="childtype">{{scope.row.childType}}</p>
+        <p class="childtype" v-show="scope.row.childType">{{scope.row.childType}}</p>
       </template>
     </el-table-column>
     <el-table-column prop="audienceType" label="状态/规模" width="100">
@@ -47,74 +47,13 @@
         <p class="childtype">{{scope.row.ownAccountId.split('_')[1]}}</p>
       </template>
     </el-table-column>
-    <!-- <el-table-column prop="description" label="描述"></el-table-column> -->
     <el-table-column prop="creator" label="创建时间" width="100">
       <template slot-scope="scope">
-        <!-- <span>
-          {{scope.row.creater}}
-          <br>
-        </span>-->
         <span>{{scope.row.timeCreated + '000' | timeFormat('yyyy-MM-dd HH:mm')}}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作" width="160">
       <template slot-scope="scope">
-        <!-- <el-popover trigger="click" placement="top" width="600">
-          <el-table :id="'targetList' + scope.row.id" :data="targetdetail" height="250">
-            <el-table-column property="fbAudienceId" label="受众ID">
-              <template slot-scope="scope">
-                <span>{{scope.row.fbAudienceId}}</span>
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  v-if="scope.row.fbAudienceName && scope.row.fbAudienceName != disAudienceName"
-                  :content="'受众名称：' + scope.row.fbAudienceName"
-                  placement="top-start"
-                >
-                  <i class="el-icon-warning"></i>
-                </el-tooltip>
-              </template>
-            </el-table-column>
-            <el-table-column property="campaignName" label="账号名称">
-              <template slot-scope="scope">
-                <span class="fbName">{{scope.row.fbAccountName}}</span>
-                <span class="fbId">ID:{{scope.row.fbAccountId.split('_')[1]}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column width="80" property="statusName" label="状态">
-              <template slot-scope="scope">
-                <span>{{scope.row.statusName}}</span>
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  v-if="scope.row.operationStatus != 200 && scope.row.deliveryDescription"
-                  :content="scope.row.deliveryDescription"
-                  placement="top-start"
-                >
-                  <i class="el-icon-warning"></i>
-                </el-tooltip>
-              </template>
-            </el-table-column>
-            <el-table-column width="100" property="approximateCount" label="规模">
-              <template slot-scope="scope">
-                <span>{{scope.row.approximateCount?scope.row.approximateCount: '--'}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column width="100" property="updateTime" label="更新时间">
-              <template slot-scope="scope">
-                <span>{{scope.row.updateTime | timeFormat('yyyy-MM-dd HH:mm:ss')}}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-          <p class="createall">{{targetdetail.length}}个广告账号内有此受众</p>
-          <el-button
-            slot="reference"
-            class="popoverbutton"
-            size="small"
-            type="text"
-            @click="getLogid(scope.row.id, scope.row.name)"
-          >详情</el-button>
-        </el-popover>-->
         <el-tooltip
           class="item"
           effect="dark"
@@ -230,13 +169,6 @@ export default {
 }
 .fbName {
   display: block;
-}
-.targetname {
-  // line-height: 23px;
-  // height: 23px;
-  // overflow: hidden;
-  // text-overflow: ellipsis;
-  // white-space: nowrap;
 }
 .ctrlbutton {
   margin-right: 10px;

@@ -45,7 +45,6 @@
             slot-scope="scope"
           >{{scope.row.creativityText}}<el-tag size="mini" style="margin-left: 5px">{{scope.row.countryId}}</el-tag><el-tag size="mini" style="margin-left: 5px">{{scope.row.sexName}}</el-tag></template>
         </el-table-column>
-        <!-- <el-table-column prop="creativityTypeName" label="类型" width="100"></el-table-column> -->
         <el-table-column prop="picture" label="缩略图" width="80">
           <template slot-scope="scope">
             <span class="headpic">
@@ -176,8 +175,6 @@ export default {
     display: flex;
     .search {
       margin-right: 10px;
-    }
-    .select {
     }
   }
   .select-table {

@@ -39,7 +39,8 @@ export default {
     'managelist': 'project/getProjects?keywords={keywords}&status={status}&pageIndex={pageIndex}&pageSize={pageSize}', // 项目管理列表
     'addproject': 'project/addProject',  // 添加项目
     'editproject': 'project/updateProject',  // 编辑项目
-    'projectover': 'project/projectIsOFF', //项目归档
+    // 'projectover': 'project/projectIsOFF', //项目归档
+    'projectover': 'project/offProject', //项目归档
     'projectbegin': 'project/projectIsON',  // 项目激活
     // project rules
     'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表

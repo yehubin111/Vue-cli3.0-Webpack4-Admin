@@ -58,7 +58,7 @@ export default {
       if (taskDetailindex == -1) return;
 
       let str = message.substr(taskDetailindex + 11);
-      let khindex = str.indexOf(")");
+      let khindex = str.lastIndexOf(")");
       let str2arr = str.substring(0, khindex - 1).split(",");
 
       console.log(str2arr);

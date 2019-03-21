@@ -2240,13 +2240,15 @@ export default {
     joblistDetail({ state, commit }) {
         let url = `${URL.jobresultdetail}${state.jobfailkey}`;
 
-        _axios.get(url)
-            .then(res => {
+        Axios({
+            url,
+            success: res => {
                 commit('JOBLISTDETAIL', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            },
+            fail: err => {
+                commit('JOBLISTDETAILERROR');
+            }
+        })
     },
     copyCreateCampaign({ state, commit, dispatch }, { name, accountId, orgId, count, identify, type, projectId, ifstride }) {
         let url = URL.createcampaign;

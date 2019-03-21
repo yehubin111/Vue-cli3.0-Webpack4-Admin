@@ -1138,7 +1138,7 @@ export default {
             [...new Set(n.map(v => v.maxage))].length > 1
               ? true
               : false,
-          language: this.form.language.length == 0 ? true : false,
+          language: n.length > 1 && this.form.language.length == 0 ? true : false,
           interest:
             n.length > 1 && this.form.interest.length == 0 ? true : false,
           auto: !auto ? true : false,

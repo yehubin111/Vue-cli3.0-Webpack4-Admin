@@ -261,6 +261,7 @@ export default {
   taskfaildetail: 0, // task失败数量 详情弹框用
   tasksuccessdetail: 0, // task成功数量 详情弹框用
   taskresult: [], // job 失败详情
+  taskerror: '', // job失败详情无数据
   adtab: 'campaignName',
 
   adalllist: [], //广告管理列表所有数据，用于导出全部

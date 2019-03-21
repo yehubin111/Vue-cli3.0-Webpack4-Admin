@@ -1144,6 +1144,9 @@ export default {
         state.jobcomplete = 0;
         state.copyjoblistdetail = [];
     },
+    JOBLISTDETAILERROR(state) {
+        state.taskresult = [];
+    },
     JOBLISTDETAIL(state, r) {
         state.taskresult = [];
         let campaignTab = ['复制广告系列', '复制广告系列(其他广告账户)'];

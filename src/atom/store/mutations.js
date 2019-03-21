@@ -1167,7 +1167,7 @@ export default {
             state.taskresult.push({
                 tabelhead: '广告组名称',
                 tabname: `广告组${eval(tabadset.map(v => v.success).join('+'))}/${errortasks.length}`,
-                tasks: tabadset['tasks']
+                tasks: errortasks
             })
         }
         let tabad = r.filter(v => adTab.indexOf(v.taskName) != -1);

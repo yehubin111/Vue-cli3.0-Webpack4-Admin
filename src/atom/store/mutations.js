@@ -1146,26 +1146,30 @@ export default {
     },
     JOBLISTDETAIL(state, r) {
         state.taskresult = [];
+        let campaignTab = ['复制广告系列', '复制广告系列(其他广告账户)'];
+        let adsetTab = ['复制广告组', '复制广告组(其他广告账户)'];
+        let adTab = ['复制广告', '创建广告', '编辑广告', '复制广告(其他广告账户)'];
+        let createTab = ['替换创意'];
 
-        let tabcampaign = r.find(v => v.taskName == '复制广告系列' || v.taskName == '复制广告系列(其他广告账户)');
+        let tabcampaign = r.find(v => campaignTab.indexOf(v.taskName) != -1);
         if (tabcampaign)
             state.taskresult.push({
                 tabname: `广告系列${tabcampaign['success']}/${tabcampaign['tasks'].length}`,
                 tasks: tabcampaign['tasks']
             })
-        let tabadset = r.find(v => v.taskName == '复制广告组' || v.taskName == '复制广告组(其他广告账户)');
+        let tabadset = r.find(v => adsetTab.indexOf(v.taskName) != -1);
         if (tabadset)
             state.taskresult.push({
                 tabname: `广告组${tabadset['success']}/${tabadset['tasks'].length}`,
                 tasks: tabadset['tasks']
             })
-        let tabad = r.find(v => v.taskName == '复制广告' || v.taskName == '创建广告' || v.taskName == '编辑广告' || v.taskName == '复制广告(其他广告账户)');
+        let tabad = r.find(v => adTab.indexOf(v.taskName) != -1);
         if (tabad)
             state.taskresult.push({
                 tabname: `广告${tabad['success']}/${tabad['tasks'].length}`,
                 tasks: tabad['tasks']
             })
-        let tabcreate = r.find(v => v.taskName == '替换创意');
+        let tabcreate = r.find(v => createTab.indexOf(v.taskName) != -1);
         if (tabcreate)
             state.taskresult.push({
                 tabname: `创意${tabcreate['success']}/${tabcreate['tasks'].length}`,
@@ -1657,7 +1661,7 @@ export default {
                 case 'LOOKALIKE':
                     let lookaliketype = JSON.parse(v.lookalikeSpec).origin[0];
                     if (lookaliketype.type == 'custom_audience') {
-                        v.childType = lookaliketype.name?`自定义受众：${lookaliketype.name}`: '';
+                        v.childType = lookaliketype.name ? `自定义受众：${lookaliketype.name}` : '';
                         v.childliketype = 'custom_audience';
                     } else if (lookaliketype.type == "campaign_conversion") {
                         v.childType = '广告转化';

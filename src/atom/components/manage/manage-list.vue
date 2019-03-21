@@ -4,7 +4,7 @@
     </el-table-column>
     <el-table-column prop="projectName" label="项目名称">
       <template slot-scope="scope">
-        <router-link class="detail" :to="'/project/' + scope.row.id + '/plan'">{{scope.row.projectName}}</router-link>
+        <router-link class="detail" :to="'/project/' + scope.row.id">{{scope.row.projectName}}</router-link>
       </template>
     </el-table-column>
     <el-table-column prop="creater" label="创建人/时间" width="100">

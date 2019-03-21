@@ -9,7 +9,7 @@
         :name="`${index+1}`"
       >
         <el-table :data="item.tasks" style="width: 100%" max-height="250">
-          <el-table-column prop="extraInfo" label="广告系列名称">
+          <el-table-column prop="extraInfo" :label="item.tabelhead">
             <template slot-scope="scope">{{scope.row.extraInfo?scope.row.extraInfo:'--'}}</template>
           </el-table-column>
           <el-table-column prop="result" label="错误信息">

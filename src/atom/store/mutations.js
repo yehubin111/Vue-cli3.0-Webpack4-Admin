@@ -1148,33 +1148,45 @@ export default {
         state.taskresult = [];
         let campaignTab = ['复制广告系列', '复制广告系列(其他广告账户)'];
         let adsetTab = ['复制广告组', '复制广告组(其他广告账户)'];
-        let adTab = ['复制广告', '创建广告', '编辑广告', '复制广告(其他广告账户)'];
-        let createTab = ['替换创意'];
+        let adTab = ['复制广告', '创建广告', '编辑广告', '复制广告(其他广告账户)', '替换创意'];
+        // let createTab = ['替换创意'];
+        let errortasks = [];
 
-        let tabcampaign = r.find(v => campaignTab.indexOf(v.taskName) != -1);
-        if (tabcampaign)
+        let tabcampaign = r.filter(v => campaignTab.indexOf(v.taskName) != -1);
+        if (tabcampaign.length > 0) {
+            errortasks = tabcampaign.map(v => v['tasks']).flat();
             state.taskresult.push({
-                tabname: `广告系列${tabcampaign['success']}/${tabcampaign['tasks'].length}`,
-                tasks: tabcampaign['tasks']
+                tabelhead: '广告系列名称',
+                tabname: `广告系列${eval(tabcampaign.map(v => v.success).join('+'))}/${errortasks.length}`,
+                tasks: errortasks
             })
-        let tabadset = r.find(v => adsetTab.indexOf(v.taskName) != -1);
-        if (tabadset)
+        }
+        let tabadset = r.filter(v => adsetTab.indexOf(v.taskName) != -1);
+        if (tabadset.length > 0) {
+            errortasks = tabadset.map(v => v['tasks']).flat();
             state.taskresult.push({
-                tabname: `广告组${tabadset['success']}/${tabadset['tasks'].length}`,
+                tabelhead: '广告组名称',
+                tabname: `广告组${eval(tabadset.map(v => v.success).join('+'))}/${errortasks.length}`,
                 tasks: tabadset['tasks']
             })
-        let tabad = r.find(v => adTab.indexOf(v.taskName) != -1);
-        if (tabad)
+        }
+        let tabad = r.filter(v => adTab.indexOf(v.taskName) != -1);
+        if (tabad.length > 0) {
+            errortasks = tabad.map(v => v['tasks']).flat();
             state.taskresult.push({
-                tabname: `广告${tabad['success']}/${tabad['tasks'].length}`,
-                tasks: tabad['tasks']
+                tabelhead: '广告名称',
+                tabname: `广告${eval(tabad.map(v => v.success).join('+'))}/${errortasks.length}`,
+                tasks: errortasks
             })
-        let tabcreate = r.find(v => createTab.indexOf(v.taskName) != -1);
-        if (tabcreate)
-            state.taskresult.push({
-                tabname: `创意${tabcreate['success']}/${tabcreate['tasks'].length}`,
-                tasks: tabcreate['tasks']
-            })
+        }
+        // let tabcreate = r.filter(v => createTab.indexOf(v.taskName) != -1);
+        // if (tabcreate.length > 0) {
+        //     errortasks = tabcreate.map(v => v['tasks']).flat();
+        //     state.taskresult.push({
+        //         tabname: `创意${eval(tabcreate.map(v => v.success).join('+'))}/${errortasks.length}`,
+        //         tasks: errortasks
+        //     })
+        // }
     },
     CALENDARDATE(state, r) {
         state.calendardate = r.data;

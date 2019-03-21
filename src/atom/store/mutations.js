@@ -1147,19 +1147,19 @@ export default {
     JOBLISTDETAIL(state, r) {
         state.taskresult = [];
 
-        let tabcampaign = r.find(v => v.taskName == '复制广告系列');
+        let tabcampaign = r.find(v => v.taskName == '复制广告系列' || v.taskName == '复制广告系列(其他广告账户)');
         if (tabcampaign)
             state.taskresult.push({
                 tabname: `广告系列${tabcampaign['success']}/${tabcampaign['tasks'].length}`,
                 tasks: tabcampaign['tasks']
             })
-        let tabadset = r.find(v => v.taskName == '复制广告组');
+        let tabadset = r.find(v => v.taskName == '复制广告组' || v.taskName == '复制广告组(其他广告账户)');
         if (tabadset)
             state.taskresult.push({
                 tabname: `广告组${tabadset['success']}/${tabadset['tasks'].length}`,
                 tasks: tabadset['tasks']
             })
-        let tabad = r.find(v => v.taskName == '复制广告' || v.taskName == '创建广告' || v.taskName == '编辑广告');
+        let tabad = r.find(v => v.taskName == '复制广告' || v.taskName == '创建广告' || v.taskName == '编辑广告' || v.taskName == '复制广告(其他广告账户)');
         if (tabad)
             state.taskresult.push({
                 tabname: `广告${tabad['success']}/${tabad['tasks'].length}`,

@@ -31,7 +31,7 @@
             class="item"
             effect="dark"
             :content="scope.row.deliveryStatusDescription"
-            v-if="scope.row.deliveryStatusCode != 200"
+            v-if="scope.row.operationStatusCode != 200"
             :disabled="!scope.row.deliveryStatusDescription"
             placement="top-start"
           >

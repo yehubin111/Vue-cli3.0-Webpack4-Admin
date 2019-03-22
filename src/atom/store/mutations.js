@@ -1638,7 +1638,7 @@ export default {
 
             v.approximateCount = v.approximateCount == 1000 ? '<1000' : v.approximateCount;
 
-            switch (v.deliveryStatusCode) {
+            switch (v.operationStatusCode) {
                 case 200:
                     v.statusName = '正常';
                     break;

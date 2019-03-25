@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     toCancel() {
-      this.$emit("update.status", false);
+      this.$emit("update:status", false);
     },
     submitExecute() {}
   },

@@ -226,6 +226,9 @@
             @showOptionbox="showOptionbox"
             @showRemainBox="showRemainBox"
             @tabJump="tabJump"
+            @ruleCreate="ruleCreate"
+            @ruleAdd="ruleAdd"
+            @ruleRemove="ruleRemove"
             :opDefault="[{ name: '广告系列名称', key: 'campaignName', tool: true, link: true }]"
             :defaultOption="defaultOption"
             type="campaignName"
@@ -245,6 +248,9 @@
             @showOptionbox="showOptionbox"
             @showRemainBox="showRemainBox"
             @tabJump="tabJump"
+            @ruleCreate="ruleCreate"
+            @ruleAdd="ruleAdd"
+            @ruleRemove="ruleRemove"
             :opDefault="[{ name: '广告组名称', key: 'adSetName', tool: true, link: true }]"
             :defaultOption="defaultOption"
             type="adSetName"
@@ -264,6 +270,9 @@
             @showOptionbox="showOptionbox"
             @showRemainBox="showRemainBox"
             @tabJump="tabJump"
+            @ruleCreate="ruleCreate"
+            @ruleAdd="ruleAdd"
+            @ruleRemove="ruleRemove"
             :opDefault="[{ name: '广告名称', key: 'adName', tool: true }]"
             :defaultOption="defaultOption"
             type="adName"
@@ -324,14 +333,16 @@
       ref="listOption"
     ></list-option>
     <import-remain :status.sync="remainstatus" :type="tabtype" @hideRemainBox="hideRemainBox"></import-remain>
-    <!-- <rule-add :status.sync="ruleaddstatus"></rule-add> -->
-    <!-- <rule-remove :status.sync="ruleremovestatus"></rule-remove> -->
+    <rule-select :status.sync="ruleselectstatus"></rule-select>
+    <rule-remove :status.sync="ruleremovestatus"></rule-remove>
+    <rule-add :status.sync="ruleaddstatus"></rule-add>
   </div>
 </template>
 
 <script>
+import RuleAdd from '../rules/rule-add';
 import RuleRemove from './ad-ruleremove';
-import RuleAdd from "./ad-ruleadd";
+import RuleSelect from "./ad-ruleselect";
 import AdSetbox from "./ad-setbox";
 import AdCreate from "./ad-create";
 import AdCopy from "./ad-copy";
@@ -351,8 +362,9 @@ export default {
     AdCopy,
     ListOption,
     ImportRemain,
-    RuleAdd,
-    RuleRemove
+    RuleSelect,
+    RuleRemove,
+    RuleAdd
   },
   beforeRouteLeave(to, from, next) {
     switch (this.tabname) {
@@ -374,8 +386,9 @@ export default {
     return {
       optionstatus: false,
       remainstatus: false,
-      ruleaddstatus: false, // 添加规则
+      ruleselectstatus: false, // 选择现有规则
       ruleremovestatus: false, // 移除规则
+      ruleaddstatus: false, // 创建规则
       defaultOption: [], // 自定义列配置, 常用，不包含各模块固定列
       defaultListOption: [], // 自定义列中的配置
       sortDown: false,
@@ -730,6 +743,15 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    ruleAdd() {
+      this.ruleaddstatus = true;
+    },
+    ruleCreate() {
+      this.ruleselectstatus = true;
+    },
+    ruleRemove() {
+      this.ruleremovestatus = true;
+    },
     tabJump(tabname, row, type) {
       this.tabname = tabname;
 

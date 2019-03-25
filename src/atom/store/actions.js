@@ -2417,7 +2417,6 @@ export default {
                     Msgsuccess('提交成功');
                     // 重置定时器
                     clearInterval(jobProcess);
-
                     setTimeout(function () {
                         dispatch('jobList');
                     }, 2000);

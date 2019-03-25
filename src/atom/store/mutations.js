@@ -1855,6 +1855,10 @@ export default {
     ALLRULES(state, r) {
         state.allrules = r.data;
     },
+    GETRULELIST(state, r) {
+        state.newrulelist = r.data.list;
+        state.newruletotal = r.data.count;
+    },
     REGUFORMDATA(state, r) {
         // 规则启用比例
         let qybl = r.data.ruleDurations;

@@ -728,6 +728,23 @@ export default {
                 console.log(err);
             })
     },
+    getRuleList({ state, commit }, option) {
+        let url = URL.getrulelist;
+        let str = '';
+        Object.keys(option).forEach(v => {
+            if(option[v])
+                str += `&${v}=${option[v]}`;
+        })
+        str = str.substr(1);
+        url += str;
+
+        Axios({
+            url,
+            success: res => {
+                commit('GETRULELIST', res);
+            }
+        })
+    },
     openRule({ state, commit }, { projid, ruleGroupId }) {
         let url = URL.openrule.replace('{projectId}', projid);
         let params = {
@@ -2071,7 +2088,9 @@ export default {
                 Msgsuccess('提交成功');
                 // 重置定时器
                 clearInterval(jobProcess);
-                dispatch('jobList');
+                setTimeout(function () {
+                    dispatch('jobList');
+                }, 2000);
             }
         })
         // _axios.post(url, option, { fullScreen: true })
@@ -2176,7 +2195,9 @@ export default {
 
                     // 重置定时器
                     clearInterval(jobProcess);
-                    dispatch('jobList');
+                    setTimeout(function () {
+                        dispatch('jobList');
+                    }, 2000);
                 }
             })
             .catch(err => {
@@ -2413,7 +2434,9 @@ export default {
                     Msgsuccess('提交成功');
                     // 重置定时器
                     clearInterval(jobProcess);
-                    dispatch('jobList');
+                    setTimeout(function () {
+                        dispatch('jobList');
+                    }, 2000);
 
                     return true;
                 } else {

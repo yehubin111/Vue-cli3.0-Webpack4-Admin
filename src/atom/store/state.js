@@ -349,6 +349,8 @@ export default {
   rg_keyword: '',
   rg_pageNo: 1,
   rg_pageSize: 20,
+  newrulelist: [], // 规则管理列表
+  newruletotal: 0, // 规则管理列表总数
   regularlist: [], //规则列表
   regulartotal: 0, // 规则列表总数
   allrules: [], //规则报表种的规则列表

@@ -2,7 +2,13 @@
   <div class="rule">
     <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;规则管理</p>
     <div class="ctrlline">
-      <el-select class="select" v-model="account" filterable placeholder="广告账户，可多选，支持编号和名称搜索" @change="selectCondition">
+      <el-select
+        class="select"
+        v-model="account"
+        filterable
+        placeholder="广告账户，可多选，支持编号和名称搜索"
+        @change="selectCondition"
+      >
         <el-option :label="111" :value="111"></el-option>
       </el-select>
       <el-button type="primary" @click="addStatus = true">创建</el-button>
@@ -25,13 +31,13 @@
           </p>
         </div>
       </div>
-    </div> -->
+    </div>-->
   </div>
 </template>
 
 <script>
-import RuleAdd from './rule-add';
-import RuleList from './rule-list';
+import RuleAdd from "./rule-add";
+import RuleList from "./rule-list";
 import { mapState } from "vuex";
 export default {
   components: {
@@ -41,24 +47,29 @@ export default {
   data() {
     return {
       value2: true,
-      account: '',
+      account: "",
       addStatus: false
     };
   },
   mounted() {
-    this.$store.dispatch("getRules", this.$route.params.id);
+    // this.$store.dispatch("getRules", this.$route.params.id);
+    let option = {
+      fbAccountIds: "act_198019510840403",
+      level: "",
+      pageIndex: 1,
+      pageSize: 20
+    };
+    this.$store.dispatch("getRuleList", option);
   },
   computed: {
-    ...mapState(["itemlist", "rulelist"]),
+    ...mapState(["itemlist"]),
     projectname() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
     }
   },
   methods: {
-    selectCondition() {
-
-    },
+    selectCondition() {},
     switchChange(id) {
       let status = this.rulelist.find(v => v.id == id).status;
 
@@ -84,15 +95,15 @@ export default {
       color: #333;
     }
   }
-  .ctrlline{
+  .ctrlline {
     margin-left: 40px;
     margin-bottom: 30px;
-    .select{
+    .select {
       width: 300px;
       margin-right: 20px;
     }
   }
-  .rulelist{
+  .rulelist {
     margin-left: 40px;
   }
   // .tip{

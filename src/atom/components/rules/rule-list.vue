@@ -1,6 +1,6 @@
 <template>
   <div class="list">
-    <el-table :data="optimizelist" style="width: 100%">
+    <el-table :data="newrulelist" style="width: 100%">
       <el-table-column prop="id" label width="80">
         <el-switch
           class="statusswitch"
@@ -12,13 +12,47 @@
           @change="switchChange"
         ></el-switch>
       </el-table-column>
-      <el-table-column prop="id" label="名称" width="180"></el-table-column>
-      <el-table-column prop="ruleName" label="应用对象"></el-table-column>
-      <el-table-column prop="fbTargetId" label="操作与条件"></el-table-column>
-      <el-table-column prop="result" label="结果" width="140"></el-table-column>
-      <el-table-column prop="ruleName" label="广告账户"></el-table-column>
-      <el-table-column prop="fbTargetId" label="创建人"></el-table-column>
-      <el-table-column prop="result" label="操作" width="140"></el-table-column>
+      <el-table-column prop label="名称" width="120">
+        <template slot-scope="scope">
+          <p>{{scope.row.name}}</p>
+          <p class="childtype">{{scope.row.scheduleCnName}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop label="应用对象">
+        <template slot-scope="scope">
+          <p
+            v-if="scope.row.ruleObjCount > 0"
+            class="activename"
+          >{{scope.row.ruleObjCount}}个{{scope.row.levelCnName}}</p>
+          <p v-else>投放中{{scope.row.levelCnName}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop label="操作与条件">
+        <template slot-scope="scope">
+          <p>{{scope.row.executionSpecName}}</p>
+          <p class="childtype">{{scope.row.scheduleCnName}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop="result" label="结果" width="100"></el-table-column>
+      <el-table-column prop label="广告账户">
+        <template slot-scope="scope">
+          <p>{{scope.row.fbAccountName}}</p>
+          <p class="childtype">{{scope.row.fbAccountId.replace('act_', '')}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop label="创建人" width="100">
+        <template slot-scope="scope">
+          <p>{{scope.row.createBy}}</p>
+          <p class="childtype">{{scope.row.createTime | timeFormat('yyyy-MM-dd')}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop label="操作" width="140">
+        <template>
+          <p class="ctrl">
+            <el-button type="text" size="mini">编辑</el-button>
+          </p>
+        </template>
+      </el-table-column>
     </el-table>
     <div class="pageswitch">
       <el-pagination
@@ -26,7 +60,7 @@
         @size-change="pageSizeChange"
         :page-sizes="[20, 200, 500]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="10"
+        :total="newruletotal"
         :page-size="20"
         @current-change="pageSwitch"
       ></el-pagination>
@@ -38,8 +72,8 @@
 
 <script>
 import { mapState } from "vuex";
-import RuleExecute from './rule-execute';
-import RuleObjdetail from './rule-objdetail';
+import RuleExecute from "./rule-execute";
+import RuleObjdetail from "./rule-objdetail";
 export default {
   components: {
     RuleExecute,
@@ -54,7 +88,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["optimizelist"])
+    ...mapState(["newrulelist", "newruletotal"])
   },
   methods: {
     switchChange() {},
@@ -67,6 +101,13 @@ export default {
 <style lang="less" scoped>
 .createTime {
   display: block;
+}
+.childtype {
+  font-size: 12px;
+  color: #999;
+}
+.activename {
+  color: #409eff;
 }
 .pageswitch {
   margin-top: 20px;

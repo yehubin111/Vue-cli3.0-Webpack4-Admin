@@ -43,7 +43,8 @@ export default {
     'projectover': 'project/offProject', //项目归档
     'projectbegin': 'project/projectIsON',  // 项目激活
     // project rules
-    'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表
+    // 'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表
+    'getrulelist': 'adRule/list?', // 规则管理列表
     'openrule': 'optimize/{projectId}/ruleGroups/add',  // 打开规则
     'closerule': 'optimize/{projectId}/ruleGroups/delete', //关闭规则
     'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}

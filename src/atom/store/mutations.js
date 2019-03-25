@@ -1158,29 +1158,32 @@ export default {
         let tabcampaign = r.filter(v => campaignTab.indexOf(v.taskName) != -1);
         if (tabcampaign.length > 0) {
             errortasks = tabcampaign.map(v => v['tasks']).flat();
-            state.taskresult.push({
-                tabelhead: '广告系列名称',
-                tabname: `广告系列${eval(tabcampaign.map(v => v.success).join('+'))}/${errortasks.length}`,
-                tasks: errortasks
-            })
+            if(errortasks.length > 0)
+                state.taskresult.push({
+                    tabelhead: '广告系列名称',
+                    tabname: `广告系列${eval(tabcampaign.map(v => v.success).join('+'))}/${errortasks.length}`,
+                    tasks: errortasks
+                })
         }
         let tabadset = r.filter(v => adsetTab.indexOf(v.taskName) != -1);
         if (tabadset.length > 0) {
             errortasks = tabadset.map(v => v['tasks']).flat();
-            state.taskresult.push({
-                tabelhead: '广告组名称',
-                tabname: `广告组${eval(tabadset.map(v => v.success).join('+'))}/${errortasks.length}`,
-                tasks: errortasks
-            })
+            if(errortasks.length > 0)
+                state.taskresult.push({
+                    tabelhead: '广告组名称',
+                    tabname: `广告组${eval(tabadset.map(v => v.success).join('+'))}/${errortasks.length}`,
+                    tasks: errortasks
+                })
         }
         let tabad = r.filter(v => adTab.indexOf(v.taskName) != -1);
         if (tabad.length > 0) {
             errortasks = tabad.map(v => v['tasks']).flat();
-            state.taskresult.push({
-                tabelhead: '广告名称',
-                tabname: `广告${eval(tabad.map(v => v.success).join('+'))}/${errortasks.length}`,
-                tasks: errortasks
-            })
+            if(errortasks.length > 0)
+                state.taskresult.push({
+                    tabelhead: '广告名称',
+                    tabname: `广告${eval(tabad.map(v => v.success).join('+'))}/${errortasks.length}`,
+                    tasks: errortasks
+                })
         }
         // let tabcreate = r.filter(v => createTab.indexOf(v.taskName) != -1);
         // if (tabcreate.length > 0) {

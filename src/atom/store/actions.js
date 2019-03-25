@@ -2071,7 +2071,9 @@ export default {
                 Msgsuccess('提交成功');
                 // 重置定时器
                 clearInterval(jobProcess);
-                dispatch('jobList');
+                setTimeout(function () {
+                    dispatch('jobList');
+                }, 2000);
             }
         })
         // _axios.post(url, option, { fullScreen: true })
@@ -2176,7 +2178,9 @@ export default {
 
                     // 重置定时器
                     clearInterval(jobProcess);
-                    dispatch('jobList');
+                    setTimeout(function () {
+                        dispatch('jobList');
+                    }, 2000);
                 }
             })
             .catch(err => {
@@ -2413,7 +2417,10 @@ export default {
                     Msgsuccess('提交成功');
                     // 重置定时器
                     clearInterval(jobProcess);
-                    dispatch('jobList');
+
+                    setTimeout(function () {
+                        dispatch('jobList');
+                    }, 2000);
 
                     return true;
                 } else {

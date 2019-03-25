@@ -1157,7 +1157,7 @@ export default {
 
         let tabcampaign = r.filter(v => campaignTab.indexOf(v.taskName) != -1);
         if (tabcampaign.length > 0) {
-            errortasks = tabcampaign.map(v => v['tasks']).flat();
+            errortasks = tabcampaign.filter(v => v['tasks']).map(v => v['tasks']).flat();
             if(errortasks.length > 0)
                 state.taskresult.push({
                     tabelhead: '广告系列名称',
@@ -1167,7 +1167,7 @@ export default {
         }
         let tabadset = r.filter(v => adsetTab.indexOf(v.taskName) != -1);
         if (tabadset.length > 0) {
-            errortasks = tabadset.map(v => v['tasks']).flat();
+            errortasks = tabadset.filter(v => v['tasks']).map(v => v['tasks']).flat();
             if(errortasks.length > 0)
                 state.taskresult.push({
                     tabelhead: '广告组名称',
@@ -1177,7 +1177,7 @@ export default {
         }
         let tabad = r.filter(v => adTab.indexOf(v.taskName) != -1);
         if (tabad.length > 0) {
-            errortasks = tabad.map(v => v['tasks']).flat();
+            errortasks = tabad.filter(v => v['tasks']).map(v => v['tasks']).flat();
             if(errortasks.length > 0)
                 state.taskresult.push({
                     tabelhead: '广告名称',

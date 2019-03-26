@@ -28,7 +28,7 @@
         </p>
       </div>
     </li>
-    <li v-if="ifSuperAdmin">规则中心
+    <!-- <li v-if="ifSuperAdmin">规则中心
       <i></i>
       <div class="list">
         <p>
@@ -38,7 +38,7 @@
           <router-link to="/reguform">规则报表</router-link>
         </p>
       </div>
-    </li>
+    </li> -->
     <li>工具箱
       <i></i>
       <div class="list">

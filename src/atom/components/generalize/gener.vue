@@ -40,7 +40,7 @@ export default {
     // SelectAccount
   },
   created() {
-
+    this.SETSTATE({ k: "classifyfiltercount", v: 0 });
   },
   mounted() {
     this.$store.dispatch("otherCountries");
@@ -52,6 +52,8 @@ export default {
     let project_id = this.$route.params.id;
     let audience_ids = this.$route.params.tid ? this.$route.params.tid : "";
     this.$store.dispatch("generAccountList", { audience_ids, project_id });
+    // 获取分类
+    this.$store.dispatch("getClassifyForPlan", project_id);
   },
   computed: {
     ...mapState(["itemlist"]),
@@ -76,7 +78,7 @@ export default {
 .gener {
   flex-grow: 1;
   position: relative;
-  .bidguide{
+  .bidguide {
     position: absolute;
     top: 100px;
     right: 0;

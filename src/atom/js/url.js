@@ -39,7 +39,8 @@ export default {
     'managelist': 'project/getProjects?keywords={keywords}&status={status}&pageIndex={pageIndex}&pageSize={pageSize}', // 项目管理列表
     'addproject': 'project/addProject',  // 添加项目
     'editproject': 'project/updateProject',  // 编辑项目
-    'projectover': 'project/projectIsOFF', //项目归档
+    // 'projectover': 'project/projectIsOFF', //项目归档
+    'projectover': 'project/offProject', //项目归档
     'projectbegin': 'project/projectIsON',  // 项目激活
     // project rules
     'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表
@@ -103,6 +104,8 @@ export default {
     'openplan': 'plan/openPlan', //开启智能推广计划
     'closeplan': 'plan/closePlan', //关闭智能推广计划
     'bidguide': 'plan/priceGuide?', // 出价指南
+    'classifyfilter': 'plan/usableCreativeCountWithPlan?', // 智能选择符合条件数量
+    'classifyfilternoplan': 'plan/usableCreativeCount?', // 智能选择符合条件数量(创建推广计划情况，无planid)
     // ad
     'adlisttotal': 'projectad/sumFbAdList', // 广告管理列表合计
     'adlist': 'projectad/getProjectsAd?', // 广告列表

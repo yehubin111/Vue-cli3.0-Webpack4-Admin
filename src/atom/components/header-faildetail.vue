@@ -1,7 +1,8 @@
 <template>
   <el-dialog title="操作详情" :visible="jobfaildetail" class="dialog" @close="toCancel">
-    <p class="detailinfo">{{tasknamedetail}}，{{tasksuccessdetail}}项成功，{{taskfaildetail}}项失败</p>
-    <el-tabs v-model="activeName" type="card" @tab-click="handleClick" empty-text="全部完成">
+    <p class="noinfo" v-show="taskresult.length == 0">该任务不存在！</p>
+    <p class="detailinfo" v-show="taskresult.length != 0">{{tasknamedetail}}，{{tasksuccessdetail}}项成功，{{taskfaildetail}}项失败</p>
+    <el-tabs v-show="taskresult.length != 0" v-model="activeName" type="card" @tab-click="handleClick" empty-text="全部完成">
       <el-tab-pane
         v-for="(item, index) in taskresult"
         :key="index"
@@ -9,7 +10,7 @@
         :name="`${index+1}`"
       >
         <el-table :data="item.tasks" style="width: 100%" max-height="250">
-          <el-table-column prop="extraInfo" label="广告系列名称">
+          <el-table-column prop="extraInfo" :label="item.tabelhead">
             <template slot-scope="scope">{{scope.row.extraInfo?scope.row.extraInfo:'--'}}</template>
           </el-table-column>
           <el-table-column prop="result" label="错误信息">

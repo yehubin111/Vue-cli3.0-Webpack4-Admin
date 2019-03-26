@@ -17,7 +17,7 @@ function Axios({ url, method = 'get', data = {}, success = null, fail = null, fu
             return success(res);
         })
         .catch(err => {
-            console.log(err);
+            console.error(err);
             if (fail) fail();
         })
 }
@@ -1015,7 +1015,7 @@ export default {
         if (loading) {
             load = Loading.service({ target: document.getElementById(loading) });
         }
-        
+
         _axios.get(url)
             .then(res => {
                 if (load)
@@ -1449,7 +1449,7 @@ export default {
                 console.log(err);
             })
     },
-    autoSelect({ state, commit, dispatch }, { plan_id, creative_type, creative_num, creative_strategy }) {
+    autoSelect({ state, commit, dispatch }, { plan_id, creative_type, creative_num, creative_strategy, creative_classify }) {
         let url = URL.autoselect;
 
         let str = '';
@@ -1457,6 +1457,7 @@ export default {
         str += '&creative_type=' + creative_type;
         str += '&creative_num=' + creative_num;
         str += '&creative_strategy=' + creative_strategy;
+        str += '&creative_classify=' + creative_classify;
 
         url += str;
 
@@ -1728,6 +1729,37 @@ export default {
                 console.log(err);
             })
     },
+    getClassifyForPlan({ state, commit }, projectid) {
+        let url = URL.classify.replace('{projectid}', projectid);
+
+        Axios({
+            url,
+            success: res => {
+                commit('CLASSIFYFORPLAN', res);
+            }
+        })
+    },
+    classifyFilterCount({ state, commit }, { planid, creativetype, classify }) {
+        let url = `${URL.classifyfilter}plan_id=${planid}&creative_type=${creativetype}&classify=${classify}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('CLASSIFYFILTERCOUNT', res);
+            }
+        })
+    },
+    classifyFilterCountNoPlan({ state, commit }, { country, gender, projectId, creativetype, classify }) {
+        let url = `${URL.classifyfilternoplan}country=${country}&gender=${gender}&projectId=${projectId}&creative_type=${creativetype}&classify=${classify}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('CLASSIFYFILTERCOUNT', res);
+            }
+        })
+    },
+
     // ad
     getAdPlanlist({ state, commit }, projectid) {
         let url = `${URL.planlist}project_id=${projectid}&pageIndex=1&pageSize=1000`;
@@ -2039,7 +2071,9 @@ export default {
                 Msgsuccess('提交成功');
                 // 重置定时器
                 clearInterval(jobProcess);
-                dispatch('jobList');
+                setTimeout(function () {
+                    dispatch('jobList');
+                }, 2000);
             }
         })
         // _axios.post(url, option, { fullScreen: true })
@@ -2050,8 +2084,9 @@ export default {
         //         console.log(err);
         //     })
     },
-    adGetCampaignlist({ state, commit }, accountId) {
-        let url = `${URL.adcampaignlist}fbAccountId=${accountId}`;
+    adGetCampaignlist({ state, commit }, { projectId, keyword = '' }) {
+        // let url = `${URL.adcampaignlist}fbAccountId=${accountId}`;
+        let url = `${URL.createcampaignlist}project_id=${projectId}&keyword=${keyword}`;
 
         _axios.get(url)
             .then(res => {
@@ -2061,8 +2096,9 @@ export default {
                 console.log(err);
             })
     },
-    adGetAdsetList({ state, commit }, accountId) {
-        let url = `${URL.adsetlist}fbAccountId=${accountId}`;
+    adGetAdsetList({ state, commit }, { projectId, keyword = '' }) {
+        // let url = `${URL.adsetlist}fbAccountId=${accountId}`;
+        let url = `${URL.createadsetlist}project_id=${projectId}&keyword=${keyword}`;
 
         _axios.get(url)
             .then(res => {
@@ -2081,12 +2117,17 @@ export default {
             success: res => res
         })
     },
-    adCopy({ state, commit, dispatch }, { orgId, distId, count, identify, type, projectId }) {
+    adCopy({ state, commit, dispatch }, { orgId, distId, count, identify, type, projectId, fbAccountId }) {
         let url = URL.adcopy;
         let params = new FormData();
         params.append('copyNum', count);
         params.append('identify', identify);
         params.append('projectId', projectId);
+        /**
+         * 20190319新增，跨广告账户复制新添加参数，目标广告账户id
+         */
+        if (fbAccountId)
+            params.append('fbAccountId', fbAccountId);
 
         if (type == 'campaignName') {
             params.append('campaignId', orgId.join(','));
@@ -2137,7 +2178,9 @@ export default {
 
                     // 重置定时器
                     clearInterval(jobProcess);
-                    dispatch('jobList');
+                    setTimeout(function () {
+                        dispatch('jobList');
+                    }, 2000);
                 }
             })
             .catch(err => {
@@ -2201,15 +2244,17 @@ export default {
     joblistDetail({ state, commit }) {
         let url = `${URL.jobresultdetail}${state.jobfailkey}`;
 
-        _axios.get(url)
-            .then(res => {
+        Axios({
+            url,
+            success: res => {
                 commit('JOBLISTDETAIL', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            },
+            fail: err => {
+                commit('JOBLISTDETAILERROR');
+            }
+        })
     },
-    copyCreateCampaign({ state, commit, dispatch }, { name, accountId, orgId, distId, count, identify, type }) {
+    copyCreateCampaign({ state, commit, dispatch }, { name, accountId, orgId, count, identify, type, projectId, ifstride }) {
         let url = URL.createcampaign;
         let option = {
             adAccount: accountId,
@@ -2218,7 +2263,10 @@ export default {
 
         _axios.post(url, option, { fullScreen: true })
             .then(res => {
-                dispatch('adCopy', { orgId, distId: [res.data[0].campaignId], count, identify, type });
+                if (res.data[0].status == 'success')
+                    dispatch('adCopy', { orgId, distId: [res.data[0].campaignId], count, identify, type, projectId, fbAccountId: !ifstride ? null : accountId });
+                else
+                    Msgerror(res.data[0].errorMsg)
             })
             .catch(err => {
                 console.log(err);
@@ -2369,7 +2417,9 @@ export default {
                     Msgsuccess('提交成功');
                     // 重置定时器
                     clearInterval(jobProcess);
-                    dispatch('jobList');
+                    setTimeout(function () {
+                        dispatch('jobList');
+                    }, 2000);
 
                     return true;
                 } else {

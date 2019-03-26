@@ -154,6 +154,8 @@ export default {
   genertarget: [], // 创建推广计划受众列表
   generaccount: [], // 创建推广计划广告账户列表
   ifadcreate: false, // 创建广告是否成功，影响是否显示创建详情
+  classifyforplan: [], // 智能选择分类列表
+  classifyfiltercount: 0, // 智能选择符合分类创意数量
   // ad
   adplanlist: [],
   nowtime: '', // 服务器时间
@@ -259,6 +261,7 @@ export default {
   taskfaildetail: 0, // task失败数量 详情弹框用
   tasksuccessdetail: 0, // task成功数量 详情弹框用
   taskresult: [], // job 失败详情
+  taskerror: '', // job失败详情无数据
   adtab: 'campaignName',
 
   adalllist: [], //广告管理列表所有数据，用于导出全部

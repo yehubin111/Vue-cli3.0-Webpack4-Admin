@@ -660,8 +660,8 @@ export default {
         return [false, this.msg.equip];
       if (this.form.sex === null && !this.mutilstatus.sex)
         return [false, this.msg.sex];
-      if (this.form.language.length == 0 && !this.mutilstatus.language)
-        return [false, this.msg.language];
+      // if (this.form.language.length == 0 && !this.mutilstatus.language)
+      //   return [false, this.msg.language];
       //   if (this.form.interest.length == 0) return [false, this.msg.interest];
       if (
         this.form.auto.length == 0 &&
@@ -1138,7 +1138,7 @@ export default {
             [...new Set(n.map(v => v.maxage))].length > 1
               ? true
               : false,
-          language: this.form.language.length == 0 ? true : false,
+          language: n.length > 1 && this.form.language.length == 0 ? true : false,
           interest:
             n.length > 1 && this.form.interest.length == 0 ? true : false,
           auto: !auto ? true : false,
@@ -1312,9 +1312,6 @@ export default {
       z-index: 9;
       left: 8px;
       font-size: 18px;
-    }
-    .minput {
-      // width: 200px;
     }
   }
 }

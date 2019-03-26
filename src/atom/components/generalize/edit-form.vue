@@ -133,7 +133,8 @@
             :label="l.os + ' ' + l.version"
             :value="l.version"
           ></el-option>
-        </el-select>--
+        </el-select>
+        --
         <el-select class="selectHalf" v-model="form.maxversion" placeholder="最高版本">
           <el-option
             v-for="(l, index) in system"
@@ -196,7 +197,7 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="性别" class="cline">
-        <el-radio-group v-model="form.sex">
+        <el-radio-group v-model="form.sex" @change="getFilterCount">
           <el-radio label="0">全部</el-radio>
           <el-radio label="1">男</el-radio>
           <el-radio label="2">女</el-radio>
@@ -313,11 +314,16 @@
         <div class="countfont">每个广告组包含的创意数量。1-3个为佳，3个以上会有内部竞争影响整体效率</div>
       </el-form-item>
       <el-form-item label="创意类型" class="cline" v-show="form.type == 'auto'">
-        <el-checkbox-group v-model="form.createtype">
+        <el-checkbox-group v-model="form.createtype" @change="getFilterCount">
           <el-checkbox label="0" name="type">单图片</el-checkbox>
           <el-checkbox label="1" name="type">单视频</el-checkbox>
           <el-checkbox label="2" name="type">轮播</el-checkbox>
         </el-checkbox-group>
+      </el-form-item>
+      <el-form-item label="选择分类" class="cline" v-show="form.type == 'auto'">
+        <el-select class="select" multiple v-model="form.classify" placeholder="选填，为空则不限制分类" @change="getFilterCount">
+          <el-option v-for="(item, index) in classifyforplan" :key="index" :label="item" :value="item"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="创意数量" class="cline ctype" v-show="form.type == 'auto'">
         <el-input-number
@@ -326,7 +332,7 @@
           :min="1"
           label="创意数量"
         ></el-input-number>
-        <div class="countfont">1个创意就会生成1条广告，在已同步的创意中优先选择CTR高的</div>
+        <div class="countfont">符合条件的创意总数为：{{classifyfiltercount}}</div>
       </el-form-item>
       <el-form-item label="选择策略" class="cline cline-strategy" v-show="form.type == 'auto'">
         <el-radio-group v-model="form.tactics" class="strategy">
@@ -481,7 +487,8 @@ export default {
         account: this.createinfo.fbAccountIds,
         adcount: this.createinfo.adsetNum,
         count: this.createinfo.adNum,
-        createtype: this.createinfo.creativeType,
+        createtype: this.createinfo.creativeType?this.createinfo.creativeType:[],
+        classify: this.createinfo.creativeClassify?this.createinfo.creativeClassify:[],
         createcount: this.createinfo.creativeNum,
         tactics: this.createinfo.creativeStrategy
           ? this.createinfo.creativeStrategy
@@ -533,6 +540,8 @@ export default {
     }
     let fb_account_ids = this.form.account.join(",");
     this.$store.dispatch("generTargetList", { fb_account_ids });
+
+    this.getFilterCount();
   },
   computed: {
     ...mapState([
@@ -545,7 +554,10 @@ export default {
       "system",
       "allpagelist",
       "genertarget",
-      "generaccount"
+      "generaccount",
+      "classifyforplan",
+      "classifyfiltercount"
+
     ]),
     actions() {
       if (this.itemlist.length == 0) return;
@@ -653,6 +665,30 @@ export default {
   },
   methods: {
     ...mapMutations(['SETSTATE']),
+    getFilterCount() {
+      if(this.form.createtype.length == 0) {
+        this.SETSTATE({k: 'classifyfiltercount', v: 0});
+        return
+      };
+
+      let country = this.form.country;
+      let gender = this.form.sex;
+      let projectId = this.$route.params.id;
+      let creativetype = this.form.createtype.join(',');
+      let classify = this.form.classify.join(',');
+      this.$store.dispatch('classifyFilterCountNoPlan', {country, gender, projectId, creativetype, classify})
+    },
+    // getFilterCount() {
+    //   if(this.form.createtype.length == 0) {
+    //     this.SETSTATE({k: 'classifyfiltercount', v: 0});
+    //     return
+    //   };
+
+    //   let planid = this.$route.params.pid;
+    //   let creativetype = this.form.createtype.join(',');
+    //   let classify = this.form.classify.join(',');
+    //   this.$store.dispatch('classifyFilterCount', {planid, creativetype, classify})
+    // },
     showBidChart() {
       if (!this.form.country) {
         return;
@@ -852,7 +888,8 @@ export default {
           maxVersion: this.form.maxversion ? this.form.maxversion : null,
           planId: this.$route.params.pid,
           adsetNum: this.form.adcount,
-          creativeStrategy: this.form.tactics
+          creativeStrategy: this.form.tactics,
+          creativeClassify: this.form.classify
         },
         route: this.$router,
         projectid: this.$route.params.id
@@ -877,7 +914,7 @@ export default {
           return [false, this.msg.rdate];
       }
       if (this.form.equip.filter(v => v).length == 0) return [false, this.msg.equip];
-      if (this.form.language.length == 0) return [false, this.msg.language];
+      // if (this.form.language.length == 0) return [false, this.msg.language];
       //   if (this.form.interest.length == 0) return [false, this.msg.interest];
       if (this.form.auto.length == 0 && this.form.verpla.length == 0)
         return [false, this.msg.verpla];
@@ -981,9 +1018,6 @@ export default {
         z-index: 9;
         left: 8px;
         font-size: 18px;
-      }
-      .minput {
-        // width: 200px;
       }
     }
     .search {

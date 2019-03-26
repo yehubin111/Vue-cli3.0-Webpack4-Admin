@@ -324,10 +324,14 @@
       ref="listOption"
     ></list-option>
     <import-remain :status.sync="remainstatus" :type="tabtype" @hideRemainBox="hideRemainBox"></import-remain>
+    <!-- <rule-add :status.sync="ruleaddstatus"></rule-add> -->
+    <!-- <rule-remove :status.sync="ruleremovestatus"></rule-remove> -->
   </div>
 </template>
 
 <script>
+import RuleRemove from './ad-ruleremove';
+import RuleAdd from "./ad-ruleadd";
 import AdSetbox from "./ad-setbox";
 import AdCreate from "./ad-create";
 import AdCopy from "./ad-copy";
@@ -339,6 +343,17 @@ import { mapState, mapMutations, mapGetters } from "vuex";
 import { Msgwarning } from "../../js/message";
 let tab = 0;
 export default {
+  components: {
+    AdSetbox,
+    SaveCondition,
+    AdCreate,
+    SeekReplace,
+    AdCopy,
+    ListOption,
+    ImportRemain,
+    RuleAdd,
+    RuleRemove
+  },
   beforeRouteLeave(to, from, next) {
     switch (this.tabname) {
       case "first":
@@ -359,6 +374,8 @@ export default {
     return {
       optionstatus: false,
       remainstatus: false,
+      ruleaddstatus: false, // 添加规则
+      ruleremovestatus: false, // 移除规则
       defaultOption: [], // 自定义列配置, 常用，不包含各模块固定列
       defaultListOption: [], // 自定义列中的配置
       sortDown: false,
@@ -644,15 +661,6 @@ export default {
       userId: localStorage.getItem("atom_id")
     };
   },
-  components: {
-    AdSetbox,
-    SaveCondition,
-    AdCreate,
-    SeekReplace,
-    AdCopy,
-    ListOption,
-    ImportRemain
-  },
   created() {},
   mounted() {
     // 清除老的缓存
@@ -708,7 +716,7 @@ export default {
         v => v.id == projectId
       ).applicationId;
 
-      this.SETSTATE({k: 'adapplicationid', v: this.applicationid});
+      this.SETSTATE({ k: "adapplicationid", v: this.applicationid });
 
       this.initData(this.applicationid);
     }
@@ -1367,7 +1375,7 @@ export default {
         let applicationid = n.find(v => v.id == this.$route.params.id)
           .applicationId;
 
-        this.SETSTATE({k: 'adapplicationid', v: applicationid});
+        this.SETSTATE({ k: "adapplicationid", v: applicationid });
 
         this.initData(applicationid);
       }
@@ -1391,7 +1399,7 @@ export default {
         this.tabname = "first";
         this.SETSTATE({ k: "adtab", v: "campaignName" });
         let applicationid = this.itemlist.find(v => v.id == n).applicationId;
-        this.SETSTATE({k: 'adapplicationid', v: applicationid});
+        this.SETSTATE({ k: "adapplicationid", v: applicationid });
         // 重置开关
         // this.$refs["campaignName"].changeFilterSwitch(true);
         // this.$refs["adSetName"].changeFilterSwitch(true);
@@ -1495,9 +1503,6 @@ export default {
     width: 960px;
     overflow: hidden;
     position: relative;
-    // height: 808px;
-    .eltabs {
-    }
     .updatetime {
       position: absolute;
       top: 0;
@@ -1620,8 +1625,6 @@ export default {
         color: #fff;
         text-align: center;
         cursor: pointer;
-        span {
-        }
       }
       .droplist {
         position: absolute;

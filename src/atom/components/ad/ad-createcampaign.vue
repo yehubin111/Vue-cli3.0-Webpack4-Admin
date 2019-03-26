@@ -4,6 +4,7 @@
       <el-form-item label="当前广告账户">
         <el-select
           class="formselect"
+          filterable
           v-model="form.account"
           placeholder="请选择广告账户"
           v-if="!mutilAccount"

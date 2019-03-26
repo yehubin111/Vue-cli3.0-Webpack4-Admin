@@ -683,6 +683,12 @@ export default {
         myChart9.setOption(chart.bidGuide(x, y2));
         myChart10.setOption(chart.bidGuide(x, y3));
     },
+    CLASSIFYFORPLAN(state, r) {
+        state.classifyforplan = r.data;
+    },
+    CLASSIFYFILTERCOUNT(state, r) {
+        state.classifyfiltercount = r.data;
+    },
     //ad
     ADPLANLIST(state, r) {
         state.adplanlist = r.data.list;
@@ -1138,33 +1144,55 @@ export default {
         state.jobcomplete = 0;
         state.copyjoblistdetail = [];
     },
+    JOBLISTDETAILERROR(state) {
+        state.taskresult = [];
+    },
     JOBLISTDETAIL(state, r) {
         state.taskresult = [];
+        let campaignTab = ['复制广告系列', '复制广告系列(其他广告账户)'];
+        let adsetTab = ['复制广告组', '复制广告组(其他广告账户)'];
+        let adTab = ['复制广告', '创建广告', '编辑广告', '复制广告(其他广告账户)', '替换创意'];
+        // let createTab = ['替换创意'];
+        let errortasks = [];
 
-        let tabcampaign = r.find(v => v.taskName == '复制广告系列');
-        if (tabcampaign)
-            state.taskresult.push({
-                tabname: `广告系列${tabcampaign['success']}/${tabcampaign['tasks'].length}`,
-                tasks: tabcampaign['tasks']
-            })
-        let tabadset = r.find(v => v.taskName == '复制广告组');
-        if (tabadset)
-            state.taskresult.push({
-                tabname: `广告组${tabadset['success']}/${tabadset['tasks'].length}`,
-                tasks: tabadset['tasks']
-            })
-        let tabad = r.find(v => v.taskName == '复制广告' || v.taskName == '创建广告' || v.taskName == '编辑广告');
-        if (tabad)
-            state.taskresult.push({
-                tabname: `广告${tabad['success']}/${tabad['tasks'].length}`,
-                tasks: tabad['tasks']
-            })
-        let tabcreate = r.find(v => v.taskName == '替换创意');
-        if (tabcreate)
-            state.taskresult.push({
-                tabname: `创意${tabcreate['success']}/${tabcreate['tasks'].length}`,
-                tasks: tabcreate['tasks']
-            })
+        let tabcampaign = r.filter(v => campaignTab.indexOf(v.taskName) != -1);
+        if (tabcampaign.length > 0) {
+            errortasks = tabcampaign.filter(v => v['tasks']).map(v => v['tasks']).flat();
+            if(errortasks.length > 0)
+                state.taskresult.push({
+                    tabelhead: '广告系列名称',
+                    tabname: `广告系列${eval(tabcampaign.map(v => v.success).join('+'))}/${errortasks.length}`,
+                    tasks: errortasks
+                })
+        }
+        let tabadset = r.filter(v => adsetTab.indexOf(v.taskName) != -1);
+        if (tabadset.length > 0) {
+            errortasks = tabadset.filter(v => v['tasks']).map(v => v['tasks']).flat();
+            if(errortasks.length > 0)
+                state.taskresult.push({
+                    tabelhead: '广告组名称',
+                    tabname: `广告组${eval(tabadset.map(v => v.success).join('+'))}/${errortasks.length}`,
+                    tasks: errortasks
+                })
+        }
+        let tabad = r.filter(v => adTab.indexOf(v.taskName) != -1);
+        if (tabad.length > 0) {
+            errortasks = tabad.filter(v => v['tasks']).map(v => v['tasks']).flat();
+            if(errortasks.length > 0)
+                state.taskresult.push({
+                    tabelhead: '广告名称',
+                    tabname: `广告${eval(tabad.map(v => v.success).join('+'))}/${errortasks.length}`,
+                    tasks: errortasks
+                })
+        }
+        // let tabcreate = r.filter(v => createTab.indexOf(v.taskName) != -1);
+        // if (tabcreate.length > 0) {
+        //     errortasks = tabcreate.map(v => v['tasks']).flat();
+        //     state.taskresult.push({
+        //         tabname: `创意${eval(tabcreate.map(v => v.success).join('+'))}/${errortasks.length}`,
+        //         tasks: errortasks
+        //     })
+        // }
     },
     CALENDARDATE(state, r) {
         state.calendardate = r.data;
@@ -1529,7 +1557,10 @@ export default {
             for (let i = 0; i < data.length; i++) {
                 let content = ''
                 titlearr.forEach(v => {
-                    content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? '"' + data[i][v.key] + '"' : '--'}`;
+                    if (v.key == 'materialId')
+                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? data[i][v.key] + '\t' : '--'}`;
+                    else
+                        content += `,${data[i][v.key] !== null && data[i][v.key] !== undefined && data[i][v.key] !== '' ? data[i][v.key] : '--'}`;
                 })
                 content = content.substr(1);
                 str += content;
@@ -1608,12 +1639,17 @@ export default {
             // 是否可以删除
             v.ifdelete = v.lookalikeAudienceIds ? false : true;
 
-            switch (v.deliveryStatusCode) {
+            v.approximateCount = v.approximateCount == 1000 ? '<1000' : v.approximateCount;
+
+            switch (v.operationStatusCode) {
                 case 200:
                     v.statusName = '正常';
                     break;
                 case 400:
                     v.statusName = '警告';
+                    break;
+                case 441:
+                    v.statusName = '准备中';
                     break;
                 case '':
                 case null:
@@ -1643,7 +1679,7 @@ export default {
                 case 'LOOKALIKE':
                     let lookaliketype = JSON.parse(v.lookalikeSpec).origin[0];
                     if (lookaliketype.type == 'custom_audience') {
-                        v.childType = lookaliketype.name?`自定义受众：${lookaliketype.name}`:'';
+                        v.childType = lookaliketype.name ? `自定义受众：${lookaliketype.name}` : '';
                         v.childliketype = 'custom_audience';
                     } else if (lookaliketype.type == "campaign_conversion") {
                         v.childType = '广告转化';
@@ -1682,6 +1718,9 @@ export default {
                     break;
                 case 400:
                     v.statusName = '警告';
+                    break;
+                case 441:
+                    v.statusName = '准备中';
                     break;
                 case '':
                 case null:

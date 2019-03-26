@@ -728,12 +728,12 @@ export default {
                 console.log(err);
             })
     },
-    getRuleList({ state, commit }, option) {
+    getRuleList({ state, commit }) {
         let url = URL.getrulelist;
         let str = '';
-        Object.keys(option).forEach(v => {
-            if(option[v])
-                str += `&${v}=${option[v]}`;
+        Object.keys(state.ruleoption).forEach(v => {
+            if(state.ruleoption[v])
+                str += `&${v}=${state.ruleoption[v]}`;
         })
         str = str.substr(1);
         url += str;

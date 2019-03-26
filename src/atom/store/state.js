@@ -351,6 +351,12 @@ export default {
   rg_pageSize: 20,
   newrulelist: [], // 规则管理列表
   newruletotal: 0, // 规则管理列表总数
+  ruleoption: {
+    fbAccountIds: '',
+    pageIndex: 1,
+    pageSize: 20,
+    level: ''
+  },
   regularlist: [], //规则列表
   regulartotal: 0, // 规则列表总数
   allrules: [], //规则报表种的规则列表

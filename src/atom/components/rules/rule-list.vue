@@ -20,10 +20,14 @@
       </el-table-column>
       <el-table-column prop label="应用对象">
         <template slot-scope="scope">
-          <p
+          <el-button
+            type="text"
+            v-if="scope.row.ruleObjCount > 0"
+          >{{scope.row.ruleObjCount}}个{{scope.row.levelCnName}}</el-button>
+          <!-- <p
             v-if="scope.row.ruleObjCount > 0"
             class="activename"
-          >{{scope.row.ruleObjCount}}个{{scope.row.levelCnName}}</p>
+          >{{scope.row.ruleObjCount}}个{{scope.row.levelCnName}}</p>-->
           <p v-else>投放中{{scope.row.levelCnName}}</p>
         </template>
       </el-table-column>
@@ -47,9 +51,11 @@
         </template>
       </el-table-column>
       <el-table-column prop label="操作" width="140">
-        <template>
+        <template slot-scope="scope">
           <p class="ctrl">
             <el-button type="text" size="mini">编辑</el-button>
+            <el-button type="text" size="mini">执行</el-button>
+            <el-button type="text" size="mini">删除</el-button>
           </p>
         </template>
       </el-table-column>
@@ -106,9 +112,10 @@ export default {
   font-size: 12px;
   color: #999;
 }
-.activename {
-  color: #409eff;
-}
+// .activename {
+//   color: #409eff;
+//   cursor: pointer;
+// }
 .pageswitch {
   margin-top: 20px;
   text-align: center;

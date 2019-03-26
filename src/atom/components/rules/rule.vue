@@ -6,10 +6,17 @@
         class="select"
         v-model="account"
         filterable
+        multiple
+        collapse-tags
         placeholder="广告账户，可多选，支持编号和名称搜索"
         @change="selectCondition"
       >
-        <el-option :label="111" :value="111"></el-option>
+        <el-option
+          v-for="item in adaccountlist"
+          :key="item.fbId"
+          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
+          :value="item.fbId"
+        ></el-option>
       </el-select>
       <el-button type="primary" @click="addStatus = true">创建</el-button>
     </div>
@@ -38,7 +45,7 @@
 <script>
 import RuleAdd from "./rule-add";
 import RuleList from "./rule-list";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   components: {
     RuleList,
@@ -47,29 +54,44 @@ export default {
   data() {
     return {
       value2: true,
-      account: "",
+      account: [],
       addStatus: false
     };
   },
   mounted() {
     // this.$store.dispatch("getRules", this.$route.params.id);
-    let option = {
-      fbAccountIds: "act_198019510840403",
-      level: "",
-      pageIndex: 1,
-      pageSize: 20
-    };
-    this.$store.dispatch("getRuleList", option);
+    this.SETOBJSTATE({
+      obj: "ruleoption",
+      name: "fbAccountIds",
+      v: "act_198019510840403"
+    });
+    // 获取规则列表数据
+    this.getRuleDate();
+    // 获取广告账户数据
+    this.$store.dispatch("getAdaccount", this.$route.params.id);
   },
   computed: {
-    ...mapState(["itemlist"]),
+    ...mapState(["itemlist", "adaccountlist"]),
     projectname() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
     }
   },
   methods: {
-    selectCondition() {},
+    ...mapMutations(["SETOBJSTATE"]),
+    selectCondition() {
+      let account = this.account.map(v => "act_" + v);
+      this.SETOBJSTATE({
+        obj: "ruleoption",
+        name: "fbAccountIds",
+        v: account.join(",")
+      });
+      // 获取规则列表数据
+      this.getRuleDate();
+    },
+    getRuleDate() {
+      this.$store.dispatch("getRuleList");
+    },
     switchChange(id) {
       let status = this.rulelist.find(v => v.id == id).status;
 
@@ -99,80 +121,12 @@ export default {
     margin-left: 40px;
     margin-bottom: 30px;
     .select {
-      width: 300px;
+      width: 400px;
       margin-right: 20px;
     }
   }
   .rulelist {
     margin-left: 40px;
   }
-  // .tip{
-  //   margin-bottom: 20px;
-  //   font-size: 14px;
-  //   margin-left: 40px;
-  // }
-  // .rulelist {
-  //   overflow: hidden;
-  //   margin-left: 25px;
-  //   margin-right: -15px;
-  //   .box {
-  //     width: 33.3%;
-  //     float: left;
-  //     box-sizing: border-box;
-  //     padding: 0 15px 30px 15px;
-  //     .con {
-  //       height: 200px;
-  //       border: 1px solid #e6e6e6;
-  //       box-sizing: border-box;
-  //       position: relative;
-  //       .id {
-  //         font-size: 16px;
-  //         font-weight: bold;
-  //         margin: 15px 0 0 20px;
-  //       }
-  //       .ttl {
-  //         margin-left: 20px;
-  //         margin-right: 20px;
-  //         height: 30px;
-  //         text-overflow: ellipsis;
-  //         overflow: hidden;
-  //         white-space: nowrap;
-  //         line-height: 30px;
-  //         font-size: 14px;
-  //       }
-  //       .describe {
-  //         margin-left: 20px;
-  //         margin-right: 20px;
-  //         height: 60px;
-  //         // text-overflow: ellipsis;
-  //         overflow: hidden;
-  //         // white-space: nowrap;
-  //         line-height: 20px;
-  //         font-size: 12px;
-  //         text-align: justify;
-  //         color: #999;
-  //       }
-  //       .ctrl {
-  //         position: absolute;
-  //         bottom: 0;
-  //         left: 0px;
-  //         color: #666;
-  //         overflow: hidden;
-  //         width: 100%;
-  //         .count {
-  //           line-height: 50px;
-  //           font-size: 12px;
-  //           float: left;
-  //           margin-left: 20px;
-  //         }
-  //         .switch {
-  //           float: right;
-  //           margin-right: 20px;
-  //           margin-top: 13px;
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 }
 </style>

@@ -4,19 +4,23 @@
       <el-form-item label="广告账户" label-width="110px">
         <el-select
           class="select"
-          v-model="account"
+          v-model="form.account"
           filterable
-          multiple
           placeholder="请选择广告账户，可搜索"
           @change="toSort"
         >
-          <el-option :label="111" :value="222"></el-option>
+          <el-option
+            v-for="item in adaccountlist"
+            :key="item.fbId"
+            :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
+            :value="item.fbId"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="规则应用对象" label-width="110px">
         <el-select
           class="select"
-          v-model="ruleobject"
+          v-model="form.ruleobject"
           filterable
           placeholder="选择对象"
           @change="selectObject"
@@ -35,7 +39,7 @@
             class="ctrlselect"
             :options="ctrlList"
             :show-all-levels="false"
-            v-model="ctrlmethod"
+            v-model="form.ctrlmethod"
             @change="selectCtrl"
           ></el-cascader>
           <el-input
@@ -88,7 +92,8 @@
             ></el-option>
           </el-select>
           <el-tooltip class="item2" effect="dark" placement="top-start">
-            <div slot="content">竞价或预算将按此字段调整。
+            <div slot="content">
+              竞价或预算将按此字段调整。
               <br>对于每个广告组，我们会在计算如何更改竞价或预算时计算这个字段的当前值。
               <br>根据容错范围字段，我们建议在下方添加“不介于”条件，否则，我们会继续尝试按实际值调整你的竞价或预算。
               <br>例如，如果你的目标是 0.5 且容错率是 10%，你可以把字段值指定为“不介于” 0.45 到 0.55 之间。这样，当前值在此范围内时，规则就不会执行。
@@ -104,7 +109,8 @@
         >
           <el-input class="wid200" v-model="ctrlway2.targetworth" placeholder></el-input>
           <el-tooltip class="item2" effect="dark" placement="top-start">
-            <div slot="content">这是你为上方目标字段选择的目标值，系统将据此调整竞价或预算。
+            <div slot="content">
+              这是你为上方目标字段选择的目标值，系统将据此调整竞价或预算。
               <br>我们会根据输入的目标值和目标字段的当前值按比例调整当前竞价或预算。通过判断目标值是否高于当前值，系统会相应提高或降低竞价或预算
             </div>
             <i class="el-icon-warning"></i>
@@ -167,6 +173,7 @@
             :options="timeOption"
             :show-all-levels="false"
             v-model="timerange"
+            @change="selectTimeRange"
           ></el-cascader>
         </el-form-item>
         <el-form-item label="统计时间窗" label-width="110px">
@@ -174,7 +181,8 @@
             <el-radio :label="1">账号默认设置</el-radio>
             <el-radio :label="2">自定义</el-radio>
           </el-radio-group>
-          <div class="windowdeploy" v-show="timewindow == 2">浏览广告后
+          <div class="windowdeploy" v-show="timewindow == 2">
+            浏览广告后
             <el-select
               class="wid100"
               v-model="timecustom1"
@@ -214,7 +222,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="规则名称" label-width="110px">
-        <el-input class="select" v-model="rulename" placeholder="请输入名称"></el-input>
+        <el-input class="select" v-model="rulename" placeholder="请输入规则名称"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -226,35 +234,35 @@
 
 <script>
 import RuleCondition from "./rule-condition";
+import { mapState } from "vuex";
 
 export default {
-  props: ['status'],
+  props: ["status"],
   components: {
     RuleCondition
   },
   data() {
     return {
       objectOption: [
-        { name: "投放中的全部广告系列", key: "campaign" },
-        { name: "投放中的全部广告组", key: "adset" },
-        { name: "投放中的全部广告", key: "ad" }
+        { name: "投放中的全部广告系列", key: "CAMPAIGN" },
+        { name: "投放中的全部广告组", key: "ADSET" },
+        { name: "投放中的全部广告", key: "AD" }
       ],
-      ruleobject: "",
       ruleobjectname: "",
       ctrlList: [],
       ctrlOption: [
         {
-          value: "close",
+          value: "PAUSE",
           label: "关闭",
           children: null
         },
         {
-          value: "open",
+          value: "UNPAUSE",
           label: "开启",
           children: null
         },
         {
-          value: "tzys",
+          value: "CHANGE_BUDGET",
           label: "调整预算",
           children: [
             {
@@ -284,7 +292,7 @@ export default {
           ]
         },
         {
-          value: "tzsdjj",
+          value: "CHANGE_BID",
           label: "调整手动竞价",
           children: [
             {
@@ -302,8 +310,12 @@ export default {
           ]
         }
       ],
-      account: [],
-      ctrlmethod: [],
+      form: {
+        account: '',
+        ruleobject: "",
+        ctrlmethod: [],
+      },
+      
       ctrlmethodkey: "",
       ctrlmethodname: "",
       ctrlmethodwant: "",
@@ -344,7 +356,7 @@ export default {
       ],
       schedule: "",
       rulename: "",
-      timerange: [],
+      timerange: ["1"],
       timeOption: [
         { label: "广告发布期间", value: "1" },
         { label: "今天", value: "2" },
@@ -399,14 +411,19 @@ export default {
         { name: "28天", key: "4" }
       ],
       timecustom1: "2",
-      timecustom2: "2"
+      timecustom2: "4"
     };
   },
   mounted() {
     this.ctrlList = this.ctrlOption.slice(0, 2);
   },
-  computed: {},
+  computed: {
+    ...mapState(["adaccountlist"])
+  },
   methods: {
+    selectTimeRange() {
+      console.log(this.timerange);
+    },
     resetCtrlSelect() {
       this.ctrlway1["ctrlnum"] = "";
       this.ctrlway1["ruleunit"] = "%";
@@ -467,12 +484,14 @@ export default {
       this.resetCtrlSelect();
     },
     hideBox() {
-      this.$emit('update:status', false);
+      this.$emit("update:status", false);
     },
     toSort() {
       console.log(this.ctrlmethod);
     },
-    saveRule() {},
+    saveRule() {
+      console.log(this.form);
+    },
     changeUnit() {}
   }
 };
@@ -486,7 +505,7 @@ export default {
 
 <style lang="less" scoped>
 .select {
-  width: 300px;
+  width: 340px;
 }
 .ctrlselect {
   width: 280px;

@@ -45,6 +45,9 @@ export default {
     // project rules
     // 'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表
     'getrulelist': 'adRule/list?', // 规则管理列表
+    'deleterule': 'adRule/{ruleId}/delete', // 规则删除
+    'ruleclose': 'adRule/{ruleId}/close', // 规则关闭
+    'ruleopen': 'adRule/{ruleId}/open', // 规则打开
     'openrule': 'optimize/{projectId}/ruleGroups/add',  // 打开规则
     'closerule': 'optimize/{projectId}/ruleGroups/delete', //关闭规则
     'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}

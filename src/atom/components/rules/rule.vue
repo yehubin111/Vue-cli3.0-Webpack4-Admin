@@ -60,11 +60,11 @@ export default {
   },
   mounted() {
     // this.$store.dispatch("getRules", this.$route.params.id);
-    // this.SETOBJSTATE({
-    //   obj: "ruleoption",
-    //   name: "fbAccountIds",
-    //   v: "act_198019510840403"
-    // });
+    this.SETOBJSTATE({
+      obj: "ruleoption",
+      name: "projectId",
+      v: this.$route.params.id
+    });
     // 获取规则列表数据
     this.getRuleDate();
     // 获取广告账户数据

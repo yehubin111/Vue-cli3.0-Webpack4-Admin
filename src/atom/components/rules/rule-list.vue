@@ -1,16 +1,18 @@
 <template>
   <div class="list">
     <el-table :data="newrulelist" style="width: 100%">
-      <el-table-column prop="id" label width="80">
-        <el-switch
-          class="statusswitch"
-          v-model="switchstatus"
-          active-value="ACTIVE"
-          inactive-value="PAUSED"
-          active-color="#13ce66"
-          inactive-color="#d7dae2"
-          @change="switchChange"
-        ></el-switch>
+      <el-table-column prop label width="80">
+        <template slot-scope="scope">
+          <el-switch
+            class="statusswitch"
+            v-model="scope.row.status"
+            active-value="ENABLED"
+            inactive-value="DISABLED"
+            active-color="#13ce66"
+            inactive-color="#d7dae2"
+            @change="switchChange(scope.row.id, scope.row.status)"
+          ></el-switch>
+        </template>
       </el-table-column>
       <el-table-column prop label="名称" width="120">
         <template slot-scope="scope">
@@ -37,7 +39,15 @@
           <p class="childtype">{{scope.row.scheduleCnName}}</p>
         </template>
       </el-table-column>
-      <el-table-column prop="result" label="结果" width="100"></el-table-column>
+      <el-table-column prop="result" label="结果" width="100">
+        <template slot-scope="scope">
+          <div v-if="scope.row.lastOccurTime">
+            <el-button type="text">{{scope.row.result}}</el-button>
+            <p class="childtype">{{scope.row.lastOccurTime | timeFormat('yyyy-MM-dd')}}</p>
+          </div>
+          <p v-else>{{scope.row.result}}</p>
+        </template>
+      </el-table-column>
       <el-table-column prop label="广告账户">
         <template slot-scope="scope">
           <p>{{scope.row.fbAccountName}}</p>
@@ -55,7 +65,7 @@
           <p class="ctrl">
             <el-button type="text" size="mini">编辑</el-button>
             <el-button type="text" size="mini">执行</el-button>
-            <el-button type="text" size="mini">删除</el-button>
+            <el-button type="text" size="mini" @click="toDelete(scope.row.id)">删除</el-button>
           </p>
         </template>
       </el-table-column>
@@ -97,7 +107,25 @@ export default {
     ...mapState(["newrulelist", "newruletotal"])
   },
   methods: {
-    switchChange() {},
+    toDelete(id) {
+      this.$confirm("确定要删除此规则吗？此操作无法撤销", "删除规则", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$store.dispatch("deleteRule", id);
+        })
+        .catch(() => {});
+    },
+    switchChange(id, status) {
+      console.log(status);
+      if(status == 'ENABLED') {
+        this.$store.dispatch('toOpenRule', id);
+      } else {
+        this.$store.dispatch('toCloseRule', id);
+      }
+    },
     pageSwitch() {},
     pageSizeChange() {}
   }

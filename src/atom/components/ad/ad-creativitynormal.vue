@@ -327,6 +327,9 @@ export default {
       // 阻塞 100ms
       await this.$barrageTime(100);
 
+      // 初始化
+      this.reset();
+
       if (n && !n.cards && !n.assetFeedSpec) {
         if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
           this.otherpageid = n.pageId ? n.pageId : "";
@@ -393,6 +396,7 @@ export default {
       this.form.title = n.creativityTitle ? n.creativityTitle : "";
       this.form.actions = n.actionCallOn ? n.actionCallOn : "";
 
+      console.log(this.processVIO);
       if (n.videoId) {
         // 单视频创意
         this.processVIO.push({

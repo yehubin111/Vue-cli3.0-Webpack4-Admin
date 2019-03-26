@@ -355,7 +355,8 @@ export default {
     fbAccountIds: '',
     pageIndex: 1,
     pageSize: 20,
-    level: ''
+    level: '',
+    projectId: ''
   },
   regularlist: [], //规则列表
   regulartotal: 0, // 规则列表总数

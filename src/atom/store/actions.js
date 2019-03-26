@@ -732,7 +732,7 @@ export default {
         let url = URL.getrulelist;
         let str = '';
         Object.keys(state.ruleoption).forEach(v => {
-            if(state.ruleoption[v])
+            if (state.ruleoption[v])
                 str += `&${v}=${state.ruleoption[v]}`;
         })
         str = str.substr(1);
@@ -740,8 +740,58 @@ export default {
 
         Axios({
             url,
+            fullscreen: true,
             success: res => {
                 commit('GETRULELIST', res);
+            }
+        })
+    },
+    deleteRule({ state, commit, dispatch }, id) {
+        let url = URL.deleterule.replace('{ruleId}', id);
+
+        Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('删除成功');
+                    dispatch('getRuleList');
+                } else {
+                    Msgerror(`删除失败：${res.msg}`);
+                }
+            }
+        })
+    },
+    toCloseRule({ state, commit }, id) {
+        let url = URL.ruleclose.replace('{ruleId}', id);
+
+        Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('关闭成功');
+                } else {
+                    Msgerror(`关闭失败：${res.msg}`);
+                }
+            }
+        })
+    },
+    toOpenRule({ state, commit }, id) {
+        let url = URL.ruleopen.replace('{ruleId}', id);
+
+        Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('打开成功');
+                } else {
+                    Msgerror(`打开失败：${res.msg}`);
+                }
             }
         })
     },

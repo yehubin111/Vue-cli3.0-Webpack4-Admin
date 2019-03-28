@@ -1960,7 +1960,7 @@ export default {
 
         let str = '';
         for (let i in option) {
-            if (option[i] !== '')
+            if (option[i])
                 str += '&' + i + '=' + option[i];
         }
 

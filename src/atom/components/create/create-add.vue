@@ -661,7 +661,7 @@ export default {
         return [false, this.msg["imginfo"]];
       if (data["type"] == 1 && this.processVIO.length == 0)
         return [false, this.msg["videoinfo"]];
-      if (data["type"] == 1 && this.processVIO[0].fmname == "")
+      if (data["type"] == 1 && !this.processVIO[0].fmname)
         return [false, this.msg["fminfo"]];
       if (data["selectArr"].length == 0) return [false, this.msg["selectArr"]];
       if (data["homepage"] == "") return [false, this.msg["homepage"]];

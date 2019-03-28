@@ -714,7 +714,7 @@ export default {
           } else if (v.processVIO[0].process != 100) {
             result = [false, `卡片${i + 1} 视频正在上传中……`];
             break;
-          } else if (v.processVIO[0].fmname == "") {
+          } else if (!v.processVIO[0].fmname) {
             result = [false, `卡片${i + 1} 封面图未上传`];
             break;
           } else if (v.processVIO[0].fmprocess != 100) {

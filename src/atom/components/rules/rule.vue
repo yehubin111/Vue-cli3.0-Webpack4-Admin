@@ -24,21 +24,6 @@
       <rule-list></rule-list>
     </div>
     <rule-add :status.sync="addStatus"></rule-add>
-    <!-- <p class="tip">规则只对推广计划生成的对象生效</p>
-    <div class="rulelist">
-      <div class="box" v-for="(l, index) in rulelist" :key="index">
-        <div class="con">
-          <p class="id">ID:{{l.id}}</p>
-          <p class="ttl">{{l.name}}</p>
-          <p class="describe">{{l.description}}</p>
-          <p class="ctrl">
-            <span class="count">触发次数：{{l.triggerCount}}</span>
-            <el-switch v-model="l.status" :active-value="true" :inactive-value="false" class="switch" active-color="#13ce66" inactive-color="#d7dae2" @change="switchChange(l.id)">
-            </el-switch>
-          </p>
-        </div>
-      </div>
-    </div>-->
   </div>
 </template>
 
@@ -80,7 +65,7 @@ export default {
   methods: {
     ...mapMutations(["SETOBJSTATE"]),
     selectCondition() {
-      let account = this.account.map(v => "act_" + v);
+      let account = this.account;
       this.SETOBJSTATE({
         obj: "ruleoption",
         name: "fbAccountIds",

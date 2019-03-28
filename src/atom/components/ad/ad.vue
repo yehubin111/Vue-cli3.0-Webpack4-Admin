@@ -333,9 +333,9 @@
       ref="listOption"
     ></list-option>
     <import-remain :status.sync="remainstatus" :type="tabtype" @hideRemainBox="hideRemainBox"></import-remain>
-    <rule-select :status.sync="ruleselectstatus"></rule-select>
+    <rule-select ref="ruleSelect" :status.sync="ruleselectstatus"></rule-select>
     <rule-remove :status.sync="ruleremovestatus"></rule-remove>
-    <rule-add :status.sync="ruleaddstatus"></rule-add>
+    <rule-add ref="ruleAdd" :status.sync="ruleaddstatus"></rule-add>
   </div>
 </template>
 
@@ -743,11 +743,13 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
-    ruleAdd() {
+    ruleAdd(select, type) {
       this.ruleaddstatus = true;
+      this.$refs.ruleAdd.adInit(select, type);
     },
-    ruleCreate() {
+    ruleCreate(select, type) {
       this.ruleselectstatus = true;
+      this.$refs.ruleSelect.adInit(select, type);
     },
     ruleRemove() {
       this.ruleremovestatus = true;

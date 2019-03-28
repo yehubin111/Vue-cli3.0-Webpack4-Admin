@@ -22,15 +22,16 @@
       </el-table-column>
       <el-table-column prop label="应用对象">
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            v-if="scope.row.ruleObjCount > 0"
-          >{{scope.row.ruleObjCount}}个{{scope.row.levelCnName}}</el-button>
+          <p
+            class="rulename"
+            v-if="scope.row.relateRuleObjs.length > 0"
+            @click="showDetail(scope.row.targetObjName, scope.row.id)"
+          >{{scope.row.targetObjName}}</p>
           <!-- <p
             v-if="scope.row.ruleObjCount > 0"
             class="activename"
           >{{scope.row.ruleObjCount}}个{{scope.row.levelCnName}}</p>-->
-          <p v-else>投放中{{scope.row.levelCnName}}</p>
+          <p v-else>{{scope.row.targetObjName}}</p>
         </template>
       </el-table-column>
       <el-table-column prop label="操作与条件">
@@ -64,7 +65,7 @@
         <template slot-scope="scope">
           <p class="ctrl">
             <el-button type="text" size="mini">编辑</el-button>
-            <el-button type="text" size="mini">执行</el-button>
+            <el-button type="text" size="mini" @click="toExecute(scope.row.fbId)">执行</el-button>
             <el-button type="text" size="mini" @click="toDelete(scope.row.id)">删除</el-button>
           </p>
         </template>
@@ -81,8 +82,8 @@
         @current-change="pageSwitch"
       ></el-pagination>
     </div>
-    <rule-execute :status.sync="executeStatus"></rule-execute>
-    <rule-objdetail :status.sync="objStatus"></rule-objdetail>
+    <rule-execute :status.sync="executeStatus" :id="executeid"></rule-execute>
+    <rule-objdetail ref="objDetail" :status.sync="objStatus"></rule-objdetail>
   </div>
 </template>
 
@@ -100,6 +101,7 @@ export default {
       setapplist: [],
       switchstatus: true,
       executeStatus: false,
+      executeid: '',
       objStatus: false
     };
   },
@@ -107,6 +109,17 @@ export default {
     ...mapState(["newrulelist", "newruletotal"])
   },
   methods: {
+    showDetail(name, id) {
+      let rule = this.newrulelist.find(v => v.id == id);
+      let detail = rule.relateRuleObjs;
+      let objname = name;
+      this.objStatus = true;
+      this.$refs.objDetail.initData(objname, detail);
+    },
+    toExecute(fbid) {
+      this.executeStatus = true;
+      this.executeid = fbid;
+    },
     toDelete(id) {
       this.$confirm("确定要删除此规则吗？此操作无法撤销", "删除规则", {
         confirmButtonText: "确定",
@@ -135,6 +148,11 @@ export default {
 <style lang="less" scoped>
 .createTime {
   display: block;
+}
+.rulename{
+  display: inline-block;
+  color: #409eff;
+  cursor: pointer;
 }
 .childtype {
   font-size: 12px;

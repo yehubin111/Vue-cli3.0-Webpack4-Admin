@@ -1,16 +1,16 @@
 <template>
-  <el-dialog :title="`2个广告系列`" :visible="status" class="deletedialog" @close="toCancel">
+  <el-dialog :title="objname" :visible="status" class="deletedialog" @close="toCancel">
     <p class="fonttip important">
-      <b>2个广告系列受这个规则管理：</b>
+      <b>{{objname}}受这个规则管理：</b>
     </p>
     <p class="fonttip important" style="margin-bottom: 20px;">
       <b>降低10%总预算</b>
     </p>
     <div class="targetlist">
       <ul>
-        <li>
-          <p class="targetname">广告组名称</p>
-          <p class="targetid">22242333442423422</p>
+        <li v-for="item in detailobj" :key="item.fbTargetId">
+          <p class="targetname">{{item.fbTargetName}}</p>
+          <p class="targetid">{{item.fbTargetId}}</p>
         </li>
       </ul>
     </div>
@@ -26,10 +26,15 @@ export default {
     props: ['status'],
   data() {
     return {
-
+      objname: '',
+      detailobj: []
     };
   },
   methods: {
+    initData(name, object) {
+      this.objname = name;
+      this.detailobj = object;
+    },
     toCancel() {
         this.$emit('update:status', false);
     }

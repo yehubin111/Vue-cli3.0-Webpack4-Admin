@@ -45,8 +45,8 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="a">创建规则</el-dropdown-item>
-            <el-dropdown-item command="b">应用现有规则</el-dropdown-item>
+            <el-dropdown-item command="a" :disabled="mutilselect.length == 0">创建规则</el-dropdown-item>
+            <el-dropdown-item command="b" :disabled="mutilselect.length == 0">应用现有规则</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -191,12 +191,16 @@ export default {
   methods: {
     ...mapMutations(["SETSTATE"]),
     ruleCtrl(key) {
+      if([...new Set(this.mutilselect.map(v => v.accountId))].length > 1){
+        Msgwarning('暂不支持跨广告账户设置规则，请选择同一个广告账户下的对象');
+        return;
+      }
       switch (key) {
         case "a":
-          this.$emit("ruleAdd");
+          this.$emit("ruleAdd", this.mutilselect, this.type);
           break;
         case "b":
-          this.$emit("ruleCreate");
+          this.$emit("ruleCreate", this.mutilselect, this.type);
           break;
       }
     },

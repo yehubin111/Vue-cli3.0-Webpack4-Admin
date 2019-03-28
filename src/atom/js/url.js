@@ -48,6 +48,8 @@ export default {
     'deleterule': 'adRule/{ruleId}/delete', // 规则删除
     'ruleclose': 'adRule/{ruleId}/close', // 规则关闭
     'ruleopen': 'adRule/{ruleId}/open', // 规则打开
+    'addrule': 'adRule/add', // 创建规则
+    'getexecute': 'adRule/{fbRuleId}/preview', // 执行
     'openrule': 'optimize/{projectId}/ruleGroups/add',  // 打开规则
     'closerule': 'optimize/{projectId}/ruleGroups/delete', //关闭规则
     'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}
@@ -154,6 +156,7 @@ export default {
     'addatacsv': `${baseurl[process.env.VUE_APP_URLBASE].BASE_URL}/afFile/upload`, // af留存数据文件上传 ${baseurl[process.env.VUE_APP_URLBASE].BASE_URL}
     'submitafdata': `afFile/upload`, // af留存数据提交
     'affiledownload': 'afFile/download?', // af数据下载
+    'adrulelist': 'adRule/list4Apply?', // 对应规则列表, 添加规则用
     // data
     'conditionlist': 'report/getRptOption', //条件获取
     'datalist': 'report/rptAccount', //账户报表

@@ -7,7 +7,7 @@
       <p>· {指标名称}{运算符}$50.00</p>
       <p>· 已花费大于$50.00</p>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="tableData" border style="width: 100%" id="ruleExecute">
       <el-table-column prop="date" label="名称"></el-table-column>
       <el-table-column prop="name" label="详情"></el-table-column>
     </el-table>
@@ -21,7 +21,7 @@
 <script>
 import { mapState } from "vuex";
 export default {
-  props: ["status"],
+  props: ["status", "id"],
   data() {
     return {
       tableData: [{ name: "111", date: "222" }]
@@ -29,12 +29,18 @@ export default {
   },
   methods: {
     toCancel() {
-        this.$emit('update.status', false);
+        this.$emit('update:status', false);
     },
     submitExecute() {}
   },
   computed: {},
-  watch: {}
+  watch: {
+    status(n, v) {
+      if(n) {
+        this.$store.dispatch('getExecute', this.id);
+      }
+    }
+  }
 };
 </script>
 

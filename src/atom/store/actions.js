@@ -795,6 +795,39 @@ export default {
             }
         })
     },
+    addRule({ state, commit, dispatch }, { option, from = '' }) {
+        let url = URL.addrule;
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            data: option,
+            success: res => {
+                if (res.data) {
+                    // 只有从当前页面创建成功，才需要刷新列表
+                    if (!from)
+                        dispatch('getRuleList');
+
+                    Msgsuccess('创建成功');
+                } else {
+                    Msgsuccess(`创建失败：${res.msg}`);
+                }
+
+                return res;
+            }
+        })
+    },
+    getExecute({ state, commit }, fbRuleId) {
+        let url = URL.getexecute.replace('{fbRuleId}', fbRuleId);
+
+        Axios({
+            url,
+            success: res => {
+
+            }
+        })
+    },
     openRule({ state, commit }, { projid, ruleGroupId }) {
         let url = URL.openrule.replace('{projectId}', projid);
         let params = {
@@ -2607,6 +2640,16 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    ruleListForAdd({ state, commit }, { fbAccountIds, level }) {
+        let url = `${URL.adrulelist}fbAccountIds=${fbAccountIds}&level=${level}`;
+
+        Axios({
+            url,
+            success: res => {
+                
+            }
+        })
     },
     // data
     getCondition({ state, commit }, { projectId }) {

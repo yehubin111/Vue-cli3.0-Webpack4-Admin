@@ -657,11 +657,12 @@ export default {
       let data = this.form;
 
       // if (data["name"] === "") return [false, this.msg["name"]];
+      console.log(this.processVIO);
       if (data["type"] == 0 && this.processIMG.length == 0)
         return [false, this.msg["imginfo"]];
       if (data["type"] == 1 && this.processVIO.length == 0)
         return [false, this.msg["videoinfo"]];
-      if (data["type"] == 1 && this.processVIO[0].fmname == "")
+      if (data["type"] == 1 && !this.processVIO[0].fmname)
         return [false, this.msg["fminfo"]];
       if (data["selectArr"].length == 0) return [false, this.msg["selectArr"]];
       if (data["homepage"] == "") return [false, this.msg["homepage"]];

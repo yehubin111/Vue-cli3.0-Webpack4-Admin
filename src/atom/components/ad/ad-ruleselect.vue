@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="`应用广告账户995947930587032的规则`" :visible="status" class="deletedialog" @close="toCancel">
+  <el-dialog :title="`应用广告账户${accountid}的规则`" :visible="status" class="deletedialog" @close="toCancel">
     <p class="fonttip important">
       <b>可选择规则并应用到已选择的对象中</b>
     </p>
@@ -21,10 +21,27 @@ export default {
   props: ["status"],
   data() {
     return {
-      tableData: [{ name: "111", date: "222" }]
+      tableData: [{ name: "111", date: "222" }],
+      accountid: ''
     };
   },
   methods: {
+    adInit(select, type) {
+      let level = '';
+      this.accountid = select[0].accountId;
+      switch(type) {
+        case 'campaignName':
+          level = 'CAMPAIGN';
+        break;
+        case 'adSetName':
+          level = 'ADSET';
+        break;
+        case 'adName':
+          level = 'AD';
+        break;
+      }
+      this.$store.dispatch('ruleListForAdd', { fbAccountIds: this.accountid, level })
+    },
     toCancel() {
       this.$emit("update:status", false);
     },

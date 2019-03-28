@@ -821,10 +821,33 @@ export default {
     getExecute({ state, commit }, fbRuleId) {
         let url = URL.getexecute.replace('{fbRuleId}', fbRuleId);
 
+        let load;
+        setTimeout(function() {
+            load = Loading.service({fullscreen: true});
+        }, 300);
         Axios({
             url,
             success: res => {
+                if(load) load.close();
+                commit('EXECUTELIST', res);
+            }
+        })
+    },
+    executeRule({state, commit, dispatch }, fbid) {
+        let url = URL.executerule.replace('{fbRuleId}', fbid);
 
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if(res.data) {
+                    Msgsuccess('执行成功');
+                    dispatch('getRuleList');
+                } else {
+                    Msgerror(`执行失败：${res.msg}`);
+                }
+                return res;
             }
         })
     },
@@ -2647,7 +2670,46 @@ export default {
         Axios({
             url,
             success: res => {
-                
+                commit('ADRULELIST', res);
+            }
+        })
+    },
+    useRules({state, commit}, { objIds, ruleIds }) {
+        let url = URL.userules;
+        let option = new FormData();
+        option.append('objIds', objIds);
+        option.append('ruleIds', ruleIds);
+
+        return Axios({
+            url,
+            method: 'post',
+            data: option,
+            success: res => {
+                return res;
+            }
+        })
+    },
+    singleRules({state, commit}, id) {
+        let url = URL.singlerules.replace('{objId}', id);
+
+        Axios({
+            url,
+            success: res => {
+                commit('SINGLERULES', res);
+            }
+        })
+    },
+    removeRules({state, commit }, {objId, ruleIds}) {
+        let url = URL.removerule.replace('{objId}', objId);
+        let option = new FormData();
+        option.append('ruleIds', ruleIds);
+
+        return Axios({
+            url,
+            method: 'post',
+            data: option,
+            success: res => {
+                return res;
             }
         })
     },

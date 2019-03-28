@@ -21,9 +21,9 @@
       <el-button type="primary" @click="addStatus = true">创建</el-button>
     </div>
     <div class="rulelist">
-      <rule-list></rule-list>
+      <rule-list @editRule="editRule"></rule-list>
     </div>
-    <rule-add :status.sync="addStatus"></rule-add>
+    <rule-add ref="ruleAdd" :status.sync="addStatus"></rule-add>
   </div>
 </template>
 
@@ -73,6 +73,10 @@ export default {
       });
       // 获取规则列表数据
       this.getRuleDate();
+    },
+    editRule(id) {
+      this.addStatus = true;
+      this.$refs.ruleAdd.initEdit(id);
     },
     getRuleDate() {
       this.$store.dispatch("getRuleList");

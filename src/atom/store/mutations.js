@@ -413,6 +413,9 @@ export default {
         state.oppagesize = r.data.pageSize;
         state.optimizelist = r.data.list;
     },
+    EXECUTELIST(state, r) {
+        state.executelist = r.data;
+    },
     // create
     CREATE(state, r) {
         state.createlist = r.data.list;
@@ -1233,6 +1236,12 @@ export default {
     },
     ACTIVEAD(state, r) {
         state.hascreatead = r.data;
+    },
+    ADRULELIST(state, r) {
+        state.adrulelist = r.data;
+    },
+    SINGLERULES(state, r) {
+        state.singlerules = r.data;
     },
     // data
     CONDITION(state, r) {

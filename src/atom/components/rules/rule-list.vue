@@ -1,7 +1,7 @@
 <template>
   <div class="list">
     <el-table :data="newrulelist" style="width: 100%">
-      <el-table-column prop label width="80">
+      <el-table-column prop label width="60">
         <template slot-scope="scope">
           <el-switch
             class="statusswitch"
@@ -37,13 +37,13 @@
       <el-table-column prop label="操作与条件">
         <template slot-scope="scope">
           <p>{{scope.row.executionSpecName}}</p>
-          <p class="childtype">{{scope.row.scheduleCnName}}</p>
+          <p class="childtype">{{scope.row.evaluationSpecName}}</p>
         </template>
       </el-table-column>
       <el-table-column prop="result" label="结果" width="100">
         <template slot-scope="scope">
           <div v-if="scope.row.lastOccurTime">
-            <el-button type="text">{{scope.row.result}}</el-button>
+            <p class="rulename">{{scope.row.result}}</p>
             <p class="childtype">{{scope.row.lastOccurTime | timeFormat('yyyy-MM-dd')}}</p>
           </div>
           <p v-else>{{scope.row.result}}</p>
@@ -64,8 +64,8 @@
       <el-table-column prop label="操作" width="140">
         <template slot-scope="scope">
           <p class="ctrl">
-            <el-button type="text" size="mini">编辑</el-button>
-            <el-button type="text" size="mini" @click="toExecute(scope.row.fbId)">执行</el-button>
+            <el-button type="text" size="mini" @click="toEdit(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="mini" @click="toExecute(scope.row.fbId, scope.row.levelCnName, scope.row.evaluationSpecName)">执行</el-button>
             <el-button type="text" size="mini" @click="toDelete(scope.row.id)">删除</el-button>
           </p>
         </template>
@@ -82,7 +82,7 @@
         @current-change="pageSwitch"
       ></el-pagination>
     </div>
-    <rule-execute :status.sync="executeStatus" :id="executeid"></rule-execute>
+    <rule-execute ref="ruleExecute" :status.sync="executeStatus"></rule-execute>
     <rule-objdetail ref="objDetail" :status.sync="objStatus"></rule-objdetail>
   </div>
 </template>
@@ -101,7 +101,7 @@ export default {
       setapplist: [],
       switchstatus: true,
       executeStatus: false,
-      executeid: '',
+      // executeid: '',
       objStatus: false
     };
   },
@@ -116,9 +116,13 @@ export default {
       this.objStatus = true;
       this.$refs.objDetail.initData(objname, detail);
     },
-    toExecute(fbid) {
+    toEdit(id) {
+      this.$emit('editRule', id);
+    },
+    toExecute(fbid, type, condition) {
       this.executeStatus = true;
-      this.executeid = fbid;
+      // this.executeid = fbid;
+      this.$refs.ruleExecute.initData(fbid, type, condition);
     },
     toDelete(id) {
       this.$confirm("确定要删除此规则吗？此操作无法撤销", "删除规则", {
@@ -165,5 +169,6 @@ export default {
 .pageswitch {
   margin-top: 20px;
   text-align: center;
+  margin-bottom: 100px;
 }
 </style>

@@ -204,8 +204,8 @@ export default {
           break;
       }
     },
-    setRule() {
-      this.$emit("ruleRemove");
+    setRule(id) {
+      this.$emit("ruleRemove", id, this.type);
     },
     tabJump(tabname, row, type) {
       this.$emit("tabJump", tabname, row, type);

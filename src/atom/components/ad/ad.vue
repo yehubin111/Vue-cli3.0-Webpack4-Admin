@@ -334,7 +334,7 @@
     ></list-option>
     <import-remain :status.sync="remainstatus" :type="tabtype" @hideRemainBox="hideRemainBox"></import-remain>
     <rule-select ref="ruleSelect" :status.sync="ruleselectstatus"></rule-select>
-    <rule-remove :status.sync="ruleremovestatus"></rule-remove>
+    <rule-remove ref="ruleRemove" :status.sync="ruleremovestatus"></rule-remove>
     <rule-add ref="ruleAdd" :status.sync="ruleaddstatus"></rule-add>
   </div>
 </template>
@@ -751,8 +751,9 @@ export default {
       this.ruleselectstatus = true;
       this.$refs.ruleSelect.adInit(select, type);
     },
-    ruleRemove() {
+    ruleRemove(id, type) {
       this.ruleremovestatus = true;
+      this.$refs.ruleRemove.initData(id, type);
     },
     tabJump(tabname, row, type) {
       this.tabname = tabname;

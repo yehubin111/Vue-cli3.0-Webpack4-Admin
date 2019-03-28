@@ -50,6 +50,7 @@ export default {
     'ruleopen': 'adRule/{ruleId}/open', // 规则打开
     'addrule': 'adRule/add', // 创建规则
     'getexecute': 'adRule/{fbRuleId}/preview', // 执行
+    'executerule': 'adRule/{fbRuleId}/execute', // 规则执行
     'openrule': 'optimize/{projectId}/ruleGroups/add',  // 打开规则
     'closerule': 'optimize/{projectId}/ruleGroups/delete', //关闭规则
     'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}
@@ -157,6 +158,9 @@ export default {
     'submitafdata': `afFile/upload`, // af留存数据提交
     'affiledownload': 'afFile/download?', // af数据下载
     'adrulelist': 'adRule/list4Apply?', // 对应规则列表, 添加规则用
+    'userules': 'adRule/addObjs', // 应用现有规则
+    'singlerules': 'projectad/{objId}/rules', // 单个规则列表，用于规则移除
+    'removerule': 'projectad/{objId}/rules/remove', // 规则移除
     // data
     'conditionlist': 'report/getRptOption', //条件获取
     'datalist': 'report/rptAccount', //账户报表

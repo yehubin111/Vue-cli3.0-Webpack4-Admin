@@ -112,42 +112,42 @@ export default {
       indicatorselectlist: [], // 枚举列表
 
       ifedit: false, // 是否为编辑状态
-
+      
       indicatorOption: [
         {
           label: "最常见",
           value: "zcj",
           children: [
-            { label: "已花费", value: "spent|1|已花费" },
-            { label: "总花费", value: "lifetime_spent|1|总花费" },
-            { label: "频次", value: "frequency|1|频次" },
-            { label: "成效", value: "results|1|成效" },
-            { label: "单次成效费用", value: "cost_per|1|单次成效费用" },
+            { label: "已花费", value: "spent|1|已花费|true" },  // key | 操作类型 | name | 是否支持实时排期
+            { label: "总花费", value: "lifetime_spent|1|总花费|false" },
+            { label: "频次", value: "frequency|1|频次|true" },
+            { label: "成效", value: "results|1|成效|true" },
+            { label: "单次成效费用", value: "cost_per|1|单次成效费用|true" },
             {
               label: "移动应用安装",
-              value: "mobile_app_install|1|移动应用安装"
+              value: "mobile_app_install|1|移动应用安装|true"
             },
             {
               label: "单次移动应用安装费用",
-              value: "cost_per_mobile_app_install|1|单次移动应用安装费用"
+              value: "cost_per_mobile_app_install|1|单次移动应用安装费用|true"
             },
             {
               label: "广告花费回报（ROAS）-移动应用购物",
               value:
-                "mobile_app_purchase_roas|1|广告花费回报（ROAS）-移动应用购物"
+                "mobile_app_purchase_roas|1|广告花费回报（ROAS）-移动应用购物|false"
             },
             {
               label: "广告花费回报（ROAS）-网站购物",
-              value: "website_purchase_roas|1|广告花费回报（ROAS）-网站购物"
+              value: "website_purchase_roas|1|广告花费回报（ROAS）-网站购物|false"
             },
             {
               label: "单日花费比率",
-              value: "daily_ratio_spent|1|单日花费比率"
+              value: "daily_ratio_spent|1|单日花费比率|true"
             },
-            { label: "总花费比率", value: "lifetime_ratio_spent|1|总花费比率" },
+            { label: "总花费比率", value: "lifetime_ratio_spent|1|总花费比率|true" },
             {
               label: "受众覆盖%",
-              value: "audience_reached_percentage|1|受众覆盖%"
+              value: "audience_reached_percentage|1|受众覆盖%|true"
             }
           ]
         },
@@ -155,14 +155,14 @@ export default {
           label: "设置",
           value: "sz",
           children: [
-            { label: "广告系列名称", value: "campaign.name|2|广告系列名称" },
-            { label: "广告组名称", value: "adset.name|2|广告组名称" },
-            { label: "版位", value: "adset.placement.page_types|3|版位" },
-            { label: "总预算", value: "lifetime_budget|1|总预算" },
-            { label: "单日预算", value: "daily_budget|1|单日预算" },
-            { label: "竞价金额", value: "bid_amount|1|竞价金额" },
-            { label: "付费事件", value: "billing_event|3|付费事件" },
-            { label: "优化目标", value: "optimization_goal|3|优化目标" }
+            { label: "广告系列名称", value: "campaign.name|2|广告系列名称|true" },
+            { label: "广告组名称", value: "adset.name|2|广告组名称|true" },
+            { label: "版位", value: "adset.placement.page_types|3|版位|true" },
+            { label: "总预算", value: "lifetime_budget|1|总预算|true" },
+            { label: "单日预算", value: "daily_budget|1|单日预算|true" },
+            { label: "竞价金额", value: "bid_amount|1|竞价金额|true" },
+            { label: "付费事件", value: "billing_event|3|付费事件|true" },
+            { label: "优化目标", value: "optimization_goal|3|优化目标|true" }
           ]
         },
         {
@@ -171,13 +171,13 @@ export default {
           children: [
             {
               label: "创建时间（小时）",
-              value: "hours_since_creation|1|创建时间（小时）"
+              value: "hours_since_creation|1|创建时间（小时）|true"
             },
-            { label: "投放时间（秒）", value: "active_time|1|投放时间（秒）" },
-            { label: "当前时间", value: "current_time|4|当前时间" },
-            { label: "创建时间", value: "created_time|4|创建时间" },
-            { label: "上次编辑时间", value: "updated_time|4|上次编辑时间" },
-            { label: "开始时间", value: "start_time|4|开始时间" }
+            { label: "投放时间（秒）", value: "active_time|1|投放时间（秒）|true" },
+            { label: "当前时间", value: "current_time|4|当前时间|true" },
+            { label: "创建时间", value: "created_time|4|创建时间|true" },
+            { label: "上次编辑时间", value: "updated_time|4|上次编辑时间|true" },
+            { label: "开始时间", value: "start_time|4|开始时间|true" }
           ]
         },
         {
@@ -186,77 +186,77 @@ export default {
           children: [
             {
               label: "所有移动应用事件",
-              value: "app_custom_event|1|所有移动应用事件"
+              value: "app_custom_event|1|所有移动应用事件|true"
             },
             {
               label: "移动应用解锁成就",
               value:
-                "app_custom_event.fb_mobile_achievement_unlocked|1|移动应用解锁成就"
+                "app_custom_event.fb_mobile_achievement_unlocked|1|移动应用解锁成就|true"
             },
             {
               label: "移动应用会话",
-              value: "app_custom_event.fb_mobile_activate_app|1|移动应用会话"
+              value: "app_custom_event.fb_mobile_activate_app|1|移动应用会话|true"
             },
             {
               label: "移动应用添加支付信息",
               value:
-                "app_custom_event.fb_mobile_add_payment_info|1|移动应用添加支付信息"
+                "app_custom_event.fb_mobile_add_payment_info|1|移动应用添加支付信息|true"
             },
             {
               label: "移动应用加入购物车",
               value:
-                "app_custom_event.fb_mobile_add_to_cart|1|移动应用加入购物车"
+                "app_custom_event.fb_mobile_add_to_cart|1|移动应用加入购物车|true"
             },
             {
               label: "移动应用加入心愿单",
               value:
-                "app_custom_event.fb_mobile_add_to_wishlist|1|移动应用加入心愿单"
+                "app_custom_event.fb_mobile_add_to_wishlist|1|移动应用加入心愿单|true"
             },
             {
               label: "移动应用完成注册",
               value:
-                "app_custom_event.fb_mobile_complete_registration|1|移动应用完成注册"
+                "app_custom_event.fb_mobile_complete_registration|1|移动应用完成注册|true"
             },
             {
               label: "移动应用内容查看",
               value:
-                "app_custom_event.fb_mobile_content_view|1|移动应用内容查看"
+                "app_custom_event.fb_mobile_content_view|1|移动应用内容查看|true"
             },
             {
               label: "移动应用发起结账",
               value:
-                "app_custom_event.fb_mobile_initiated_checkout|1|移动应用发起结账"
+                "app_custom_event.fb_mobile_initiated_checkout|1|移动应用发起结账|true"
             },
             {
               label: "移动应用关卡完成",
               value:
-                "app_custom_event.fb_mobile_level_achieved|1|移动应用关卡完成"
+                "app_custom_event.fb_mobile_level_achieved|1|移动应用关卡完成|true"
             },
             {
               label: "移动应用购物",
-              value: "app_custom_event.fb_mobile_purchase|1|移动应用购物"
+              value: "app_custom_event.fb_mobile_purchase|1|移动应用购物|true"
             },
             {
               label: "移动应用提交评分",
-              value: "app_custom_event.fb_mobile_rate|1|移动应用提交评分"
+              value: "app_custom_event.fb_mobile_rate|1|移动应用提交评分|true"
             },
             {
               label: "移动应用搜索",
-              value: "app_custom_event.fb_mobile_search|1|移动应用搜索"
+              value: "app_custom_event.fb_mobile_search|1|移动应用搜索|true"
             },
             {
               label: "移动应用点数花费",
               value:
-                "app_custom_event.fb_mobile_spent_credits|1|移动应用点数花费"
+                "app_custom_event.fb_mobile_spent_credits|1|移动应用点数花费|true"
             },
             {
               label: "移动应用完成教程",
               value:
-                "app_custom_event.fb_mobile_tutorial_completion|1|移动应用完成教程"
+                "app_custom_event.fb_mobile_tutorial_completion|1|移动应用完成教程|true"
             },
             {
               label: "移动应用其他操作",
-              value: "app_custom_event.other|1|移动应用其他操作"
+              value: "app_custom_event.other|1|移动应用其他操作|true"
             }
           ]
         },
@@ -267,65 +267,65 @@ export default {
             {
               label: "单次移动应用成就解锁费用",
               value:
-                "cost_per_mobile_achievement_unlocked|1|单次移动应用成就解锁费用"
+                "cost_per_mobile_achievement_unlocked|1|单次移动应用成就解锁费用|true"
             },
             {
               label: "单次移动应用会话费用",
-              value: "cost_per_mobile_activate_app|1|单次移动应用会话费用"
+              value: "cost_per_mobile_activate_app|1|单次移动应用会话费用|true"
             },
             {
               label: "单次移动应用添加支付信息费用",
               value:
-                "cost_per_mobile_add_payment_info|1|单次移动应用添加支付信息费用"
+                "cost_per_mobile_add_payment_info|1|单次移动应用添加支付信息费用|true"
             },
             {
               label: "单次移动应用加入购物车费用",
-              value: "cost_per_mobile_add_to_cart|1|单次移动应用加入购物车费用"
+              value: "cost_per_mobile_add_to_cart|1|单次移动应用加入购物车费用|true"
             },
             {
               label: "单次移动应用加入心愿单费用",
               value:
-                "cost_per_mobile_add_to_wishlist|1|单次移动应用加入心愿单费用"
+                "cost_per_mobile_add_to_wishlist|1|单次移动应用加入心愿单费用|true"
             },
             {
               label: "单次移动应用完成注册费用",
               value:
-                "cost_per_mobile_complete_registration|1|单次移动应用完成注册费用"
+                "cost_per_mobile_complete_registration|1|单次移动应用完成注册费用|true"
             },
             {
               label: "单次移动应用内容查看费用",
-              value: "cost_per_mobile_content_view|1|单次移动应用内容查看费用"
+              value: "cost_per_mobile_content_view|1|单次移动应用内容查看费用|true"
             },
             {
               label: "单次移动应用发起结账费用",
               value:
-                "cost_per_mobile_initiated_checkout|1|单次移动应用发起结账费用"
+                "cost_per_mobile_initiated_checkout|1|单次移动应用发起结账费用|true"
             },
             {
               label: "单次移动应用关卡完成费用",
-              value: "cost_per_mobile_level_achieved|1|单次移动应用关卡完成费用"
+              value: "cost_per_mobile_level_achieved|1|单次移动应用关卡完成费用|true"
             },
             {
               label: "单次移动应用购物费用",
-              value: "cost_per_mobile_purchase|1|单次移动应用购物费用"
+              value: "cost_per_mobile_purchase|1|单次移动应用购物费用|true"
             },
             {
               label: "单次移动应用提交评分费用",
-              value: "cost_per_mobile_rate|1|单次移动应用提交评分费用"
+              value: "cost_per_mobile_rate|1|单次移动应用提交评分费用|true"
             },
             {
               label: "单次移动应用搜索费用",
-              value: "cost_per_mobile_search|1|单次移动应用搜索费用"
+              value: "cost_per_mobile_search|1|单次移动应用搜索费用|true"
             },
             {
               label: "单次移动应用点数花费的广告费用",
               value:
-                "cost_per_mobile_spent_credits|1|单次移动应用点数花费的广告费用"
+                "cost_per_mobile_spent_credits|1|单次移动应用点数花费的广告费用|true"
             },
             {
               label: "单次移动应用完成教程学习费用",
               value:
-                "cost_per_mobile_tutorial_completion|1|单次移动应用完成教程学习费用"
+                "cost_per_mobile_tutorial_completion|1|单次移动应用完成教程学习费用|true"
             }
           ]
         },
@@ -335,78 +335,78 @@ export default {
           children: [
             {
               label: "其他点击费用（链接）",
-              value: "cost_per_link_click|1|其他点击费用（链接）"
+              value: "cost_per_link_click|1|其他点击费用（链接）|true"
             },
-            { label: "链接点击量", value: "link_clicks|1|链接点击量" },
-            { label: "千次发展费用", value: "cpm|1|千次发展费用" },
-            { label: "点击率（链接）", value: "link_ctr|1|点击率（链接）" },
-            { label: "总展示量", value: "lifetime_impressions|1|总展示量" },
-            { label: "展示次数", value: "impressions|1|展示次数" },
-            { label: "覆盖人数", value: "reach|1|覆盖人数" },
-            { label: "潜在客户", value: "leadgen|1|潜在客户" },
-            { label: "操作", value: "actions|1|操作" },
-            { label: "点击量", value: "clicks|1|点击量" },
-            { label: "CPA", value: "cpa|1|CPA" },
-            { label: "CPC", value: "cpc|1|CPC" },
+            { label: "链接点击量", value: "link_clicks|1|链接点击量|true" },
+            { label: "千次发展费用", value: "cpm|1|千次发展费用|true" },
+            { label: "点击率（链接）", value: "link_ctr|1|点击率（链接）|true" },
+            { label: "总展示量", value: "lifetime_impressions|1|总展示量|false" },
+            { label: "展示次数", value: "impressions|1|展示次数|true" },
+            { label: "覆盖人数", value: "reach|1|覆盖人数|true" },
+            { label: "潜在客户", value: "leadgen|1|潜在客户|true" },
+            { label: "操作", value: "actions|1|操作|true" },
+            { label: "点击量", value: "clicks|1|点击量|true" },
+            { label: "CPA", value: "cpa|1|CPA|true" },
+            { label: "CPC", value: "cpc|1|CPC|true" },
             // { label: "每点成本", value: "13|1" },
-            { label: "点击率", value: "ctr|1|点击率" },
-            { label: "成效率", value: "result_rate|1|成效率" },
+            { label: "点击率", value: "ctr|1|点击率|true" },
+            { label: "成效率", value: "result_rate|1|成效率|true" },
             // { label: "社交点击量", value: "16|1" },
             // { label: "社交展示次数", value: "17|1" },
             {
               label: "单次独立点击费用",
-              value: "cost_per_unique_click|1|单次独立点击费用"
+              value: "cost_per_unique_click|1|单次独立点击费用|true"
             },
             {
               label: "独立用户点击量",
-              value: "unique_clicks|1|独立用户点击量"
+              value: "unique_clicks|1|独立用户点击量|true"
             },
             // { label: "独立用户社交点击量", value: "20|1" },
             // { label: "独立用户社交展示次数", value: "21|1" },
-            { label: "今日花费", value: "today_spent|1|今日花费" },
-            { label: "昨日花费", value: "yesterday_spent|1|昨日花费" },
-            { label: "帖文互动", value: "post_engagement|1|帖文互动" },
+            { label: "今日花费", value: "today_spent|1|今日花费|false" },
+            { label: "昨日花费", value: "yesterday_spent|1|昨日花费|false" },
+            { label: "帖文互动", value: "post_engagement|1|帖文互动|true" },
             {
               label: "单次帖文互动",
-              value: "cost_per_post_engagement|1|单次帖文互动"
+              value: "cost_per_post_engagement|1|单次帖文互动|false"
             },
             {
               label: "观看视频达3秒的次数",
-              value: "video_view|1|观看视频达3秒的次数"
+              value: "video_view|1|观看视频达3秒的次数|true"
             },
             {
               label: "单次视频观看费用",
-              value: "cost_per_video_view|1|单次视频观看费用"
+              value: "cost_per_video_view|1|单次视频观看费用|false"
             },
-            { label: "主页赞", value: "like|1|主页赞" },
-            { label: "站外互动", value: "offsite_engagement|1|站外互动" },
-            { label: "帖子", value: "post|1|帖子" },
-            { label: "帖子评论", value: "post_comment|1|帖子评论" },
-            { label: "帖子获赞", value: "post_like|1|帖子获赞" },
-            { label: "帖子心情", value: "post_reaction|1|帖子心情" },
-            { label: "内容查看", value: "view_content|1|内容查看" },
-            { label: "点击播放视频", value: "video_play|1|点击播放视频" },
-            { label: "提问回答", value: "vote|1|提问回答" },
+            { label: "主页赞", value: "like|1|主页赞|true" },
+            { label: "站外互动", value: "offsite_engagement|1|站外互动|true" },
+            { label: "帖子", value: "post|1|帖子|true" },
+            { label: "帖子评论", value: "post_comment|1|帖子评论|true" },
+            { label: "帖子获赞", value: "post_like|1|帖子获赞|true" },
+            { label: "帖子心情", value: "post_reaction|1|帖子心情|true" },
+            { label: "内容查看", value: "view_content|1|内容查看|true" },
+            { label: "点击播放视频", value: "video_play|1|点击播放视频|true" },
+            { label: "提问回答", value: "vote|1|提问回答|true" },
             {
               label: "新增消息联系人数量",
               value:
-                "onsite_conversion.messaging_first_reply|1|新增消息联系人数量"
+                "onsite_conversion.messaging_first_reply|1|新增消息联系人数量|true"
             },
             {
               label: "单次新增消息联系人费用",
-              value: "cost_per_messaging_first_reply|1|单次新增消息联系人费用"
+              value: "cost_per_messaging_first_reply|1|单次新增消息联系人费用|true"
             },
             {
               label: "消息回复次数",
-              value: "onsite_conversion.messaging_reply|1|消息回复次数"
+              value: "onsite_conversion.messaging_reply|1|消息回复次数|true"
             },
             {
               label: "单次消息回复费用",
-              value: "cost_per_messaging_reply|1|单次消息回复费用"
+              value: "cost_per_messaging_reply|1|单次消息回复费用|true"
             },
             {
               label: "预估预算花费%",
-              value: "estimated_budget_spending_percentage|1|预估预算花费%"
+              value: "estimated_budget_spending_percentage|1|预估预算花费%|true"
             }
           ]
         }
@@ -573,6 +573,7 @@ export default {
       let key = indicator[0];
       let compare = this.operationlist.find(v => v.key == this.operation);
       let name = `${indicator[2]}${compare.name}`;
+      let trigger = eval(indicator[3]);
       switch (this.indicatortype) {
         case "1":
           if (this.operation == "1" || this.operation == "2") {
@@ -620,6 +621,7 @@ export default {
         name,
         key,
         option,
+        trigger,
         indicator: this.indicator,
         operation: this.operation
       });

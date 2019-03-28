@@ -110,7 +110,7 @@
             icon="el-icon-setting"
             type="text"
             size="mini"
-            @click="setRule(scope.row[typeData.effectIdsPush], scope.row[item.key])"
+            @click="setRule(scope.row[typeData.effectIdsPush])"
             :disabled="scope.row.jobStatus"
           >规则</el-button>
           <el-button
@@ -248,8 +248,8 @@ export default {
       this.$refs["multipleTable" + this.type].clearSelection();
       this.$refs["multipleTable" + this.type].toggleRowSelection(row, true);
     },
-    setRule() {
-      this.$emit('setRule');
+    setRule(id) {
+      this.$emit('setRule', id);
     },
     toEdit(id, name) {
       this.$emit("toEdit", [id], name);

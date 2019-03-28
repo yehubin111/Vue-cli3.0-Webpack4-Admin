@@ -74,6 +74,7 @@ export default {
   oppagesize: 20, // 优化记录单页条数
   optimizelist: [], // 优化记录列表
   optimizeaccount: [], //优化记录广告账户
+  executelist: [], // 执行列表
   // create
   createlist: [], // 创意列表
   createchecked: [], // 创意列表多选情况
@@ -275,6 +276,8 @@ export default {
   customeventad: [],
   adcustomevent: [],
   conditionlist: [], // 已保存筛选条件列表
+  adrulelist: [], // 广告账户对应规则列表
+  singlerules: [], // 单独规则列表，用于移除
   // data
   adcampaign: [], //广告系列
   adaccount: [], // 广告账户

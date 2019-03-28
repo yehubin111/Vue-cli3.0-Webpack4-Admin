@@ -223,6 +223,7 @@
           placeholder="选择排期"
           @change="selectSchedule"
         >
+          <el-option label="实时（至多7分钟）" value="TRIGGER|" :disabled="!trigger"></el-option>
           <el-option
             v-for="item in schedulelist"
             :key="item.key"
@@ -374,6 +375,23 @@ export default {
         { name: "每周一次", key: "10080" },
         { name: "两周一次", key: "20160" }
       ],
+      // 非统计指标, 不选择统计指标的情况下无法使用实时
+      specialIndicator: [
+        "campaign.name",
+        "adset.name",
+        "adset.placement.page_types",
+        "lifetime_budget",
+        "daily_budget",
+        "bid_amount",
+        "billing_event",
+        "optimization_goal",
+        "hours_since_creation",
+        "active_time",
+        "current_time",
+        "created_time",
+        "updated_time",
+        "start_time"
+      ],
       targetList: [
         // 调整目标list
         {
@@ -446,7 +464,6 @@ export default {
         { name: "28天", key: "28" }
       ],
       schedulelist: [
-        { name: "实时（至多7分钟）", key: "TRIGGER|" },
         { name: "每半小时", key: "SCHEDULE|SEMI_HOURLY" },
         { name: "每小时", key: "SCHEDULE|HOURLY" },
         { name: "每日（每天12点）", key: "SCHEDULE|DAILY" },
@@ -465,14 +482,15 @@ export default {
       adselect: [],
       adtype: "",
       idkey: "",
-      from: ""
+      from: "",
+      trigger: true
     };
   },
   mounted() {
     this.ctrlList = this.ctrlOption.slice(0, 2);
   },
   computed: {
-    ...mapState(["adaccountlist"])
+    ...mapState(["adaccountlist", "newrulelist"])
   },
   methods: {
     adInit(select, type) {
@@ -481,13 +499,21 @@ export default {
       switch (type) {
         case "campaignName":
           this.adObjectOption = this.adObjectOption.concat([
-            { name: `${select.length}个广告系列`, key: "CAMPAIGN|ad", difkey: 1 },
+            {
+              name: `${select.length}个广告系列`,
+              key: "CAMPAIGN|ad",
+              difkey: 1
+            },
             {
               name: `${select.length}个广告系列中正在投放的广告组`,
               key: "ADSET|ad",
               difkey: 2
             },
-            { name: `${select.length}个广告系列中正在投放的广告`, key: "AD|ad", difkey: 3 }
+            {
+              name: `${select.length}个广告系列中正在投放的广告`,
+              key: "AD|ad",
+              difkey: 3
+            }
           ]);
           this.adtype = "CAMPAIGN";
           this.idkey = "campaignId";
@@ -495,7 +521,11 @@ export default {
         case "adSetName":
           this.adObjectOption = this.adObjectOption.concat([
             { name: `${select.length}个广告组`, key: "ADSET|ad", difkey: 1 },
-            { name: `${select.length}个广告组中正在投放的广告`, key: "AD|ad", difkey: 2 }
+            {
+              name: `${select.length}个广告组中正在投放的广告`,
+              key: "AD|ad",
+              difkey: 2
+            }
           ]);
           this.adtype = "ADSET";
           this.idkey = "adsetId";
@@ -508,6 +538,9 @@ export default {
           this.idkey = "adId";
           break;
       }
+    },
+    initEdit(id) {
+      // let object = this.newrulelist.find(v => v.id == id);
     },
     editCondition(key) {
       let condition = this.form.conditionlist.find(v => v.key == key);
@@ -528,10 +561,31 @@ export default {
       this.form.conditionlist = this.form.conditionlist.filter(
         v => v.key != key
       );
+      // 判断是否支持实时
+      this.setTriggerStatus();
+    },
+    setTriggerStatus() {
+      this.trigger = true;
+      // 首先排除特殊情况，条件全为非统计指标，则无法使用实时
+      let special = this.form.conditionlist.filter(
+        v => this.specialIndicator.indexOf(v.key) == -1
+      );
+      if (special.length == 0) {
+        this.trigger = false;
+      } else {
+        special.forEach(v => {
+          if (!v.trigger) {
+            this.trigger = false;
+          }
+        });
+      }
+      this.form.schedule = "";
     },
     returnCondition(condition) {
       console.log(condition);
       this.form.conditionlist.push(condition);
+      // 判断是否支持实时
+      this.setTriggerStatus();
     },
     selectSchedule() {
       let schedule = this.form.schedule.split("|");
@@ -575,7 +629,7 @@ export default {
       this.resetCtrlSelect();
     },
     selectObject() {
-      switch (this.form.ruleobject.split('|')[0]) {
+      switch (this.form.ruleobject.split("|")[0]) {
         case "CAMPAIGN":
           this.form.ruleobjectname = "广告系列";
           this.ctrlList = this.ctrlOption.slice(0, 3);
@@ -665,7 +719,7 @@ export default {
           filters: [
             {
               field: "entity_type",
-              value: this.form.ruleobject.split('|')[0],
+              value: this.form.ruleobject.split("|")[0],
               operator: "EQUAL"
             },
             {
@@ -741,7 +795,7 @@ export default {
         console.log(this.idkey);
         let adobj = {
           field:
-            this.adtype == this.form.ruleobject.split('|')[0]
+            this.adtype == this.form.ruleobject.split("|")[0]
               ? "id"
               : `${this.adtype.toLocaleLowerCase()}.id`,
           value: this.adselect.map(v => v[this.idkey]),
@@ -824,6 +878,7 @@ export default {
       this.adObjectOption = [];
       this.idkey = "";
       this.from = "";
+      this.trigger = true;
     }
   }
 };
@@ -836,6 +891,9 @@ export default {
 </style>
 
 <style lang="less" scoped>
+.tagline {
+  margin-right: 10px;
+}
 .select {
   width: 340px;
 }

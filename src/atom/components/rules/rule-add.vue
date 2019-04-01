@@ -8,6 +8,7 @@
           filterable
           multiple
           collapse-tags
+          :disabled="Boolean(editid)"
           placeholder="请选择广告账户，可搜索"
         >
           <el-option
@@ -24,6 +25,7 @@
           v-model="form.ruleobject"
           filterable
           placeholder="选择对象"
+          :disabled="Boolean(editid)"
           @change="selectObject"
         >
           <el-option
@@ -651,7 +653,7 @@ export default {
             this.ctrlway1.ruleunit == "ACCOUNT_CURRENCY"
               ? changespec["value"]["amount"] / 100
               : changespec["value"]["amount"];
-          this.ctrlway1.daybudget = changespec["value"]["limit"];
+          this.ctrlway1.daybudget = changespec["value"]["limit"] / 100;
         }
 
         this.form.ctrlmethod.push(
@@ -1004,7 +1006,7 @@ export default {
           break;
       }
       // 从广告管理页面创建，选择了特殊选项
-      if (this.from == "ad") {
+      if (this.form.ruleobject.split("|")[1] && this.form.ruleobject.split("|")[1] == "ad") {
         console.log(this.adselect);
         console.log(this.idkey);
         let adobj = {

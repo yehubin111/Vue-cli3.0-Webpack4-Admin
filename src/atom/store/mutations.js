@@ -401,20 +401,17 @@ export default {
         state.ruleapp = dt;
     },
     OPTIMIZEACCOUNT(state, r) {
-        let dt = r.data;
-        dt.unshift({
-            fbAccountName: '不限',
-            fbAccountId: '-1',
-        });
-        state.optimizeaccount = dt;
+        state.optimizeaccount = r.data;
     },
     OPTIMIZELIST(state, r) {
-        state.optotal = r.data.total;
-        state.oppagesize = r.data.pageSize;
+        state.optotal = r.data.count;
         state.optimizelist = r.data.list;
     },
     EXECUTELIST(state, r) {
         state.executelist = r.data;
+    },
+    OPTIMIZEDETAIL(state, r) {
+        state.optimizedetail = r.data;
     },
     // create
     CREATE(state, r) {

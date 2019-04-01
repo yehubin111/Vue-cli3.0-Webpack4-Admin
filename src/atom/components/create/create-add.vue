@@ -885,10 +885,6 @@ export default {
   width: 50%;
   float: left;
 }
-.cline {
-  // width: 50%;
-  // float: left;
-}
 .cbutton {
   width: 100%;
   float: left;

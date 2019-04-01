@@ -818,22 +818,42 @@ export default {
             }
         })
     },
+    editRule({ state, commit, dispatch }, { option }) {
+        let url = URL.editrule;
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            data: option,
+            success: res => {
+                if (res.data) {
+                    dispatch('getRuleList');
+                    Msgsuccess('编辑成功');
+                } else {
+                    Msgsuccess(`编辑失败：${res.msg}`);
+                }
+
+                return res;
+            }
+        })
+    },
     getExecute({ state, commit }, fbRuleId) {
         let url = URL.getexecute.replace('{fbRuleId}', fbRuleId);
 
         let load;
-        setTimeout(function() {
-            load = Loading.service({fullscreen: true});
+        setTimeout(function () {
+            load = Loading.service({ fullscreen: true });
         }, 300);
         Axios({
             url,
             success: res => {
-                if(load) load.close();
+                if (load) load.close();
                 commit('EXECUTELIST', res);
             }
         })
     },
-    executeRule({state, commit, dispatch }, fbid) {
+    executeRule({ state, commit, dispatch }, fbid) {
         let url = URL.executerule.replace('{fbRuleId}', fbid);
 
         return Axios({
@@ -841,7 +861,7 @@ export default {
             method: 'post',
             fullscreen: true,
             success: res => {
-                if(res.data) {
+                if (res.data) {
                     Msgsuccess('执行成功');
                     dispatch('getRuleList');
                 } else {
@@ -902,13 +922,13 @@ export default {
                 console.log(err);
             })
     },
-    getOptimizeList({ state, commit }, { optlist, projectId }) {
-        let url = URL.optimize.replace('{projectId}', projectId);
+    getOptimizeList({ state, commit }, option) {
+        let url = URL.optimize;
 
         let str = '';
-        for (let i in optlist) {
-            if (optlist[i])
-                str += `&${i}=${optlist[i]}`;
+        for (let i in option) {
+            if (option[i])
+                str += `&${i}=${option[i]}`;
         }
 
         url += str.substr(1);
@@ -920,6 +940,16 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    optimizeDetail({state, commit}, fbid) {
+        let url = `${URL.optimizedetail}fbRuleLogId=${fbid}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('OPTIMIZEDETAIL', res);
+            }
+        })
     },
     // create
     matchFileMD5({ state, commit }, { md5, file, list, type, tabvalue, on, vdname }) {
@@ -2674,22 +2704,28 @@ export default {
             }
         })
     },
-    useRules({state, commit}, { objIds, ruleIds }) {
+    useRules({ state, commit }, { objIds, ruleIds, objLevel }) {
         let url = URL.userules;
         let option = new FormData();
         option.append('objIds', objIds);
         option.append('ruleIds', ruleIds);
+        option.append('objLevel', objLevel);
 
         return Axios({
             url,
             method: 'post',
             data: option,
+            fullscreen: true,
             success: res => {
+                if (res.data)
+                    Msgsuccess('应用成功');
+                else
+                    Msgerror(`应用失败：${res.msg}`);
                 return res;
             }
         })
     },
-    singleRules({state, commit}, id) {
+    singleRules({ state, commit }, id) {
         let url = URL.singlerules.replace('{objId}', id);
 
         Axios({
@@ -2699,16 +2735,22 @@ export default {
             }
         })
     },
-    removeRules({state, commit }, {objId, ruleIds}) {
+    removeRules({ state, commit }, { objId, ruleIds, objLevel }) {
         let url = URL.removerule.replace('{objId}', objId);
         let option = new FormData();
         option.append('ruleIds', ruleIds);
+        option.append('objLevel', objLevel);
 
         return Axios({
             url,
             method: 'post',
+            fullscreen: true,
             data: option,
             success: res => {
+                if (res.data)
+                    Msgsuccess('移除成功');
+                else
+                    Msgerror(`移除失败：${res.msg}`);
                 return res;
             }
         })

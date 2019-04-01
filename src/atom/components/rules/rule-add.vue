@@ -14,7 +14,7 @@
             v-for="item in adaccountlist"
             :key="item.fbId"
             :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-            :value="item.name + '|' + item.fbId"
+            :value="item.fbId"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -159,6 +159,14 @@
         </el-form-item>
       </el-form-item>
       <el-form-item label="条件" label-width="110px">
+        <el-tooltip
+          class="conditiontip"
+          effect="dark"
+          content="实时规则建议把难度较高的规则放在前面，以便能及时触发；实时必须要有统计类指标，且某些统计类指标不支持实时"
+          placement="top-start"
+        >
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
         <span
           class="tagline"
           v-for="cond in form.conditionlist"
@@ -259,6 +267,7 @@
 import RuleCondition from "./rule-condition";
 import { mapState } from "vuex";
 import { Msgwarning, Msgerror } from "../../js/message";
+import { setTimeout } from "timers";
 
 export default {
   props: ["status"],
@@ -483,7 +492,9 @@ export default {
       adtype: "",
       idkey: "",
       from: "",
-      trigger: true
+      trigger: true,
+      editid: '',
+      editfbid: ''
     };
   },
   mounted() {
@@ -539,8 +550,200 @@ export default {
           break;
       }
     },
-    initEdit(id) {
-      // let object = this.newrulelist.find(v => v.id == id);
+    async initEdit(id, fbid) {
+      let object = this.newrulelist.find(v => v.id == id);
+      let level = object.level;
+
+      let evaluationSpec = JSON.parse(object.evaluationSpec);
+      let executionSpec = JSON.parse(object.executionSpec);
+      let scheduleSpec = object.scheduleSpec
+        ? JSON.parse(object.scheduleSpec)
+        : null;
+      // 广告账户
+      this.form.account = object.fbAccountId.split(",");
+      // 规则应用对象
+      let entity = evaluationSpec["filters"].find(
+        v => v.field == "entity_type"
+      );
+      let fromad = evaluationSpec["filters"].find(
+        v =>
+          v.field == "campaign.id" ||
+          v.field == "adset.id" ||
+          v.field == "ad.id" ||
+          v.field == "id"
+      );
+      if (fromad) {
+        let adidkey = "";
+        let adtype = "";
+        if (fromad.field != "id") {
+          level = fromad.field.split(".")[0].toLocaleUpperCase();
+        }
+        console.log(level);
+        switch (level) {
+          case "CAMPAIGN":
+            adidkey = "campaignId";
+            adtype = "campaignName";
+            break;
+          case "ADSET":
+            adidkey = "adsetId";
+            adtype = "adSetName";
+            break;
+          case "AD":
+            adidkey = "adId";
+            adtype = "adName";
+            break;
+        }
+        let addata = fromad.value.map(v => {
+          let obj = {};
+          obj[adidkey] = v;
+          return obj;
+        });
+        this.adInit(addata, adtype);
+        this.form.ruleobject = entity.value + "|ad";
+      } else {
+        this.form.ruleobject = entity.value;
+      }
+
+      this.selectObject();
+      /**
+       * 操作部分数据初始化逻辑
+       */
+      this.form.ctrlmethod.push(executionSpec["execution_type"]);
+      let budget = evaluationSpec["filters"].find(
+        v => v.field == "budget_reset_period"
+      );
+      let changespec = executionSpec["execution_options"]
+        ? executionSpec["execution_options"].find(v => v.field == "change_spec")
+        : null;
+      // 如果存在则表示不是开启或关闭
+      if (changespec) {
+        if (budget)
+          this.form.ctrlmethodkey =
+            budget[0] == "day" ? "daybudget" : "totalbudget";
+        else this.form.ctrlmethodkey = "bid";
+
+        switch (this.form.ctrlmethodkey) {
+          case "daybudget":
+            this.form.ctrlmethodname = "单日预算";
+            break;
+          case "totalbudget":
+            this.form.ctrlmethodname = "总预算";
+            break;
+          case "bid":
+            this.form.ctrlmethodname = "竞价";
+            break;
+        }
+
+        if (changespec["value"]["target_field"]) {
+          this.form.ctrlmethodwant = "other";
+          this.ctrlway2.targetworth = changespec["value"]["amount"] / 100;
+          this.ctrlway2.target = changespec["value"]["target_field"];
+          this.ctrlway2.firstdist = changespec["value"]["limit"][0] / 100;
+          this.ctrlway2.seconddist = changespec["value"]["limit"][1] / 100;
+        } else {
+          if (changespec["value"]["amount"] < 0) {
+            this.form.ctrlmethodwant = "decrease";
+          } else {
+            this.form.ctrlmethodwant = "increase";
+          }
+          this.ctrlway1.ruleunit = changespec["value"]["unit"];
+          this.ctrlway1.ctrlnum =
+            this.ctrlway1.ruleunit == "ACCOUNT_CURRENCY"
+              ? changespec["value"]["amount"] / 100
+              : changespec["value"]["amount"];
+          this.ctrlway1.daybudget = changespec["value"]["limit"];
+        }
+
+        this.form.ctrlmethod.push(
+          this.form.ctrlmethodkey + "_" + this.form.ctrlmethodwant
+        );
+      }
+      /**
+       * 操作部分数据初始化逻辑
+       */
+
+      /**
+       * 条件初始化逻辑
+       */
+      // 定时情况
+      if (evaluationSpec["trigger"]) {
+        let triggercond = evaluationSpec["trigger"];
+        delete triggercond["type"];
+
+        await this.$barrageTime(300);
+        this.$refs.setCondition.editRuleInit(triggercond);
+      }
+      let condition = evaluationSpec["filters"].filter(
+        v => v.operator != "EQUAL"
+      );
+      // 排除特殊情况
+      condition = condition.filter(
+        v =>
+          v.field != "budget_reset_period" &&
+          v.field != level.toLocaleLowerCase() + ".id" &&
+          v.field != "id"
+      );
+
+      await this.$barrageTime(300);
+      this.$refs.setCondition.editRuleInit(condition);
+      // 时间范围
+      let timepreset = evaluationSpec["filters"].find(
+        v => v.field == "time_preset"
+      );
+      if (!this.timeOption.find(v => v.value == timepreset.value)) {
+        this.timeOption.forEach(v => {
+          if (v.children.find(g => g.value == timepreset.value)) {
+            this.timerange.push(v.value);
+          }
+        });
+      }
+      this.timerange = [timepreset.value];
+      // 统计时间窗逻辑
+      let attributionWindow = evaluationSpec["filters"].find(
+        v => v.field == "attribution_window"
+      );
+      switch (attributionWindow.value) {
+        case "ACCOUNT_DEFAULT":
+          this.form.timewindow = 1;
+          break;
+        case "DEFAULT":
+          this.form.timewindow = 2;
+          this.form.timecustom1 = "1";
+          this.form.timecustom2 == "28";
+          break;
+        case "INLINE":
+          this.form.timewindow = 2;
+          this.form.timecustom1 = "0";
+          this.form.timecustom2 == "0";
+          break;
+        default:
+          this.form.timewindow = 2;
+          let ar = attributionWindow.value.split("_");
+          let view = ar.indexOf("VIEW");
+          let click = ar.indexOf("CLICK");
+          this.form.timecustom1 =
+            view != -1 ? ar[view - 1].replace("D", "") : "0";
+          this.form.timecustom2 =
+            click != -1 ? ar[click - 1].replace("D", "") : "0";
+          break;
+      }
+      /**
+       * 条件初始化逻辑
+       */
+      // 排期
+      this.form.schedule =
+        evaluationSpec["evaluation_type"] +
+        "|" +
+        (scheduleSpec ? scheduleSpec["schedule_type"] : "");
+      this.selectSchedule();
+      if (scheduleSpec && scheduleSpec["schedule_type"] == "CUSTOM") {
+        this.form.week = scheduleSpec["schedule"][0]["days"];
+      }
+      // 规则名称
+      this.form.rulename = object["name"];
+
+      this.editid = id;
+      this.editfbid = fbid;
     },
     editCondition(key) {
       let condition = this.form.conditionlist.find(v => v.key == key);
@@ -685,8 +888,10 @@ export default {
         return;
       }
 
-      let accountid = this.form.account.map(v => v.split("|")[1]);
-      let accountname = this.form.account.map(v => v.split("|")[0]);
+      let accountid = this.form.account;
+      let accountname = this.form.account.map(
+        v => this.adaccountlist.find(g => g.fbId == v).name
+      );
       // 统计时间窗逻辑
       let windowcond = "ACCOUNT_DEFAULT";
       if (this.form.timewindow != 1) {
@@ -776,15 +981,24 @@ export default {
         case "increase":
         case "decrease":
           obj.value = {
-            amount: this.ctrlway1.ctrlnum,
-            limit: this.ctrlway1.daybudget,
+            amount:
+              this.ctrlway1.ruleunit == "ACCOUNT_CURRENCY"
+                ? this.ctrlway1.ctrlnum * 100
+                : this.ctrlway1.ctrlnum,
+            limit: this.ctrlway1.daybudget * 100,
             unit: this.ctrlway1.ruleunit
           };
           break;
+        case "decrease":
+          obj.value.amount = obj.value.amount * -1;
+          break;
         case "other":
           obj.value = {
-            amount: this.ctrlway2.targetworth,
-            limit: [this.ctrlway2.firstdist, this.ctrlway2.seconddist],
+            amount: this.ctrlway2.targetworth * 100,
+            limit: [
+              this.ctrlway2.firstdist * 100,
+              this.ctrlway2.seconddist * 100
+            ],
             target_field: this.ctrlway2.target
           };
           break;
@@ -806,10 +1020,26 @@ export default {
       // 关闭或者开启操作无需传该条件
       if (this.form.ctrlmethodwant)
         option["executionSpec"]["execution_options"].push(obj);
-      // 条件
+      /**
+       * 条件传参逻辑
+       * 如果是选择了统计条件，并且选择了实时排期，则需要传trigger字段，参数为第一个统计条件
+       */
+      let conditionall = this.form.conditionlist;
+      if (this.form.schedulegrade == "TRIGGER") {
+        let specialcondition = this.form.conditionlist.find(
+          v => this.specialIndicator.indexOf(v.key) == -1
+        );
+        option["evaluationSpec"]["trigger"] = {
+          type: "STATS_CHANGE",
+          ...specialcondition["option"]
+        };
+        conditionall = this.form.conditionlist.filter(
+          v => v.key != specialcondition.key
+        );
+      }
       option["evaluationSpec"]["filters"] = option["evaluationSpec"][
         "filters"
-      ].concat(this.form.conditionlist.map(v => v.option));
+      ].concat(conditionall.map(v => v.option));
       // 排期
       if (this.form.schedulegrade == "SCHEDULE") {
         option["scheduleSpec"] = {
@@ -827,13 +1057,21 @@ export default {
 
       option["executionSpec"] = JSON.stringify(option["executionSpec"]);
       option["evaluationSpec"] = JSON.stringify(option["evaluationSpec"]);
-      option["scheduleSpec"] = JSON.stringify(option["scheduleSpec"]);
+      if (option["scheduleSpec"])
+        option["scheduleSpec"] = JSON.stringify(option["scheduleSpec"]);
 
       console.log(option);
-      let res = await this.$store.dispatch("addRule", {
-        option,
-        from: this.from
-      });
+      let res = null;
+      if (!this.editid)
+        res = await this.$store.dispatch("addRule", {
+          option,
+          from: this.from
+        });
+      else {
+        option['id'] = this.editid;
+        option['fbId'] = this.editfbid;
+        res = await this.$store.dispatch("editRule", { option });
+      }
       if (res && res.data) {
         this.hideBox();
       }
@@ -879,6 +1117,8 @@ export default {
       this.idkey = "";
       this.from = "";
       this.trigger = true;
+      this.editid = '';
+      this.editfbid = '';
     }
   }
 };
@@ -913,6 +1153,11 @@ export default {
 }
 .maxdaybudget {
   position: relative;
+}
+.conditiontip {
+  position: absolute;
+  left: -78px;
+  top: 14px;
 }
 .item {
   position: absolute;

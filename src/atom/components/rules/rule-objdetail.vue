@@ -4,7 +4,7 @@
       <b>{{objname}}受这个规则管理：</b>
     </p>
     <p class="fonttip important" style="margin-bottom: 20px;">
-      <b>降低10%总预算</b>
+      <b>{{name}}</b>
     </p>
     <div class="targetlist">
       <ul>
@@ -26,14 +26,16 @@ export default {
     props: ['status'],
   data() {
     return {
+      name: '',
       objname: '',
       detailobj: []
     };
   },
   methods: {
-    initData(name, object) {
+    initData(rulename, name, object) {
       this.objname = name;
       this.detailobj = object;
+      this.name = rulename;
     },
     toCancel() {
         this.$emit('update:status', false);

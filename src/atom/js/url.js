@@ -49,11 +49,14 @@ export default {
     'ruleclose': 'adRule/{ruleId}/close', // 规则关闭
     'ruleopen': 'adRule/{ruleId}/open', // 规则打开
     'addrule': 'adRule/add', // 创建规则
+    'editrule': 'adRule/update', // 编辑规则
     'getexecute': 'adRule/{fbRuleId}/preview', // 执行
     'executerule': 'adRule/{fbRuleId}/execute', // 规则执行
     'openrule': 'optimize/{projectId}/ruleGroups/add',  // 打开规则
     'closerule': 'optimize/{projectId}/ruleGroups/delete', //关闭规则
-    'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}
+    // 'optimize': 'optimize/{projectId}/logs?', // 优化记录列表 ?fbAccountId={fbAccountId}&ruleGroupId={ruleGroupId}&status={status}&startTime={startTime}&endTime={endTime}&pageNo={pageNo}&pageSize={pageSize}
+    'optimize': 'adRule/logs?', // 优化记录
+    'optimizedetail': 'adRule/logResults?', // 优化记录更改对象详情
     'optimizeadaccount': 'optimize/getAdaccountLists?', // 优化记录广告账户
     // create
     'matchmd5': `${baseurl[process.env.VUE_APP_URLBASE].MD5_URL}/file/search`,

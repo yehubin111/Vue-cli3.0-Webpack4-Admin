@@ -75,6 +75,7 @@ export default {
   optimizelist: [], // 优化记录列表
   optimizeaccount: [], //优化记录广告账户
   executelist: [], // 执行列表
+  optimizedetail: [], // 优化记录更改对象列表
   // create
   createlist: [], // 创意列表
   createchecked: [], // 创意列表多选情况

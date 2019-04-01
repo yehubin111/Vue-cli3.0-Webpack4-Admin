@@ -5,11 +5,18 @@
     class="deletedialog"
     @close="toCancel"
   >
-    <p class="fonttip important">
-      <b>以下是应用于此对象的规则，选择后可移除：</b>
-    </p>
-    <el-table :data="singlerules" border style="width: 100%" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" fixed width="55"></el-table-column>
+    <div class="fonttip important">
+      <p>以下是应用于此对象的规则，选择后可移除：</p>
+      <p class="notice">置灰列表不可删除，请直接删除此规则</p>
+    </div>
+    <el-table
+      :data="singlerules"
+      border
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" :selectable="ifSelect" fixed width="55">
+      </el-table-column>
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop label="操作与条件">
         <template slot-scope="scope">
@@ -35,11 +42,16 @@ export default {
       id: "",
       type: "",
       typename: "",
-      ruleids: []
+      ruleids: [],
+      level: ""
     };
   },
   methods: {
-    ...mapMutations(['SETSTATE']),
+    ...mapMutations(["SETSTATE"]),
+    ifSelect(row, index) {
+      if (row.ruleObjCount > 1) return true;
+      else return false;
+    },
     toCancel() {
       this.$emit("update:status", false);
 
@@ -53,7 +65,12 @@ export default {
       }
       let objId = this.id;
       let ruleIds = this.ruleids.join(",");
-      let res = await this.$store.dispatch("removeRules", {objId, ruleIds});
+      let res = await this.$store.dispatch("removeRules", {
+        objId,
+        ruleIds,
+        objLevel: this.level
+      });
+      this.toCancel();
     },
     handleSelectionChange(vl) {
       this.ruleids = vl.map(v => v.fbId);
@@ -64,19 +81,22 @@ export default {
       switch (type) {
         case "campaignName":
           this.typename = "广告系列";
+          this.level = "CAMPAIGN";
           break;
         case "adSetName":
           this.typename = "广告组";
+          this.level = "ADSET";
           break;
         case "adName":
           this.typename = "广告";
+          this.level = "AD";
           break;
       }
       this.$store.dispatch("singleRules", id);
     }
   },
   computed: {
-    ...mapState(['singlerules'])
+    ...mapState(["singlerules"])
   },
   watch: {}
 };
@@ -85,6 +105,17 @@ export default {
 <style lang='less' scoped>
 .fonttip {
   margin-bottom: 10px;
+  .notice {
+    color: red;
+  }
+}
+.conditiontip {
+  position: absolute;
+  left: -10px;
+  top: 14px;
+}
+.specialname {
+  z-index: 99;
 }
 .targetlist {
   margin-bottom: 20px;

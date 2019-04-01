@@ -2,30 +2,50 @@
   <div class="optimize">
     <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;优化记录</p>
     <div class="sort">
-      <el-select class="select" v-model="value1" placeholder="规则" @change="toSort">
-        <el-option v-for="item in rulelist" :key="item.id" :label="item.name" :value="item.id">
-        </el-option>
+      <el-select
+        class="select"
+        v-model="account"
+        filterable
+        multiple
+        collapse-tags
+        placeholder="广告账户"
+        @change="toSort"
+      >
+        <el-option
+          v-for="item in adaccountlist"
+          :key="item.fbId"
+          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
+          :value="item.fbId"
+        ></el-option>
       </el-select>
-      <el-select class="select" v-model="value2" filterable placeholder="广告账户" @change="toSort">
-        <el-option v-for="item in optimizeaccount" :key="item.fbAccountId" :label="item.fbAccountName + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')" :value="item.fbAccountId">
-        </el-option>
-      </el-select>
-      <el-select class="select" v-model="value3" placeholder="状态" @change="toSort">
-        <el-option v-for="item in options3" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
-      </el-select>
-      <el-date-picker v-model="value4" @change="toSort" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-      </el-date-picker>
+      <el-date-picker
+        v-model="sortdate"
+        @change="toSort"
+        class="daterange"
+        type="daterange"
+        :clearable="false"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      ></el-date-picker>
+      <el-checkbox v-model="checked" @change="toSort">不显示未更改</el-checkbox>
     </div>
     <div class="dialog">
       <optimize-list></optimize-list>
     </div>
     <div class="pageswitch">
-      <el-pagination background @size-change="pageSizeChange" :page-sizes="[20, 200, 500]" layout="total, sizes, prev, pager, next, jumper" :total="optotal" :page-size="oppagesize" @current-change="pageSwitch">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="pageSizeChange"
+        :page-sizes="[20, 200, 500]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="optotal"
+        :page-size="pagesize"
+        :current-page="pageindex"
+        @current-change="pageSwitch"
+      ></el-pagination>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -38,50 +58,31 @@ export default {
   },
   data() {
     return {
-      value1: "",
-      value2: "",
-      value3: "",
-      value4: [],
+      account: [],
+      sortdate: [new Date().setDate(new Date().getDate() - 6), new Date()],
+      checked: false,
       pageindex: 1,
       pagesize: 20,
-      //   pgtotal: 0,
-
-      options3: [
-        {
-          value: "-1",
-          label: "不限"
-        },
-        {
-          value: "1",
-          label: "成功"
-        },
-        {
-          value: "0",
-          label: "失败"
-        }
-      ]
+      fbruleid: ''
     };
   },
   computed: {
-    ...mapState(["itemlist", "optimizeaccount", "optotal", "oppagesize"]),
-    ...mapGetters(["rulelist"]),
+    ...mapState(["itemlist", "adaccountlist", "optotal"]),
     projectname() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
     },
-    // applicationid() {
-    //   if (this.itemlist.length == 0) return;
-    //   return this.itemlist.find(v => v.id == this.$route.params.id)
-    //     .applicationId;
-    // }
+    ruleId() {
+      return this.$route.params.ruleId;
+    }
   },
   mounted() {
-    this.$store.dispatch("getRules", this.$route.params.id);
-
+    this.fbruleid = this.$route.params.ruleId;
     this.toSort();
 
     let n = this.$route.params.id;
-    this.$store.dispatch("getOptimizeAccount", n);
+    // this.$store.dispatch("getOptimizeAccount", n);
+    this.$store.dispatch("getAdaccount", n);
   },
   methods: {
     pageSizeChange(size) {
@@ -94,37 +95,31 @@ export default {
       this.toSort();
     },
     toSort() {
-      console.log(this.value4);
-      let optlist = {
-        status: this.value3 == "-1" ? "" : this.value3,
-        ruleGroupId: this.value1 == "-1" ? "" : this.value1,
-        fbAccountId: this.value2 == "-1" ? "" : this.value2,
-        startTime:
-          this.value4 && this.value4.length > 0
-            ? this.$timeFormat(this.value4[0], "yyyy-MM-dd HH:mm:ss")
+      let option = {
+        projectId: this.$route.params.id,
+        fbRuleId: this.fbruleid,
+        fbAccountIds: this.account.map(v => v.replace("act_", "")).join(","),
+        startDate:
+          this.sortdate && this.sortdate.length > 0
+            ? this.$timeFormat(this.sortdate[0], "yyyy-MM-dd")
             : "",
-        endTime:
-          this.value4 && this.value4.length > 0
-            ? this.$timeFormat(this.value4[1], "yyyy-MM-dd HH:mm:ss")
+        endDate:
+          this.sortdate && this.sortdate.length > 0
+            ? this.$timeFormat(this.sortdate[1], "yyyy-MM-dd")
             : "",
+        withoutUnChange: this.checked.toString(),
         pageSize: this.pagesize,
-        pageNo: this.pageindex
+        pageIndex: this.pageindex
       };
 
-      let projectId = this.$route.params.id;
-
-      this.$store.dispatch("getOptimizeList", {
-        optlist,
-        projectId
-      });
+      this.$store.dispatch("getOptimizeList", option);
     }
   },
   watch: {
-    // applicationid(n, o) {
-    //   if (n != "") {
-        
-    //   }
-    // }
+    ruleId(n, o) {
+      this.fbruleid = n;
+      this.toSort(); 
+    }
   }
 };
 </script>
@@ -145,7 +140,10 @@ export default {
     margin-left: 40px;
     margin-bottom: 20px;
     .select {
-      width: 150px;
+      width: 360px;
+      margin-right: 20px;
+    }
+    .daterange {
       margin-right: 20px;
     }
     .label {

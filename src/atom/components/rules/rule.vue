@@ -74,9 +74,9 @@ export default {
       // 获取规则列表数据
       this.getRuleDate();
     },
-    editRule(id) {
+    editRule(id, fbid) {
       this.addStatus = true;
-      this.$refs.ruleAdd.initEdit(id);
+      this.$refs.ruleAdd.initEdit(id, fbid);
     },
     getRuleDate() {
       this.$store.dispatch("getRuleList");

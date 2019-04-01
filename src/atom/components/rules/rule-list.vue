@@ -25,7 +25,7 @@
           <p
             class="rulename"
             v-if="scope.row.relateRuleObjs.length > 0"
-            @click="showDetail(scope.row.targetObjName, scope.row.id)"
+            @click="showDetail(scope.row.name, scope.row.targetObjName, scope.row.id)"
           >{{scope.row.targetObjName}}</p>
           <!-- <p
             v-if="scope.row.ruleObjCount > 0"
@@ -43,7 +43,7 @@
       <el-table-column prop="result" label="结果" width="100">
         <template slot-scope="scope">
           <div v-if="scope.row.lastOccurTime">
-            <p class="rulename">{{scope.row.result}}</p>
+            <router-link :to="`/project/${$route.params.id}/optimize/${scope.row.fbId}`" class="rulename">{{scope.row.result}}</router-link>
             <p class="childtype">{{scope.row.lastOccurTime | timeFormat('yyyy-MM-dd')}}</p>
           </div>
           <p v-else>{{scope.row.result}}</p>
@@ -64,7 +64,7 @@
       <el-table-column prop label="操作" width="140">
         <template slot-scope="scope">
           <p class="ctrl">
-            <el-button type="text" size="mini" @click="toEdit(scope.row.id)">编辑</el-button>
+            <el-button type="text" size="mini" @click="toEdit(scope.row.id, scope.row.fbId)">编辑</el-button>
             <el-button type="text" size="mini" @click="toExecute(scope.row.fbId, scope.row.levelCnName, scope.row.evaluationSpecName)">执行</el-button>
             <el-button type="text" size="mini" @click="toDelete(scope.row.id)">删除</el-button>
           </p>
@@ -109,15 +109,15 @@ export default {
     ...mapState(["newrulelist", "newruletotal"])
   },
   methods: {
-    showDetail(name, id) {
+    showDetail(rulename, name, id) {
       let rule = this.newrulelist.find(v => v.id == id);
       let detail = rule.relateRuleObjs;
       let objname = name;
       this.objStatus = true;
-      this.$refs.objDetail.initData(objname, detail);
+      this.$refs.objDetail.initData(rulename, objname, detail);
     },
-    toEdit(id) {
-      this.$emit('editRule', id);
+    toEdit(id, fbid) {
+      this.$emit('editRule', id, fbid);
     },
     toExecute(fbid, type, condition) {
       this.executeStatus = true;

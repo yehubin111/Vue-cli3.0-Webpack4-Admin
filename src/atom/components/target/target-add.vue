@@ -530,13 +530,7 @@ export default {
       height: 20px;
       padding: 10px 0;
     }
-    .ctrlright {
-    }
   }
-}
-.cline {
-  // width: 50%;
-  // float: left;
 }
 .cbutton {
   width: 100%;

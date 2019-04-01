@@ -112,13 +112,13 @@ export default {
       indicatorselectlist: [], // 枚举列表
 
       ifedit: false, // 是否为编辑状态
-      
+
       indicatorOption: [
         {
           label: "最常见",
           value: "zcj",
           children: [
-            { label: "已花费", value: "spent|1|已花费|true" },  // key | 操作类型 | name | 是否支持实时排期
+            { label: "已花费", value: "spent|1|已花费|true" }, // key | 操作类型 | name | 是否支持实时排期
             { label: "总花费", value: "lifetime_spent|1|总花费|false" },
             { label: "频次", value: "frequency|1|频次|true" },
             { label: "成效", value: "results|1|成效|true" },
@@ -138,13 +138,17 @@ export default {
             },
             {
               label: "广告花费回报（ROAS）-网站购物",
-              value: "website_purchase_roas|1|广告花费回报（ROAS）-网站购物|false"
+              value:
+                "website_purchase_roas|1|广告花费回报（ROAS）-网站购物|false"
             },
             {
               label: "单日花费比率",
               value: "daily_ratio_spent|1|单日花费比率|true"
             },
-            { label: "总花费比率", value: "lifetime_ratio_spent|1|总花费比率|true" },
+            {
+              label: "总花费比率",
+              value: "lifetime_ratio_spent|1|总花费比率|true"
+            },
             {
               label: "受众覆盖%",
               value: "audience_reached_percentage|1|受众覆盖%|true"
@@ -155,7 +159,10 @@ export default {
           label: "设置",
           value: "sz",
           children: [
-            { label: "广告系列名称", value: "campaign.name|2|广告系列名称|true" },
+            {
+              label: "广告系列名称",
+              value: "campaign.name|2|广告系列名称|true"
+            },
             { label: "广告组名称", value: "adset.name|2|广告组名称|true" },
             { label: "版位", value: "adset.placement.page_types|3|版位|true" },
             { label: "总预算", value: "lifetime_budget|1|总预算|true" },
@@ -173,10 +180,16 @@ export default {
               label: "创建时间（小时）",
               value: "hours_since_creation|1|创建时间（小时）|true"
             },
-            { label: "投放时间（秒）", value: "active_time|1|投放时间（秒）|true" },
+            {
+              label: "投放时间（秒）",
+              value: "active_time|1|投放时间（秒）|true"
+            },
             { label: "当前时间", value: "current_time|4|当前时间|true" },
             { label: "创建时间", value: "created_time|4|创建时间|true" },
-            { label: "上次编辑时间", value: "updated_time|4|上次编辑时间|true" },
+            {
+              label: "上次编辑时间",
+              value: "updated_time|4|上次编辑时间|true"
+            },
             { label: "开始时间", value: "start_time|4|开始时间|true" }
           ]
         },
@@ -195,7 +208,8 @@ export default {
             },
             {
               label: "移动应用会话",
-              value: "app_custom_event.fb_mobile_activate_app|1|移动应用会话|true"
+              value:
+                "app_custom_event.fb_mobile_activate_app|1|移动应用会话|true"
             },
             {
               label: "移动应用添加支付信息",
@@ -280,7 +294,8 @@ export default {
             },
             {
               label: "单次移动应用加入购物车费用",
-              value: "cost_per_mobile_add_to_cart|1|单次移动应用加入购物车费用|true"
+              value:
+                "cost_per_mobile_add_to_cart|1|单次移动应用加入购物车费用|true"
             },
             {
               label: "单次移动应用加入心愿单费用",
@@ -294,7 +309,8 @@ export default {
             },
             {
               label: "单次移动应用内容查看费用",
-              value: "cost_per_mobile_content_view|1|单次移动应用内容查看费用|true"
+              value:
+                "cost_per_mobile_content_view|1|单次移动应用内容查看费用|true"
             },
             {
               label: "单次移动应用发起结账费用",
@@ -303,7 +319,8 @@ export default {
             },
             {
               label: "单次移动应用关卡完成费用",
-              value: "cost_per_mobile_level_achieved|1|单次移动应用关卡完成费用|true"
+              value:
+                "cost_per_mobile_level_achieved|1|单次移动应用关卡完成费用|true"
             },
             {
               label: "单次移动应用购物费用",
@@ -339,8 +356,14 @@ export default {
             },
             { label: "链接点击量", value: "link_clicks|1|链接点击量|true" },
             { label: "千次发展费用", value: "cpm|1|千次发展费用|true" },
-            { label: "点击率（链接）", value: "link_ctr|1|点击率（链接）|true" },
-            { label: "总展示量", value: "lifetime_impressions|1|总展示量|false" },
+            {
+              label: "点击率（链接）",
+              value: "link_ctr|1|点击率（链接）|true"
+            },
+            {
+              label: "总展示量",
+              value: "lifetime_impressions|1|总展示量|false"
+            },
             { label: "展示次数", value: "impressions|1|展示次数|true" },
             { label: "覆盖人数", value: "reach|1|覆盖人数|true" },
             { label: "潜在客户", value: "leadgen|1|潜在客户|true" },
@@ -394,7 +417,8 @@ export default {
             },
             {
               label: "单次新增消息联系人费用",
-              value: "cost_per_messaging_first_reply|1|单次新增消息联系人费用|true"
+              value:
+                "cost_per_messaging_first_reply|1|单次新增消息联系人费用|true"
             },
             {
               label: "消息回复次数",
@@ -414,6 +438,53 @@ export default {
     };
   },
   methods: {
+    editRuleInit(conditionlist) {
+      conditionlist.forEach(v => {
+        let cond = null;
+        let fatherkey = "";
+        for (let i = 0; i < this.indicatorOption.length; i++) {
+          cond = this.indicatorOption[i].children.find(
+            g => g.value.split("|")[0] == v.field
+          );
+          if (cond) {
+            fatherkey = this.indicatorOption[i].value;
+            break;
+          }
+        }
+        let vl = cond.value.split("|");
+        this.indicator = [fatherkey, cond.value];
+        // 初始化选项信息
+        this.selectIndicator();
+        this.operation = this.operationlist.find(v => v.tmp == v.operator).key;
+        let indicator = this.indicator[1].split("|");
+        let ifdollar = this.dollarCheck(indicator[0]);
+        switch (this.indicatortype) {
+          case "1":
+            if (this.operation == "1" || this.operation == "2") {
+              this.indicatornum = ifdollar ? v.value / 100:v.value;
+            } else {
+              this.indicatornum = ifdollar ? v.value[0] / 100 : v.value[0];
+              this.indicatornumend = ifdollar ? v.value[1] / 100 : v.value[1];
+            }
+            break;
+          case "2":
+            this.indicatordata = v.value;
+            break;
+          case "3":
+            this.indicatorselect = v.value;
+            break;
+          case "4":
+            if (this.operation == "1" || this.operation == "2") {
+              this.indicatortime = new Date(parseInt(v.value));
+            } else {
+              this.indicatortimerange = v.value.map(v => new Date(parseInt(v)));
+            }
+            break;
+        }
+
+        this.determineSearch("hole");
+      });
+    },
     editInit(condition) {
       this.indicator = condition.indicator;
       this.ifedit = true;
@@ -546,7 +617,6 @@ export default {
           if (this.indicatorselect == "") return [false, "请选择内容"];
           break;
         case "4":
-
           if (this.operation == "1" || this.operation == "2") {
             if (this.indicatortime == "") return [false, "请选择日期"];
           } else {
@@ -558,7 +628,22 @@ export default {
 
       return [true];
     },
-    determineSearch() {
+    // 判断是否需要乘以100传参，费用类
+    dollarCheck(key) {
+      if (
+        key.indexOf("ratio") == -1 &&
+        (key.indexOf("amount") != -1 ||
+          key.indexOf("cost") != -1 ||
+          key.indexOf("budget") != -1 ||
+          key.indexOf("spent") != -1 ||
+          key.indexOf("cpm") != -1 ||
+          key.indexOf("cpc") != -1 ||
+          key.indexOf("cpa") != -1)
+      ) {
+        return true;
+      } else return false;
+    },
+    determineSearch(frm) {
       let check = this.dataCheck();
       if (!check[0]) {
         Msgwarning(check[1]);
@@ -574,14 +659,23 @@ export default {
       let compare = this.operationlist.find(v => v.key == this.operation);
       let name = `${indicator[2]}${compare.name}`;
       let trigger = eval(indicator[3]);
+      let ifdollar = this.dollarCheck(indicator[0]);
       switch (this.indicatortype) {
         case "1":
           if (this.operation == "1" || this.operation == "2") {
-            val = this.indicatornum;
-            name += this.indicatornum;
+            val = ifdollar ? this.indicatornum * 100 : this.indicatornum;
+            name += (ifdollar ? "$" : "") + this.indicatornum;
           } else {
-            val = [this.indicatornum, this.indicatornumend];
-            name += this.indicatornum + "和" + this.indicatornumend;
+            val = [
+              ifdollar ? this.indicatornum * 100 : this.indicatornum,
+              ifdollar ? this.indicatornumend * 100 : this.indicatornumend
+            ];
+            name +=
+              (ifdollar ? "$" : "") +
+              this.indicatornum +
+              "和" +
+              (ifdollar ? "$" : "") +
+              this.indicatornumend;
           }
           break;
         case "2":
@@ -593,10 +687,10 @@ export default {
           break;
         case "4":
           if (this.operation == "1" || this.operation == "2") {
-            val = new Date(this.indicatortime).getTime();
+            val = new Date(this.indicatortime).getTime().toString();
             name += this.$timeFormat(this.indicatortime, "yyyy-MM-dd HH:mm:ss");
           } else {
-            val = this.indicatortimerange.map(v => new Date(v).getTime());
+            val = this.indicatortimerange.map(v => new Date(v).getTime().toString());
             name +=
               this.$timeFormat(
                 this.indicatortimerange[0],
@@ -626,8 +720,11 @@ export default {
         operation: this.operation
       });
       this.ifedit = false;
-
-      this.cancelSearch();
+      if (frm == "hole") {
+        this.reset();
+      } else {
+        this.cancelSearch();
+      }
     },
     cancelSearch() {
       this.$emit("update:status", false);

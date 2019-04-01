@@ -135,7 +135,7 @@ export default new Router({
                 }
             },
             {
-                path: 'optimize',
+                path: 'optimize/:ruleId?',
                 name: 'optimize',
                 component: optimize,
                 meta: {

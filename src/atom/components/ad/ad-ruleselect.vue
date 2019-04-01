@@ -39,33 +39,33 @@ export default {
     return {
       accountid: "",
       objids: [],
-      ruleids: []
+      ruleids: [],
+      level: ''
     };
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
     adInit(select, type) {
-      let level = "";
       let typeId = "";
       this.accountid = select[0].accountId;
       switch (type) {
         case "campaignName":
-          level = "CAMPAIGN";
+          this.level = "CAMPAIGN";
           typeId = "campaignId";
           break;
         case "adSetName":
-          level = "ADSET";
-          typeId = "adSetId";
+          this.level = "ADSET";
+          typeId = "adsetId";
           break;
         case "adName":
-          level = "AD";
+          this.level = "AD";
           typeId = "adId";
           break;
       }
       this.objids = select.map(v => v[typeId]);
       this.$store.dispatch("ruleListForAdd", {
         fbAccountIds: this.accountid,
-        level
+        level: this.level
       });
     },
     toCancel() {
@@ -82,7 +82,10 @@ export default {
       }
       let objIds = this.objids.join(",");
       let ruleIds = this.ruleids.join(",");
-      let res = await this.$store.dispatch("useRules", { objIds, ruleIds });
+      let res = await this.$store.dispatch("useRules", { objIds, ruleIds, objLevel: this.level });
+      if(res.data) {
+        this.toCancel();
+      }
     },
     handleSelectionChange(vl) {
       console.log(vl);

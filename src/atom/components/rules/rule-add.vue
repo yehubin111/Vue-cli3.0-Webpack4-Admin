@@ -501,8 +501,8 @@ export default {
       idkey: "",
       from: "",
       trigger: true,
-      editid: '',
-      editfbid: ''
+      editid: "",
+      editfbid: ""
     };
   },
   mounted() {
@@ -843,7 +843,7 @@ export default {
       switch (this.form.ruleobject.split("|")[0]) {
         case "CAMPAIGN":
           this.form.ruleobjectname = "广告系列";
-          this.ctrlList = this.ctrlOption.slice(0, 3);
+          this.ctrlList = this.ctrlOption.slice(0, 2);
           break;
         case "ADSET":
           this.form.ruleobjectname = "广告组";
@@ -942,11 +942,6 @@ export default {
                   ? this.timerange[1]
                   : this.timerange[0],
               operator: "EQUAL"
-            },
-            {
-              field: "attribution_window",
-              value: windowcond,
-              operator: "EQUAL"
             }
           ]
         },
@@ -1011,7 +1006,10 @@ export default {
           break;
       }
       // 从广告管理页面创建，选择了特殊选项
-      if (this.form.ruleobject.split("|")[1] && this.form.ruleobject.split("|")[1] == "ad") {
+      if (
+        this.form.ruleobject.split("|")[1] &&
+        this.form.ruleobject.split("|")[1] == "ad"
+      ) {
         console.log(this.adselect);
         console.log(this.idkey);
         let adobj = {
@@ -1049,6 +1047,12 @@ export default {
       ].concat(conditionall.map(v => v.option));
       // 排期
       if (this.form.schedulegrade == "SCHEDULE") {
+        // 只有定时的时候需要传时间窗
+        option["evaluationSpec"]["filters"].push({
+          field: "attribution_window",
+          value: windowcond,
+          operator: "EQUAL"
+        });
         option["scheduleSpec"] = {
           schedule_type: this.form.schedulekey
         };
@@ -1075,8 +1079,8 @@ export default {
           from: this.from
         });
       else {
-        option['id'] = this.editid;
-        option['fbId'] = this.editfbid;
+        option["id"] = this.editid;
+        option["fbId"] = this.editfbid;
         res = await this.$store.dispatch("editRule", { option });
       }
       if (res && res.data) {
@@ -1124,8 +1128,8 @@ export default {
       this.idkey = "";
       this.from = "";
       this.trigger = true;
-      this.editid = '';
-      this.editfbid = '';
+      this.editid = "";
+      this.editfbid = "";
     }
   }
 };

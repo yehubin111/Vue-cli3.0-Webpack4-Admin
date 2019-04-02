@@ -455,7 +455,8 @@ export default {
         this.indicator = [fatherkey, cond.value];
         // 初始化选项信息
         this.selectIndicator();
-        this.operation = this.operationlist.find(v => v.tmp == v.operator).key;
+        this.operation = this.operationlist.find(g => g.imp == v.operator).key;
+        console.log(this.operation);
         let indicator = this.indicator[1].split("|");
         let ifdollar = this.dollarCheck(indicator[0]);
         switch (this.indicatortype) {
@@ -493,13 +494,16 @@ export default {
       // 填充数据
       this.operation = condition.operation;
       let optionvalue = condition.option;
+      let indicator = this.indicator[1].split("|");
+      let ifdollar = this.dollarCheck(indicator[0]);
+      console.log(ifdollar);
       switch (this.indicatortype) {
         case "1":
           if (this.operation == "1" || this.operation == "2") {
-            this.indicatornum = optionvalue.value;
+            this.indicatornum = ifdollar ? optionvalue.value / 100 : optionvalue.value;
           } else {
-            this.indicatornum = optionvalue.value[0];
-            this.indicatornumend = optionvalue.value[1];
+            this.indicatornum = ifdollar ? optionvalue.value[0] / 100 : optionvalue.value[0];
+            this.indicatornumend = ifdollar ? optionvalue.value[1] / 100 : optionvalue.value[1];
           }
           break;
         case "2":

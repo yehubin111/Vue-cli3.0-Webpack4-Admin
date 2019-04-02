@@ -657,8 +657,8 @@ export default {
           this.ctrlway1.ruleunit = changespec["value"]["unit"];
           this.ctrlway1.ctrlnum =
             this.ctrlway1.ruleunit == "ACCOUNT_CURRENCY"
-              ? changespec["value"]["amount"] / 100
-              : changespec["value"]["amount"];
+              ? Math.abs(changespec["value"]["amount"] / 100)
+              : Math.abs(changespec["value"]["amount"]);
           this.ctrlway1.daybudget = changespec["value"]["limit"] / 100;
         }
 
@@ -679,7 +679,7 @@ export default {
         delete triggercond["type"];
 
         await this.$barrageTime(300);
-        this.$refs.setCondition.editRuleInit(triggercond);
+        this.$refs.setCondition.editRuleInit([triggercond]);
       }
       let condition = evaluationSpec["filters"].filter(
         v => v.operator != "EQUAL"

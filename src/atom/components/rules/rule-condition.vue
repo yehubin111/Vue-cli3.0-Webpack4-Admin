@@ -461,7 +461,7 @@ export default {
         switch (this.indicatortype) {
           case "1":
             if (this.operation == "1" || this.operation == "2") {
-              this.indicatornum = ifdollar ? v.value / 100:v.value;
+              this.indicatornum = ifdollar ? v.value / 100 : v.value;
             } else {
               this.indicatornum = ifdollar ? v.value[0] / 100 : v.value[0];
               this.indicatornumend = ifdollar ? v.value[1] / 100 : v.value[1];
@@ -523,14 +523,14 @@ export default {
       this.indicatorval = condition[0];
       let selectOption = {
         "adset.placement.page_types": [
-          { name: "Facebook动态（桌面版）", key: "desktopfeed" },
-          { name: "Facebook动态（移动版）", key: "mobilefeed" },
-          { name: "Facebook右边栏", key: "rightcolumn" },
-          { name: "Instagram动态", key: "instagramstream" },
-          { name: "Instagram快拍", key: "instagramstory" },
-          { name: "Audience Network", key: "mobileexternal" },
-          { name: "Messenger收件箱", key: "messenger_home" },
-          { name: "Facebook Marketplace", key: "mobile-marketplace" }
+          { name: "Facebook动态（桌面版）", key: "DESKTOPFEED" },
+          { name: "Facebook动态（移动版）", key: "MOBILEFEED" },
+          { name: "Facebook右边栏", key: "RIGHTCOLUMN" },
+          { name: "Instagram动态", key: "INSTAGRAMSTREAM" },
+          { name: "Instagram快拍", key: "INSTAGRAMSTORY" },
+          { name: "Audience Network", key: "MOBILEEXTERNAL" },
+          { name: "Messenger收件箱", key: "MESSENGER_HOME" },
+          { name: "Facebook Marketplace", key: "MOBILE-MARKETPLACE" }
         ],
         billing_event: [
           { name: "展示次数", key: "IMPRESSIONS" },
@@ -684,13 +684,19 @@ export default {
           break;
         case "3":
           val = this.indicatorselect;
+          let indicatorselectname = this.indicatorselect.map(
+            v => this.indicatorselectlist.find(g => g.key == v).name
+          );
+          name += indicatorselectname.join(",");
           break;
         case "4":
           if (this.operation == "1" || this.operation == "2") {
             val = new Date(this.indicatortime).getTime().toString();
             name += this.$timeFormat(this.indicatortime, "yyyy-MM-dd HH:mm:ss");
           } else {
-            val = this.indicatortimerange.map(v => new Date(v).getTime().toString());
+            val = this.indicatortimerange.map(v =>
+              new Date(v).getTime().toString()
+            );
             name +=
               this.$timeFormat(
                 this.indicatortimerange[0],

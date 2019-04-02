@@ -844,14 +844,15 @@ export default {
         let load;
         setTimeout(function () {
             load = Loading.service({ fullscreen: true });
+
+            Axios({
+                url,
+                success: res => {
+                    if (load) load.close();
+                    commit('EXECUTELIST', res);
+                }
+            })
         }, 300);
-        Axios({
-            url,
-            success: res => {
-                if (load) load.close();
-                commit('EXECUTELIST', res);
-            }
-        })
     },
     executeRule({ state, commit, dispatch }, fbid) {
         let url = URL.executerule.replace('{fbRuleId}', fbid);
@@ -943,13 +944,20 @@ export default {
     },
     optimizeDetail({state, commit}, fbid) {
         let url = `${URL.optimizedetail}fbRuleLogId=${fbid}`;
+        let load;
+        
+        setTimeout(function () {
+            load = Loading.service({ fullscreen: true });
 
-        Axios({
-            url,
-            success: res => {
-                commit('OPTIMIZEDETAIL', res);
-            }
-        })
+            Axios({
+                url,
+                fullscreen: true,
+                success: res => {
+                    if (load) load.close();
+                    commit('OPTIMIZEDETAIL', res);
+                }
+            })
+        }, 300);
     },
     // create
     matchFileMD5({ state, commit }, { md5, file, list, type, tabvalue, on, vdname }) {

@@ -13,7 +13,7 @@
           <p
             v-if="scope.row.changeCount > 0"
             class="changeobj"
-            @click="optimizeDetail(scope.row.fbId, scope.row.changeTargetInfo, scope.row.targetType, scope.row.ruleCondition, scope.row.ruleName)"
+            @click="optimizeDetail(scope.row.id, scope.row.changeTargetInfo, scope.row.targetType, scope.row.ruleCondition, scope.row.ruleName)"
           >{{scope.row.changeTargetInfo}}</p>
           <p v-else>{{scope.row.changeTargetInfo}}</p>
         </template>

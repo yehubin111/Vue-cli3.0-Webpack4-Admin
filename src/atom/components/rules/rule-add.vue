@@ -209,7 +209,7 @@
             浏览广告后
             <el-select class="wid100" v-model="form.timecustom1" filterable placeholder size="mini">
               <el-option
-                v-for="item in timecustomlist"
+                v-for="item in viewcustomlist"
                 :key="item.key"
                 :label="item.name"
                 :value="item.key"
@@ -217,7 +217,7 @@
             </el-select>点击广告后
             <el-select class="wid100" v-model="form.timecustom2" filterable placeholder size="mini">
               <el-option
-                v-for="item in timecustomlist"
+                v-for="item in clickcustomlist"
                 :key="item.key"
                 :label="item.name"
                 :value="item.key"
@@ -468,8 +468,14 @@ export default {
         }
       ],
       conditionStatus: false,
-      timecustomlist: [
+      viewcustomlist: [
         { name: "无（不计算浏览的转化）", key: "0" },
+        { name: "1天", key: "1" },
+        { name: "7天", key: "7" },
+        { name: "28天", key: "28" }
+      ],
+      clickcustomlist: [
+        { name: "无（不计算点击的转化）", key: "0" },
         { name: "1天", key: "1" },
         { name: "7天", key: "7" },
         { name: "28天", key: "28" }
@@ -990,7 +996,6 @@ export default {
             limit: this.ctrlway1.daybudget * 100,
             unit: this.ctrlway1.ruleunit
           };
-          break;
         case "decrease":
           obj.value.amount = obj.value.amount * -1;
           break;

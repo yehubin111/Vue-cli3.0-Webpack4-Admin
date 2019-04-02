@@ -811,7 +811,7 @@ export default {
 
                     Msgsuccess('创建成功');
                 } else {
-                    Msgsuccess(`创建失败：${res.msg}`);
+                    Msgerror(`创建失败：${res.msg}`);
                 }
 
                 return res;
@@ -831,7 +831,7 @@ export default {
                     dispatch('getRuleList');
                     Msgsuccess('编辑成功');
                 } else {
-                    Msgsuccess(`编辑失败：${res.msg}`);
+                    Msgerror(`编辑失败：${res.msg}`);
                 }
 
                 return res;

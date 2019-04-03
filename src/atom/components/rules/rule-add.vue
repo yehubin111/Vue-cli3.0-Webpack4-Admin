@@ -530,8 +530,7 @@ export default {
   methods: {
     adInit(select, type) {
       this.adselect = select;
-      if(!this.editid)
-        this.form.account = [select[0].accountId];
+      this.form.account = [select[0].accountId];
       this.from = "ad"; // 表面是从广告管理页面创建规则
       switch (type) {
         case "campaignName":
@@ -604,7 +603,7 @@ export default {
         if (fromad.field != "id") {
           level = fromad.field.split(".")[0].toLocaleUpperCase();
         }
-        console.log(level);
+        // console.log(level);
         switch (level) {
           case "CAMPAIGN":
             adidkey = "campaignId";
@@ -622,6 +621,7 @@ export default {
         let addata = fromad.value.map(v => {
           let obj = {};
           obj[adidkey] = v;
+          obj['accountId'] = object.fbAccountId;
           return obj;
         });
         this.adInit(addata, adtype);
@@ -835,7 +835,7 @@ export default {
       }
     },
     returnCondition(condition) {
-      console.log(condition);
+      // console.log(condition);
       this.form.conditionlist.push(condition);
       // 判断是否支持实时
       this.setTriggerStatus();
@@ -885,7 +885,7 @@ export default {
       this.setTriggerStatus();
     },
     selectObject() {
-      console.log(this.form.ruleobject)
+      // console.log(this.form.ruleobject)
       switch (this.form.ruleobject.split("|")[0]) {
         case "CAMPAIGN":
           this.form.ruleobjectname = "广告系列";
@@ -1059,8 +1059,8 @@ export default {
         this.form.ruleobject.split("|")[1] &&
         this.form.ruleobject.split("|")[1] == "ad"
       ) {
-        console.log(this.adselect);
-        console.log(this.idkey);
+        // console.log(this.adselect);
+        // console.log(this.idkey);
         let adobj = {
           field:
             this.adtype == this.form.ruleobject.split("|")[0]
@@ -1120,7 +1120,7 @@ export default {
       if (option["scheduleSpec"])
         option["scheduleSpec"] = JSON.stringify(option["scheduleSpec"]);
 
-      console.log(option);
+      // console.log(option);
       let res = null;
       if (!this.editid)
         res = await this.$store.dispatch("addRule", {

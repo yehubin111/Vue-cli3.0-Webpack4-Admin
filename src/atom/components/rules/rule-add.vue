@@ -707,33 +707,35 @@ export default {
       }
       this.timerange = [timepreset.value];
       // 统计时间窗逻辑
-      let attributionWindow = evaluationSpec["filters"].find(
-        v => v.field == "attribution_window"
-      );
-      switch (attributionWindow.value) {
-        case "ACCOUNT_DEFAULT":
-          this.form.timewindow = 1;
-          break;
-        case "DEFAULT":
-          this.form.timewindow = 2;
-          this.form.timecustom1 = "1";
-          this.form.timecustom2 == "28";
-          break;
-        case "INLINE":
-          this.form.timewindow = 2;
-          this.form.timecustom1 = "0";
-          this.form.timecustom2 == "0";
-          break;
-        default:
-          this.form.timewindow = 2;
-          let ar = attributionWindow.value.split("_");
-          let view = ar.indexOf("VIEW");
-          let click = ar.indexOf("CLICK");
-          this.form.timecustom1 =
-            view != -1 ? ar[view - 1].replace("D", "") : "0";
-          this.form.timecustom2 =
-            click != -1 ? ar[click - 1].replace("D", "") : "0";
-          break;
+      if (evaluationSpec["evaluation_type"] != "TRIGGER") {
+        let attributionWindow = evaluationSpec["filters"].find(
+          v => v.field == "attribution_window"
+        );
+        switch (attributionWindow.value) {
+          case "ACCOUNT_DEFAULT":
+            this.form.timewindow = 1;
+            break;
+          case "DEFAULT":
+            this.form.timewindow = 2;
+            this.form.timecustom1 = "1";
+            this.form.timecustom2 == "28";
+            break;
+          case "INLINE":
+            this.form.timewindow = 2;
+            this.form.timecustom1 = "0";
+            this.form.timecustom2 == "0";
+            break;
+          default:
+            this.form.timewindow = 2;
+            let ar = attributionWindow.value.split("_");
+            let view = ar.indexOf("VIEW");
+            let click = ar.indexOf("CLICK");
+            this.form.timecustom1 =
+              view != -1 ? ar[view - 1].replace("D", "") : "0";
+            this.form.timecustom2 =
+              click != -1 ? ar[click - 1].replace("D", "") : "0";
+            break;
+        }
       }
       /**
        * 条件初始化逻辑

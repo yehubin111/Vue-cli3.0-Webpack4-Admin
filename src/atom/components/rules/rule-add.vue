@@ -233,14 +233,16 @@
           placeholder="选择排期"
           @change="selectSchedule"
         >
-          <el-option label="实时（至多7分钟）" value="TRIGGER|" :disabled="!trigger"></el-option>
+          <el-option label="实时（至多7分钟）" value="TRIGGER|" :disabled="!trigger || editschedulestatus == 'SCHEDULE'"></el-option>
           <el-option
             v-for="item in schedulelist"
             :key="item.key"
             :label="item.name"
             :value="item.key"
+            :disabled="editschedulestatus == 'TRIGGER'"
           ></el-option>
         </el-select>
+        <p v-show="form.schedulegrade == 'TRIGGER'">实时无需设置统计时间窗</p>
         <p v-show="form.schedulekey == 'DAILY'">每日的12点指的是广告账户时间</p>
         <p v-show="form.schedulekey == 'CUSTOM'">每天12点；自定义的12点指的是广告账户时间</p>
         <el-select
@@ -397,6 +399,15 @@ export default {
         "billing_event",
         "optimization_goal",
         "hours_since_creation",
+        "lifetime_ratio_spent",
+        "onsite_conversion.messaging_reply",
+        "cost_per_messaging_reply",
+        "onsite_conversion.messaging_first_reply",
+        "cost_per_messaging_first_reply",
+        "estimated_budget_spending_percentage",
+        "audience_reached_percentage",
+        "effective_status",
+        "daily_ratio_spent",
         "active_time",
         "current_time",
         "created_time",
@@ -502,7 +513,8 @@ export default {
       from: "",
       trigger: true,
       editid: "",
-      editfbid: ""
+      editfbid: "",
+      editschedulestatus: ""
     };
   },
   mounted() {
@@ -746,6 +758,7 @@ export default {
         "|" +
         (scheduleSpec ? scheduleSpec["schedule_type"] : "");
       this.selectSchedule();
+      this.editschedulestatus = this.form.schedulegrade;
       if (scheduleSpec && scheduleSpec["schedule_type"] == "CUSTOM") {
         this.form.week = scheduleSpec["schedule"][0]["days"];
       }
@@ -779,6 +792,13 @@ export default {
     },
     setTriggerStatus() {
       this.trigger = true;
+      // 操作条件选择情况判断
+      if (
+        this.form.ctrlmethodwant == "increase" ||
+        this.form.ctrlmethodwant == "decrease"
+      ) {
+        this.trigger = false;
+      }
       // 首先排除特殊情况，条件全为非统计指标，则无法使用实时
       let special = this.form.conditionlist.filter(
         v => this.specialIndicator.indexOf(v.key) == -1
@@ -793,6 +813,8 @@ export default {
         });
       }
       this.form.schedule = "";
+      this.form.schedulegrade = '';
+      this.form.schedulekey = '';
     },
     returnCondition(condition) {
       console.log(condition);
@@ -840,6 +862,9 @@ export default {
       }
 
       this.resetCtrlSelect();
+      // 重置排期选项，增减预算和竞价不支持实时
+      // 判断是否支持实时
+      this.setTriggerStatus();
     },
     selectObject() {
       switch (this.form.ruleobject.split("|")[0]) {
@@ -863,6 +888,9 @@ export default {
       this.form.ctrlmethodwant = "";
 
       this.resetCtrlSelect();
+      // 重置排期选项，增减预算和竞价不支持实时
+      // 判断是否支持实时
+      this.setTriggerStatus();
     },
     hideBox() {
       this.$emit("update:status", false);
@@ -1132,6 +1160,7 @@ export default {
       this.trigger = true;
       this.editid = "";
       this.editfbid = "";
+      this.editschedulestatus = "";
     }
   }
 };

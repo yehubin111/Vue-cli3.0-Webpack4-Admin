@@ -233,7 +233,11 @@
           placeholder="选择排期"
           @change="selectSchedule"
         >
-          <el-option label="实时（至多7分钟）" value="TRIGGER|" :disabled="!trigger || editschedulestatus == 'SCHEDULE'"></el-option>
+          <el-option
+            label="实时（至多7分钟）"
+            value="TRIGGER|"
+            :disabled="!trigger || editschedulestatus == 'SCHEDULE'"
+          ></el-option>
           <el-option
             v-for="item in schedulelist"
             :key="item.key"
@@ -360,8 +364,8 @@ export default {
 
         timecustom1: "1",
         timecustom2: "28",
-        schedule: "",
-        schedulegrade: "",
+        schedule: "TRIGGER|",
+        schedulegrade: "TRIGGER",
         schedulekey: "",
         week: [],
         rulename: ""
@@ -713,7 +717,9 @@ export default {
       );
       if (!this.timeOption.find(v => v.value == timepreset.value)) {
         this.timeOption.forEach(v => {
-          let t = v.children ? v.children.find(g => g.value == timepreset.value) : null;
+          let t = v.children
+            ? v.children.find(g => g.value == timepreset.value)
+            : null;
           if (t) {
             this.timerange = [v.value];
             this.timerange.push(t.value);
@@ -722,7 +728,7 @@ export default {
       } else {
         this.timerange = [timepreset.value];
       }
-      
+
       // 统计时间窗逻辑
       if (evaluationSpec["evaluation_type"] != "TRIGGER") {
         let attributionWindow = evaluationSpec["filters"].find(
@@ -817,9 +823,9 @@ export default {
           }
         });
       }
-      this.form.schedule = "";
-      this.form.schedulegrade = '';
-      this.form.schedulekey = '';
+      this.form.schedule = this.trigger ? "TRIGGER|" : "SCHEDULE|SEMI_HOURLY";
+      this.form.schedulegrade = this.trigger ? "TRIGGER" : "SCHEDULE";
+      this.form.schedulekey = this.trigger ? "" : "SEMI_HOURLY";
     },
     returnCondition(condition) {
       console.log(condition);
@@ -1135,8 +1141,8 @@ export default {
 
       this.form.timecustom1 = "1";
       this.form.timecustom2 = "28";
-      this.form.schedule = "";
-      this.form.schedulegrade = "";
+      this.form.schedule = "TRIGGER|";
+      this.form.schedulegrade = "TRIGGER";
       this.form.schedulekey = "";
       this.form.week = [];
       this.form.rulename = "";

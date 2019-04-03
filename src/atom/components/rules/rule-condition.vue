@@ -439,7 +439,7 @@ export default {
   },
   methods: {
     editRuleInit(conditionlist) {
-      console.log(conditionlist);
+      // console.log(conditionlist);
       conditionlist.forEach(v => {
         let cond = null;
         let fatherkey = "";
@@ -457,7 +457,7 @@ export default {
         // 初始化选项信息
         this.selectIndicator();
         this.operation = this.operationlist.find(g => g.imp == v.operator).key;
-        console.log(this.operation);
+        // console.log(this.operation);
         let indicator = this.indicator[1].split("|");
         let ifdollar = this.dollarCheck(indicator[0]);
         switch (this.indicatortype) {
@@ -497,7 +497,7 @@ export default {
       let optionvalue = condition.option;
       let indicator = this.indicator[1].split("|");
       let ifdollar = this.dollarCheck(indicator[0]);
-      console.log(ifdollar);
+      // console.log(ifdollar);
       switch (this.indicatortype) {
         case "1":
           if (this.operation == "1" || this.operation == "2") {
@@ -654,7 +654,7 @@ export default {
         Msgwarning(check[1]);
         return;
       }
-      console.log(this.indicator);
+      // console.log(this.indicator);
       // console.log(this.operationlist);
       // console.log(this.operation);
 

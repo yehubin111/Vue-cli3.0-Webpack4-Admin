@@ -121,7 +121,7 @@ export default {
             { label: "已花费", value: "spent|1|已花费|true" }, // key | 操作类型 | name | 是否支持实时排期
             { label: "总花费", value: "lifetime_spent|1|总花费|false" },
             { label: "频次", value: "frequency|1|频次|true" },
-            { label: "成效", value: "results|1|成效|true" },
+            { label: "成效", value: "result|1|成效|true" },
             { label: "单次成效费用", value: "cost_per|1|单次成效费用|true" },
             {
               label: "移动应用安装",

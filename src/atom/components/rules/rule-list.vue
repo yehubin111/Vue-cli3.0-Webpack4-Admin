@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import RuleExecute from "./rule-execute";
 import RuleObjdetail from "./rule-objdetail";
 export default {
@@ -109,6 +109,7 @@ export default {
     ...mapState(["newrulelist", "newruletotal"])
   },
   methods: {
+    ...mapMutations(['SETOBJSTATE']),
     showDetail(rulename, name, id) {
       let rule = this.newrulelist.find(v => v.id == id);
       let detail = rule.relateRuleObjs;

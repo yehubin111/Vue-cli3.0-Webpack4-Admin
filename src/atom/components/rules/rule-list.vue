@@ -143,8 +143,22 @@ export default {
         this.$store.dispatch('toCloseRule', id);
       }
     },
-    pageSwitch() {},
-    pageSizeChange() {}
+    pageSwitch(index) {
+      this.SETOBJSTATE({
+        obj: "ruleoption",
+        name: "pageIndex",
+        v: index
+      });
+      this.$store.dispatch("getRuleList");
+    },
+    pageSizeChange(size) {
+      this.SETOBJSTATE({
+        obj: "ruleoption",
+        name: "pageSize",
+        v: size
+      });
+      this.$store.dispatch("getRuleList");
+    }
   }
 };
 </script>

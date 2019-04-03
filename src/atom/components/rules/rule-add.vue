@@ -1,5 +1,5 @@
 <template>
-  <el-dialog class="dialogrule" title="创建规则" :visible="status" @close="hideBox">
+  <el-dialog class="dialogrule" :title="this.editid?'编辑规则':'创建规则'" :visible="status" @close="hideBox">
     <el-form label-position="left">
       <el-form-item label="广告账户" label-width="110px">
         <el-select

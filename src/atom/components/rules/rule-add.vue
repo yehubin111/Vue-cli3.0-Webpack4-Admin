@@ -8,7 +8,7 @@
           filterable
           multiple
           collapse-tags
-          :disabled="Boolean(editid)"
+          :disabled="Boolean(editid) || from == 'ad'"
           placeholder="请选择广告账户，可搜索"
         >
           <el-option
@@ -526,6 +526,7 @@ export default {
   methods: {
     adInit(select, type) {
       this.adselect = select;
+      this.form.account = [select[0].accountId];
       this.from = "ad"; // 表面是从广告管理页面创建规则
       switch (type) {
         case "campaignName":

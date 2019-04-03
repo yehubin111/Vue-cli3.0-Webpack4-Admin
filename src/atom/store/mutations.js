@@ -1870,6 +1870,14 @@ export default {
     GETRULELIST(state, r) {
         state.newrulelist = r.data.list;
         state.newruletotal = r.data.count;
+        // 特殊情况，通知类型操作，无法编辑
+        state.newrulelist.forEach(v => {
+            let executionSpec = JSON.parse(v.executionSpec);
+            if(executionSpec['execution_type'] == 'NOTIFICATION')
+                v.noedit = true;
+        })
+
+
     },
     REGUFORMDATA(state, r) {
         // 规则启用比例

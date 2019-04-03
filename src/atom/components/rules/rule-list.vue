@@ -64,7 +64,7 @@
       <el-table-column prop label="操作" width="140">
         <template slot-scope="scope">
           <p class="ctrl">
-            <el-button type="text" size="mini" @click="toEdit(scope.row.id, scope.row.fbId)">编辑</el-button>
+            <el-button type="text" size="mini" @click="toEdit(scope.row.id, scope.row.fbId)" :disabled="scope.row.noedit">编辑</el-button>
             <el-button type="text" size="mini" @click="toExecute(scope.row.fbId, scope.row.levelCnName, scope.row.evaluationSpecName)">执行</el-button>
             <el-button type="text" size="mini" @click="toDelete(scope.row.id)">删除</el-button>
           </p>

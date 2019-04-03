@@ -823,9 +823,15 @@ export default {
           }
         });
       }
-      this.form.schedule = this.trigger ? "TRIGGER|" : "SCHEDULE|SEMI_HOURLY";
-      this.form.schedulegrade = this.trigger ? "TRIGGER" : "SCHEDULE";
-      this.form.schedulekey = this.trigger ? "" : "SEMI_HOURLY";
+      if(!this.editid){
+        this.form.schedule = this.trigger ? "TRIGGER|" : "SCHEDULE|SEMI_HOURLY";
+        this.form.schedulegrade = this.trigger ? "TRIGGER" : "SCHEDULE";
+        this.form.schedulekey = this.trigger ? "" : "SEMI_HOURLY";
+      }else{
+        this.form.schedule = '';
+        this.form.schedulegrade = '';
+        this.form.schedulekey = '';
+      }
     },
     returnCondition(condition) {
       console.log(condition);

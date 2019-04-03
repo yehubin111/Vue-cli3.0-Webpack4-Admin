@@ -885,6 +885,7 @@ export default {
       this.setTriggerStatus();
     },
     selectObject() {
+      console.log(this.form.ruleobject)
       switch (this.form.ruleobject.split("|")[0]) {
         case "CAMPAIGN":
           this.form.ruleobjectname = "广告系列";

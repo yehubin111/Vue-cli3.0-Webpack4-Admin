@@ -71,6 +71,11 @@ export default {
         name: "fbAccountIds",
         v: account.join(",")
       });
+      this.SETOBJSTATE({
+        obj: "ruleoption",
+        name: "pageIndex",
+        v: 1
+      });
       // 获取规则列表数据
       this.getRuleDate();
     },

@@ -705,7 +705,7 @@ export default {
       // 排除特殊情况
       condition = condition.filter(
         v =>
-          v.field.indexOf("budget_reset_period") != -1 &&
+          v.field.indexOf("budget_reset_period") == -1 &&
           v.field != level.toLocaleLowerCase() + ".id" &&
           v.field != "id"
       );

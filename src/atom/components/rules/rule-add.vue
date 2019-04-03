@@ -712,12 +712,16 @@ export default {
       );
       if (!this.timeOption.find(v => v.value == timepreset.value)) {
         this.timeOption.forEach(v => {
-          if (v.children.find(g => g.value == timepreset.value)) {
-            this.timerange.push(v.value);
+          let t = v.children ? v.children.find(g => g.value == timepreset.value) : null;
+          if (t) {
+            this.timerange = [v.value];
+            this.timerange.push(t.value);
           }
         });
+      } else {
+        this.timerange = [timepreset.value];
       }
-      this.timerange = [timepreset.value];
+      
       // 统计时间窗逻辑
       if (evaluationSpec["evaluation_type"] != "TRIGGER") {
         let attributionWindow = evaluationSpec["filters"].find(

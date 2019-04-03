@@ -78,7 +78,8 @@
         :page-sizes="[20, 200, 500]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="newruletotal"
-        :page-size="20"
+        :page-size="ruleoption.pageSize"
+        :current-page="ruleoption.pageIndex"
         @current-change="pageSwitch"
       ></el-pagination>
     </div>
@@ -101,12 +102,14 @@ export default {
       setapplist: [],
       switchstatus: true,
       executeStatus: false,
+      pageIndex: 1,
+      pageSize: 20,
       // executeid: '',
       objStatus: false
     };
   },
   computed: {
-    ...mapState(["newrulelist", "newruletotal"])
+    ...mapState(["newrulelist", "newruletotal", "ruleoption"])
   },
   methods: {
     ...mapMutations(['SETOBJSTATE']),

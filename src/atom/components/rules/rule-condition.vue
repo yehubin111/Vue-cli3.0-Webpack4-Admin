@@ -439,6 +439,7 @@ export default {
   },
   methods: {
     editRuleInit(conditionlist) {
+      console.log(conditionlist);
       conditionlist.forEach(v => {
         let cond = null;
         let fatherkey = "";

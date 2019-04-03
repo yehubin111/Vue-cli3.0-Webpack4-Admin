@@ -1,7 +1,11 @@
 <template>
   <div>
     <el-table :data="optimizelist" style="width: 100%">
-      <el-table-column prop="executionDetailInfo" label="详细信息"></el-table-column>
+      <el-table-column prop="executionDetailInfo" label="详细信息">
+        <template slot-scope="scope">
+          <p>{{scope.row.executionDetailInfo ? scope.row.executionDetailInfo : '--'}}</p>
+        </template>
+      </el-table-column>
       <el-table-column prop="ruleName" label="名称">
         <template slot-scope="scope">
           <p>{{scope.row.ruleName}}</p>

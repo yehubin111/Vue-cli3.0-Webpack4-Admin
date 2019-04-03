@@ -530,7 +530,8 @@ export default {
   methods: {
     adInit(select, type) {
       this.adselect = select;
-      this.form.account = [select[0].accountId];
+      if(!this.editid)
+        this.form.account = [select[0].accountId];
       this.from = "ad"; // 表面是从广告管理页面创建规则
       switch (type) {
         case "campaignName":

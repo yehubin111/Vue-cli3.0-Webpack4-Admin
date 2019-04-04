@@ -19,6 +19,7 @@
         ></el-option>
       </el-select>
       <el-button type="primary" @click="addStatus = true">创建</el-button>
+      <el-input v-model="keyword" placeholder="请输入关键词" class="keyword" @input="toSort"></el-input>
     </div>
     <div class="rulelist">
       <rule-list @editRule="editRule"></rule-list>
@@ -31,6 +32,8 @@
 import RuleAdd from "./rule-add";
 import RuleList from "./rule-list";
 import { mapState, mapMutations } from "vuex";
+import { clearTimeout, setTimeout } from 'timers';
+let keywordsearch;
 export default {
   components: {
     RuleList,
@@ -40,7 +43,8 @@ export default {
     return {
       value2: true,
       account: [],
-      addStatus: false
+      addStatus: false,
+      keyword: ''
     };
   },
   mounted() {
@@ -64,6 +68,22 @@ export default {
   },
   methods: {
     ...mapMutations(["SETOBJSTATE"]),
+    toSort() {
+      clearTimeout(keywordsearch);
+      keywordsearch = setTimeout(() => {
+        this.SETOBJSTATE({
+          obj: "ruleoption",
+          name: "pageIndex",
+          v: 1
+        });
+        this.SETOBJSTATE({
+          obj: "ruleoption",
+          name: "name",
+          v: encodeURIComponent(this.keyword)
+        });
+        this.getRuleDate();
+      }, 300);
+    },
     selectCondition() {
       let account = this.account;
       this.SETOBJSTATE({
@@ -117,6 +137,10 @@ export default {
     .select {
       width: 400px;
       margin-right: 20px;
+    }
+    .keyword{
+      width: 300px;
+      float: right;
     }
   }
   .rulelist {

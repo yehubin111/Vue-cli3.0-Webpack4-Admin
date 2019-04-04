@@ -79,7 +79,7 @@ export default {
         this.SETOBJSTATE({
           obj: "ruleoption",
           name: "name",
-          v: encodeURIComponent(this.keyword)
+          v: encodeURIComponent(this.keyword.trim())
         });
         this.getRuleDate();
       }, 300);

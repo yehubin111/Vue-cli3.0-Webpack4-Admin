@@ -708,6 +708,8 @@ export default {
      * 从优化记录点击跳转，需要筛选出当前选择条件对应数据
      */
     let kid = this.$route.params.kid;
+    let tab = 'first';
+    let tabname = 'campaignName';
     if(kid) {
       let k = kid.split('_');
       let id = k[0];
@@ -717,31 +719,33 @@ export default {
         case 'CAMPAIGN':
           this.prevFirstKey = 'fbCampaignId';
           this.conditionSel = '广告系列编号';
-          this.tabname = 'first';
+          tab = 'first';
+          tabname = 'campaignName';
         break;
         case 'ADSET':
           this.prevFirstKey = 'fbAdSetId';
           this.conditionSel = '广告组编号';
-          this.tabname = 'second';
+          tab = 'second';
+          tabname = 'adSetName';
         break;
         case 'AD':
           this.prevFirstKey = 'fbAdId';
           this.conditionSel = '广告编号';
-          this.tabname = 'third';
+          tab = 'third';
+          tabname = 'adName';
         break;
       }
-
       this.conditionInput = id;
       this.prevFirstSearch = "allsearch";
       this.determineSearch();
     }
+    this.tabname = tab;
+    this.SETSTATE({ k: "adtab", v: tabname });
 
     // 初始化从本地缓存获取已选广告账户，存到state中
     this.SETSTATE({ k: "adaccountid", v: this.value3 });
 
     // 初始化数据
-    this.tabname = "first";
-    this.SETSTATE({ k: "adtab", v: "campaignName" });
     this.SETSTATE({
       k: "adstarttime",
       v: this.$timeFormat(dt[0], "yyyy-MM-dd")

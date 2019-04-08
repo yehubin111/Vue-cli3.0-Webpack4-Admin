@@ -970,8 +970,8 @@ export default {
     },
     searchLocalstorage() {
       // 条件保存到本地缓存
-      console.log(JSON.stringify(this.allCondition));
       this.allCondition[this.$route.params.id] = this.disCondition;
+      console.log(JSON.stringify(this.allCondition));
       localStorage.setItem(adFilterLS.new, JSON.stringify(this.allCondition));
     },
     // 确定条件，同时保存到本地缓存

@@ -10,7 +10,7 @@
       <el-table :data="optimizedetail" border style="width: 100%" id="ruleExecute">
         <el-table-column prop="targetName" label="名称">
           <template slot-scope="scope">
-            <p>{{scope.row.targetName}}</p>
+            <p class="targetname" @click="targetDetail(scope.row.fbTargetId, scope.row.targetType)">{{scope.row.targetName}}</p>
             <p class="childtype">{{scope.row.fbTargetId}}</p>
           </template>
         </el-table-column>
@@ -55,6 +55,14 @@ export default {
     },
     toCancel() {
       this.$emit("update:status", false);
+    },
+    targetDetail(id, type) {
+      this.$router.push({
+        name: 'ad',
+        params: {
+          kid: `${id}_${type}`
+        }
+      })
     }
   },
   computed: {
@@ -73,6 +81,10 @@ export default {
   .childtype {
     font-size: 12px;
     color: #999;
+  }
+  .targetname{
+    color: #409eff;
+    cursor: pointer;
   }
 }
 </style>

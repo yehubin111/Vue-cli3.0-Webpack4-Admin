@@ -676,6 +676,7 @@ export default {
   },
   created() {},
   mounted() {
+    console.log(`kid=${this.$route.params.kid}`);
     // 清除老的缓存
     if (adFilterLS.old && localStorage.getItem(adFilterLS.old)) {
       localStorage.removeItem(adFilterLS.old);

@@ -712,7 +712,7 @@ export default {
       let k = kid.split('_');
       let id = k[0];
       let type = k[1];
-
+      console.log(k);
       switch(type) {
         case 'CAMPAIGN':
           this.prevFirstKey = 'fbCampaignId';

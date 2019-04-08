@@ -689,20 +689,6 @@ export default {
 
     let dt = this.date;
 
-    // 初始化从本地缓存获取筛选条件
-    this.allCondition = localStorage.getItem(adFilterLS.new)
-      ? JSON.parse(localStorage.getItem(adFilterLS.new))
-      : {};
-    this.disCondition = this.allCondition[this.$route.params.id]
-      ? this.allCondition[this.$route.params.id]
-      : [];
-    // 初始化从本地缓存获取广告账户
-    this.accountStorage = localStorage.getItem("ad-account")
-      ? JSON.parse(localStorage.getItem("ad-account"))
-      : {};
-    this.value3 = this.accountStorage[this.$route.params.id]
-      ? this.accountStorage[this.$route.params.id].split("|")
-      : [];
     /**
      * 2019-04-08新增筛选条件相关逻辑
      * 从优化记录点击跳转，需要筛选出当前选择条件对应数据
@@ -741,6 +727,21 @@ export default {
     }
     this.tabname = tab;
     this.SETSTATE({ k: "adtab", v: tabname });
+
+    // 初始化从本地缓存获取筛选条件
+    this.allCondition = localStorage.getItem(adFilterLS.new)
+      ? JSON.parse(localStorage.getItem(adFilterLS.new))
+      : {};
+    this.disCondition = this.allCondition[this.$route.params.id]
+      ? this.allCondition[this.$route.params.id]
+      : [];
+    // 初始化从本地缓存获取广告账户
+    this.accountStorage = localStorage.getItem("ad-account")
+      ? JSON.parse(localStorage.getItem("ad-account"))
+      : {};
+    this.value3 = this.accountStorage[this.$route.params.id]
+      ? this.accountStorage[this.$route.params.id].split("|")
+      : [];
 
     // 初始化从本地缓存获取已选广告账户，存到state中
     this.SETSTATE({ k: "adaccountid", v: this.value3 });

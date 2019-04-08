@@ -40,7 +40,8 @@
         type="primary"
         v-if="disCondition.length < 5"
         @command="handleCommand"
-      >搜索
+      >
+        搜索
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item class="tocreate" command="fbCampaignId_广告系列编号">广告系列编号</el-dropdown-item>
           <el-dropdown-item class="tocreate" command="campaignName_广告系列名称">广告系列名称</el-dropdown-item>
@@ -340,8 +341,8 @@
 </template>
 
 <script>
-import RuleAdd from '../rules/rule-add';
-import RuleRemove from './ad-ruleremove';
+import RuleAdd from "../rules/rule-add";
+import RuleRemove from "./ad-ruleremove";
 import RuleSelect from "./ad-ruleselect";
 import AdSetbox from "./ad-setbox";
 import AdCreate from "./ad-create";
@@ -688,7 +689,7 @@ export default {
     }
 
     let dt = this.date;
-    
+
     // 初始化从本地缓存获取筛选条件
     this.allCondition = localStorage.getItem(adFilterLS.new)
       ? JSON.parse(localStorage.getItem(adFilterLS.new))
@@ -701,40 +702,40 @@ export default {
      * 从优化记录点击跳转，需要筛选出当前选择条件对应数据
      */
     let kid = this.$route.params.kid;
-    let tab = 'first';
-    let tabname = 'campaignName';
-    if(kid) {
-      let k = kid.split('_');
+    let tab = "first";
+    let tabname = "campaignName";
+    if (kid) {
+      let k = kid.split("_");
       let id = k[0];
       let type = k[1];
       console.log(k);
-      switch(type) {
-        case 'CAMPAIGN':
-          this.prevFirstKey = 'fbCampaignId';
-          this.conditionSel = '广告系列编号';
-          tab = 'first';
-          tabname = 'campaignName';
-        break;
-        case 'ADSET':
-          this.prevFirstKey = 'fbAdSetId';
-          this.conditionSel = '广告组编号';
-          tab = 'second';
-          tabname = 'adSetName';
-        break;
-        case 'AD':
-          this.prevFirstKey = 'fbAdId';
-          this.conditionSel = '广告编号';
-          tab = 'third';
-          tabname = 'adName';
-        break;
+      switch (type) {
+        case "CAMPAIGN":
+          this.prevFirstKey = "fbCampaignId";
+          this.conditionSel = "广告系列编号";
+          tab = "first";
+          tabname = "campaignName";
+          break;
+        case "ADSET":
+          this.prevFirstKey = "fbAdSetId";
+          this.conditionSel = "广告组编号";
+          tab = "second";
+          tabname = "adSetName";
+          break;
+        case "AD":
+          this.prevFirstKey = "fbAdId";
+          this.conditionSel = "广告编号";
+          tab = "third";
+          tabname = "adName";
+          break;
       }
       this.conditionInput = id;
       this.prevFirstSearch = "allsearch";
-      this.determineSearch('init');
+      this.determineSearch("init");
     }
     this.tabname = tab;
     this.SETSTATE({ k: "adtab", v: tabname });
-    
+
     // 初始化从本地缓存获取广告账户
     this.accountStorage = localStorage.getItem("ad-account")
       ? JSON.parse(localStorage.getItem("ad-account"))
@@ -1114,8 +1115,7 @@ export default {
       // 确定完之后初始化状态
       this.cancelSearch("select");
       // 重置列表数据
-      if(frm != 'init')
-        this.resetPageData();
+      if (frm != "init") this.resetPageData();
     },
     // 取消条件，重置状态
     cancelSearch(frm) {
@@ -1327,7 +1327,18 @@ export default {
       // 设置默认条件，详情见方法注释
       this.sortConditionLogic(option);
 
-      var k = "campain_option";
+      var k = "";
+      switch (this.tabname) {
+        case "first":
+          k = "campain_option";
+          break;
+        case "second":
+          k = "adset_option";
+          break;
+        case "third":
+          k = "ad_option";
+          break;
+      }
       this.SETSTATE({ k, v: option });
 
       // 获取joblist

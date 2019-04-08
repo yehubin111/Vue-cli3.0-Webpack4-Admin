@@ -708,7 +708,6 @@ export default {
       let k = kid.split("_");
       let id = k[0];
       let type = k[1];
-      console.log(k);
       switch (type) {
         case "CAMPAIGN":
           this.prevFirstKey = "fbCampaignId";
@@ -769,7 +768,6 @@ export default {
       ).applicationId;
 
       this.SETSTATE({ k: "adapplicationid", v: this.applicationid });
-      console.log(this.disCondition);
       this.initData(this.applicationid);
     }
     // 初始化获取已保存筛选条件
@@ -850,7 +848,6 @@ export default {
       } else pandectEvent = JSON.parse(pandectEvent);
 
       pandectEvent[applicationid] = localEvent;
-      console.log(localEvent);
       localStorage.setItem(adEventLS.new, JSON.stringify(pandectEvent));
 
       this.resetPageData();
@@ -970,7 +967,6 @@ export default {
     searchLocalstorage() {
       // 条件保存到本地缓存
       this.allCondition[this.$route.params.id] = this.disCondition;
-      console.log(JSON.stringify(this.allCondition));
       localStorage.setItem(adFilterLS.new, JSON.stringify(this.allCondition));
     },
     // 确定条件，同时保存到本地缓存
@@ -1068,7 +1064,6 @@ export default {
           }
           break;
         case 3:
-          console.log(this.conditionInput);
           if (this.conditionInput.trim() === "") {
             Msgwarning("请输入内容");
             return;
@@ -1108,7 +1103,6 @@ export default {
         v => v.regkey != cond.regkey
       );
       this.disCondition.push(cond);
-      console.log(this.disCondition);
       // 保存到本地缓存
       this.searchLocalstorage();
 
@@ -1319,6 +1313,7 @@ export default {
        * 如果有操作过相关条件，则取消默认
        */
       option.adCampaignStatusStr = this.sortdefault;
+      console.log(this.disCondition);
       this.disCondition.forEach(v => {
         if (option[v.key] && v.key != "adCampaignStatusStr")
           option[v.key] += " and " + v.option;

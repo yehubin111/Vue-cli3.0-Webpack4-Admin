@@ -403,15 +403,15 @@ export default {
         "billing_event",
         "optimization_goal",
         "hours_since_creation",
-        "lifetime_ratio_spent",
-        "onsite_conversion.messaging_reply",
-        "cost_per_messaging_reply",
-        "onsite_conversion.messaging_first_reply",
-        "cost_per_messaging_first_reply",
-        "estimated_budget_spending_percentage",
-        "audience_reached_percentage",
-        "effective_status",
-        "daily_ratio_spent",
+        // "lifetime_ratio_spent",
+        // "onsite_conversion.messaging_reply",
+        // "cost_per_messaging_reply",
+        // "onsite_conversion.messaging_first_reply",
+        // "cost_per_messaging_first_reply",
+        // "estimated_budget_spending_percentage",
+        // "audience_reached_percentage",
+        // "effective_status",
+        // "daily_ratio_spent",
         "active_time",
         "current_time",
         "created_time",
@@ -813,12 +813,12 @@ export default {
       }
       // 首先排除特殊情况，条件全为非统计指标，则无法使用实时
       let special = this.form.conditionlist.filter(
-        v => this.specialIndicator.indexOf(v.key) == -1
+        v => !this.specialIndicator.includes(v.key)
       );
       if (special.length == 0) {
         this.trigger = false;
       } else {
-        special.forEach(v => {
+        this.form.conditionlist.forEach(v => {
           if (!v.trigger) {
             this.trigger = false;
           }
@@ -1081,7 +1081,7 @@ export default {
       let conditionall = this.form.conditionlist;
       if (this.form.schedulegrade == "TRIGGER") {
         let specialcondition = this.form.conditionlist.find(
-          v => this.specialIndicator.indexOf(v.key) == -1
+          v => !this.specialIndicator.includes(v.key)
         );
         option["evaluationSpec"]["trigger"] = {
           type: "STATS_CHANGE",
@@ -1187,7 +1187,7 @@ export default {
 
 <style>
 .dialogrule .el-dialog {
-  width: 65%;
+  width: 40%;
 }
 </style>
 

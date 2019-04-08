@@ -164,7 +164,7 @@ export default {
               value: "campaign.name|2|广告系列名称|true"
             },
             { label: "广告组名称", value: "adset.name|2|广告组名称|true" },
-            { label: "版位", value: "adset.placement.page_types|3|版位|true" },
+            { label: "版位", value: "adset.placement.page_types|3|版位|false" },
             { label: "总预算", value: "lifetime_budget|1|总预算|true" },
             { label: "单日预算", value: "daily_budget|1|单日预算|true" },
             { label: "竞价金额", value: "bid_amount|1|竞价金额|true" },
@@ -178,13 +178,13 @@ export default {
           children: [
             {
               label: "创建时间（小时）",
-              value: "hours_since_creation|1|创建时间（小时）|true"
+              value: "hours_since_creation|1|创建时间（小时）|false"
             },
             {
               label: "投放时间（秒）",
-              value: "active_time|1|投放时间（秒）|true"
+              value: "active_time|1|投放时间（秒）|false"
             },
-            { label: "当前时间", value: "current_time|4|当前时间|true" },
+            { label: "当前时间", value: "current_time|4|当前时间|false" },
             { label: "创建时间", value: "created_time|4|创建时间|true" },
             {
               label: "上次编辑时间",

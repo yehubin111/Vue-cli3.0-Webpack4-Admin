@@ -737,7 +737,7 @@ export default {
       }
       this.conditionInput = id;
       this.prevFirstSearch = "allsearch";
-      this.determineSearch();
+      this.determineSearch('init');
     }
     this.tabname = tab;
     this.SETSTATE({ k: "adtab", v: tabname });
@@ -971,7 +971,7 @@ export default {
       localStorage.setItem(adFilterLS.new, JSON.stringify(this.allCondition));
     },
     // 确定条件，同时保存到本地缓存
-    determineSearch() {
+    determineSearch(frm) {
       let cond = {};
       let dealkey = this.seachDeal();
       // 所有字段的值需要乘以100
@@ -1111,7 +1111,8 @@ export default {
       // 确定完之后初始化状态
       this.cancelSearch("select");
       // 重置列表数据
-      this.resetPageData();
+      if(frm != 'init')
+        this.resetPageData();
     },
     // 取消条件，重置状态
     cancelSearch(frm) {

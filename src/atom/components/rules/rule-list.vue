@@ -158,6 +158,11 @@ export default {
     pageSizeChange(size) {
       this.SETOBJSTATE({
         obj: "ruleoption",
+        name: "pageIndex",
+        v: 1
+      });
+      this.SETOBJSTATE({
+        obj: "ruleoption",
         name: "pageSize",
         v: size
       });

@@ -86,6 +86,7 @@ export default {
   },
   methods: {
     pageSizeChange(size) {
+      this.pageindex = 1;
       this.pagesize = size;
       this.toSort();
     },

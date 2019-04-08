@@ -1328,7 +1328,7 @@ export default {
           k = "campain_option";
           break;
         case "second":
-          k = "adset_option";
+          k = "set_option";
           break;
         case "third":
           k = "ad_option";

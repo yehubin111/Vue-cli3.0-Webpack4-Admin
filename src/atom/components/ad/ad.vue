@@ -729,7 +729,7 @@ export default {
       }
 
       this.conditionInput = id;
-      this.searchType = 3;
+      this.prevFirstSearch = "allsearch";
       this.determineSearch();
     }
 

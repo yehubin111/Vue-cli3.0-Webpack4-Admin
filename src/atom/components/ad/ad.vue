@@ -676,7 +676,6 @@ export default {
   },
   created() {},
   mounted() {
-    console.log(`kid=${this.$route.params.kid}`);
     // 清除老的缓存
     if (adFilterLS.old && localStorage.getItem(adFilterLS.old)) {
       localStorage.removeItem(adFilterLS.old);
@@ -704,6 +703,36 @@ export default {
     this.value3 = this.accountStorage[this.$route.params.id]
       ? this.accountStorage[this.$route.params.id].split("|")
       : [];
+    /**
+     * 2019-04-08新增筛选条件相关逻辑
+     * 从优化记录点击跳转，需要筛选出当前选择条件对应数据
+     */
+    let kid = this.$route.params.kid;
+    if(kid) {
+      let k = kid.split('_');
+      let id = k[0];
+      let type = k[1];
+
+      switch(type) {
+        case 'CAMPAIGN':
+          this.prevFirstKey = 'fbCampaignId';
+          this.conditionSel = '广告系列编号';
+        break;
+        case 'ADSET':
+          this.prevFirstKey = 'fbAdSetId';
+          this.conditionSel = '广告组编号';
+        break;
+        case 'AD':
+          this.prevFirstKey = 'fbAdId';
+          this.conditionSel = '广告编号';
+        break;
+      }
+
+      this.conditionInput = id;
+      this.searchType = 3;
+      this.determineSearch();
+    }
+
     // 初始化从本地缓存获取已选广告账户，存到state中
     this.SETSTATE({ k: "adaccountid", v: this.value3 });
 

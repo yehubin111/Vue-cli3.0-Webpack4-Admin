@@ -1108,6 +1108,7 @@ export default {
         v => v.regkey != cond.regkey
       );
       this.disCondition.push(cond);
+      console.log(this.disCondition);
       // 保存到本地缓存
       this.searchLocalstorage();
 

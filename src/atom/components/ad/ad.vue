@@ -693,6 +693,9 @@ export default {
     this.allCondition = localStorage.getItem(adFilterLS.new)
       ? JSON.parse(localStorage.getItem(adFilterLS.new))
       : {};
+    this.disCondition = this.allCondition[this.$route.params.id]
+      ? this.allCondition[this.$route.params.id]
+      : [];
     /**
      * 2019-04-08新增筛选条件相关逻辑
      * 从优化记录点击跳转，需要筛选出当前选择条件对应数据
@@ -731,12 +734,7 @@ export default {
     }
     this.tabname = tab;
     this.SETSTATE({ k: "adtab", v: tabname });
-
-    // 初始化从本地缓存获取筛选条件
-    console.log('get');
-    this.disCondition = this.allCondition[this.$route.params.id]
-      ? this.allCondition[this.$route.params.id]
-      : [];
+    
     // 初始化从本地缓存获取广告账户
     this.accountStorage = localStorage.getItem("ad-account")
       ? JSON.parse(localStorage.getItem("ad-account"))
@@ -770,7 +768,7 @@ export default {
       ).applicationId;
 
       this.SETSTATE({ k: "adapplicationid", v: this.applicationid });
-
+      console.log(this.disCondition);
       this.initData(this.applicationid);
     }
     // 初始化获取已保存筛选条件

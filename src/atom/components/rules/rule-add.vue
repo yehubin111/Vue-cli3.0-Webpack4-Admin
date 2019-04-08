@@ -200,7 +200,7 @@
             v-model="timerange"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="统计时间窗" label-width="110px">
+        <el-form-item label="统计时间窗" label-width="110px" v-show="form.schedulegrade != 'TRIGGER'">
           <el-radio-group v-model="form.timewindow">
             <el-radio :label="1">账号默认设置</el-radio>
             <el-radio :label="2">自定义</el-radio>

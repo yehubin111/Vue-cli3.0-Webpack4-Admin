@@ -515,7 +515,7 @@ export default {
           break;
         case "4":
           if (this.operation == "1" || this.operation == "2") {
-            this.indicatortime = new Date(optionvalue.value);
+            this.indicatortime = new Date(parseInt(optionvalue.value));
           } else {
             this.indicatortimerange = optionvalue.value.map(v => new Date(v));
           }

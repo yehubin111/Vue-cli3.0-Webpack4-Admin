@@ -729,6 +729,7 @@ export default {
     this.SETSTATE({ k: "adtab", v: tabname });
 
     // 初始化从本地缓存获取筛选条件
+    console.log('get');
     this.allCondition = localStorage.getItem(adFilterLS.new)
       ? JSON.parse(localStorage.getItem(adFilterLS.new))
       : {};
@@ -968,6 +969,7 @@ export default {
     },
     searchLocalstorage() {
       // 条件保存到本地缓存
+      console.log(JSON.stringify(this.allCondition));
       this.allCondition[this.$route.params.id] = this.disCondition;
       localStorage.setItem(adFilterLS.new, JSON.stringify(this.allCondition));
     },

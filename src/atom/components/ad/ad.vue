@@ -717,14 +717,17 @@ export default {
         case 'CAMPAIGN':
           this.prevFirstKey = 'fbCampaignId';
           this.conditionSel = '广告系列编号';
+          this.tabname = 'first';
         break;
         case 'ADSET':
           this.prevFirstKey = 'fbAdSetId';
           this.conditionSel = '广告组编号';
+          this.tabname = 'second';
         break;
         case 'AD':
           this.prevFirstKey = 'fbAdId';
           this.conditionSel = '广告编号';
+          this.tabname = 'third';
         break;
       }
 

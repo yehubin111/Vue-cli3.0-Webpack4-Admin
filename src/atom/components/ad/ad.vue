@@ -1058,6 +1058,7 @@ export default {
           }
           break;
         case 3:
+          console.log(this.conditionInput);
           if (this.conditionInput.trim() === "") {
             Msgwarning("请输入内容");
             return;

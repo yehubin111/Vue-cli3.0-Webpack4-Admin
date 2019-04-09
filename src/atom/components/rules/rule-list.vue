@@ -16,7 +16,8 @@
       </el-table-column>
       <el-table-column prop label="名称" width="120">
         <template slot-scope="scope">
-          <p class="rulename" @click="toEdit(scope.row.id, scope.row.fbId)">{{scope.row.name}}</p>
+          <p v-if="scope.row.noedit">{{scope.row.name}}</p>
+          <p v-else class="rulename" @click="toEdit(scope.row.id, scope.row.fbId)">{{scope.row.name}}</p>
           <p class="childtype">{{scope.row.scheduleCnName}}</p>
         </template>
       </el-table-column>

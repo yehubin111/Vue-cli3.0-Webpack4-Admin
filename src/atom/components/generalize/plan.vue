@@ -1,6 +1,9 @@
 <template>
   <div class="plan">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;推广计划管理</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>推广计划管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="ctrlbutton">
       <el-dropdown class="select" split-button type="primary">
         创建

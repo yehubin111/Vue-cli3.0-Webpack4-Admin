@@ -7,7 +7,7 @@
   >
     <div class="fonttip important">
       <p>以下是应用于此对象的规则，选择后可移除：</p>
-      <p class="notice">置灰列表不可删除，请直接删除此规则</p>
+      <p class="notice" v-show="hascantselect">置灰列表不可删除，请直接删除此规则</p>
     </div>
     <el-table
       :data="singlerules"
@@ -43,20 +43,26 @@ export default {
       type: "",
       typename: "",
       ruleids: [],
-      level: ""
+      level: "",
+      hascantselect: false
     };
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
     ifSelect(row, index) {
-      if (row.ruleObjCount > 1) return true;
-      else return false;
+      if (row.ruleObjCount > 1) {
+        return true;
+      } else {
+        this.hascantselect = true;
+        return false;
+      }
     },
     toCancel() {
       this.$emit("update:status", false);
 
       this.ruleids = [];
       this.SETSTATE({ k: "singlerules", v: [] });
+      this.hascantselect = false;
     },
     async submitExecute() {
       if (this.ruleids.length == 0) {

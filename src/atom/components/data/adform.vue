@@ -1,6 +1,9 @@
 <template>
   <div class="ad">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;广告报表</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>广告报表</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="ctrlbutton">
       <el-select class="select" v-model="form.value1" filterable multiple collapse-tags remote placeholder="广告账户" no-data-text="无数据，请输入或者改变关键字" :remote-method="searchAccount" @blur="clearArr('adaccount')" @change="toSort">
         <el-option v-for="(item, index) in adaccount" :key="index" :label="item.accountName + (item.fbAccountId?'('+item.fbAccountId+')':'')" :value="item.fbAccountId">

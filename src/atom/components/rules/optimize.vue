@@ -1,6 +1,9 @@
 <template>
   <div class="optimize">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;优化记录</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>优化记录</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="sort">
       <el-select
         class="select"
@@ -63,7 +66,7 @@ export default {
       checked: false,
       pageindex: 1,
       pagesize: 20,
-      fbruleid: ''
+      fbruleid: ""
     };
   },
   computed: {
@@ -119,7 +122,7 @@ export default {
   watch: {
     ruleId(n, o) {
       this.fbruleid = n;
-      this.toSort(); 
+      this.toSort();
     }
   }
 };

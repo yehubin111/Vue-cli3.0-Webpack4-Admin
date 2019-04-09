@@ -1,5 +1,10 @@
 <template>
-  <el-dialog class="dialogrule" :title="this.editid?'编辑规则':'创建规则'" :visible="status" @close="hideBox">
+  <el-dialog
+    class="dialogrule"
+    :title="this.editid?'编辑规则':'创建规则'"
+    :visible="status"
+    @close="hideBox"
+  >
     <el-form label-position="left">
       <el-form-item label="广告账户" label-width="110px">
         <el-select
@@ -603,25 +608,27 @@ export default {
         if (fromad.field != "id") {
           level = fromad.field.split(".")[0].toLocaleUpperCase();
         }
-        // console.log(level);
-        switch (level) {
-          case "CAMPAIGN":
-            adidkey = "campaignId";
-            adtype = "campaignName";
-            break;
-          case "ADSET":
-            adidkey = "adsetId";
-            adtype = "adSetName";
-            break;
-          case "AD":
-            adidkey = "adId";
-            adtype = "adName";
-            break;
-        }
+        let caseoption = {
+          CAMPAIGN: {
+            key: "campaignId",
+            type: "campaignName"
+          },
+          ADSET: {
+            key: "adsetId",
+            type: "adSetName"
+          },
+          AD: {
+            key: "adId",
+            type: "adName"
+          }
+        };
+        adidkey = caseoption[level]["key"];
+        adtype = caseoption[level]["type"];
+
         let addata = fromad.value.map(v => {
           let obj = {};
           obj[adidkey] = v;
-          obj['accountId'] = object.fbAccountId;
+          obj["accountId"] = object.fbAccountId;
           return obj;
         });
         this.adInit(addata, adtype);
@@ -824,14 +831,14 @@ export default {
           }
         });
       }
-      if(!this.editid){
+      if (!this.editid) {
         this.form.schedule = this.trigger ? "TRIGGER|" : "SCHEDULE|SEMI_HOURLY";
         this.form.schedulegrade = this.trigger ? "TRIGGER" : "SCHEDULE";
         this.form.schedulekey = this.trigger ? "" : "SEMI_HOURLY";
-      }else{
-        this.form.schedule = '';
-        this.form.schedulegrade = '';
-        this.form.schedulekey = '';
+      } else {
+        this.form.schedule = "";
+        this.form.schedulegrade = "";
+        this.form.schedulekey = "";
       }
     },
     returnCondition(condition) {
@@ -862,17 +869,18 @@ export default {
         let key = this.form.ctrlmethod[1].split("_");
         this.form.ctrlmethodkey = key[0];
         this.form.ctrlmethodwant = key[1];
-        switch (key[0]) {
-          case "daybudget":
-            this.form.ctrlmethodname = "单日预算";
-            break;
-          case "totalbudget":
-            this.form.ctrlmethodname = "总预算";
-            break;
-          case "bid":
-            this.form.ctrlmethodname = "竞价";
-            break;
-        }
+        let caseoption = {
+          daybudget: {
+            name: "单日预算"
+          },
+          totalbudget: {
+            name: "总预算"
+          },
+          bid: {
+            name: "竞价"
+          }
+        };
+        this.form.ctrlmethodname = caseoption[key[0]]["name"];
       } else {
         this.form.ctrlmethodkey = this.form.ctrlmethod[0];
         this.form.ctrlmethodname = "";

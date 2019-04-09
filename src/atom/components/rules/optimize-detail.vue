@@ -10,7 +10,10 @@
       <el-table :data="optimizedetail" border style="width: 100%" id="ruleExecute">
         <el-table-column prop="targetName" label="名称">
           <template slot-scope="scope">
-            <p class="targetname" @click="targetDetail(scope.row.fbTargetId, scope.row.targetType)">{{scope.row.targetName}}</p>
+            <p
+              class="targetname"
+              @click="targetDetail(scope.row.fbTargetId, scope.row.targetType)"
+            >{{scope.row.targetName}}</p>
             <p class="childtype">{{scope.row.fbTargetId}}</p>
           </template>
         </el-table-column>
@@ -39,17 +42,18 @@ export default {
     initData(fbid, info, type, condition, name) {
       this.info = info;
       this.rulename = name;
-      switch (type) {
-        case "CAMPAIGN":
-          this.typename = "广告系列";
-          break;
-        case "ADSET":
-          this.typename = "广告组";
-          break;
-        case "AD":
-          this.typename = "广告";
-          break;
-      }
+      let caseoption = {
+        CAMPAIGN: {
+          name: "广告系列"
+        },
+        ADSET: {
+          name: "广告组"
+        },
+        AD: {
+          name: "广告"
+        }
+      };
+      this.typename = typeoption[type]["name"];
       this.condition = condition.split("且").map(v => v.trim());
       this.$store.dispatch("optimizeDetail", fbid);
     },
@@ -58,11 +62,11 @@ export default {
     },
     targetDetail(id, type) {
       this.$router.push({
-        name: 'ad',
+        name: "ad",
         params: {
           kid: `${id}_${type}`
         }
-      })
+      });
     }
   },
   computed: {
@@ -82,7 +86,7 @@ export default {
     font-size: 12px;
     color: #999;
   }
-  .targetname{
+  .targetname {
     color: #409eff;
     cursor: pointer;
   }

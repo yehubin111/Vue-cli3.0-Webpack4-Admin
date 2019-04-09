@@ -4,6 +4,7 @@
       class="ctrlselect"
       :options="indicatorOption"
       :show-all-levels="false"
+      expand-trigger="hover"
       size="mini"
       placeholder="指标名称"
       v-model="indicator"

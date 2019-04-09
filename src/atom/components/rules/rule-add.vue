@@ -192,7 +192,7 @@
           <el-button
             type="primary"
             icon="el-icon-plus"
-            circle
+            size="mini"
             v-show="!conditionStatus"
             @click="conditionStatus = true"
           ></el-button>
@@ -1188,6 +1188,8 @@ export default {
       this.editid = "";
       this.editfbid = "";
       this.editschedulestatus = "";
+
+      this.$refs.setCondition.cancelSearch();
     }
   }
 };
@@ -1249,7 +1251,7 @@ export default {
   top: 14px;
 }
 .wid100 {
-  width: 100px;
+  width: 80px;
   margin-bottom: 10px;
 }
 

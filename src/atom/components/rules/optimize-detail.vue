@@ -53,7 +53,7 @@ export default {
           name: "广告"
         }
       };
-      this.typename = typeoption[type]["name"];
+      this.typename = caseoption[type]["name"];
       this.condition = condition.split("且").map(v => v.trim());
       this.$store.dispatch("optimizeDetail", fbid);
     },

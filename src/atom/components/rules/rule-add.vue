@@ -50,10 +50,11 @@
       <el-form-item label="操作" label-width="110px">
         <div>
           <el-cascader
-            class="ctrlselect"
+            class="ctrlselect2"
             :options="ctrlList"
             :show-all-levels="false"
             v-model="form.ctrlmethod"
+            expand-trigger="hover"
             @change="selectCtrl"
           ></el-cascader>
           <el-input
@@ -202,6 +203,7 @@
             class="ctrlselect"
             :options="timeOption"
             :show-all-levels="false"
+            expand-trigger="hover"
             v-model="timerange"
           ></el-cascader>
         </el-form-item>
@@ -1210,6 +1212,9 @@ export default {
 }
 .ctrlselect {
   width: 280px;
+}
+.ctrlselect2 {
+  width: 200px;
 }
 .dialog-footer {
   text-align: center;

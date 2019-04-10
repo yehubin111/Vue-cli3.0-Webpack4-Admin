@@ -1875,6 +1875,9 @@ export default {
             let executionSpec = JSON.parse(v.executionSpec);
             if(executionSpec['execution_type'] == 'NOTIFICATION')
                 v.noedit = true;
+            
+            let evaluationSpec = JSON.parse(v.evaluationSpec);
+            v.iftrigger = evaluationSpec['evaluation_type'] == 'TRIGGER' ? true : false;
         })
 
 

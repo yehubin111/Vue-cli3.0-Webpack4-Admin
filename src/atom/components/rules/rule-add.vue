@@ -815,8 +815,9 @@ export default {
       this.trigger = true;
       // 操作条件选择情况判断
       if (
-        this.form.ctrlmethodwant == "increase" ||
-        this.form.ctrlmethodwant == "decrease"
+        this.form.ctrlmethodkey == "daybudget" ||
+        this.form.ctrlmethodkey == "totalbudget" ||
+        this.form.ctrlmethodkey == "bid"
       ) {
         this.trigger = false;
       }

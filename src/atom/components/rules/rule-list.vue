@@ -17,7 +17,11 @@
       <el-table-column prop label="名称" width="120">
         <template slot-scope="scope">
           <p v-if="scope.row.noedit">{{scope.row.name}}</p>
-          <p v-else class="rulename" @click="toEdit(scope.row.id, scope.row.fbId)">{{scope.row.name}}</p>
+          <p
+            v-else
+            class="rulename"
+            @click="toEdit(scope.row.id, scope.row.fbId)"
+          >{{scope.row.name}}</p>
           <p class="childtype">{{scope.row.scheduleCnName}}</p>
         </template>
       </el-table-column>
@@ -44,7 +48,10 @@
       <el-table-column prop="result" label="结果" width="100">
         <template slot-scope="scope">
           <div v-if="scope.row.lastOccurTime">
-            <router-link :to="`/project/${$route.params.id}/optimize/${scope.row.fbId}`" class="rulename">{{scope.row.result}}</router-link>
+            <router-link
+              :to="`/project/${$route.params.id}/optimize/${scope.row.fbId}`"
+              class="rulename"
+            >{{scope.row.result}}</router-link>
             <p class="childtype">{{scope.row.lastOccurTime | timeFormat('yyyy-MM-dd')}}</p>
           </div>
           <p v-else>{{scope.row.result}}</p>
@@ -65,8 +72,18 @@
       <el-table-column prop label="操作" width="140">
         <template slot-scope="scope">
           <p class="ctrl">
-            <el-button type="text" size="mini" @click="toEdit(scope.row.id, scope.row.fbId)" :disabled="scope.row.noedit">编辑</el-button>
-            <el-button type="text" size="mini" @click="toExecute(scope.row.fbId, scope.row.levelCnName, scope.row.evaluationSpecName)" :disabled="scope.row.iftrigger">执行</el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click="toEdit(scope.row.id, scope.row.fbId)"
+              :disabled="scope.row.noedit"
+            >编辑</el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click="toExecute(scope.row.fbId, scope.row.levelCnName, scope.row.evaluationSpecName)"
+              :disabled="scope.row.iftrigger"
+            >执行</el-button>
             <el-button type="text" size="mini" @click="toDelete(scope.row.id)">删除</el-button>
           </p>
         </template>
@@ -113,7 +130,7 @@ export default {
     ...mapState(["newrulelist", "newruletotal", "ruleoption"])
   },
   methods: {
-    ...mapMutations(['SETOBJSTATE']),
+    ...mapMutations(["SETOBJSTATE"]),
     showDetail(rulename, name, id) {
       let rule = this.newrulelist.find(v => v.id == id);
       let detail = rule.relateRuleObjs;
@@ -122,7 +139,7 @@ export default {
       this.$refs.objDetail.initData(rulename, objname, detail);
     },
     toEdit(id, fbid) {
-      this.$emit('editRule', id, fbid);
+      this.$emit("editRule", id, fbid);
     },
     toExecute(fbid, type, condition) {
       this.executeStatus = true;
@@ -142,10 +159,10 @@ export default {
     },
     switchChange(id, status) {
       console.log(status);
-      if(status == 'ENABLED') {
-        this.$store.dispatch('toOpenRule', id);
+      if (status == "ENABLED") {
+        this.$store.dispatch("toOpenRule", id);
       } else {
-        this.$store.dispatch('toCloseRule', id);
+        this.$store.dispatch("toCloseRule", id);
       }
     },
     pageSwitch(index) {
@@ -177,7 +194,7 @@ export default {
 .createTime {
   display: block;
 }
-.rulename{
+.rulename {
   display: inline-block;
   color: #409eff;
   cursor: pointer;

@@ -1,6 +1,9 @@
 <template>
   <div class="plan">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;受众管理</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>受众管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="ctrlbutton">
       <el-select
         class="selectl"

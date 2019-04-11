@@ -1,43 +1,120 @@
 <template>
   <div class="rule">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;规则管理</p>
-    <p class="tip">规则只对推广计划生成的对象生效</p>
-    <div class="rulelist">
-      <div class="box" v-for="(l, index) in rulelist" :key="index">
-        <div class="con">
-          <p class="id">ID:{{l.id}}</p>
-          <p class="ttl">{{l.name}}</p>
-          <p class="describe">{{l.description}}</p>
-          <p class="ctrl">
-            <span class="count">触发次数：{{l.triggerCount}}</span>
-            <el-switch v-model="l.status" :active-value="true" :inactive-value="false" class="switch" active-color="#13ce66" inactive-color="#d7dae2" @change="switchChange(l.id)">
-            </el-switch>
-          </p>
-        </div>
-      </div>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>规则管理</el-breadcrumb-item>
+    </el-breadcrumb>
+    <div class="ctrlline">
+      <el-select
+        class="select"
+        v-model="account"
+        filterable
+        multiple
+        collapse-tags
+        placeholder="广告账户，可多选，支持编号和名称搜索"
+        @change="selectCondition"
+      >
+        <el-option
+          v-for="item in adaccountlist"
+          :key="item.fbId"
+          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
+          :value="item.fbId"
+        ></el-option>
+      </el-select>
+      <el-button type="primary" @click="addStatus = true">创建</el-button>
+      <el-input
+        v-model="keyword"
+        placeholder="请输入规则名称"
+        class="keyword"
+        @input="toSort"
+        suffix-icon="el-icon-search"
+      ></el-input>
     </div>
+    <div class="rulelist">
+      <rule-list @editRule="editRule"></rule-list>
+    </div>
+    <rule-add ref="ruleAdd" :status.sync="addStatus"></rule-add>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import RuleAdd from "./rule-add";
+import RuleList from "./rule-list";
+import { mapState, mapMutations } from "vuex";
+import { clearTimeout, setTimeout } from "timers";
+let keywordsearch;
 export default {
+  components: {
+    RuleList,
+    RuleAdd
+  },
   data() {
     return {
-      value2: true
+      value2: true,
+      account: [],
+      addStatus: false,
+      keyword: ""
     };
   },
   mounted() {
-    this.$store.dispatch("getRules", this.$route.params.id);
+    // this.$store.dispatch("getRules", this.$route.params.id);
+    this.SETOBJSTATE({
+      obj: "ruleoption",
+      name: "projectId",
+      v: this.$route.params.id
+    });
+    // 获取规则列表数据
+    this.getRuleDate();
+    // 获取广告账户数据
+    this.$store.dispatch("getAdaccount", this.$route.params.id);
   },
   computed: {
-    ...mapState(["itemlist", "rulelist"]),
+    ...mapState(["itemlist", "adaccountlist"]),
     projectname() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
     }
   },
   methods: {
+    ...mapMutations(["SETOBJSTATE"]),
+    toSort() {
+      clearTimeout(keywordsearch);
+      keywordsearch = setTimeout(() => {
+        this.SETOBJSTATE({
+          obj: "ruleoption",
+          name: "pageIndex",
+          v: 1
+        });
+        this.SETOBJSTATE({
+          obj: "ruleoption",
+          name: "name",
+          v: encodeURIComponent(this.keyword.trim())
+        });
+        this.getRuleDate();
+      }, 300);
+    },
+    selectCondition() {
+      let account = this.account;
+      this.SETOBJSTATE({
+        obj: "ruleoption",
+        name: "fbAccountIds",
+        v: account.join(",")
+      });
+      this.SETOBJSTATE({
+        obj: "ruleoption",
+        name: "pageIndex",
+        v: 1
+      });
+      // 获取规则列表数据
+      this.getRuleDate();
+    },
+    editRule(id, fbid) {
+      this.addStatus = true;
+      this.$refs.ruleAdd.initEdit(id, fbid);
+    },
+    getRuleDate() {
+      this.$store.dispatch("getRuleList");
+    },
     switchChange(id) {
       let status = this.rulelist.find(v => v.id == id).status;
 
@@ -63,73 +140,20 @@ export default {
       color: #333;
     }
   }
-  .tip{
-    margin-bottom: 20px;
-    font-size: 14px;
+  .ctrlline {
     margin-left: 40px;
+    margin-bottom: 30px;
+    .select {
+      width: 400px;
+      margin-right: 20px;
+    }
+    .keyword {
+      width: 300px;
+      float: right;
+    }
   }
   .rulelist {
-    overflow: hidden;
-    margin-left: 25px;
-    margin-right: -15px;
-    .box {
-      width: 33.3%;
-      float: left;
-      box-sizing: border-box;
-      padding: 0 15px 30px 15px;
-      .con {
-        height: 200px;
-        border: 1px solid #e6e6e6;
-        box-sizing: border-box;
-        position: relative;
-        .id {
-          font-size: 16px;
-          font-weight: bold;
-          margin: 15px 0 0 20px;
-        }
-        .ttl {
-          margin-left: 20px;
-          margin-right: 20px;
-          height: 30px;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-          line-height: 30px;
-          font-size: 14px;
-        }
-        .describe {
-          margin-left: 20px;
-          margin-right: 20px;
-          height: 60px;
-          // text-overflow: ellipsis;
-          overflow: hidden;
-          // white-space: nowrap;
-          line-height: 20px;
-          font-size: 12px;
-          text-align: justify;
-          color: #999;
-        }
-        .ctrl {
-          position: absolute;
-          bottom: 0;
-          left: 0px;
-          color: #666;
-          overflow: hidden;
-          width: 100%;
-          .count {
-            line-height: 50px;
-            font-size: 12px;
-            float: left;
-            margin-left: 20px;
-          }
-          .switch {
-            float: right;
-            margin-right: 20px;
-            margin-top: 13px;
-          }
-        }
-      }
-    }
+    margin-left: 40px;
   }
 }
 </style>

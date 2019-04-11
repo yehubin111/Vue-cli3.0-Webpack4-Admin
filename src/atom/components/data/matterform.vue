@@ -1,6 +1,9 @@
 <template>
   <div class="ad">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;素材报表</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>素材报表</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="ctrlbutton">
       <el-select
         class="select"

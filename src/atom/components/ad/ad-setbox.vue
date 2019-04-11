@@ -10,7 +10,8 @@
         type="primary"
         @click="toCtrlAll('Edit')"
         @command="handleCommand"
-      >编辑
+      >
+        编辑
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item class="tocreate" command="a" :disabled="archivedbutton">开启</el-dropdown-item>
           <el-dropdown-item class="tocreate" command="b" :disabled="archivedbutton">关闭</el-dropdown-item>
@@ -37,8 +38,21 @@
       <div class="createbutton">
         <el-button type="text" icon="el-icon-delete" @click="toCtrlAll('DELETED')">删除</el-button>
       </div>
+      <div class="createbutton">
+        <el-dropdown @command="ruleCtrl">
+          <span class="el-dropdown-link">
+            规则
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="a" :disabled="mutilselect.length == 0">创建规则</el-dropdown-item>
+            <el-dropdown-item command="b" :disabled="mutilselect.length == 0">应用现有规则</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
       <p class="download">
-        <span @click="outTable" :style="{color: exportstatus?'': '#999'}">导出全部
+        <span @click="outTable" :style="{color: exportstatus?'': '#999'}">
+          导出全部
           <svg-icon svgname="save" svgclass="save" :style="{color: exportstatus?'': '#999'}"></svg-icon>
         </span>
       </p>
@@ -84,7 +98,8 @@
         </span>
       </p>
     </div>
-    <div class="timeout" v-show="adlisttimeout">加载失败请
+    <div class="timeout" v-show="adlisttimeout">
+      加载失败请
       <el-button type="text" @click="toGetdata(false)">重试</el-button>
     </div>
     <div class="list" id="AdList" v-show="!adlisttimeout">
@@ -97,6 +112,7 @@
         :type="type"
         @tableSort="tableSort"
         @tabJump="tabJump"
+        @setRule="setRule"
       ></ad-setlist>
     </div>
     <div class="pageswitch" v-show="!adlisttimeout">
@@ -174,6 +190,23 @@ export default {
   watch: {},
   methods: {
     ...mapMutations(["SETSTATE"]),
+    ruleCtrl(key) {
+      if([...new Set(this.mutilselect.map(v => v.accountId))].length > 1){
+        Msgwarning('暂不支持跨广告账户设置规则，请选择同一个广告账户下的对象');
+        return;
+      }
+      switch (key) {
+        case "a":
+          this.$emit("ruleAdd", this.mutilselect, this.type);
+          break;
+        case "b":
+          this.$emit("ruleCreate", this.mutilselect, this.type);
+          break;
+      }
+    },
+    setRule(id) {
+      this.$emit("ruleRemove", id, this.type);
+    },
     tabJump(tabname, row, type) {
       this.$emit("tabJump", tabname, row, type);
     },
@@ -477,7 +510,7 @@ export default {
          */
         let activead = []; // 动态创意广告
         let activeidsarr = []; // 动态创意广告id集合
-        let activeids = ''; // 动态创意广告id（String）
+        let activeids = ""; // 动态创意广告id（String）
         let activecreative = []; // 动态创意集合
         let activecreativeids = []; // 动态创意id集合
         let activenotice = ""; // confirm提示内容
@@ -490,14 +523,19 @@ export default {
             v => v.assetFeedSpec && v.assetFeedSpec != "null"
           );
           let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
-          let activead = this.mutilselect.filter(v => activecreativeids.indexOf(v['creativeId']) != -1);
+          let activead = this.mutilselect.filter(
+            v => activecreativeids.indexOf(v["creativeId"]) != -1
+          );
           activeidsarr = activead.map(v => v["adId"]);
           if (activeidsarr.length > 0) {
             activenotice =
               "选中了至少一条使用动态创意的广告。归档此类型广告后，广告组也会自动归档";
             // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
-            adIds = adIds.split(',').filter(v => activeidsarr.indexOf(v) == -1).join(',');
-            activeids = activeidsarr.join(',');
+            adIds = adIds
+              .split(",")
+              .filter(v => activeidsarr.indexOf(v) == -1)
+              .join(",");
+            activeids = activeidsarr.join(",");
           }
         }
         this.$confirm(
@@ -525,7 +563,7 @@ export default {
          */
         let activead = []; // 动态创意广告
         let activeidsarr = []; // 动态创意广告id集合
-        let activeids = ''; // 动态创意广告id（String）
+        let activeids = ""; // 动态创意广告id（String）
         let activecreative = []; // 动态创意集合
         let activecreativeids = []; // 动态创意id集合
         let activenotice = ""; // confirm提示内容
@@ -538,14 +576,19 @@ export default {
             v => v.assetFeedSpec && v.assetFeedSpec != "null"
           );
           let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
-          let activead = this.mutilselect.filter(v => activecreativeids.indexOf(v['creativeId']) != -1);
+          let activead = this.mutilselect.filter(
+            v => activecreativeids.indexOf(v["creativeId"]) != -1
+          );
           activeidsarr = activead.map(v => v["adId"]);
           if (activeidsarr.length > 0) {
             activenotice =
               "选中了至少一条使用动态创意的广告。删除此类型广告后，广告组也会自动删除";
             // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
-            adIds = adIds.split(',').filter(v => activeidsarr.indexOf(v) == -1).join(',');
-            activeids = activeidsarr.join(',');
+            adIds = adIds
+              .split(",")
+              .filter(v => activeidsarr.indexOf(v) == -1)
+              .join(",");
+            activeids = activeidsarr.join(",");
           }
         }
         this.$confirm(
@@ -628,7 +671,7 @@ export default {
       };
       // console.log(this.typeData);
       option[this.typeData.effectIds] = adIds;
-      option['isActiveAdIds'] = activeIds;
+      option["isActiveAdIds"] = activeIds;
       this.$store.dispatch("changeAdstatus", {
         option,
         type: this.type,
@@ -760,6 +803,13 @@ export default {
   margin-top: 20px;
   margin-bottom: 50px;
 }
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409eff;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
+}
 .ctrlbutton {
   // overflow: hidden;
   margin-bottom: 10px;
@@ -826,6 +876,7 @@ export default {
   .createbutton {
     float: left;
     margin-right: 10px;
+    line-height: 40px;
   }
   .select {
     float: left;

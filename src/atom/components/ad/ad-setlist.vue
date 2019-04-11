@@ -93,13 +93,6 @@
           v-if="item.tool && !scope.row.iscare && scope.row.effectiveStatus != 'ARCHIVED' && scope.row.effectiveStatus != 'DELETED' && (item.name == '广告系列名称' || item.name == '广告组名称' || item.name == '广告名称')"
         >
           <el-button
-            icon="el-icon-edit"
-            type="text"
-            size="mini"
-            @click="reName(scope.row[typeData.effectIdsPush], scope.row[item.key])"
-            :disabled="scope.row.jobStatus"
-          >重命名</el-button>
-          <el-button
             icon="el-icon-edit-outline"
             type="text"
             size="mini"
@@ -113,6 +106,21 @@
             @click="toCopy(scope.row[typeData.effectIdsPush], scope.row[typeData.originalId], scope.row[typeData.originalName], scope.row.accountId)"
             :disabled="scope.row.jobStatus"
           >复制</el-button>
+          <el-button
+            icon="el-icon-setting"
+            type="text"
+            size="mini"
+            @click="setRule(scope.row[typeData.effectIdsPush])"
+            :disabled="scope.row.jobStatus"
+          >规则</el-button>
+          <el-button
+            icon="el-icon-edit"
+            type="text"
+            size="mini"
+            @click="reName(scope.row[typeData.effectIdsPush], scope.row[item.key])"
+            :disabled="scope.row.jobStatus"
+            class="rename"
+          ></el-button>
         </p>
       </template>
     </el-table-column>
@@ -239,6 +247,9 @@ export default {
 
       this.$refs["multipleTable" + this.type].clearSelection();
       this.$refs["multipleTable" + this.type].toggleRowSelection(row, true);
+    },
+    setRule(id) {
+      this.$emit('setRule', id);
     },
     toEdit(id, name) {
       this.$emit("toEdit", [id], name);
@@ -512,5 +523,11 @@ export default {
 .namectrl {
   font-size: 12px;
   min-width: 200px;
+  .rename{
+    position: absolute;
+    top: calc((100% - 40px) / 2);
+    right: 0;
+    padding: 0;
+  }
 }
 </style>

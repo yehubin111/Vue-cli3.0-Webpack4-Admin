@@ -1,6 +1,9 @@
 <template>
   <div class="ad" :style="{height: documentHeight + 'px'}">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;广告管理</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>广告管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="ctrlbutton">
       <el-select
         class="selectAccount"
@@ -40,7 +43,8 @@
         type="primary"
         v-if="disCondition.length < 5"
         @command="handleCommand"
-      >搜索
+      >
+        搜索
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item class="tocreate" command="fbCampaignId_广告系列编号">广告系列编号</el-dropdown-item>
           <el-dropdown-item class="tocreate" command="campaignName_广告系列名称">广告系列名称</el-dropdown-item>
@@ -226,6 +230,9 @@
             @showOptionbox="showOptionbox"
             @showRemainBox="showRemainBox"
             @tabJump="tabJump"
+            @ruleCreate="ruleCreate"
+            @ruleAdd="ruleAdd"
+            @ruleRemove="ruleRemove"
             :opDefault="[{ name: '广告系列名称', key: 'campaignName', tool: true, link: true }]"
             :defaultOption="defaultOption"
             type="campaignName"
@@ -245,6 +252,9 @@
             @showOptionbox="showOptionbox"
             @showRemainBox="showRemainBox"
             @tabJump="tabJump"
+            @ruleCreate="ruleCreate"
+            @ruleAdd="ruleAdd"
+            @ruleRemove="ruleRemove"
             :opDefault="[{ name: '广告组名称', key: 'adSetName', tool: true, link: true }]"
             :defaultOption="defaultOption"
             type="adSetName"
@@ -264,6 +274,9 @@
             @showOptionbox="showOptionbox"
             @showRemainBox="showRemainBox"
             @tabJump="tabJump"
+            @ruleCreate="ruleCreate"
+            @ruleAdd="ruleAdd"
+            @ruleRemove="ruleRemove"
             :opDefault="[{ name: '广告名称', key: 'adName', tool: true }]"
             :defaultOption="defaultOption"
             type="adName"
@@ -324,14 +337,16 @@
       ref="listOption"
     ></list-option>
     <import-remain :status.sync="remainstatus" :type="tabtype" @hideRemainBox="hideRemainBox"></import-remain>
-    <!-- <rule-add :status.sync="ruleaddstatus"></rule-add> -->
-    <!-- <rule-remove :status.sync="ruleremovestatus"></rule-remove> -->
+    <rule-select ref="ruleSelect" :status.sync="ruleselectstatus"></rule-select>
+    <rule-remove ref="ruleRemove" :status.sync="ruleremovestatus"></rule-remove>
+    <rule-add ref="ruleAdd" :status.sync="ruleaddstatus"></rule-add>
   </div>
 </template>
 
 <script>
-import RuleRemove from './ad-ruleremove';
-import RuleAdd from "./ad-ruleadd";
+import RuleAdd from "../rules/rule-add";
+import RuleRemove from "./ad-ruleremove";
+import RuleSelect from "./ad-ruleselect";
 import AdSetbox from "./ad-setbox";
 import AdCreate from "./ad-create";
 import AdCopy from "./ad-copy";
@@ -351,8 +366,9 @@ export default {
     AdCopy,
     ListOption,
     ImportRemain,
-    RuleAdd,
-    RuleRemove
+    RuleSelect,
+    RuleRemove,
+    RuleAdd
   },
   beforeRouteLeave(to, from, next) {
     switch (this.tabname) {
@@ -374,8 +390,9 @@ export default {
     return {
       optionstatus: false,
       remainstatus: false,
-      ruleaddstatus: false, // 添加规则
+      ruleselectstatus: false, // 选择现有规则
       ruleremovestatus: false, // 移除规则
+      ruleaddstatus: false, // 创建规则
       defaultOption: [], // 自定义列配置, 常用，不包含各模块固定列
       defaultListOption: [], // 自定义列中的配置
       sortDown: false,
@@ -683,6 +700,44 @@ export default {
     this.disCondition = this.allCondition[this.$route.params.id]
       ? this.allCondition[this.$route.params.id]
       : [];
+    /**
+     * 2019-04-08新增筛选条件相关逻辑
+     * 从优化记录点击跳转，需要筛选出当前选择条件对应数据
+     */
+    let kid = this.$route.params.kid;
+    let tab = "first";
+    let tabname = "campaignName";
+    if (kid) {
+      let k = kid.split("_");
+      let id = k[0];
+      let type = k[1];
+      switch (type) {
+        case "CAMPAIGN":
+          this.prevFirstKey = "fbCampaignId";
+          this.conditionSel = "广告系列编号";
+          tab = "first";
+          tabname = "campaignName";
+          break;
+        case "ADSET":
+          this.prevFirstKey = "fbAdSetId";
+          this.conditionSel = "广告组编号";
+          tab = "second";
+          tabname = "adSetName";
+          break;
+        case "AD":
+          this.prevFirstKey = "fbAdId";
+          this.conditionSel = "广告编号";
+          tab = "third";
+          tabname = "adName";
+          break;
+      }
+      this.conditionInput = id;
+      this.prevFirstSearch = "allsearch";
+      this.determineSearch("init");
+    }
+    this.tabname = tab;
+    this.SETSTATE({ k: "adtab", v: tabname });
+
     // 初始化从本地缓存获取广告账户
     this.accountStorage = localStorage.getItem("ad-account")
       ? JSON.parse(localStorage.getItem("ad-account"))
@@ -690,12 +745,11 @@ export default {
     this.value3 = this.accountStorage[this.$route.params.id]
       ? this.accountStorage[this.$route.params.id].split("|")
       : [];
+
     // 初始化从本地缓存获取已选广告账户，存到state中
     this.SETSTATE({ k: "adaccountid", v: this.value3 });
 
     // 初始化数据
-    this.tabname = "first";
-    this.SETSTATE({ k: "adtab", v: "campaignName" });
     this.SETSTATE({
       k: "adstarttime",
       v: this.$timeFormat(dt[0], "yyyy-MM-dd")
@@ -717,7 +771,6 @@ export default {
       ).applicationId;
 
       this.SETSTATE({ k: "adapplicationid", v: this.applicationid });
-
       this.initData(this.applicationid);
     }
     // 初始化获取已保存筛选条件
@@ -730,6 +783,18 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    ruleAdd(select, type) {
+      this.ruleaddstatus = true;
+      this.$refs.ruleAdd.adInit(select, type);
+    },
+    ruleCreate(select, type) {
+      this.ruleselectstatus = true;
+      this.$refs.ruleSelect.adInit(select, type);
+    },
+    ruleRemove(id, type) {
+      this.ruleremovestatus = true;
+      this.$refs.ruleRemove.initData(id, type);
+    },
     tabJump(tabname, row, type) {
       this.tabname = tabname;
 
@@ -786,7 +851,6 @@ export default {
       } else pandectEvent = JSON.parse(pandectEvent);
 
       pandectEvent[applicationid] = localEvent;
-      console.log(localEvent);
       localStorage.setItem(adEventLS.new, JSON.stringify(pandectEvent));
 
       this.resetPageData();
@@ -909,7 +973,7 @@ export default {
       localStorage.setItem(adFilterLS.new, JSON.stringify(this.allCondition));
     },
     // 确定条件，同时保存到本地缓存
-    determineSearch() {
+    determineSearch(frm) {
       let cond = {};
       let dealkey = this.seachDeal();
       // 所有字段的值需要乘以100
@@ -1048,7 +1112,7 @@ export default {
       // 确定完之后初始化状态
       this.cancelSearch("select");
       // 重置列表数据
-      this.resetPageData();
+      if (frm != "init") this.resetPageData();
     },
     // 取消条件，重置状态
     cancelSearch(frm) {
@@ -1252,6 +1316,7 @@ export default {
        * 如果有操作过相关条件，则取消默认
        */
       option.adCampaignStatusStr = this.sortdefault;
+      console.log(this.disCondition);
       this.disCondition.forEach(v => {
         if (option[v.key] && v.key != "adCampaignStatusStr")
           option[v.key] += " and " + v.option;
@@ -1260,7 +1325,18 @@ export default {
       // 设置默认条件，详情见方法注释
       this.sortConditionLogic(option);
 
-      var k = "campain_option";
+      var k = "";
+      switch (this.tabname) {
+        case "first":
+          k = "campain_option";
+          break;
+        case "second":
+          k = "set_option";
+          break;
+        case "third":
+          k = "ad_option";
+          break;
+      }
       this.SETSTATE({ k, v: option });
 
       // 获取joblist

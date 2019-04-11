@@ -42,6 +42,9 @@ export default {
     SETSTATE(state, { k, v }) {
         state[k] = v;
     },
+    SETOBJSTATE(state, {obj, name, v}) {
+        state[obj][name] = v;
+    },
     MESSAGECOUNT(state, r) {
         switch (true) {
             case (r.data != '99+' && Array.isArray(eval(r.data))):
@@ -398,17 +401,17 @@ export default {
         state.ruleapp = dt;
     },
     OPTIMIZEACCOUNT(state, r) {
-        let dt = r.data;
-        dt.unshift({
-            fbAccountName: '不限',
-            fbAccountId: '-1',
-        });
-        state.optimizeaccount = dt;
+        state.optimizeaccount = r.data;
     },
     OPTIMIZELIST(state, r) {
-        state.optotal = r.data.total;
-        state.oppagesize = r.data.pageSize;
+        state.optotal = r.data.count;
         state.optimizelist = r.data.list;
+    },
+    EXECUTELIST(state, r) {
+        state.executelist = r.data;
+    },
+    OPTIMIZEDETAIL(state, r) {
+        state.optimizedetail = r.data;
     },
     // create
     CREATE(state, r) {
@@ -1158,7 +1161,7 @@ export default {
         let tabcampaign = r.filter(v => campaignTab.indexOf(v.taskName) != -1);
         if (tabcampaign.length > 0) {
             errortasks = tabcampaign.filter(v => v['tasks']).map(v => v['tasks']).flat();
-            if(errortasks.length > 0)
+            if (errortasks.length > 0)
                 state.taskresult.push({
                     tabelhead: '广告系列名称',
                     tabname: `广告系列${eval(tabcampaign.map(v => v.success).join('+'))}/${errortasks.length}`,
@@ -1168,7 +1171,7 @@ export default {
         let tabadset = r.filter(v => adsetTab.indexOf(v.taskName) != -1);
         if (tabadset.length > 0) {
             errortasks = tabadset.filter(v => v['tasks']).map(v => v['tasks']).flat();
-            if(errortasks.length > 0)
+            if (errortasks.length > 0)
                 state.taskresult.push({
                     tabelhead: '广告组名称',
                     tabname: `广告组${eval(tabadset.map(v => v.success).join('+'))}/${errortasks.length}`,
@@ -1178,7 +1181,7 @@ export default {
         let tabad = r.filter(v => adTab.indexOf(v.taskName) != -1);
         if (tabad.length > 0) {
             errortasks = tabad.filter(v => v['tasks']).map(v => v['tasks']).flat();
-            if(errortasks.length > 0)
+            if (errortasks.length > 0)
                 state.taskresult.push({
                     tabelhead: '广告名称',
                     tabname: `广告${eval(tabad.map(v => v.success).join('+'))}/${errortasks.length}`,
@@ -1230,6 +1233,12 @@ export default {
     },
     ACTIVEAD(state, r) {
         state.hascreatead = r.data;
+    },
+    ADRULELIST(state, r) {
+        state.adrulelist = r.data;
+    },
+    SINGLERULES(state, r) {
+        state.singlerules = r.data;
     },
     // data
     CONDITION(state, r) {
@@ -1857,6 +1866,21 @@ export default {
     },
     ALLRULES(state, r) {
         state.allrules = r.data;
+    },
+    GETRULELIST(state, r) {
+        state.newrulelist = r.data.list;
+        state.newruletotal = r.data.count;
+        // 特殊情况，通知类型操作，无法编辑
+        state.newrulelist.forEach(v => {
+            let executionSpec = JSON.parse(v.executionSpec);
+            if(executionSpec['execution_type'] == 'NOTIFICATION')
+                v.noedit = true;
+            
+            let evaluationSpec = JSON.parse(v.evaluationSpec);
+            v.iftrigger = evaluationSpec['evaluation_type'] == 'TRIGGER' ? true : false;
+        })
+
+
     },
     REGUFORMDATA(state, r) {
         // 规则启用比例

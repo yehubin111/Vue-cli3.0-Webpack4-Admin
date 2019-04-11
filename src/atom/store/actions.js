@@ -728,6 +728,150 @@ export default {
                 console.log(err);
             })
     },
+    getRuleList({ state, commit }) {
+        let url = URL.getrulelist;
+        let str = '';
+        Object.keys(state.ruleoption).forEach(v => {
+            if (state.ruleoption[v])
+                str += `&${v}=${state.ruleoption[v]}`;
+        })
+        str = str.substr(1);
+        url += str;
+
+        Axios({
+            url,
+            fullscreen: true,
+            success: res => {
+                commit('GETRULELIST', res);
+            }
+        })
+    },
+    deleteRule({ state, commit, dispatch }, id) {
+        let url = URL.deleterule.replace('{ruleId}', id);
+
+        Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('删除成功');
+                    dispatch('getRuleList');
+                } else {
+                    Msgerror(`删除失败：${res.msg}`);
+                }
+            }
+        })
+    },
+    toCloseRule({ state, commit }, id) {
+        let url = URL.ruleclose.replace('{ruleId}', id);
+
+        Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('关闭成功');
+                } else {
+                    Msgerror(`关闭失败：${res.msg}`);
+                }
+            }
+        })
+    },
+    toOpenRule({ state, commit }, id) {
+        let url = URL.ruleopen.replace('{ruleId}', id);
+
+        Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('打开成功');
+                } else {
+                    Msgerror(`打开失败：${res.msg}`);
+                }
+            }
+        })
+    },
+    addRule({ state, commit, dispatch }, { option, from = '' }) {
+        let url = URL.addrule;
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            data: option,
+            success: res => {
+                if (res.data) {
+                    // 只有从当前页面创建成功，才需要刷新列表
+                    if (!from)
+                        dispatch('getRuleList');
+
+                    Msgsuccess('创建成功');
+                } else {
+                    Msgerror(`创建失败：${res.msg}`);
+                }
+
+                return res;
+            }
+        })
+    },
+    editRule({ state, commit, dispatch }, { option }) {
+        let url = URL.editrule;
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            data: option,
+            success: res => {
+                if (res.data) {
+                    dispatch('getRuleList');
+                    Msgsuccess('编辑成功');
+                } else {
+                    Msgerror(`编辑失败：${res.msg}`);
+                }
+
+                return res;
+            }
+        })
+    },
+    getExecute({ state, commit }, fbRuleId) {
+        let url = URL.getexecute.replace('{fbRuleId}', fbRuleId);
+
+        let load;
+        setTimeout(function () {
+            load = Loading.service({ fullscreen: true });
+
+            Axios({
+                url,
+                success: res => {
+                    if (load) load.close();
+                    commit('EXECUTELIST', res);
+                }
+            })
+        }, 300);
+    },
+    executeRule({ state, commit, dispatch }, fbid) {
+        let url = URL.executerule.replace('{fbRuleId}', fbid);
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('执行成功');
+                    dispatch('getRuleList');
+                } else {
+                    Msgerror(`执行失败：${res.msg}`);
+                }
+                return res;
+            }
+        })
+    },
     openRule({ state, commit }, { projid, ruleGroupId }) {
         let url = URL.openrule.replace('{projectId}', projid);
         let params = {
@@ -779,13 +923,13 @@ export default {
                 console.log(err);
             })
     },
-    getOptimizeList({ state, commit }, { optlist, projectId }) {
-        let url = URL.optimize.replace('{projectId}', projectId);
+    getOptimizeList({ state, commit }, option) {
+        let url = URL.optimize;
 
         let str = '';
-        for (let i in optlist) {
-            if (optlist[i])
-                str += `&${i}=${optlist[i]}`;
+        for (let i in option) {
+            if (option[i])
+                str += `&${i}=${option[i]}`;
         }
 
         url += str.substr(1);
@@ -797,6 +941,23 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    optimizeDetail({state, commit}, fbid) {
+        let url = `${URL.optimizedetail}fbRuleLogId=${fbid}`;
+        let load;
+        
+        setTimeout(function () {
+            load = Loading.service({ fullscreen: true });
+
+            Axios({
+                url,
+                fullscreen: true,
+                success: res => {
+                    if (load) load.close();
+                    commit('OPTIMIZEDETAIL', res);
+                }
+            })
+        }, 300);
     },
     // create
     matchFileMD5({ state, commit }, { md5, file, list, type, tabvalue, on, vdname }) {
@@ -2540,6 +2701,67 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    ruleListForAdd({ state, commit }, { fbAccountIds, level }) {
+        let url = `${URL.adrulelist}fbAccountIds=${fbAccountIds}&level=${level}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('ADRULELIST', res);
+            }
+        })
+    },
+    useRules({ state, commit }, { objIds, ruleIds, objLevel }) {
+        let url = URL.userules;
+        let option = new FormData();
+        option.append('objIds', objIds);
+        option.append('ruleIds', ruleIds);
+        option.append('objLevel', objLevel);
+
+        return Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => {
+                if (res.data)
+                    Msgsuccess('应用成功');
+                else
+                    Msgerror(`应用失败：${res.msg}`);
+                return res;
+            }
+        })
+    },
+    singleRules({ state, commit }, id) {
+        let url = URL.singlerules.replace('{objId}', id);
+
+        Axios({
+            url,
+            success: res => {
+                commit('SINGLERULES', res);
+            }
+        })
+    },
+    removeRules({ state, commit }, { objId, ruleIds, objLevel }) {
+        let url = URL.removerule.replace('{objId}', objId);
+        let option = new FormData();
+        option.append('ruleIds', ruleIds);
+        option.append('objLevel', objLevel);
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            data: option,
+            success: res => {
+                if (res.data)
+                    Msgsuccess('移除成功');
+                else
+                    Msgerror(`移除失败：${res.msg}`);
+                return res;
+            }
+        })
     },
     // data
     getCondition({ state, commit }, { projectId }) {

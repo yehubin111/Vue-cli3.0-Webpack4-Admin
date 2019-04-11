@@ -657,6 +657,7 @@ export default {
       let data = this.form;
 
       // if (data["name"] === "") return [false, this.msg["name"]];
+      console.log(this.processVIO);
       if (data["type"] == 0 && this.processIMG.length == 0)
         return [false, this.msg["imginfo"]];
       if (data["type"] == 1 && this.processVIO.length == 0)
@@ -883,10 +884,6 @@ export default {
 .leftform {
   width: 50%;
   float: left;
-}
-.cline {
-  // width: 50%;
-  // float: left;
 }
 .cbutton {
   width: 100%;

@@ -1,6 +1,9 @@
 <template>
   <div class="rule">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;创意管理</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>创意管理</el-breadcrumb-item>
+    </el-breadcrumb>
     <div class="ctrlbutton">
       <!-- <el-button class="add" type="primary" @click="status4 = true">新增创意</el-button> -->
       <el-dropdown class="add" split-button type="primary" @command="addCreateType">

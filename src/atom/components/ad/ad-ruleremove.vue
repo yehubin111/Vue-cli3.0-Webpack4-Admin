@@ -1,12 +1,29 @@
 <template>
-  <el-dialog :title="`应用于{对象ID}{广告系列/广告组/广告}的规则`" :visible="status" class="deletedialog" @close="toCancel">
-    <p class="fonttip important">
-      <b>以下是应用于此对象的规则，选择后可移除：</b>
-    </p>
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column type="selection" fixed width="55"></el-table-column>
-      <el-table-column prop="date" label="名称"></el-table-column>
-      <el-table-column prop="name" label="操作与条件"></el-table-column>
+  <el-dialog
+    :title="`应用于${id}${typename}的规则`"
+    :visible="status"
+    class="deletedialog"
+    @close="toCancel"
+  >
+    <div class="fonttip important">
+      <p>以下是应用于此对象的规则，选择后可移除：</p>
+      <p class="notice" v-show="hascantselect">置灰列表不可删除，请直接删除此规则</p>
+    </div>
+    <el-table
+      :data="singlerules"
+      border
+      style="width: 100%"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" :selectable="ifSelect" fixed width="55">
+      </el-table-column>
+      <el-table-column prop="name" label="名称"></el-table-column>
+      <el-table-column prop label="操作与条件">
+        <template slot-scope="scope">
+          <p>{{scope.row.executionSpecName}}</p>
+          <p class="childtype">{{scope.row.evaluationSpecName}}</p>
+        </template>
+      </el-table-column>
     </el-table>
     <div slot="footer" class="dialog-footer">
       <el-button @click="toCancel">取 消</el-button>
@@ -16,21 +33,77 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
+import { Msgwarning } from "../../js/message";
 export default {
   props: ["status"],
   data() {
     return {
-      tableData: [{ name: "111", date: "222" }]
+      id: "",
+      type: "",
+      typename: "",
+      ruleids: [],
+      level: "",
+      hascantselect: false
     };
   },
   methods: {
-    toCancel() {
-      this.$emit("update.status", false);
+    ...mapMutations(["SETSTATE"]),
+    ifSelect(row, index) {
+      if (row.ruleObjCount > 1) {
+        return true;
+      } else {
+        this.hascantselect = true;
+        return false;
+      }
     },
-    submitExecute() {}
+    toCancel() {
+      this.$emit("update:status", false);
+
+      this.ruleids = [];
+      this.SETSTATE({ k: "singlerules", v: [] });
+      this.hascantselect = false;
+    },
+    async submitExecute() {
+      if (this.ruleids.length == 0) {
+        Msgwarning("请选择规则");
+        return;
+      }
+      let objId = this.id;
+      let ruleIds = this.ruleids.join(",");
+      let res = await this.$store.dispatch("removeRules", {
+        objId,
+        ruleIds,
+        objLevel: this.level
+      });
+      this.toCancel();
+    },
+    handleSelectionChange(vl) {
+      this.ruleids = vl.map(v => v.fbId);
+    },
+    initData(id, type) {
+      this.id = id;
+      this.type = type;
+      switch (type) {
+        case "campaignName":
+          this.typename = "广告系列";
+          this.level = "CAMPAIGN";
+          break;
+        case "adSetName":
+          this.typename = "广告组";
+          this.level = "ADSET";
+          break;
+        case "adName":
+          this.typename = "广告";
+          this.level = "AD";
+          break;
+      }
+      this.$store.dispatch("singleRules", id);
+    }
   },
-  computed: {},
+  computed: {
+    ...mapState(["singlerules"])
+  },
   watch: {}
 };
 </script>
@@ -38,8 +111,23 @@ export default {
 <style lang='less' scoped>
 .fonttip {
   margin-bottom: 10px;
+  .notice {
+    color: red;
+  }
+}
+.conditiontip {
+  position: absolute;
+  left: -10px;
+  top: 14px;
+}
+.specialname {
+  z-index: 99;
 }
 .targetlist {
   margin-bottom: 20px;
+}
+.childtype {
+  font-size: 12px;
+  color: #999;
 }
 </style>

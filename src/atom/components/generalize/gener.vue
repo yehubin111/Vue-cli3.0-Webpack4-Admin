@@ -1,6 +1,9 @@
 <template>
   <div class="gener">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;创建推广计划</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>创建推广计划</el-breadcrumb-item>
+    </el-breadcrumb>
     <gener-form @changeEdit="changeEdit" :targetid="targetid"></gener-form>
   </div>
 </template>

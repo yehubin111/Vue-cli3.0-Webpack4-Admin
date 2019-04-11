@@ -1,6 +1,9 @@
 <template>
   <div class="gener">
-    <p class="title">项目{{projectname}}&nbsp;&nbsp;>&nbsp;&nbsp;编辑推广计划</p>
+    <el-breadcrumb class="title" separator=">">
+      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
+      <el-breadcrumb-item>编辑推广计划</el-breadcrumb-item>
+    </el-breadcrumb>
     <edit-form v-for="(l, index) in disinfo" :key="index" :createinfo="l" @changeEdit="changeEdit"></edit-form>
   </div>
 </template>

@@ -45,6 +45,9 @@
         <p style="padding-left: 20px" @click="videoTranslate">
           视频转换
         </p>
+        <p>
+          <router-link to="/temp">模板制图</router-link>
+        </p>
       </div>
     </li>
   </ul>

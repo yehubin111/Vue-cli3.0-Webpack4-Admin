@@ -43,6 +43,7 @@ import Sort from "./pandect-sort";
 import TableList from "./pandect-table";
 import AppChart from "./pandect-appchart";
 import OtherTable from "./pandect-othertable";
+import imageTemplate from '@/atom/js/imageTemplate';
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
   components: {

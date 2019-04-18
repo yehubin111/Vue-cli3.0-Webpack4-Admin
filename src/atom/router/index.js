@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import index from '../components/index'
 import bind from '../components/bind'
 import pandect from '../components/pandect/pandect'
@@ -10,6 +11,7 @@ import notmanage from '../components/manage/notmanage'
 import regular from '../components/regular/regular'
 import reguform from '../components/regular/reguform'
 import message from '../components/message/message'
+import temp from '../components/temp/temp'
 
 import project from '../components/project'
 import rule from '../components/rules/rule'
@@ -114,6 +116,14 @@ export default new Router({
                 component: message,
                 meta: {
                     title: '消息中心'
+                }
+            },
+            {
+                path: 'temp',
+                name: 'temp',
+                component: temp,
+                meta: {
+                    title: '制作图片'
                 }
             }
         ]

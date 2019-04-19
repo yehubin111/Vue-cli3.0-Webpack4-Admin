@@ -23,7 +23,7 @@
             <div slot="tip" class="el-upload__tip">建议上传模板的成品，吸引用户使用</div>
             <p class="image" v-for="img in form.face" :key="img.imageUrl">
               <span class="box">
-                <img :src="img.imageUrl" alt>
+                <img :src="form.faceurl" alt>
               </span>
               <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
             </p>
@@ -36,7 +36,7 @@
             <div slot="tip" class="el-upload__tip">素材放好位置后，会讲模板覆盖在上面</div>
             <p class="image" v-for="img in form.temp" :key="img.imageUrl">
               <span class="box">
-                <img :src="img.imageUrl" alt>
+                <img :src="form.tempurl" alt>
               </span>
               <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
             </p>
@@ -128,7 +128,9 @@ export default {
         size: "",
         trade: "",
         face: [],
+        faceurl: '',
         temp: [],
+        tempurl: '',
         logo: {
           with: true,
           x: 0,
@@ -153,10 +155,11 @@ export default {
   methods: {
     tempUploading(res) {
       this.form.temp = res;
+      this.form.tempurl = res[0].imageUrl;
     },
     imgUploading(res) {
-      console.log(res[0].imageUrl);
       this.form.face = res;
+      this.form.faceurl = res[0].imageUrl;
     },
     onSubmit() {},
     handleClose(tag) {

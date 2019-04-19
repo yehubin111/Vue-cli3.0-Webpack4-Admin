@@ -175,6 +175,8 @@ export default {
       if (!this.form.tempurl) return [false, "请上传模板"];
 
       if (this.form.tags.length == 0) return [false, "请设置标签"];
+
+      return [true];
     },
     onSubmit() {
       let check = this.dataCheck();

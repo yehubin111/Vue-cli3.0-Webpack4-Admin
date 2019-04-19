@@ -21,11 +21,9 @@
             <templates-upload @imgUploading="imgUploading"></templates-upload>
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">建议上传模板的成品，吸引用户使用</div>
-            <p class="image">
-              <img
-                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                alt
-              >
+            <p class="image" v-for="img in form.face" :key="img">
+              <img :src="img.imageUrl" alt>
+              <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
             </p>
           </div>
         </el-form-item>
@@ -127,6 +125,7 @@ export default {
       form: {
         size: "",
         trade: "",
+        face: [],
         logo: {
           with: true,
           x: 0,
@@ -150,7 +149,7 @@ export default {
   },
   methods: {
     imgUploading(res) {
-      console.log(res);
+      this.form.face = res;
     },
     onSubmit() {},
     handleClose(tag) {

@@ -3277,7 +3277,7 @@ export default {
             })
     },
     // template
-    addTemplate({ state, commit }, option, route) {
+    addTemplate({ state, commit }, { option, route }) {
         let url = URL.addtemplate;
 
         Axios({

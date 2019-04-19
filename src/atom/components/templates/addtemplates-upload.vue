@@ -127,10 +127,9 @@ export default {
         if (v.name == res.data[0].originName) {
           v.imageUrl = res.data[0].targetName;
           v.imageHash = res.data[0].md5;
-
-          this.$emit("imgUploading", this.processIMG);
         }
       });
+      this.$emit("imgUploading", this.processIMG);
     },
     uploadError(res, file) {
       //   this.SETSTATE({ k: "addcreate", v: true });

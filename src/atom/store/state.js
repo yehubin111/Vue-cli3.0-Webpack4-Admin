@@ -373,4 +373,7 @@ export default {
   msgpageindex: 1,
   msgpagesize: 20,
   messagecount: 0, // 头部消息条数
+  // template
+  tempsize: [], // 尺寸列表
+  temptrade: [], // 行业列表
 }

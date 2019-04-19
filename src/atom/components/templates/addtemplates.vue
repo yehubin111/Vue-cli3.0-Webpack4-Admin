@@ -8,12 +8,12 @@
       <el-form ref="form" :model="form" label-width="60px" label-position="left">
         <el-form-item label="尺寸">
           <el-select class="select" v-model="form.size" placeholder="请选择尺寸">
-            <el-option :label="sz" :value="sz" v-for="sz in sizes" :key="sz"></el-option>
+            <el-option :label="sz" :value="sz" v-for="sz in tempsize" :key="sz"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="行业">
           <el-select class="select" v-model="form.trade" placeholder="请选择行业">
-            <el-option :label="td" :value="td" v-for="td in trades" :key="td"></el-option>
+            <el-option :label="td" :value="td" v-for="td in temptrade" :key="td"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="封面">
@@ -72,6 +72,7 @@
                   type="text"
                   icon="el-icon-close"
                   v-show="form.matter.length > 1"
+                  @click="deleteMatter(index)"
                 ></el-button>
               </div>
               <div class="sizeinput">
@@ -122,14 +123,15 @@
 <script>
 import TemplatesUpload from "./addtemplates-upload";
 import { Msgwarning } from "../../js/message";
+import { mapState } from "vuex";
 export default {
   components: {
     TemplatesUpload
   },
   data() {
     return {
-      sizes: ["1200x628", "1080x1080", "320x480", "300x250", "300x50"],
-      trades: ["电商", "短视频", "社交", "工具"],
+      // sizes: ["1200x628", "1080x1080", "320x480", "300x250", "300x50"],
+      // trades: ["电商", "短视频", "社交", "工具"],
       form: {
         size: "",
         trade: "",
@@ -151,7 +153,19 @@ export default {
       inputValue: ""
     };
   },
+  mounted() {
+    // 获取尺寸列表
+    this.$store.dispatch("getSizeTrade", "template_size");
+    // 获取行业列表
+    this.$store.dispatch("getSizeTrade", "template_business");
+  },
+  computed: {
+    ...mapState(["tempsize", "temptrade"])
+  },
   methods: {
+    deleteMatter(idx) {
+      this.form.matter.splice(idx, 1);
+    },
     moreMatter() {
       this.form.matter.push({
         x: 0,

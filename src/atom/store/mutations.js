@@ -1992,5 +1992,12 @@ export default {
     MESSAGELIST(state, r) {
         state.messagelist = r.data;
         state.messagetotal = r.data.length;
+    },
+    // template
+    TEMPSIZE(state, r) {
+        state.tempsize = r.data;
+    },
+    TEMPTRADE(state, r) {
+        state.temptrade = r.data;
     }
 }

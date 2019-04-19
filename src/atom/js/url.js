@@ -206,5 +206,6 @@ export default {
     'setallread': 'user/setUserMessageRead', // 全部已读
     'messageCountWebsocket': `${location.protocol.indexOf('https:') != -1? 'wss':'ws'}://${baseurl[process.env.VUE_APP_URLBASE].WEBSOCKET_URL}/websocket/`, // 获取消息数量websocket连接地址
     // template
+    'sizetrade': 'template/getTemplatValue?', // 获取尺寸列表和行业列表
     'addtemplate': 'template/saveTemplate', // 保存模板
 }

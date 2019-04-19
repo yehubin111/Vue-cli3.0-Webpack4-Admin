@@ -3277,6 +3277,19 @@ export default {
             })
     },
     // template
+    getSizeTrade({ state, commit }, key) {
+        let url = URL.sizetrade + 'key=' + key;
+
+        Axios({
+            url,
+            success: res => {
+                if (key == 'template_size')
+                    commit('TEMPSIZE', res);
+                else
+                    commit('TEMPTRADE', res);
+            }
+        })
+    },
     addTemplate({ state, commit }, { option, route }) {
         let url = URL.addtemplate;
 
@@ -3288,7 +3301,7 @@ export default {
             success: res => {
                 Msgsuccess('模板保存成功');
                 setTimeout(() => {
-                    route.push(`/manage`);
+                    route.push(`/templates`);
                 }, 1000)
             }
         })

@@ -35,10 +35,12 @@
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">素材放好位置后，会讲模板覆盖在上面</div>
             <p class="image">
-              <img
-                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                alt
-              >
+              <span class="box">
+                <img
+                  src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
+                  alt
+                >
+              </span>
             </p>
           </div>
         </el-form-item>
@@ -201,6 +203,7 @@ export default {
       margin-left: 5px;
     }
     .image {
+      width: 153px;
       .box {
         width: 100px;
         height: 100px;
@@ -208,6 +211,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 5px;
         img {
           width: 100%;
         }

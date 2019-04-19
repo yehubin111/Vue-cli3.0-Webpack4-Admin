@@ -1,21 +1,31 @@
 <template>
   <div>
-    <el-table :data="disapp" style="width: 100%">
-      <el-table-column prop="applicationId" label="ID" width="200"></el-table-column>
-      <el-table-column prop="name" label="封面"></el-table-column>
-      <el-table-column prop="category" label="尺寸" width="180"></el-table-column>
-      <el-table-column prop="name" label="行业"></el-table-column>
-      <el-table-column prop="category" label="标签" width="180"></el-table-column>
-      <el-table-column prop="name" label="LOGO"></el-table-column>
-      <el-table-column prop="category" label="素材" width="180"></el-table-column>
-      <el-table-column prop="name" label="操作">
+    <el-table :data="templatelist" style="width: 100%">
+      <el-table-column prop="id" label="ID" width="120"></el-table-column>
+      <el-table-column prop="coverImage" label="封面">
         <template slot-scope="scope">
-          <el-button
-            type="text"
-            size="small"
-            @click="setDetection(scope.row.applicationId, scope.row.applicationPlatformVO)"
-          >编辑</el-button>
-          <el-button type="text" size="small" @click="deleteTemp()">删除</el-button>
+          <p class="image">
+            <img :src="'http://172.31.1.76' + scope.row.coverImage" alt>
+          </p>
+        </template>
+      </el-table-column>
+      <el-table-column prop="size" label="尺寸" width="140"></el-table-column>
+      <el-table-column prop="business" label="行业" width="140"></el-table-column>
+      <el-table-column prop="label" label="标签" width="140"></el-table-column>
+      <el-table-column prop="isLogo" label="LOGO" width="140">
+        <template slot-scope="scope">
+          <p>{{scope.row.isLogo == '0'? '不支持': '支持'}}</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop="templateImage" label="素材" width="140">
+        <template slot-scope="scope">
+          <p>{{JSON.parse(scope.row.templateImage).length}}个</p>
+        </template>
+      </el-table-column>
+      <el-table-column prop="name" label="操作" width="140">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="setDetection(scope.row.id)">编辑</el-button>
+          <el-button type="text" size="small" @click="deleteTemp(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -27,13 +37,14 @@
         :page-sizes="[20, 50, 80]"
         :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
+        :total="templatetotal"
       ></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -41,6 +52,9 @@ export default {
       pagesize: 20,
       total: 30
     };
+  },
+  computed: {
+    ...mapState(["templatelist", "templatetotal"])
   },
   methods: {
     pageSizeChange() {},
@@ -63,5 +77,16 @@ export default {
   margin-top: 20px;
   text-align: center;
   margin-bottom: 100px;
+}
+.image{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: 1px solid #ddd;
+  img{
+    width: 100%;
+  }
 }
 </style>

@@ -19,6 +19,9 @@ export default {
 
         }
     },
+    mounted() {
+      this.$store.dispatch('getTemplateList');
+    },
     methods: {
       addTemplates() {
         this.$router.push({

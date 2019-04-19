@@ -208,4 +208,5 @@ export default {
     // template
     'sizetrade': 'template/getTemplatValue?', // 获取尺寸列表和行业列表
     'addtemplate': 'template/saveTemplate', // 保存模板
+    'templatelist': 'template/findAll?', // 模板列表
 }

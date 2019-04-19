@@ -1999,5 +1999,9 @@ export default {
     },
     TEMPTRADE(state, r) {
         state.temptrade = r.data;
+    },
+    TEMPLATELIST(state, r) {
+        state.templatetotal = r.data.total;
+        state.templatelist = r.data.list;
     }
 }

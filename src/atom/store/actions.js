@@ -3290,6 +3290,16 @@ export default {
             }
         })
     },
+    getTemplateList({ state, commit }, { size = '', business = '' } = {}) {
+        let url = `${URL.templatelist}size=${size}&business=${business}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('TEMPLATELIST', res);
+            }
+        })
+    },
     addTemplate({ state, commit }, { option, route }) {
         let url = URL.addtemplate;
 
@@ -3299,10 +3309,14 @@ export default {
             data: option,
             fullscreen: true,
             success: res => {
-                Msgsuccess('模板保存成功');
-                setTimeout(() => {
-                    route.push(`/templates`);
-                }, 1000)
+                if (res.data) {
+                    Msgsuccess('模板保存成功');
+                    setTimeout(() => {
+                        route.push(`/templates`);
+                    }, 1000)
+                } else {
+                    Msgsuccess('模板保存失败');
+                }
             }
         })
     }

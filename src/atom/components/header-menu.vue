@@ -17,7 +17,7 @@
         </p>
       </div>
     </li>
-    <li>Facebook同步
+    <li>资源
       <i></i>
       <div class="list">
         <p>
@@ -49,6 +49,12 @@
           <router-link to="/temp">模板制图</router-link>
         </p>
       </div>
+    </li>
+    <li class="special">
+      <router-link to="/setting">设置</router-link>
+    </li>
+    <li class="special">
+      <router-link to="/templates">上传模板</router-link>
     </li>
   </ul>
 </template>

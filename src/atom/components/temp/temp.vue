@@ -5,7 +5,7 @@
       <el-breadcrumb-item>模板制图</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="ctrl">
-      <el-button class="add" type="primary" @click="status1 = true">制作图片</el-button>
+      <el-button class="add" type="primary" @click="toCreateImage">制作图片</el-button>
       <el-dropdown class="add" split-button type="primary" @command="templateCtrl">
         批量
         <el-dropdown-menu slot="dropdown">
@@ -28,13 +28,14 @@
       ></image-template>
     </div>
     <el-button type="primary" @click="setTemplate">click</el-button>
-    <el-button type="primary" @click="templateExport">export</el-button> -->
+    <el-button type="primary" @click="templateExport">export</el-button>-->
   </div>
 </template>
 
 <script>
-import TempList from './temp-templist';
-import ImageTemplate from "./temp-template";
+import TempList from "./temp-templist";
+import ImageTemplate from "./createtemp-template";
+
 import exportTemplate from "@/atom/js/imageTemplate";
 export default {
   components: {
@@ -43,6 +44,7 @@ export default {
   },
   data() {
     return {
+      createstatus: true,
       baseImage:
         "http://172.31.1.45/file/image/2019/04/17/2050c4b8-1d64-4b63-9705-767068f68016.png",
       baseWidth: 1200,
@@ -58,9 +60,12 @@ export default {
     };
   },
   methods: {
-    templateCtrl() {
-
+    toCreateImage() {
+      this.$router.push({
+        name: "createtemp"
+      });
     },
+    templateCtrl() {},
     setTemplate() {
       let images = [
         "http://172.31.1.45/file/image/2019/01/21/e9903413-1837-4a21-b15c-2885679dbf14.jpg",

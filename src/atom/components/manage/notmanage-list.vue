@@ -1,7 +1,7 @@
 <template>
   <el-table :data="dismanage" style="width: 100%" id="manageTable">
-    <el-table-column prop="id" label="项目ID" width="140">
-    </el-table-column>
+    <!-- <el-table-column prop="id" label="项目ID" width="140">
+    </el-table-column> -->
     <el-table-column prop="projectName" label="项目名称">
     </el-table-column>
     <el-table-column prop="closer" label="归档人/时间" width="100">

@@ -7,12 +7,12 @@
           <el-button class="add" type="primary" @click="status1 = true">新增应用</el-button>
           <el-input class="search" v-model="state4" placeholder="搜索应用ID/名称" suffix-icon="el-icon-search" @input="appSearch"></el-input>
         </div>
-        <app-list @editApp="editApp" @setDetection="setDetection"></app-list>
+        <app-list @editApp="editApp"></app-list>
       </div>
     </div>
     <add-app :status="status1" @cancelAddapp="cancelAddapp"></add-app>
     <set-app :status="status2" :id="id" @cancelAddapp="cancelAddapp"></set-app>
-    <app-detection :status="status3" :platform="platform" :id="id" @cancelAddapp="cancelAddapp"></app-detection>
+    <!-- <app-detection :status="status3" :platform="platform" :id="id" @cancelAddapp="cancelAddapp"></app-detection> -->
   </div>
 </template>
 
@@ -20,14 +20,14 @@
 import AppList from "./app-list";
 import AddApp from "./app-addapp";
 import SetApp from "./app-setapp";
-import AppDetection from "./app-detection";
+// import AppDetection from "./app-detection";
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
   components: {
     AppList,
     AddApp,
     SetApp,
-    AppDetection
+    // AppDetection
   },
   data() {
     return {
@@ -54,11 +54,11 @@ export default {
   watch: {},
   methods: {
     ...mapMutations(["SETSTATE"]),
-    setDetection(id, platform) {
-      this.status3 = true;
-      this.platform = platform;
-      this.id = id;
-    },
+    // setDetection(id, platform) {
+    //   this.status3 = true;
+    //   this.platform = platform;
+    //   this.id = id;
+    // },
     appSearch() {
       let v = this.state4.toLowerCase();
       let k = "appkwd";

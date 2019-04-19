@@ -147,7 +147,7 @@ export default {
       float: left;
       .ctrl {
         overflow: hidden;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
         .add {
           float: left;
         }

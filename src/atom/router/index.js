@@ -12,6 +12,10 @@ import regular from '../components/regular/regular'
 import reguform from '../components/regular/reguform'
 import message from '../components/message/message'
 import temp from '../components/temp/temp'
+import createtemp from '../components/temp/createtemp'
+import templates from '../components/templates/templates'
+import addtemplates from '../components/templates/addtemplates'
+import setting from '../components/setting/setting'
 
 import project from '../components/project'
 import rule from '../components/rules/rule'
@@ -124,6 +128,38 @@ export default new Router({
                 component: temp,
                 meta: {
                     title: '制作图片'
+                }
+            },
+            {
+                path: 'temp/create',
+                name: 'createtemp',
+                component: createtemp,
+                meta: {
+                    title: '制作图片'
+                }
+            },
+            {
+                path: 'templates',
+                name: 'templates',
+                component: templates,
+                meta: {
+                    title: '模板管理'
+                }
+            },
+            {
+                path: 'templates/add',
+                name: 'addtemplates',
+                component: addtemplates,
+                meta: {
+                    title: '上传模板'
+                }
+            },
+            {
+                path: 'setting',
+                name: 'setting',
+                component: setting,
+                meta: {
+                    title: '设置'
                 }
             }
         ]

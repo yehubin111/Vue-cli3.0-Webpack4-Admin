@@ -2,11 +2,11 @@
   <el-dialog :title="title" :visible.sync="dialogFormVisible" class="dialog" @close="toCancel">
     <el-form :model="form" class="form" label-position="left" :label-width="formLabelWidth">
       <el-form-item label="项目名称">
-        <el-input class="input" v-model="form.projectname" auto-complete="off"></el-input>
+        <el-input class="input" v-model="form.projectname" auto-complete="off" placeholder="输入项目名称"></el-input>
       </el-form-item>
       <el-form-item label="投放平台">
         <el-radio-group v-model="form.radio1">
-          <el-radio label="Facebook"></el-radio>
+          <el-radio label="Facebook ADS"></el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="项目目标">
@@ -14,8 +14,23 @@
           <el-radio label="安装应用"></el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="选择应用">
-        <el-select class="addselect" :disabled="id != ''" v-model="form.region" placeholder="请选择应用">
+      <el-form-item label="应用">
+        <el-select class="addselect" :disabled="id != ''" v-model="form.region" multiple collapse-tags placeholder="请选择此项目的应用，多选">
+          <el-option v-for="(l, index) in manageapplist" :key="index" :label="l.name" :value="l.applicationId"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="主页">
+        <el-select class="addselect" :disabled="id != ''" v-model="form.page" multiple collapse-tags placeholder="请选择此项目的主页，多选">
+          <el-option v-for="(l, index) in manageapplist" :key="index" :label="l.name" :value="l.applicationId"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="参与成员">
+        <el-select class="addselect" :disabled="id != ''" v-model="form.member" multiple collapse-tags placeholder="请选择此项目的成员，多选">
+          <el-option v-for="(l, index) in manageapplist" :key="index" :label="l.name" :value="l.applicationId"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="广告账户">
+        <el-select class="addselect" :disabled="id != ''" v-model="form.account" multiple collapse-tags placeholder="请选择此项目的广告账户，多选">
           <el-option v-for="(l, index) in manageapplist" :key="index" :label="l.name" :value="l.applicationId"></el-option>
         </el-select>
       </el-form-item>
@@ -37,9 +52,12 @@ export default {
       dialogFormVisible: false,
       form: {
         projectname: "",
-        radio1: "Facebook",
+        radio1: "Facebook ADS",
         radio2: "安装应用",
-        region: ""
+        region: [],
+        page: [],
+        member: [],
+        account: []
       },
       formLabelWidth: "100px"
     };

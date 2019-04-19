@@ -1,16 +1,12 @@
 <template>
-    <el-dialog
-  title=""
-  :visible.sync="dialogVisible"
-  width="30%"
-  @close="toCancel">
-  <span>归档后将不可进入，确认归档？</span>
-  <el-checkbox class="checkbox" v-model="checked">停用广告系列</el-checkbox>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="toOver">确 定</el-button>
-  </span>
-</el-dialog>
+  <el-dialog title :visible.sync="dialogVisible" width="30%" @close="toCancel">
+    <span>归档后将不可进入，确认归档？</span>
+    <el-checkbox class="checkbox" v-model="checked">停用广告系列</el-checkbox>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="toOver">确 定</el-button>
+    </span>
+  </el-dialog>
 </template>
 
 <script>

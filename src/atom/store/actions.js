@@ -3277,15 +3277,19 @@ export default {
             })
     },
     // template
-    addTemplate({ state, commit }, option) {
+    addTemplate({ state, commit }, option, route) {
         let url = URL.addtemplate;
 
         Axios({
             url,
             method: 'post',
             data: option,
+            fullscreen: true,
             success: res => {
-
+                Msgsuccess('模板保存成功');
+                setTimeout(() => {
+                    route.push(`/manage`);
+                }, 1000)
             }
         })
     }

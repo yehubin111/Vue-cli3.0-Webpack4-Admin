@@ -205,7 +205,7 @@ export default {
         templateImage: JSON.stringify(temparr)
       };
 
-      this.$store.dispatch('addTemplate', option);
+      this.$store.dispatch('addTemplate', option, this.$router);
     },
     handleClose(tag) {
       this.form.tags.splice(this.form.tags.indexOf(tag), 1);

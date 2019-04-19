@@ -22,7 +22,9 @@
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">建议上传模板的成品，吸引用户使用</div>
             <p class="image" v-for="img in form.face" :key="img">
-              <img :src="img.imageUrl" alt>
+              <span class="box">
+                <img :src="img.imageUrl" alt>
+              </span>
               <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
             </p>
           </div>
@@ -149,6 +151,7 @@ export default {
   },
   methods: {
     imgUploading(res) {
+      console.log(res);
       this.form.face = res;
     },
     onSubmit() {},
@@ -198,14 +201,16 @@ export default {
       margin-left: 5px;
     }
     .image {
-      width: 100px;
-      height: 100px;
-      border: 1px solid #ddd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      img {
-        width: 100%;
+      .box {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+          width: 100%;
+        }
       }
     }
     .sizeinput {

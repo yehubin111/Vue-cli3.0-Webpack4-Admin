@@ -103,7 +103,7 @@ export default {
      */
     matchMD5(md5, file, type) {
       // 单图情况，上传之前需要清空原先的
-      if (type == "SINGLE") this.processIMG = [];
+      if (this.type == "SINGLE") this.processIMG = [];
 
       this.dom =
         type == "img" ? "vueFileUploaderSINGER" : "vueFileUploaderVioSINGER";

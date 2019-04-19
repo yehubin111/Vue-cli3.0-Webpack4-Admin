@@ -28,7 +28,13 @@ import baseurl from "../../js/baseurl";
 import { mapState, mapMutations } from "vuex";
 let bmf = new BMF();
 export default {
-  props: ["type"],
+  props: {
+    // 类型 SINGLE MUTIPLE
+    type: {
+      type: String,
+      default: "SINGLE"
+    }
+  },
   components: {
     VueFileUpload
   },
@@ -117,7 +123,7 @@ export default {
         on: "",
         vdname: this.fmvideoname,
         callback: () => {
-            this.$emit("imgUploading", this.processIMG);
+          this.$emit("imgUploading", this.processIMG);
         }
       });
     },

@@ -205,4 +205,6 @@ export default {
     'setmessage': 'user/setUserMessageStatus?', // 消息设置已读
     'setallread': 'user/setUserMessageRead', // 全部已读
     'messageCountWebsocket': `${location.protocol.indexOf('https:') != -1? 'wss':'ws'}://${baseurl[process.env.VUE_APP_URLBASE].WEBSOCKET_URL}/websocket/`, // 获取消息数量websocket连接地址
+    // template
+    'addtemplate': 'template/saveTemplate', // 保存模板
 }

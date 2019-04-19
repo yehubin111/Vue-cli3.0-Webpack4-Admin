@@ -942,10 +942,10 @@ export default {
                 console.log(err);
             })
     },
-    optimizeDetail({state, commit}, fbid) {
+    optimizeDetail({ state, commit }, fbid) {
         let url = `${URL.optimizedetail}fbRuleLogId=${fbid}`;
         let load;
-        
+
         setTimeout(function () {
             load = Loading.service({ fullscreen: true });
 
@@ -3275,5 +3275,18 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    // template
+    addTemplate({ state, commit }, option) {
+        let url = URL.addtemplate;
+
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            success: res => {
+
+            }
+        })
     }
 }

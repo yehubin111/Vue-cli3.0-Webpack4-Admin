@@ -15,11 +15,7 @@
             size="small"
             @click="setDetection(scope.row.applicationId, scope.row.applicationPlatformVO)"
           >编辑</el-button>
-          <el-button
-            type="text"
-            size="small"
-            @click="setDetection(scope.row.applicationId, scope.row.applicationPlatformVO)"
-          >删除</el-button>
+          <el-button type="text" size="small" @click="deleteTemp()">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -48,7 +44,16 @@ export default {
   },
   methods: {
     pageSizeChange() {},
-    pageSwitch() {}
+    pageSwitch() {},
+    deleteTemp() {
+      this.$confirm("删除模板后将不可恢复，确认删除模板吗?", "删除模板", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {})
+        .catch(() => {});
+    }
   }
 };
 </script>

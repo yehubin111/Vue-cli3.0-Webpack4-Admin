@@ -45,13 +45,13 @@
         <el-form-item label="logo">
           <div>
             <el-checkbox v-model="form.logo['with']">支持放置logo</el-checkbox>
-            <div class="sizeinput">
+            <div class="sizeinput" v-show="form.logo['with']">
               <span class="font">位置</span>
               <el-input class="smallinput" v-model="form.logo['x']" size="mini" placeholder="x"></el-input>
               <span class="between">,</span>
               <el-input class="smallinput" v-model="form.logo['y']" size="mini" placeholder="y"></el-input>
             </div>
-            <div class="sizeinput">
+            <div class="sizeinput" v-show="form.logo['with']">
               <span class="font">宽高</span>
               <el-input class="smallinput" v-model="form.logo['w']" size="mini" placeholder="宽"></el-input>
               <span class="between">x</span>
@@ -67,7 +67,12 @@
                 <el-input class="smallinput" v-model="mt['x']" size="mini" placeholder="x"></el-input>
                 <span class="between">,</span>
                 <el-input class="smallinput" v-model="mt['y']" size="mini" placeholder="y"></el-input>
-                <el-button class="close" type="text" icon="el-icon-close"></el-button>
+                <el-button
+                  class="close"
+                  type="text"
+                  icon="el-icon-close"
+                  v-show="form.matter.length > 1"
+                ></el-button>
               </div>
               <div class="sizeinput">
                 <span class="font">宽高</span>
@@ -76,7 +81,7 @@
                 <el-input class="smallinput" v-model="mt['h']" size="mini" placeholder="高"></el-input>
               </div>
             </div>
-            <el-button type="primary" size="mini">新增</el-button>
+            <el-button type="primary" size="mini" @click="moreMatter">新增</el-button>
           </div>
         </el-form-item>
         <el-form-item label="标签">
@@ -116,6 +121,7 @@
 
 <script>
 import TemplatesUpload from "./addtemplates-upload";
+import { Msgwarning } from "../../js/message";
 export default {
   components: {
     TemplatesUpload
@@ -128,9 +134,9 @@ export default {
         size: "",
         trade: "",
         face: [],
-        faceurl: '',
+        faceurl: "",
         temp: [],
-        tempurl: '',
+        tempurl: "",
         logo: {
           with: true,
           x: 0,
@@ -138,14 +144,7 @@ export default {
           w: 0,
           h: 0
         },
-        matter: [
-          {
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0
-          }
-        ],
+        matter: [{ x: 0, y: 0, w: 0, h: 0 }],
         tags: []
       },
       inputVisible: false,
@@ -153,6 +152,14 @@ export default {
     };
   },
   methods: {
+    moreMatter() {
+      this.form.matter.push({
+        x: 0,
+        y: 0,
+        w: 0,
+        h: 0
+      });
+    },
     tempUploading(res) {
       this.form.temp = res;
       this.form.tempurl = res[0].imageUrl;
@@ -161,7 +168,43 @@ export default {
       this.form.face = res;
       this.form.faceurl = res[0].imageUrl;
     },
-    onSubmit() {},
+    dataCheck() {
+      if (!this.form.size) return [false, "请选择尺寸"];
+      if (!this.form.trade) return [false, "请选择行业"];
+      if (!this.form.faceurl) return [false, "请上传封面"];
+      if (!this.form.tempurl) return [false, "请上传模板"];
+
+      if (this.form.tags.length == 0) return [false, "请设置标签"];
+    },
+    onSubmit() {
+      let check = this.dataCheck();
+      if (!check[0]) {
+        Msgwarning(check[1]);
+        return;
+      }
+
+      let temparr = [];
+      this.form.matter.forEach(v => {
+        let obj = {
+          size: v.x * 1 + "," + v.y * 1,
+          width_height: v.w * 1 + "x" + v.h * 1
+        };
+        temparr.push(obj);
+      });
+      let option = {
+        business: this.form.trade,
+        coverImage: this.form.faceurl,
+        designMaterial: this.form.tempurl,
+        isLogo: this.form.logo.with * 1,
+        label: this.form.tags.join(","),
+        logoLocation: this.form.logo.x * 1 + "," + this.form.logo.y * 1,
+        logoWidthHeight: this.form.logo.w * 1 + "x" + this.form.logo.h * 1,
+        size: this.form.size,
+        templateImage: temparr
+      };
+
+      this.$store.dispatch('addTemplate', option);
+    },
     handleClose(tag) {
       this.form.tags.splice(this.form.tags.indexOf(tag), 1);
     },

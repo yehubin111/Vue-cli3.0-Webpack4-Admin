@@ -21,7 +21,7 @@
             <templates-upload @imgUploading="imgUploading"></templates-upload>
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">建议上传模板的成品，吸引用户使用</div>
-            <p class="image" v-for="img in form.face" :key="img.imageHash">
+            <p class="image" v-for="img in form.face" :key="img.imageUrl">
               <span class="box">
                 <img :src="img.imageUrl" alt>
               </span>
@@ -31,16 +31,14 @@
         </el-form-item>
         <el-form-item label="模板">
           <div>
-            <templates-upload></templates-upload>
+            <templates-upload @imgUploading="tempUploading"></templates-upload>
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">素材放好位置后，会讲模板覆盖在上面</div>
-            <p class="image">
+            <p class="image" v-for="img in form.temp" :key="img.imageUrl">
               <span class="box">
-                <img
-                  src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                  alt
-                >
+                <img :src="img.imageUrl" alt>
               </span>
+              <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
             </p>
           </div>
         </el-form-item>
@@ -130,6 +128,7 @@ export default {
         size: "",
         trade: "",
         face: [],
+        temp: [],
         logo: {
           with: true,
           x: 0,
@@ -152,8 +151,11 @@ export default {
     };
   },
   methods: {
+    tempUploading(res) {
+      this.form.temp = res;
+    },
     imgUploading(res) {
-      console.log(res);
+      console.log(res[0].imageUrl);
       this.form.face = res;
     },
     onSubmit() {},

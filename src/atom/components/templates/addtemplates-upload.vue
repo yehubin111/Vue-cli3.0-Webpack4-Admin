@@ -115,7 +115,10 @@ export default {
         list: type == "img" ? this.processIMG : this.processVIO,
         type,
         on: "",
-        vdname: this.fmvideoname
+        vdname: this.fmvideoname,
+        callback: () => {
+            this.$emit("imgUploading", this.processIMG);
+        }
       });
     },
     onAddItem(files) {

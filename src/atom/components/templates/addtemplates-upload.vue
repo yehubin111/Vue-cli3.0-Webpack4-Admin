@@ -28,6 +28,7 @@ import baseurl from "../../js/baseurl";
 import { mapState, mapMutations } from "vuex";
 let bmf = new BMF();
 export default {
+  props: ["type"],
   components: {
     VueFileUpload
   },
@@ -101,6 +102,9 @@ export default {
      * 选择文件之后，JS获取MD5值（brower-file-md5），传到后台，如果已上传过，则进度直接为100%
      */
     matchMD5(md5, file, type) {
+      // 单图情况，上传之前需要清空原先的
+      if (type == "SINGLE") this.processIMG = [];
+
       this.dom =
         type == "img" ? "vueFileUploaderSINGER" : "vueFileUploaderVioSINGER";
 

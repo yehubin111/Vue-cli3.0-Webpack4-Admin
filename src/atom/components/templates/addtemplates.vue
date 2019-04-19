@@ -202,7 +202,7 @@ export default {
         logoLocation: this.form.logo.x * 1 + "," + this.form.logo.y * 1,
         logoWidthHeight: this.form.logo.w * 1 + "x" + this.form.logo.h * 1,
         size: this.form.size,
-        templateImage: temparr
+        templateImage: JSON.parse(temparr)
       };
 
       this.$store.dispatch('addTemplate', option);

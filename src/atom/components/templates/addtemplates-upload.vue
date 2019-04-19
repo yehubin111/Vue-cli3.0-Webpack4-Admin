@@ -25,7 +25,7 @@ import VueFileUpload from "vue-file-upload";
 import BMF from "browser-md5-file";
 import { Msgwarning, Msgsuccess, Msgerror } from "../../js/message";
 import baseurl from "../../js/baseurl";
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations } from "vuex";
 let bmf = new BMF();
 export default {
   components: {
@@ -89,12 +89,13 @@ export default {
     }
   },
   computed: {
+    ...mapState(["wantupload"]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
     }
   },
   methods: {
-    ...mapMutations(['SETSTATE']),
+    ...mapMutations(["SETSTATE"]),
     /**
      * 20181107新增，图片视频素材库
      * 选择文件之后，JS获取MD5值（brower-file-md5），传到后台，如果已上传过，则进度直接为100%
@@ -120,7 +121,7 @@ export default {
       console.log("create-add this.uploadsize:", this.uploadsize);
     },
     uploadRes(res) {
-    //   this.SETSTATE({ k: "addcreate", v: true });
+      //   this.SETSTATE({ k: "addcreate", v: true });
 
       this.processIMG.forEach(v => {
         if (v.name == res.data[0].originName) {
@@ -130,12 +131,12 @@ export default {
       });
     },
     uploadError(res, file) {
-    //   this.SETSTATE({ k: "addcreate", v: true });
+      //   this.SETSTATE({ k: "addcreate", v: true });
       this.processIMG = this.processIMG.filter(v => v.name != file.name);
     },
     uploadPic(file, process) {
       this.disfile = file;
-    //   this.SETSTATE({ k: "addcreate", v: false });
+      //   this.SETSTATE({ k: "addcreate", v: false });
 
       let obj = {};
       obj.name = file.name;
@@ -151,8 +152,8 @@ export default {
       if (!this.processIMG.find(v => v.name == file.name)) {
         this.processIMG.push(obj);
       }
-        
-      this.$emit('imgUploading', this.processIMG);
+
+      this.$emit("imgUploading", this.processIMG);
     },
     delIMG(file, name) {
       if (file && file.isUploading) {
@@ -161,7 +162,7 @@ export default {
       }
       this.processIMG = this.processIMG.filter(v => v.name != name);
 
-    //   this.SETSTATE({ k: "addcreate", v: true });
+      //   this.SETSTATE({ k: "addcreate", v: true });
     }
   }
 };

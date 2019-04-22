@@ -185,7 +185,7 @@ export default {
           }
         ];
         this.form.tempurl = n.designMaterial;
-        this.form.logo["with"] = n.isLogo;
+        this.form.logo["with"] = n.isLogo == 1 ? true : false;
         if (n.isLogo == 1) {
           let xy = n.logoLocation.split(",");
           this.form.logo["x"] = xy[0];

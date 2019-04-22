@@ -125,7 +125,9 @@ export default {
       canvasWidth: 0,
       canvasHeight: 0,
       fileDots: [],
-      fileImages: []
+      fileImages: [],
+      logoDots: [],
+      logoImages: []
     };
   },
   async mounted() {
@@ -138,8 +140,8 @@ export default {
     this.baseHeight = res["size"].split("x")[1] * 1;
     this.canvasWidth = 560;
 
-    this.fileDots = [];
     // logo
+    this.logoDots = [];
     this.islogo = res.isLogo == "1" ? true : false;
     if (this.islogo) {
       let logoxy = res["logoLocation"].split(",").map(v => v * 1);
@@ -148,9 +150,10 @@ export default {
         start: logoxy,
         end: [logoxy[0] + logowh[0], logoxy[1] + logowh[1]]
       };
-      this.fileDots.push(obj);
+      this.logoDots.push(obj);
     }
 
+    this.fileDots = [];
     let temp = JSON.parse(res["templateImage"]);
     temp.forEach(v => {
       let xy = v.location.split(",").map(v => v * 1);
@@ -171,11 +174,7 @@ export default {
       console.log(res);
       this.logo = res;
       this.logourl = location.origin + res[0].imageUrl;
-
-      this.drawImage();
-    },
-    drawImage() {
-      this.fileImages = [this.logourl].concat(this.images);
+      this.logoImages = [this.logourl];
     },
     goBack() {
       this.$emit("goBack");

@@ -7,7 +7,7 @@ export default {
   props: {
     id: {
       type: String,
-      default: 'myCanvas'
+      default: "myCanvas"
     },
     // 背景圖url
     baseImage: {
@@ -41,6 +41,14 @@ export default {
     fileDots: {
       type: Array,
       required: true
+    },
+    // logo
+    logoImages: {
+      type: Array
+    },
+    // logo位置
+    logoDots: {
+      type: Array
     }
   },
   data() {
@@ -56,7 +64,10 @@ export default {
   },
   watch: {
     fileImages(n, o) {
-      this.drawImages(n);
+      this.drawImages();
+    },
+    logoImages(n, o) {
+      this.drawImages();
     }
   },
   mounted() {
@@ -83,19 +94,17 @@ export default {
     this.drawBackground();
   },
   methods: {
-    async drawImages(images) {
-      console.log('draw');
+    async drawImages() {
+      console.log("draw images");
       let me = this;
       // 清空canvas
       this.ctx.clearRect(0, 0, this.canvaswidth, this.canvasheight);
       //   this.exctx.clearRect(0, 0, this.baseWidth, this.baseHeight);
       // 超過位置最大數量，截取前幾張
       let maxcount = this.fileDots.length;
-      images = images.slice(0, maxcount);
-      console.log(images);
-      console.log(this.fileDots);
+      this.fileImages = this.fileImages.slice(0, maxcount);
       // 在指定位置渲染圖片
-      for (let i = 0; i < images.length; i++) {
+      for (let i = 0; i < this.fileImages.length; i++) {
         let start = this.fileDots[i].start;
         let end = this.fileDots[i].end;
         // 計算圖片寬高
@@ -106,7 +115,7 @@ export default {
           return new Promise((resolve, reject) => {
             let img = new Image();
             img.crossOrigin = "Anonymous";
-            img.src = images[i];
+            img.src = this.fileImages[i];
             img.onload = () => {
               me.ctx.drawImage(
                 img,
@@ -122,16 +131,48 @@ export default {
         })();
       }
       // 渲染背景
-      this.drawBackground();
+      await this.drawBackground();
+      // 渲染logo
+      if (this.logoDots.length != 0) this.drawLogo();
+    },
+    drawLogo() {
+      // 超過位置最大數量，截取前幾張
+      let me = this;
+      let maxcount = this.logoDots.length;
+      this.logoImages = this.logoImages.slice(0, maxcount);
+
+      for (let i = 0; i < this.logoImages.length; i++) {
+        let start = this.logoDots[i].start;
+        let end = this.logoDots[i].end;
+        // 計算圖片寬高
+        let width = end[0] - start[0];
+        let height = end[1] - start[1];
+
+        let img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = images[i];
+        img.onload = () => {
+          me.ctx.drawImage(
+            img,
+            start[0] * me.ratio,
+            start[1] * me.ratio,
+            width * me.ratio,
+            height * me.ratio
+          );
+        };
+      }
     },
     drawBackground() {
+      let me = this;
       let img = new Image();
       img.crossOrigin = "Anonymous";
       img.src = this.baseImage;
-      img.onload = () => {
-        this.ctx.drawImage(img, 0, 0, this.canvaswidth, this.canvasheight);
-        // this.exctx.drawImage(img, 0, 0, this.baseWidth, this.baseHeight);
-      };
+      return new Promise((resolve, reject) => {
+        img.onload = () => {
+          me.ctx.drawImage(img, 0, 0, this.canvaswidth, this.canvasheight);
+          resolve();
+        };
+      });
     },
     exportTemplate() {
       let url = this.canvas.toDataURL("image/jpeg");
@@ -143,7 +184,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-canvas{
+canvas {
   display: block;
 }
 </style>

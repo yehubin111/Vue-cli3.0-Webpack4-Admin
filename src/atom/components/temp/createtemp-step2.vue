@@ -170,7 +170,7 @@ export default {
     tempUploading(res) {
       console.log(res);
       this.logo = res;
-      this.logourl = res[0].imageUrl;
+      this.logourl = location.host + res[0].imageUrl;
 
       this.drawImage();
     },

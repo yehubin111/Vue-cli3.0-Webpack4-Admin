@@ -67,6 +67,7 @@ export default {
       this.drawImages();
     },
     logoImages(n, o) {
+      console.log(n);
       this.drawImages();
     }
   },

@@ -103,9 +103,9 @@ export default {
       //   this.exctx.clearRect(0, 0, this.baseWidth, this.baseHeight);
       // 超過位置最大數量，截取前幾張
       let maxcount = this.fileDots.length;
-      this.fileImages = this.fileImages.slice(0, maxcount);
+      let images = this.fileImages.slice(0, maxcount);
       // 在指定位置渲染圖片
-      for (let i = 0; i < this.fileImages.length; i++) {
+      for (let i = 0; i < images.length; i++) {
         let start = this.fileDots[i].start;
         let end = this.fileDots[i].end;
         // 計算圖片寬高
@@ -116,7 +116,7 @@ export default {
           return new Promise((resolve, reject) => {
             let img = new Image();
             img.crossOrigin = "Anonymous";
-            img.src = this.fileImages[i];
+            img.src = images[i];
             img.onload = () => {
               me.ctx.drawImage(
                 img,
@@ -140,9 +140,9 @@ export default {
       // 超過位置最大數量，截取前幾張
       let me = this;
       let maxcount = this.logoDots.length;
-      this.logoImages = this.logoImages.slice(0, maxcount);
+      let images = this.logoImages.slice(0, maxcount);
 
-      for (let i = 0; i < this.logoImages.length; i++) {
+      for (let i = 0; i < images.length; i++) {
         let start = this.logoDots[i].start;
         let end = this.logoDots[i].end;
         // 計算圖片寬高

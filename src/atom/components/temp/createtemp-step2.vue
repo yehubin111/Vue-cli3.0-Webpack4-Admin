@@ -177,9 +177,11 @@ export default {
     tempUploading(res) {
       console.log(res);
       this.logo = res;
-      this.logourl = location.origin + res[0].imageUrl;
-      this.logoImages = [];
-      this.logoImages.push(this.logourl);
+      this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl;
+      if (logourl) {
+        this.logoImages = [];
+        this.logoImages.push(this.logourl);
+      }
     },
     goBack() {
       this.$emit("goBack");

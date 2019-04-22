@@ -167,7 +167,7 @@ export default {
       this.drawImage();
     },
     drawImage() {
-      this.fileImages = this.logo.concat(this.images);
+      this.fileImages = [this.logourl].concat(this.images);
     },
     goBack() {
       this.$emit("goBack");

@@ -34,29 +34,15 @@
 
 <script>
 import TempList from "./temp-templist";
-// import ImageTemplate from "./createtemp-template";
 
 import exportTemplate from "@/atom/js/imageTemplate";
 export default {
   components: {
-    // ImageTemplate,
     TempList
   },
   data() {
     return {
-      createstatus: true,
-      baseImage:
-        "http://172.31.1.45/file/image/2019/04/17/2050c4b8-1d64-4b63-9705-767068f68016.png",
-      baseWidth: 1200,
-      baseHeight: 628,
-      canvasWidth: 600,
-      canvasHeight: 314,
-      fileDots: [
-        { start: [0, 0], end: [405, 628] },
-        { start: [411, 0], end: [795, 628] },
-        { start: [801, 0], end: [1200, 628] }
-      ],
-      fileImages: []
+      createstatus: true
     };
   },
   methods: {

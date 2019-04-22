@@ -1,10 +1,14 @@
 <template>
-  <canvas id="myCanvas"></canvas>
+  <canvas :id="id"></canvas>
 </template>
 
 <script>
 export default {
   props: {
+    id: {
+      type: String,
+      default: 'myCanvas'
+    },
     // 背景圖url
     baseImage: {
       type: String,
@@ -61,7 +65,7 @@ export default {
     this.ratio = this.canvaswidth / this.baseWidth;
     this.canvasheight = this.baseHeight * this.ratio;
     // 显示用的canvas
-    this.canvas = document.getElementById("myCanvas");
+    this.canvas = document.getElementById(this.id);
     this.canvas.width = this.canvaswidth;
     this.canvas.height = this.canvasheight;
     // 导出用的canvas

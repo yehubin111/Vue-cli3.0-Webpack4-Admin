@@ -6,16 +6,16 @@
         <div class="upload">
           <span class="name">上传logo</span>
           <div class="uploadbtn">
-            <el-button size="small" type="primary">上传</el-button>
+            <templates-upload @imgUploading="tempUploading" :disabled="!islogo"></templates-upload>
             <div slot="tip" class="el-upload__tip">有些模板可上传logo，有些不可上传，具体位置通过后台设定</div>
           </div>
         </div>
         <ul class="imagelist">
-          <li>
-            <img
-              src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-              alt
-            >
+          <li class="image" v-for="img in logo" :key="img.imageUrl">
+            <span class="box">
+              <img :src="logourl" alt>
+            </span>
+            <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
           </li>
         </ul>
         <div class="upload">
@@ -59,6 +59,7 @@
         <p class="restheme">第一张</p>
         <p class="resimage">
           <image-template
+            id="myCanvas1"
             :baseImage="baseImage"
             :baseWidth="baseWidth"
             :baseHeight="baseHeight"
@@ -71,10 +72,17 @@
         </p>
         <p class="restheme">第二张</p>
         <p class="resimage">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
+          <image-template
+            id="myCanvas2"
+            :baseImage="baseImage"
+            :baseWidth="baseWidth"
+            :baseHeight="baseHeight"
+            :fileDots="fileDots"
+            :fileImages="fileImages"
+            :canvasWidth="canvasWidth"
+            :canvasHeight="canvasHeight"
+            v-if="baseImage"
+          ></image-template>
         </p>
         <p class="resfont">显示前2张效果预览，共3张</p>
       </div>
@@ -88,40 +96,79 @@
 
 <script>
 import ImageTemplate from "./createtemp-template";
+import TemplatesUpload from "../templates/addtemplates-upload";
 import { mapState } from "vuex";
 export default {
   components: {
-    ImageTemplate
+    ImageTemplate,
+    TemplatesUpload
   },
   data() {
     return {
       tempdetail: null,
+      islogo: true,
+      logo: [],
+      logourl: "",
+      images: [],
 
       baseImage: "",
       baseWidth: 0,
       baseHeight: 0,
       canvasWidth: 0,
       canvasHeight: 0,
-      fileDots: [
-        { start: [0, 0], end: [405, 628] },
-        { start: [411, 0], end: [795, 628] },
-        { start: [801, 0], end: [1200, 628] }
-      ],
+      fileDots: [],
       fileImages: []
     };
   },
   async mounted() {
     console.log("step 2");
-    let res = await this.$store.dispatch("getTempDetail", { id: this.$route.params.tempid });
-    this.baseImage = 'http://172.31.1.76' + res['designMaterial'];
-    this.baseWidth = res['size'].split('x')[0] * 1;
-    this.baseHeight = res['size'].split('x')[1] * 1;
+    let res = await this.$store.dispatch("getTempDetail", {
+      id: this.$route.params.tempid
+    });
+    this.baseImage = "http://172.31.1.76" + res["designMaterial"];
+    this.baseWidth = res["size"].split("x")[0] * 1;
+    this.baseHeight = res["size"].split("x")[1] * 1;
     this.canvasWidth = 560;
+
+    this.fileDots = [];
+    // logo
+    this.islogo = res.isLogo == "1" ? true : false;
+    if (this.islogo) {
+      let logoxy = res["logoLocation"].split(",").map(v => v * 1);
+      let logowh = res["logoWidthHeight"].split("x").map(v => v * 1);
+      let obj = {
+        start: logoxy,
+        end: [logoxy[0] + logowh[0], logoxy[1] + logowh[1]]
+      };
+      this.fileDots.push(obj);
+    }
+
+    let temp = JSON.parse(res["templateImage"]);
+    temp.forEach(v => {
+      let xy = v.location.split(",").map(v => v * 1);
+      let wh = v.width_height.split("x").map(v => v * 1);
+
+      let obj = {
+        start: xy,
+        end: [xy[0] + wh[0], xy[1] + wh[1]]
+      };
+      this.fileDots.push(obj);
+    });
   },
   computed: {
     ...mapState(["templatelist"])
   },
   methods: {
+    tempUploading(res) {
+      console.log(res);
+      this.logo = res;
+      this.logourl = res[0].imageUrl;
+
+      this.drawImage();
+    },
+    drawImage() {
+      this.fileImages = this.logo.concat(this.images);
+    },
     goBack() {
       this.$emit("goBack");
     }

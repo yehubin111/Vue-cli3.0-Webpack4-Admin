@@ -1,6 +1,6 @@
 <template>
   <div class="upload">
-    <el-button size="mini" type="primary">上传</el-button>
+    <el-button size="mini" class="button" type="primary" :disabled="disabled">上传</el-button>
     <vue-file-upload
       ref="vueFileUploaderSINGER"
       @matchMD5="matchMD5"
@@ -9,11 +9,12 @@
       @uploadRes="uploadRes"
       @uploadError="uploadError"
       name="file"
-      class="fileinput"
+      class="fileuploadinput"
       :url="uploadFileUrl"
       :events="eventsIMG"
       :requestOptions="fileOption"
       :filters="imgfilters"
+      v-show="!disabled"
     >
       <span slot="label"></span>
     </vue-file-upload>
@@ -33,6 +34,11 @@ export default {
     type: {
       type: String,
       default: "SINGLE"
+    },
+    // disabled
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -181,16 +187,38 @@ export default {
   }
 };
 </script>
+<style lang="less">
+.fileuploadinput {
+  input[name="file"] {
+    width: 80px;
+    height: 32px;
+    background-color: #000;
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    // cursor: pointer;
+  }
+}
+</style>
 
 <style lang="less" scoped>
 .upload {
   display: inline-block;
-}
-.fileinput {
+  position: relative;
   width: 56px;
   height: 28px;
-  margin-top: 3px;
+}
+.button{
+  display: block;
+}
+.fileuploadinput {
+  position: absolute;
   cursor: pointer;
   overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 56px;
+  height: 28px;
+  // cursor: pointer;
 }
 </style>

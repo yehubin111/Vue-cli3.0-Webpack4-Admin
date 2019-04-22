@@ -17,8 +17,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="封面">
-          <div>
-            <templates-upload @imgUploading="imgUploading" type="SINGLE"></templates-upload>
+          <div class="upbox">
+            <templates-upload @imgUploading="imgUploading" type="SINGLE" class="uploadline"></templates-upload>
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">建议上传模板的成品，吸引用户使用</div>
             <p class="image" v-for="img in form.face" :key="img.imageUrl">
@@ -30,8 +30,8 @@
           </div>
         </el-form-item>
         <el-form-item label="模板">
-          <div>
-            <templates-upload @imgUploading="tempUploading"></templates-upload>
+          <div class="upbox">
+            <templates-upload @imgUploading="tempUploading" class="uploadline"></templates-upload>
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">素材放好位置后，会讲模板覆盖在上面</div>
             <p class="image" v-for="img in form.temp" :key="img.imageUrl">
@@ -318,6 +318,12 @@ export default {
       font-size: 12px;
       color: #999;
       margin-left: 5px;
+    }
+    .upbox{
+      // overflow: hidden;
+    }
+    .upload{
+      // margin-top: 5px;
     }
     .image {
       width: 153px;

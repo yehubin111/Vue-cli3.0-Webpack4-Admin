@@ -174,7 +174,8 @@ export default {
       console.log(res);
       this.logo = res;
       this.logourl = location.origin + res[0].imageUrl;
-      this.logoImages = [this.logourl];
+      this.logoImages = [];
+      this.logoImages.push(this.logourl);
     },
     goBack() {
       this.$emit("goBack");

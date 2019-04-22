@@ -162,14 +162,14 @@ export default {
       }
     },
     matterUploading(res) {
-      let arr = [];
-      this.allImages.concat(res).forEach(v => {
-        if(!arr.find(g => g.imageUrl == v.imageUrl)) {
-          arr.push(v);
-        }
-      })
-      this.allImages = [];
-      this.allImages = this.allImages.concat(arr);
+      // let arr = [];
+      // this.allImages.flat().concat(res).forEach(v => {
+      //   if(!arr.find(g => g.imageUrl == v.imageUrl)) {
+      //     arr.push(v);
+      //   }
+      // })
+      // this.allImages = [];
+      this.allImages = this.allImages.concat(res);
       this.fileImages1 = this.allImages.slice(0, this.imagecount).map(v => v.imageUrl);
       this.fileImages2 = this.allImages.slice(
         this.imagecount,

@@ -174,7 +174,7 @@ export default {
         this.processIMG.push(obj);
       }
 
-      this.$emit("imgUploading", this.processIMG);
+      // this.$emit("imgUploading", this.processIMG);
     },
     delIMG(file, name) {
       if (file && file.isUploading) {

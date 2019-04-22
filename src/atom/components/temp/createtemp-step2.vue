@@ -12,9 +12,9 @@
         </div>
         <ul class="imagelist">
           <li class="image" v-for="img in logo" :key="img.imageUrl">
-            <span class="box">
+            <p>
               <img :src="logourl" alt>
-            </span>
+            </p>
             <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
           </li>
         </ul>
@@ -28,30 +28,38 @@
         <p class="theme">第一张</p>
         <ul class="imagelist">
           <li>
-            <img
-              src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-              alt
-            >
+            <p>
+              <img
+                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
+                alt
+              >
+            </p>
+            <el-progress :percentage="100" :status="'success'"></el-progress>
           </li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
+          <li>
+            <p></p>
+          </li>
+          <li>
+            <p></p>
+          </li>
+          <li>
+            <p></p>
+          </li>
+          <li>
+            <p></p>
+          </li>
         </ul>
         <p class="theme">第二张</p>
         <ul class="imagelist">
           <li>
-            <img
-              src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-              alt
-            >
+            <p>
+              <img
+                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
+                alt
+              >
+            </p>
+            <el-progress :percentage="100" :status="'success'"></el-progress>
           </li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
-          <li></li>
         </ul>
       </div>
       <div class="module">
@@ -215,16 +223,19 @@ export default {
       padding-left: 75px;
       li {
         float: left;
-        width: 100px;
-        height: 100px;
-        border: 1px solid #ddd;
-        margin-right: 20px;
+        width: 153px;
         margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        img {
-          width: 100%;
+        p {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid #ddd;
+          width: 100px;
+          height: 100px;
+          margin-bottom: 3px;
+          img {
+            width: 100%;
+          }
         }
       }
     }

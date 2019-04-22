@@ -25,42 +25,17 @@
             <div slot="tip" class="el-upload__tip">可上传多张图片，可调整图片顺序，不支持裁剪</div>
           </div>
         </div>
-        <p class="theme">第一张</p>
-        <ul class="imagelist">
-          <li>
-            <p>
-              <img
-                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                alt
-              >
-            </p>
-            <el-progress :percentage="100" :status="'success'"></el-progress>
-          </li>
-          <li>
-            <p></p>
-          </li>
-          <li>
-            <p></p>
-          </li>
-          <li>
-            <p></p>
-          </li>
-          <li>
-            <p></p>
-          </li>
-        </ul>
-        <p class="theme">第二张</p>
-        <ul class="imagelist">
-          <li>
-            <p>
-              <img
-                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                alt
-              >
-            </p>
-            <el-progress :percentage="100" :status="'success'"></el-progress>
-          </li>
-        </ul>
+        <div v-for="(matter, index) in allImages" :key="index">
+          <p class="theme">第{{index}}张</p>
+          <ul class="imagelist">
+            <li v-for="(m, idx) in matter" :key="idx">
+              <p>
+                <img :src="m.imageUrl" alt>
+              </p>
+              <el-progress :percentage="m.process" :status="m.process == 100?'success':''"></el-progress>
+            </li>
+          </ul>
+        </div>
       </div>
       <div class="module">
         <p class="title">效果预览</p>
@@ -72,7 +47,7 @@
             :baseWidth="baseWidth"
             :baseHeight="baseHeight"
             :fileDots="fileDots"
-            :fileImages="fileImages"
+            :fileImages="fileImages1"
             :canvasWidth="canvasWidth"
             :canvasHeight="canvasHeight"
             :logoImages="logoImages"
@@ -88,7 +63,7 @@
             :baseWidth="baseWidth"
             :baseHeight="baseHeight"
             :fileDots="fileDots"
-            :fileImages="fileImages"
+            :fileImages="fileImages2"
             :canvasWidth="canvasWidth"
             :canvasHeight="canvasHeight"
             :logoImages="logoImages"
@@ -122,6 +97,7 @@ export default {
       logo: [],
       logourl: "",
       images: [],
+      imagecount: 0,
 
       baseImage: "",
       baseWidth: 0,
@@ -129,7 +105,9 @@ export default {
       canvasWidth: 0,
       canvasHeight: 0,
       fileDots: [],
-      fileImages: [],
+      fileImages1: [],
+      fileImages2: [],
+      allImages: [],
       logoDots: [],
       logoImages: []
     };
@@ -169,6 +147,7 @@ export default {
       };
       this.fileDots.push(obj);
     });
+    this.imagecount = this.fileDots.length;
   },
   computed: {
     ...mapState(["templatelist"])
@@ -183,7 +162,12 @@ export default {
       }
     },
     matterUploading(res) {
-      console.log(res);
+      this.allImages = this.allImages.concat(res);
+      this.fileImages1 = this.allImages.slice(0, this.imagecount).map(v => v.imageUrl);
+      this.fileImages2 = this.allImages.slice(
+        this.imagecount,
+        this.imagecount * 2
+      ).map(v => v.imageUrl);
     },
     goBack() {
       this.$emit("goBack");

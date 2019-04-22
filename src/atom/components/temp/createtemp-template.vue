@@ -169,7 +169,6 @@ export default {
       img.src = this.baseImage;
       return new Promise((resolve, reject) => {
         img.onload = () => {
-          console.log('ddddd');
           me.ctx.drawImage(img, 0, 0, this.canvaswidth, this.canvasheight);
           resolve();
         };

@@ -133,7 +133,7 @@ export default {
     let res = await this.$store.dispatch("getTempDetail", {
       id: this.$route.params.tempid
     });
-    this.baseImage = "http://172.31.1.76" + res["designMaterial"];
+    this.baseImage = location.origin + res["designMaterial"];
     this.baseWidth = res["size"].split("x")[0] * 1;
     this.baseHeight = res["size"].split("x")[1] * 1;
     this.canvasWidth = 560;
@@ -170,7 +170,7 @@ export default {
     tempUploading(res) {
       console.log(res);
       this.logo = res;
-      this.logourl = location.host + res[0].imageUrl;
+      this.logourl = location.origin + res[0].imageUrl;
 
       this.drawImage();
     },

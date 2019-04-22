@@ -190,7 +190,7 @@ export default {
           let xy = n.logoLocation.split(",");
           this.form.logo["x"] = xy[0];
           this.form.logo["y"] = xy[1];
-          let wh = logoWidthHeight.split("x");
+          let wh = n.logoWidthHeight.split("x");
           this.form.logo["w"] = wh[0];
           this.form.logo["h"] = wh[1];
         }

@@ -1,5 +1,5 @@
 <template>
-  <div class="upload">
+  <div class="uploadfile">
     <el-button size="mini" class="button" type="primary" :disabled="disabled">上传</el-button>
     <vue-file-upload
       ref="vueFileUploaderSINGER"
@@ -202,7 +202,7 @@ export default {
 </style>
 
 <style lang="less" scoped>
-.upload {
+.uploadfile {
   display: inline-block;
   position: relative;
   width: 56px;

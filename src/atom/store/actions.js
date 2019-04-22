@@ -3295,6 +3295,7 @@ export default {
 
         Axios({
             url,
+            fullscreen: true,
             success: res => {
                 commit('TEMPLATELIST', res);
             }
@@ -3380,10 +3381,11 @@ export default {
     getTempDetail({ state, commit }, { id }) {
         let url = `${URL.tempdetail}id=${id}`;
 
-        Axios({
+        return Axios({
             url,
             success: res => {
                 commit('TEMPDETAIL', res);
+                return res.data;
             }
         })
     },

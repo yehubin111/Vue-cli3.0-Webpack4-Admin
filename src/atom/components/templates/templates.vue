@@ -4,10 +4,10 @@
     <div class="ctrl">
       <el-button class="add" type="primary" @click="addTemplates">上传模板</el-button>
       <el-select class="fr" clearable v-model="trade" placeholder="请选择行业" @change="getTemplateList">
-        <el-option :label="td" :value="td" v-for="td in temptrade" :key="td"></el-option>
+        <el-option :label="td.name" :value="td.name" v-for="td in temptrade" :key="td.name"></el-option>
       </el-select>
       <el-select class="fr" clearable v-model="size" placeholder="请选择尺寸" @change="getTemplateList">
-        <el-option :label="sz" :value="sz" v-for="sz in tempsize" :key="sz"></el-option>
+        <el-option :label="sz.name" :value="sz.name" v-for="sz in tempsize" :key="sz.name"></el-option>
       </el-select>
       <el-button class="fr" type="text" @click="tradestatus = true">行业管理</el-button>
       <el-button class="fr" type="text" @click="sizestatus = true">尺寸管理</el-button>

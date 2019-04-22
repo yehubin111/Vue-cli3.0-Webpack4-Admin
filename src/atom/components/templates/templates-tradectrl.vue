@@ -5,10 +5,10 @@
         <el-tag
           class="size"
           v-for="tag in temptrade"
-          :key="tag"
-          closable
-          @close="deleteTrade(tag)"
-        >{{tag}}</el-tag>
+          :key="tag.name"
+          :closable="tag.delete"
+          @close="deleteTrade(tag.name)"
+        >{{tag.name}}</el-tag>
       </el-form-item>
       <el-form-item label="新增行业">
         <div>

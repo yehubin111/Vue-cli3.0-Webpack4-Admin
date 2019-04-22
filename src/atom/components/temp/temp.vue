@@ -34,12 +34,12 @@
 
 <script>
 import TempList from "./temp-templist";
-import ImageTemplate from "./createtemp-template";
+// import ImageTemplate from "./createtemp-template";
 
 import exportTemplate from "@/atom/js/imageTemplate";
 export default {
   components: {
-    ImageTemplate,
+    // ImageTemplate,
     TempList
   },
   data() {

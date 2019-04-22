@@ -5,10 +5,10 @@
         <el-tag
           class="size"
           v-for="tag in tempsize"
-          :key="tag"
-          closable
-          @close="deleteSize(tag)"
-        >{{tag}}</el-tag>
+          :key="tag.name"
+          :closable="tag.delete"
+          @close="deleteSize(tag.name)"
+        >{{tag.name}}</el-tag>
       </el-form-item>
       <el-form-item label="新增尺寸">
         <div>

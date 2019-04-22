@@ -58,10 +58,16 @@
         <p class="title">效果预览</p>
         <p class="restheme">第一张</p>
         <p class="resimage">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
+          <image-template
+            :baseImage="baseImage"
+            :baseWidth="baseWidth"
+            :baseHeight="baseHeight"
+            :fileDots="fileDots"
+            :fileImages="fileImages"
+            :canvasWidth="canvasWidth"
+            :canvasHeight="canvasHeight"
+            v-if="baseImage"
+          ></image-template>
         </p>
         <p class="restheme">第二张</p>
         <p class="resimage">
@@ -74,19 +80,60 @@
       </div>
     </div>
     <div class="button">
-      <el-button>上一步</el-button>
+      <el-button @click="goBack">上一步</el-button>
       <el-button type="primary">生成图片</el-button>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+import ImageTemplate from "./createtemp-template";
+import { mapState } from "vuex";
+export default {
+  components: {
+    ImageTemplate
+  },
+  data() {
+    return {
+      tempdetail: null,
+
+      baseImage: "",
+      baseWidth: 0,
+      baseHeight: 0,
+      canvasWidth: 0,
+      canvasHeight: 0,
+      fileDots: [
+        { start: [0, 0], end: [405, 628] },
+        { start: [411, 0], end: [795, 628] },
+        { start: [801, 0], end: [1200, 628] }
+      ],
+      fileImages: []
+    };
+  },
+  async mounted() {
+    console.log("step 2");
+    let res = await this.$store.dispatch("getTempDetail", { id: this.$route.params.tempid });
+    this.baseImage = 'http://172.31.1.76' + res['designMaterial'];
+    this.baseWidth = res['size'].split('x')[0] * 1;
+    this.baseHeight = res['size'].split('x')[1] * 1;
+    this.canvasWidth = 560;
+  },
+  computed: {
+    ...mapState(["templatelist"])
+  },
+  methods: {
+    goBack() {
+      this.$emit("goBack");
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
 .contain {
   display: flex;
+  width: 1200px;
+  margin: 0 auto;
   .module {
     flex-grow: 1;
     flex-shrink: 0;
@@ -150,8 +197,8 @@ export default {};
     }
   }
 }
-.button{
-    text-align: center;
-    margin: 60px 0;
+.button {
+  text-align: center;
+  margin: 60px 0;
 }
 </style>

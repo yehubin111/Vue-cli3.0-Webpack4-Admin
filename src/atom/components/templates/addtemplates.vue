@@ -8,12 +8,12 @@
       <el-form ref="form" :model="form" label-width="60px" label-position="left">
         <el-form-item label="尺寸">
           <el-select class="select" v-model="form.size" placeholder="请选择尺寸">
-            <el-option :label="sz" :value="sz" v-for="sz in tempsize" :key="sz"></el-option>
+            <el-option :label="sz.name" :value="sz.name" v-for="sz in tempsize" :key="sz.name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="行业">
           <el-select class="select" v-model="form.trade" placeholder="请选择行业">
-            <el-option :label="td" :value="td" v-for="td in temptrade" :key="td"></el-option>
+            <el-option :label="td.name" :value="td.name" v-for="td in temptrade" :key="td.name"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="封面">
@@ -187,7 +187,7 @@ export default {
         this.form.tempurl = n.designMaterial;
         this.form.logo["with"] = n.isLogo;
         if (n.isLogo == 1) {
-          let xy = logoLocation.split(",");
+          let xy = n.logoLocation.split(",");
           this.form.logo["x"] = xy[0];
           this.form.logo["y"] = xy[1];
           let wh = logoWidthHeight.split("x");

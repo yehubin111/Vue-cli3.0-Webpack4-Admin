@@ -131,7 +131,7 @@ export default new Router({
                 }
             },
             {
-                path: 'temp/create',
+                path: 'temp/create/:tempid?',
                 name: 'createtemp',
                 component: createtemp,
                 meta: {

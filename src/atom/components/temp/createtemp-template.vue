@@ -57,9 +57,9 @@ export default {
   },
   mounted() {
     this.canvaswidth = this.canvasWidth ? this.canvasWidth : this.baseWidth;
-    this.canvasheight = this.canvasHeight ? this.canvasHeight : this.baseHeight;
     // 获取比例系数
     this.ratio = this.canvaswidth / this.baseWidth;
+    this.canvasheight = this.baseHeight * this.ratio;
     // 显示用的canvas
     this.canvas = document.getElementById("myCanvas");
     this.canvas.width = this.canvaswidth;
@@ -135,6 +135,9 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less" scoped>
+canvas{
+  display: block;
+}
 </style>
 

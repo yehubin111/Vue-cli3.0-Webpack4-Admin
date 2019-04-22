@@ -1995,10 +1995,10 @@ export default {
     },
     // template
     TEMPSIZE(state, r) {
-        state.tempsize = r.data;
+        state.tempsize = Object.keys(r.data).map(v => { return { name: v, delete: r.data[v] } });
     },
     TEMPTRADE(state, r) {
-        state.temptrade = r.data;
+        state.temptrade = Object.keys(r.data).map(v => { return { name: v, delete: r.data[v] } });
     },
     TEMPLATELIST(state, r) {
         state.templatetotal = r.data.total;

@@ -4,18 +4,18 @@
       <p>
         <span class="title">尺寸</span>
         <el-radio-group v-model="size" @change="getTemplateList">
-          <el-radio :label="size" v-for="size in tempsize" :key="size">{{size}}</el-radio>
+          <el-radio :label="size.name" v-for="size in tempsize" :key="size.name">{{size.name}}</el-radio>
         </el-radio-group>
       </p>
       <p>
         <span class="title">行业</span>
         <el-radio-group v-model="trade" @change="getTemplateList">
-          <el-radio :label="trade" v-for="trade in temptrade" :key="trade">{{trade}}</el-radio>
+          <el-radio :label="trade.name" v-for="trade in temptrade" :key="trade.name">{{trade.name}}</el-radio>
         </el-radio-group>
       </p>
     </div>
     <ul class="templatelist">
-      <li v-for="temp in templatelist" :key="temp.id">
+      <li v-for="temp in templatelist" :key="temp.id" @click="selectTemp(temp.id)">
         <p class="image">
           <img :src="'http://172.31.1.76' + temp.coverImage" alt>
         </p>
@@ -50,7 +50,9 @@ export default {
     };
   },
   methods: {
-    sizeSort() {},
+    selectTemp(id) {
+      this.$emit('selectTemp', id);
+    },
     pageSizeChange(size) {
       this.pagesize = size;
       this.getTemplateList();
@@ -81,8 +83,8 @@ export default {
     // 获取行业列表
     await this.$store.dispatch("getSizeTrade", "template_business");
 
-    this.size = this.tempsize[0];
-    this.trade = this.temptrade[0];
+    this.size = this.tempsize[0].name;
+    this.trade = this.temptrade[0].name;
     // 获取模板列表
     this.getTemplateList();
   }

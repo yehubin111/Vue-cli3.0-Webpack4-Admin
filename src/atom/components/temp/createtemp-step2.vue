@@ -26,7 +26,7 @@
           </div>
         </div>
         <div v-for="(matter, index) in allImages" :key="index">
-          <p class="theme">第{{index}}张</p>
+          <p class="theme">第{{index + 1}}张</p>
           <ul class="imagelist">
             <li v-for="(m, idx) in matter" :key="idx">
               <p>
@@ -162,7 +162,14 @@ export default {
       }
     },
     matterUploading(res) {
-      this.allImages = this.allImages.concat(res);
+      let arr = [];
+      this.allImages.concat(res).forEach(v => {
+        if(!arr.find(g => g.imageUrl == v.imageUrl)) {
+          arr.push(v);
+        }
+      })
+      this.allImages = [];
+      this.allImages = this.allImages.concat(arr);
       this.fileImages1 = this.allImages.slice(0, this.imagecount).map(v => v.imageUrl);
       this.fileImages2 = this.allImages.slice(
         this.imagecount,

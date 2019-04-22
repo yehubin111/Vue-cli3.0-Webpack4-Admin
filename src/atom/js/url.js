@@ -209,4 +209,9 @@ export default {
     'sizetrade': 'template/getTemplatValue?', // 获取尺寸列表和行业列表
     'addtemplate': 'template/saveTemplate', // 保存模板
     'templatelist': 'template/findAll?', // 模板列表
+    'addsort': 'template/insertValue?', // 新增行业尺寸
+    'deletetemp': 'template/deleteTemplate?', // 删除模板
+    'deletesort': 'template/deleteValue?', // 删除条件
+    'tempdetail': 'template/findById?', // 模板详细信息
+    'edittemp': 'template/updateTemplate', // 编辑模板
 }

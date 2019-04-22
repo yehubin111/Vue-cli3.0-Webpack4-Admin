@@ -42,7 +42,7 @@ export default {
     SETSTATE(state, { k, v }) {
         state[k] = v;
     },
-    SETOBJSTATE(state, {obj, name, v}) {
+    SETOBJSTATE(state, { obj, name, v }) {
         state[obj][name] = v;
     },
     MESSAGECOUNT(state, r) {
@@ -1873,9 +1873,9 @@ export default {
         // 特殊情况，通知类型操作，无法编辑
         state.newrulelist.forEach(v => {
             let executionSpec = JSON.parse(v.executionSpec);
-            if(executionSpec['execution_type'] == 'NOTIFICATION')
+            if (executionSpec['execution_type'] == 'NOTIFICATION')
                 v.noedit = true;
-            
+
             let evaluationSpec = JSON.parse(v.evaluationSpec);
             v.iftrigger = evaluationSpec['evaluation_type'] == 'TRIGGER' ? true : false;
         })
@@ -2003,5 +2003,8 @@ export default {
     TEMPLATELIST(state, r) {
         state.templatetotal = r.data.total;
         state.templatelist = r.data.list;
+    },
+    TEMPDETAIL(state, r) {
+        state.tempdetail = r.data;
     }
 }

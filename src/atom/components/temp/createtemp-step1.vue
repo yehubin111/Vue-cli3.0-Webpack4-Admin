@@ -3,79 +3,24 @@
     <div class="sort">
       <p>
         <span class="title">尺寸</span>
-        <span class="sel on">1200x628</span>
-        <span class="sel">1080x1080</span>
-        <span class="sel">320x480</span>
-        <span class="sel">300x250</span>
-        <span class="sel">300x50</span>
+        <el-radio-group v-model="size" @change="getTemplateList">
+          <el-radio :label="size" v-for="size in tempsize" :key="size">{{size}}</el-radio>
+        </el-radio-group>
       </p>
       <p>
         <span class="title">行业</span>
-        <span class="sel">电商</span>
-        <span class="sel">短视频</span>
-        <span class="sel">社交</span>
-        <span class="sel">工具</span>
+        <el-radio-group v-model="trade" @change="getTemplateList">
+          <el-radio :label="trade" v-for="trade in temptrade" :key="trade">{{trade}}</el-radio>
+        </el-radio-group>
       </p>
     </div>
     <ul class="templatelist">
-      <li>
+      <li v-for="temp in templatelist" :key="temp.id">
         <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
+          <img :src="'http://172.31.1.76' + temp.coverImage" alt>
         </p>
         <p class="tip">
-          <el-tag class="tag" size="medium">浪漫</el-tag>
-          <el-tag class="tag" size="medium">多图</el-tag>
-        </p>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <p class="tip">
-          <el-tag class="tag" size="medium">浪漫</el-tag>
-          <el-tag class="tag" size="medium">多图</el-tag>
-        </p>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <p class="tip">
-          <el-tag class="tag" size="medium">浪漫</el-tag>
-          <el-tag class="tag" size="medium">多图</el-tag>
-        </p>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <p class="tip">
-          <el-tag class="tag" size="medium">浪漫</el-tag>
-          <el-tag class="tag" size="medium">多图</el-tag>
-        </p>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <p class="tip">
-          <el-tag class="tag" size="medium">浪漫</el-tag>
-          <el-tag class="tag" size="medium">多图</el-tag>
+          <el-tag v-for="tag in temp.label.split(',')" :key="tag" class="tag" size="medium">{{tag}}</el-tag>
         </p>
       </li>
     </ul>
@@ -87,24 +32,59 @@
         :page-sizes="[20, 50, 80]"
         :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
+        :total="templatetotal"
       ></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       pageindex: 1,
       pagesize: 20,
-      total: 30
+      size: "",
+      trade: ""
     };
   },
   methods: {
-    pageSizeChange() {},
-    pageSwitch() {}
+    sizeSort() {},
+    pageSizeChange(size) {
+      this.pagesize = size;
+      this.getTemplateList();
+    },
+    pageSwitch(idx) {
+      this.pageindex = idx;
+      this.getTemplateList();
+    },
+    getTemplateList() {
+      let option = {
+        size: this.size,
+        business: this.trade,
+        pageIndex: this.pageindex,
+        pageSize: this.pagesize
+      };
+
+      this.$store.dispatch("getTemplateList", option);
+    }
+  },
+  computed: {
+    ...mapState(["templatelist", "templatetotal", "tempsize", "temptrade"])
+  },
+  watch: {
+  },
+  async mounted() {
+    // 获取尺寸列表
+    await this.$store.dispatch("getSizeTrade", "template_size");
+    // 获取行业列表
+    await this.$store.dispatch("getSizeTrade", "template_business");
+
+    this.size = this.tempsize[0];
+    this.trade = this.temptrade[0];
+    // 获取模板列表
+    this.getTemplateList();
   }
 };
 </script>
@@ -137,9 +117,10 @@ export default {
 .templatelist {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  // grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 20px;
-  height: 1200px;
+  // height: 1200px;
+  margin-bottom: 50px;
   li {
     border: 1px solid #ddd;
     overflow: hidden;
@@ -147,6 +128,7 @@ export default {
     display: flex;
     flex-direction: column;
     cursor: pointer;
+    height: 285px;
     .image {
       flex-grow: 1;
       width: 100%;

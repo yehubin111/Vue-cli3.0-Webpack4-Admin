@@ -147,7 +147,7 @@ export default new Router({
                 }
             },
             {
-                path: 'templates/add',
+                path: 'templates/add/:eid?',
                 name: 'addtemplates',
                 component: addtemplates,
                 meta: {

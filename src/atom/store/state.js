@@ -378,4 +378,5 @@ export default {
   temptrade: [], // 行业列表
   templatelist: [], // 模板列表
   templatetotal: 0,
+  tempdetail: null, // 模板详情
 }

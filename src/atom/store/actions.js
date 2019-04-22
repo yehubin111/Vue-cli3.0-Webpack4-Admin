@@ -3280,7 +3280,7 @@ export default {
     getSizeTrade({ state, commit }, key) {
         let url = URL.sizetrade + 'key=' + key;
 
-        Axios({
+        return Axios({
             url,
             success: res => {
                 if (key == 'template_size')
@@ -3290,8 +3290,8 @@ export default {
             }
         })
     },
-    getTemplateList({ state, commit }, { size = '', business = '' } = {}) {
-        let url = `${URL.templatelist}size=${size}&business=${business}`;
+    getTemplateList({ state, commit }, { size = '', business = '', pageIndex, pageSize } = {}) {
+        let url = `${URL.templatelist}size=${size}&business=${business}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
 
         Axios({
             url,
@@ -3313,11 +3313,98 @@ export default {
                     Msgsuccess('模板保存成功');
                     setTimeout(() => {
                         route.push(`/templates`);
-                    }, 1000)
+                    }, 500)
                 } else {
                     Msgsuccess('模板保存失败');
                 }
             }
         })
-    }
+    },
+    addSort({ state, commit, dispatch }, { key, value }) {
+        let url = `${URL.addsort}key=${key}&value=${value}`;
+
+        Axios({
+            url,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('新增成功');
+                } else {
+                    Msgerror('新增失败');
+                    return;
+                }
+
+                if (key == 'template_size') {
+                    dispatch("getSizeTrade", "template_size");
+                } else {
+                    dispatch("getSizeTrade", "template_business");
+                }
+            }
+        })
+    },
+    deleteTemp({ state, commit }, { id }) {
+        let url = `${URL.deletetemp}id=${id}`;
+
+        return Axios({
+            url,
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('删除成功');
+                } else {
+                    Msgerror('删除失败');
+                }
+                return res;
+            }
+        })
+    },
+    deleteSizeTrade({ state, commit, dispatch }, { key, value }) {
+        let url = `${URL.deletesort}key=${key}&value=${value}`;
+
+        Axios({
+            url,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('删除成功');
+                } else {
+                    Msgsuccess('删除失败');
+                    return;
+                }
+                if (key == 'template_size') {
+                    dispatch("getSizeTrade", "template_size");
+                } else {
+                    dispatch("getSizeTrade", "template_business");
+                }
+            }
+        })
+    },
+    getTempDetail({ state, commit }, { id }) {
+        let url = `${URL.tempdetail}id=${id}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit('TEMPDETAIL', res);
+            }
+        })
+    },
+    editTemplate({ state, commit }, { option, route }) {
+        let url = URL.edittemp;
+
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            fullscreen: true,
+            success: res => {
+                if (res.data) {
+                    Msgsuccess('模板编辑成功');
+                    setTimeout(() => {
+                        route.push(`/templates`);
+                    }, 500)
+                } else {
+                    Msgsuccess('模板编辑失败');
+                }
+            }
+        })
+    },
 }

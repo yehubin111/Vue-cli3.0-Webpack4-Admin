@@ -132,6 +132,7 @@ export default {
     return {
       // sizes: ["1200x628", "1080x1080", "320x480", "300x250", "300x50"],
       // trades: ["电商", "短视频", "社交", "工具"],
+      editid: "",
       form: {
         size: "",
         trade: "",
@@ -154,13 +155,61 @@ export default {
     };
   },
   mounted() {
+    console.log(this.$route.params);
+    this.editid = this.$route.params.eid;
+    if (this.editid) this.$store.dispatch("getTempDetail", { id: this.editid });
     // 获取尺寸列表
     this.$store.dispatch("getSizeTrade", "template_size");
     // 获取行业列表
     this.$store.dispatch("getSizeTrade", "template_business");
   },
   computed: {
-    ...mapState(["tempsize", "temptrade"])
+    ...mapState(["tempsize", "temptrade", "tempdetail"])
+  },
+  watch: {
+    tempdetail(n, v) {
+      if (n) {
+        this.form.size = n.size;
+        this.form.trade = n.business;
+        this.form.face = [
+          {
+            process: 100,
+            imageUrl: n.coverImage
+          }
+        ];
+        this.form.faceurl = n.coverImage;
+        this.form.temp = [
+          {
+            process: 100,
+            imageUrl: n.designMaterial
+          }
+        ];
+        this.form.tempurl = n.designMaterial;
+        this.form.logo["with"] = n.isLogo;
+        if (n.isLogo == 1) {
+          let xy = logoLocation.split(",");
+          this.form.logo["x"] = xy[0];
+          this.form.logo["y"] = xy[1];
+          let wh = logoWidthHeight.split("x");
+          this.form.logo["w"] = wh[0];
+          this.form.logo["h"] = wh[1];
+        }
+        let temp = JSON.parse(n.templateImage);
+        this.form.matter = [];
+        temp.forEach(v => {
+          let xy = v.location.split(",");
+          let wh = v.width_height.split("x");
+          let obj = {
+            x: xy[0],
+            y: xy[1],
+            w: wh[0],
+            h: wh[1]
+          };
+          this.form.matter.push(obj);
+        });
+        this.form.tags = n.label.split(",");
+      }
+    }
   },
   methods: {
     deleteMatter(idx) {
@@ -202,7 +251,7 @@ export default {
       let temparr = [];
       this.form.matter.forEach(v => {
         let obj = {
-          size: v.x * 1 + "," + v.y * 1,
+          location: v.x * 1 + "," + v.y * 1,
           width_height: v.w * 1 + "x" + v.h * 1
         };
         temparr.push(obj);
@@ -218,8 +267,12 @@ export default {
         size: this.form.size,
         templateImage: JSON.stringify(temparr)
       };
-
-      this.$store.dispatch("addTemplate", { option, route: this.$router });
+      if (this.editid) {
+        option.id = this.editid;
+        this.$store.dispatch("editTemplate", { option, route: this.$router });
+      } else {
+        this.$store.dispatch("addTemplate", { option, route: this.$router });
+      }
     },
     handleClose(tag) {
       this.form.tags.splice(this.form.tags.indexOf(tag), 1);

@@ -21,7 +21,7 @@
         <div class="upload">
           <span class="name">上传图片</span>
           <div class="uploadbtn">
-            <el-button size="small" type="primary">上传</el-button>
+            <templates-upload @imgUploading="matterUploading" :disabled="!islogo" type="MUTIPLE"></templates-upload>
             <div slot="tip" class="el-upload__tip">可上传多张图片，可调整图片顺序，不支持裁剪</div>
           </div>
         </div>
@@ -175,13 +175,15 @@ export default {
   },
   methods: {
     tempUploading(res) {
-      console.log(res);
       this.logo = res;
       this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl;
       if (this.logourl) {
         this.logoImages = [];
         this.logoImages.push(this.logourl);
       }
+    },
+    matterUploading(res) {
+      console.log(res);
     },
     goBack() {
       this.$emit("goBack");

@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item label="封面">
           <div class="upbox">
-            <templates-upload @imgUploading="imgUploading" type="SINGLE" class="uploadline"></templates-upload>
+            <templates-upload @imgUploading="imgUploading" class="uploadline"></templates-upload>
             <span class="size">{{form.size}}</span>
             <div slot="tip" class="el-upload__tip">建议上传模板的成品，吸引用户使用</div>
             <p class="image" v-for="img in form.face" :key="img.imageUrl">

@@ -14,6 +14,7 @@
       :events="eventsIMG"
       :requestOptions="fileOption"
       :filters="imgfilters"
+      :multiple="type == 'MUTIPLE'"
       v-show="!disabled"
     >
       <span slot="label"></span>

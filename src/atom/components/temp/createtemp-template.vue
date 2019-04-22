@@ -84,6 +84,7 @@ export default {
   },
   methods: {
     async drawImages(images) {
+      console.log('draw');
       let me = this;
       // 清空canvas
       this.ctx.clearRect(0, 0, this.canvaswidth, this.canvasheight);

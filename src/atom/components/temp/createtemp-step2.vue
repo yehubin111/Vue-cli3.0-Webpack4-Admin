@@ -178,7 +178,7 @@ export default {
       console.log(res);
       this.logo = res;
       this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl;
-      if (logourl) {
+      if (this.logourl) {
         this.logoImages = [];
         this.logoImages.push(this.logourl);
       }

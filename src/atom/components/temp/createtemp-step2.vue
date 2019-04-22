@@ -75,6 +75,8 @@
             :fileImages="fileImages"
             :canvasWidth="canvasWidth"
             :canvasHeight="canvasHeight"
+            :logoImages="logoImages"
+            :logoDots="logoDots"
             v-if="baseImage"
           ></image-template>
         </p>
@@ -89,6 +91,8 @@
             :fileImages="fileImages"
             :canvasWidth="canvasWidth"
             :canvasHeight="canvasHeight"
+            :logoImages="logoImages"
+            :logoDots="logoDots"
             v-if="baseImage"
           ></image-template>
         </p>

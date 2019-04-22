@@ -163,30 +163,35 @@ export default {
     },
     matterUploading(res) {
       let arr = [];
-      this.allImages.flat().concat(res).forEach(v => {
-        if(!arr.find(g => g.imageUrl == v.imageUrl)) {
-          arr.push(v);
-        }
-      })
+      this.allImages
+        .flat()
+        .concat(res)
+        .forEach(v => {
+          if (!arr.find(g => g.imageUrl == v.imageUrl)) {
+            arr.push(v);
+          }
+        });
       this.allImages = arr;
       // 设置canvas参数
-      this.fileImages1 = this.allImages.slice(0, this.imagecount).map(v => v.imageUrl);
-      this.fileImages2 = this.allImages.slice(
-        this.imagecount,
-        this.imagecount * 2
-      ).map(v => v.imageUrl);
+      this.fileImages1 = this.allImages
+        .slice(0, this.imagecount)
+        .map(v => v.imageUrl);
+      this.fileImages2 = this.allImages
+        .slice(this.imagecount, this.imagecount * 2)
+        .map(v => v.imageUrl);
       // 左侧分组显示
       let list = [];
       let i = 0;
       this.allImages.forEach(v => {
-        if(!list[i])
-          list[i] = [];
-        else{
-          while(list[i].length < this.imagecount) {
-            list[i].push(v)
+        if (!list[i]) list[i] = [];
+        else {
+          if (list[i].length < this.imagecount) {
+            list[i].push(v);
+          } else {
+            i++;
           }
         }
-      })
+      });
       this.allImages = list;
     },
     goBack() {

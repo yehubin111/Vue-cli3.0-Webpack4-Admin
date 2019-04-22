@@ -92,6 +92,8 @@ export default {
       // 超過位置最大數量，截取前幾張
       let maxcount = this.fileDots.length;
       images = images.slice(0, maxcount);
+      console.log(images);
+      console.log(this.fileDots);
       // 在指定位置渲染圖片
       for (let i = 0; i < images.length; i++) {
         let start = this.fileDots[i].start;

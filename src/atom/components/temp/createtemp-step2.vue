@@ -168,13 +168,26 @@ export default {
           arr.push(v);
         }
       })
-      this.allImages = [];
-      this.allImages = this.allImages.concat(arr);
+      this.allImages = arr;
+      // 设置canvas参数
       this.fileImages1 = this.allImages.slice(0, this.imagecount).map(v => v.imageUrl);
       this.fileImages2 = this.allImages.slice(
         this.imagecount,
         this.imagecount * 2
       ).map(v => v.imageUrl);
+      // 左侧分组显示
+      let list = [];
+      let i = 0;
+      this.allImages.forEach(v => {
+        if(!list[i])
+          list[i] = [];
+        else{
+          while(list[i].length < this.imagecount) {
+            list[i].push(v)
+          }
+        }
+      })
+      this.allImages = list;
     },
     goBack() {
       this.$emit("goBack");

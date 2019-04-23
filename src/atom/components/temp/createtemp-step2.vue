@@ -87,6 +87,7 @@ import TemplatesUpload from "../templates/addtemplates-upload";
 import exportTemplate from "@/atom/js/imageTemplate";
 import { mapState } from "vuex";
 import { Loading } from "element-ui";
+import { Msgsuccess } from '../../js/message';
 export default {
   components: {
     ImageTemplate,
@@ -180,7 +181,14 @@ export default {
       });
 
       let res = await this.$store.dispatch("saveTempImages", { images });
-
+      if(res.data) {
+        Msgsuccess("制作成功");
+        this.$router.push({
+          name: 'temp'
+        })
+      } else {
+        Msgsuccess("制作失败");
+      }
       if (load) load.close();
     },
     convertBase64UrlToBlob(urlData) {

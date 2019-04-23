@@ -90,14 +90,7 @@ export default {
       let res;
       switch (type) {
         case "a":
-          res = await this.$store.dispatch("downloadTempImages", {
-            fileIds: fileIds.join(",")
-          });
-          if (res && res.data) {
-            Msgsuccess("正在下载...");
-          } else {
-            Msgerror("下载失败");
-          }
+          windon.open(`/api/files/downloadZip?fileIds=${fileIds.join(",")}`);
           break;
         case "b":
           res = await this.$store.dispatch("deleteTempImages", {

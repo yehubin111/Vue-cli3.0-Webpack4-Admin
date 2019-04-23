@@ -2008,9 +2008,10 @@ export default {
         state.tempdetail = r.data;
     },
     TEMPIMAGES(state, r) {
-        state.tempimages = r.data;
+        state.tempimages = r.data.list;
         state.tempimages.forEach(v => {
             v.select = false;
         })
+        state.tempimagestotal = r.data.total
     }
 }

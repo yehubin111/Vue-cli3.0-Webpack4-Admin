@@ -16,7 +16,7 @@
         :page-sizes="[20, 50, 80]"
         :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
+        :total="tempimagestotal"
       ></el-pagination>
     </div>
   </div>
@@ -28,12 +28,11 @@ export default {
   data() {
     return {
       pageindex: 1,
-      pagesize: 20,
-      total: 30
+      pagesize: 20
     };
   },
   computed: {
-    ...mapState(["tempimages"])
+    ...mapState(["tempimages", "tempimagestotal"])
   },
   methods: {
     pageSizeChange() {},

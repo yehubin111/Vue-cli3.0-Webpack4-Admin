@@ -380,4 +380,5 @@ export default {
   templatetotal: 0,
   tempdetail: null, // 模板详情
   tempimages: [], // 模板图片列表
+  tempimagestotal: 0,
 }

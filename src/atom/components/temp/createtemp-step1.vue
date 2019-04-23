@@ -3,13 +3,13 @@
     <div class="sort">
       <p>
         <span class="title">尺寸</span>
-        <el-radio-group v-model="size" @change="getTemplateList">
+        <el-radio-group v-model="size" @change="sortChange">
           <el-radio :label="size.name" v-for="size in tempsize" :key="size.name">{{size.name}}</el-radio>
         </el-radio-group>
       </p>
       <p>
         <span class="title">行业</span>
-        <el-radio-group v-model="trade" @change="getTemplateList">
+        <el-radio-group v-model="trade" @change="sortChange">
           <el-radio :label="trade.name" v-for="trade in temptrade" :key="trade.name">{{trade.name}}</el-radio>
         </el-radio-group>
       </p>
@@ -59,6 +59,10 @@ export default {
     },
     pageSwitch(idx) {
       this.pageindex = idx;
+      this.getTemplateList();
+    },
+    sortChange() {
+      this.pageindex = 1;
       this.getTemplateList();
     },
     getTemplateList() {

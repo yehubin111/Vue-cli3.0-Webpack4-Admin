@@ -3428,7 +3428,6 @@ export default {
             url,
             data: option,
             method: 'post',
-            fullscreen: true,
             success: res => res
         })
     }

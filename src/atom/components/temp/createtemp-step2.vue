@@ -156,7 +156,7 @@ export default {
   },
   methods: {
     async saveTempImages() {
-      // let load = Loading.service({ fullscreen: true });
+      let load = Loading.service({ fullscreen: true });
       let images = [];
       // 导出图片
       for (let i = 0; i < this.allImages.length; i++) {

@@ -174,7 +174,7 @@ export default {
       }
       console.log(images);
       images = images.map(v => {
-        var bl = convertBase64UrlToBlob(v);
+        var bl = this.convertBase64UrlToBlob(v);
         var formdata = new FormData();
         formdata.append("file", bl, "file_" + Date.parse(new Date()) + ".jpg");
         return formdata;
@@ -183,6 +183,17 @@ export default {
       let res = await this.$store.dispatch("saveTempImages", { images });
 
       if (load) load.close();
+    },
+    convertBase64UrlToBlob(urlData) {
+      var arr = urlData.split(","),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
     },
     tempUploading(res) {
       this.logo = res;

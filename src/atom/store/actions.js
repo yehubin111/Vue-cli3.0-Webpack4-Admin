@@ -3426,6 +3426,7 @@ export default {
 
         return Axios({
             url,
+            data: option,
             method: 'post',
             fullscreen: true,
             success: res => res

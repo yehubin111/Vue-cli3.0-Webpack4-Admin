@@ -90,7 +90,7 @@ export default {
       let res;
       switch (type) {
         case "a":
-          windon.open(`/api/files/downloadZip?fileIds=${fileIds.join(",")}`);
+          window.open(`/api/files/downloadZip?fileIds=${fileIds.join(",")}`);
           break;
         case "b":
           res = await this.$store.dispatch("deleteTempImages", {

@@ -12,7 +12,7 @@
 <script>
 import { mapState } from "vuex";
 export default {
-  props: ["selectall"],
+  props: ["selectall", "ctrluse"],
   data() {
     return {};
   },
@@ -21,6 +21,12 @@ export default {
   },
   methods: {
     changeSelect() {
+      // 有勾选的情况下，可以用操作
+      if(this.tempimages.find(v => v.select)) {
+        this.$emit('update:ctrluse', true);
+      } else {
+        this.$emit('update:ctrluse', false);
+      }
       // 没找到未选的，则为全选
       if (!this.tempimages.find(v => !v.select)) {
         this.$emit("update:selectall", true);

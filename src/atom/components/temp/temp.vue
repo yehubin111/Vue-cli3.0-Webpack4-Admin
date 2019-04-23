@@ -9,13 +9,13 @@
       <el-dropdown class="add" split-button type="primary" @command="templateCtrl">
         批量
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="a">下载</el-dropdown-item>
-          <el-dropdown-item command="b">删除</el-dropdown-item>
+          <el-dropdown-item command="a" :disabled="!ctrluse">下载</el-dropdown-item>
+          <el-dropdown-item command="b" :disabled="!ctrluse">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <el-button type="text" class="add" @click="selectAll">{{selectall? '取消全选': '全选'}}</el-button>
     </div>
-    <temp-list :selectall.sync="selectall"></temp-list>
+    <temp-list :selectall.sync="selectall" :ctrluse.sync="ctrluse"></temp-list>
     <div class="pageswitch">
       <el-pagination
         @size-change="pageSizeChange"
@@ -44,6 +44,7 @@ export default {
     return {
       createstatus: true,
       selectall: false,
+      ctrluse: false,
       pageindex: 1,
       pagesize: 20
     };
@@ -61,6 +62,7 @@ export default {
       this.tempimages.forEach(v => {
         v.select = this.selectall;
       });
+      this.ctrluse = this.selectall;
     },
     pageSizeChange(size) {
       this.pagesize = size;
@@ -83,26 +85,41 @@ export default {
     },
     async templateCtrl(type) {
       let fileIds = this.tempimages.filter(v => v.select).map(v => v.id);
-      if (fileIds.length == 0) {
-        Msgwarning("请先选择模板");
-        return;
-      }
       let res;
       switch (type) {
         case "a":
-          window.open(`/api/files/downloadZip?fileIds=${fileIds.join(",")}`);
+          this.$confirm("确认打包下载所选图片吗？", "下载", {
+            confirmButtonText: "下载",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+            .then(async () => {
+              window.open(
+                `/api/files/downloadZip?fileIds=${fileIds.join(",")}`
+              );
+            })
+            .catch(() => {});
           break;
         case "b":
-          res = await this.$store.dispatch("deleteTempImages", {
-            fileIds: fileIds.join(",")
-          });
-          if (res && res.data) {
-            Msgsuccess("删除成功");
-            this.pageindex = 1;
-            this.getData();
-          } else {
-            Msgerror("删除失败");
-          }
+          this.$confirm("确认删除所选图片吗？", "删除", {
+            confirmButtonText: "删除",
+            cancelButtonText: "取消",
+            type: "warning"
+          })
+            .then(async () => {
+              res = await this.$store.dispatch("deleteTempImages", {
+                fileIds: fileIds.join(",")
+              });
+              if (res && res.data) {
+                Msgsuccess("删除成功");
+                this.pageindex = 1;
+                this.getData();
+              } else {
+                Msgerror("删除失败");
+              }
+            })
+            .catch(() => {});
+
           break;
       }
     }

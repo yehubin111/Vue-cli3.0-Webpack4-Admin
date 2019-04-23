@@ -169,11 +169,24 @@ export default {
       this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
     },
     async saveTempImages() {
+      // 素材必须上传，并且不能出现素材不全的情况
+      let t;
+      let spe = this.allImages.find((v, i) => {
+        if (v.length != 0 && v.length < this.imagecount) {
+          t = i;
+          return v;
+        }
+      });
+      if (spe) {
+        Msgwarning(`第${t + 1}张图片素材不全，请不全后再生成图片`);
+        return;
+      }
+
       let load = Loading.service({ fullscreen: true });
       let imagesarr = [];
       // 导出图片
       for (let i = 0; i < this.allImages.length; i++) {
-        if(this.allImages[i].length == 0) continue;
+        if (this.allImages[i].length == 0) continue;
         let img = await new exportTemplate({
           baseImage: this.baseImage,
           baseWidth: this.baseWidth,

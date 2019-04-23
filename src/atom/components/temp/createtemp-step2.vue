@@ -92,7 +92,7 @@ import exportTemplate from "@/atom/js/imageTemplate";
 
 import { mapState } from "vuex";
 import { Loading } from "element-ui";
-import { Msgsuccess } from "../../js/message";
+import { Msgsuccess, Msgwarning } from "../../js/message";
 import draggable from "vuedraggable/src/vuedraggable";
 export default {
   components: {

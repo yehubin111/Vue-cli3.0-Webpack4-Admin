@@ -215,5 +215,5 @@ export default {
     'tempdetail': 'template/findById?', // 模板详细信息
     'edittemp': 'template/updateTemplate', // 编辑模板
     'tempimagelist': 'file/getAll', // 模板图片列表
-    'savetempimage': 'file/saveFile', // 保存模板图片
+    'savetempimage': 'files/saveFile', // 保存模板图片
 }

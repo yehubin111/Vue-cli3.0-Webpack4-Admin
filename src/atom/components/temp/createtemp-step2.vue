@@ -21,7 +21,7 @@
         <div class="upload">
           <span class="name">上传图片</span>
           <div class="uploadbtn">
-            <templates-upload @imgUploading="matterUploading" :disabled="!islogo" type="MUTIPLE"></templates-upload>
+            <templates-upload @imgUploading="matterUploading" type="MUTIPLE"></templates-upload>
             <div slot="tip" class="el-upload__tip">可上传多张图片，可调整图片顺序，不支持裁剪</div>
           </div>
         </div>
@@ -71,7 +71,7 @@
             v-if="baseImage"
           ></image-template>
         </p>
-        <p class="resfont">显示前2张效果预览，共3张</p>
+        <p class="resfont">显示前2张效果预览，共{{allImages.length}}张</p>
       </div>
     </div>
     <div class="button">

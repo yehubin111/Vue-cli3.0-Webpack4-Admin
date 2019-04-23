@@ -3424,12 +3424,13 @@ export default {
         let url = URL.savetempimage;
         console.log(images);
         let option = new FormData();
-        option.append('file', images);
-        // let option = images;
+        images.forEach(v => {
+            option.append('file', v);
+        });
 
         return Axios({
             url,
-            data: images[0],
+            data: option,
             method: 'post',
             success: res => res
         })

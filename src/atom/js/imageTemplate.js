@@ -49,7 +49,7 @@ class exportTemplate {
                     img.src = this.fileImages[i];
                     img.onload = () => {
                         me.ctx.drawImage(
-                            'http://172.31.1.76' + img,
+                            img,
                             start[0] * me.ratio,
                             start[1] * me.ratio,
                             width * me.ratio,
@@ -89,7 +89,7 @@ class exportTemplate {
                 img.src = images[i];
                 img.onload = () => {
                     me.ctx.drawImage(
-                        'http://172.31.1.76' + img,
+                        img,
                         start[0] * me.ratio,
                         start[1] * me.ratio,
                         width * me.ratio,
@@ -107,7 +107,7 @@ class exportTemplate {
             img.crossOrigin = "Anonymous";
             img.src = this.baseImage;
             img.onload = () => {
-                me.ctx.drawImage('http://172.31.1.76' + img, 0, 0, me.canvaswidth, me.canvasheight);
+                me.ctx.drawImage(img, 0, 0, me.canvaswidth, me.canvasheight);
                 resolve();
             };
         });

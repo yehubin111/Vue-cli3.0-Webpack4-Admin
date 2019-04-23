@@ -2006,5 +2006,11 @@ export default {
     },
     TEMPDETAIL(state, r) {
         state.tempdetail = r.data;
+    },
+    TEMPIMAGES(state, r) {
+        state.tempimages = r.data;
+        state.tempimages.forEach(v => {
+            v.select = false;
+        })
     }
 }

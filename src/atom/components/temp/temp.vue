@@ -16,19 +16,6 @@
       <el-button type="text" class="add">全选</el-button>
     </div>
     <temp-list></temp-list>
-    <!-- <div class="canvas">
-      <image-template
-        :baseImage="baseImage"
-        :baseWidth="baseWidth"
-        :baseHeight="baseHeight"
-        :fileDots="fileDots"
-        :fileImages="fileImages"
-        :canvasWidth="canvasWidth"
-        :canvasHeight="canvasHeight"
-      ></image-template>
-    </div>
-    <el-button type="primary" @click="setTemplate">click</el-button>
-    <el-button type="primary" @click="templateExport">export</el-button>-->
   </div>
 </template>
 
@@ -55,27 +42,6 @@ export default {
       });
     },
     templateCtrl() {},
-    setTemplate() {
-      let images = [
-        "http://172.31.1.45/file/image/2019/01/21/e9903413-1837-4a21-b15c-2885679dbf14.jpg",
-        "http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg",
-        "http://172.31.1.45/file/image/2019/04/17/81928349-a23c-4c85-9803-e9fdbcc566e7.jpg"
-      ];
-
-      this.fileImages = images;
-    },
-    templateExport() {
-      new exportTemplate({
-        baseImage: this.baseImage,
-        baseWidth: this.baseWidth,
-        baseHeight: this.baseHeight,
-        fileImages: this.fileImages,
-        fileDots: this.fileDots
-      }).then(res => {
-        let img = new Image();
-        img.src = res;
-      });
-    }
   }
 };
 </script>

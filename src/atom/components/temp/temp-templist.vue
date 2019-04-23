@@ -1,50 +1,11 @@
 <template>
   <div>
     <ul class="templist">
-      <li>
+      <li v-for="img in tempimages" :key="img.id">
         <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
+          <img :src="img.path" alt>
         </p>
-        <el-checkbox v-model="checked" class="select"></el-checkbox>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <el-checkbox v-model="checked" class="select"></el-checkbox>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <el-checkbox v-model="checked" class="select"></el-checkbox>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <el-checkbox v-model="checked" class="select"></el-checkbox>
-      </li>
-      <li>
-        <p class="image">
-          <img
-            src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-            alt
-          >
-        </p>
-        <el-checkbox v-model="checked" class="select"></el-checkbox>
+        <el-checkbox v-model="img.select" class="select"></el-checkbox>
       </li>
     </ul>
     <div class="pageswitch">
@@ -62,18 +23,22 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
-    data() {
-        return {
-            pageindex: 1,
-            pagesize: 20,
-            total: 30
-        }
-    },
-    methods: {
-        pageSizeChange() {},
-        pageSwitch() {}
-    }
+  data() {
+    return {
+      pageindex: 1,
+      pagesize: 20,
+      total: 30
+    };
+  },
+  computed: {
+    ...mapState(["tempimages"])
+  },
+  methods: {
+    pageSizeChange() {},
+    pageSwitch() {}
+  }
 };
 </script>
 
@@ -106,8 +71,8 @@ export default {
     }
   }
 }
-.pageswitch{
-    text-align: center;
-    margin-bottom: 100px;
+.pageswitch {
+  text-align: center;
+  margin-bottom: 100px;
 }
 </style>

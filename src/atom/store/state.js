@@ -379,4 +379,5 @@ export default {
   templatelist: [], // 模板列表
   templatetotal: 0,
   tempdetail: null, // 模板详情
+  tempimages: [], // 模板图片列表
 }

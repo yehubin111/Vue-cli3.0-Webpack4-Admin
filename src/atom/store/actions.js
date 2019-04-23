@@ -3414,8 +3414,9 @@ export default {
 
         Axios({
             url,
+            fullscreen: true,
             success: res => {
-
+                commit('TEMPIMAGES', res);
             }
         })
     },

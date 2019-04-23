@@ -182,14 +182,14 @@ export default {
       // 左侧分组显示
       let list = [];
       let i = 0;
+      list[i] = [];
       this.allImages.forEach(v => {
-        if (!list[i]) list[i] = [];
-        else {
-          if (list[i].length < this.imagecount) {
-            list[i].push(v);
-          } else {
-            i++;
-          }
+        if (list[i].length < this.imagecount) {
+          list[i].push(v);
+        } else {
+          i++;
+          list[i] = [];
+          list[i].push(v);
         }
       });
       this.allImages = list;

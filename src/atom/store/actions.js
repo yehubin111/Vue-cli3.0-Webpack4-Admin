@@ -3422,15 +3422,10 @@ export default {
     },
     saveTempImages({ state, commit }, { images }) {
         let url = URL.savetempimage;
-        console.log(images);
-        let option = new FormData();
-        images.forEach(v => {
-            option.append('file', v);
-        });
 
         return Axios({
             url,
-            data: option,
+            data: images,
             method: 'post',
             success: res => res
         })

@@ -157,7 +157,7 @@ export default {
   methods: {
     async saveTempImages() {
       let load = Loading.service({ fullscreen: true });
-      let images = [];
+      let imagesarr = [];
       // 导出图片
       for (let i = 0; i < this.allImages.length; i++) {
         let img = await new exportTemplate({
@@ -170,14 +170,13 @@ export default {
           fileImages: this.allImages[i].map(v => v.imageUrl),
           fileDots: this.fileDots
         });
-        images.push(img);
+        imagesarr.push(img);
       }
-      console.log(images);
-      images = images.map(v => {
-        var bl = this.convertBase64UrlToBlob(v);
-        var formdata = new FormData();
-        formdata.append("file", bl, "file_" + Date.parse(new Date()) + ".jpg");
-        return formdata;
+      console.log(imagesarr);
+      let images = new FormData();
+      imagesarr.forEach(v => {
+        let bl = this.convertBase64UrlToBlob(v);
+        images.append("file", bl, "file_" + Date.parse(new Date()) + ".jpg");
       });
 
       let res = await this.$store.dispatch("saveTempImages", { images });

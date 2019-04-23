@@ -17,7 +17,7 @@
     <ul class="templatelist">
       <li v-for="temp in templatelist" :key="temp.id" @click="selectTemp(temp.id)">
         <p class="image">
-          <img :src="'http://172.31.1.76' + temp.coverImage" alt>
+          <img :src="temp.coverImage" alt>
         </p>
         <p class="tip">
           <el-tag v-for="tag in temp.label.split(',')" :key="tag" class="tag" size="medium">{{tag}}</el-tag>

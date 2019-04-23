@@ -25,17 +25,21 @@
             <div slot="tip" class="el-upload__tip">可上传多张图片，可调整图片顺序，不支持裁剪</div>
           </div>
         </div>
+        <!-- <transition-group type="transition" name="flip-list"> -->
         <div v-for="(matter, index) in allImages" :key="index">
           <p class="theme">第{{index + 1}}张</p>
-          <ul class="imagelist">
-            <li v-for="(m, idx) in matter" :key="idx">
+          <draggable tag="ul" class="imagelist" :list="matter" group="people">
+            <!-- <transition-group type="transition" name="flip-list"> -->
+            <li v-for="m in matter" :key="m.name">
               <p>
-                <img :src="m.imageUrl" alt>
+                <img :src="'http://172.31.1.76' + m.imageUrl" alt>
               </p>
               <el-progress :percentage="m.process" :status="m.process == 100?'success':''"></el-progress>
             </li>
-          </ul>
+            <!-- </transition-group> -->
+          </draggable>
         </div>
+        <!-- </transition-group> -->
       </div>
       <div class="module">
         <p class="title">效果预览</p>
@@ -85,13 +89,16 @@
 import ImageTemplate from "./createtemp-template";
 import TemplatesUpload from "../templates/addtemplates-upload";
 import exportTemplate from "@/atom/js/imageTemplate";
+
 import { mapState } from "vuex";
 import { Loading } from "element-ui";
 import { Msgsuccess } from "../../js/message";
+import draggable from "vuedraggable/src/vuedraggable";
 export default {
   components: {
     ImageTemplate,
-    TemplatesUpload
+    TemplatesUpload,
+    draggable
   },
   data() {
     return {
@@ -123,7 +130,7 @@ export default {
     this.baseImage = location.origin + res["designMaterial"]; // location.origin
     this.baseWidth = res["size"].split("x")[0] * 1;
     this.baseHeight = res["size"].split("x")[1] * 1;
-    this.canvasWidth = 560;
+    this.canvasWidth = 560; // 560 是当前位置宽度
 
     // logo
     this.logoDots = [];
@@ -165,7 +172,7 @@ export default {
           baseImage: this.baseImage,
           baseWidth: this.baseWidth,
           baseHeight: this.baseHeight,
-          canvasWidth: this.canvasWidth,
+          // canvasWidth: this.canvasWidth,
           logoDots: this.logoDots,
           logoImages: this.logoImages,
           fileImages: this.allImages[i].map(v => v.imageUrl),

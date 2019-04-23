@@ -4,7 +4,7 @@
     <el-table-column prop="coverImage" label="封面">
       <template slot-scope="scope">
         <p class="image">
-          <img :src="'http://172.31.1.76' + scope.row.coverImage" alt>
+          <img :src="scope.row.coverImage" alt>
         </p>
       </template>
     </el-table-column>

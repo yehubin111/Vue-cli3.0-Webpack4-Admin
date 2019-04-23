@@ -5,8 +5,8 @@ class exportTemplate {
         this.baseHeight = baseHeight; // 背景图高度
         this.canvasWidth = canvasWidth; // canvas宽度
         this.canvasHeight = canvasHeight; // canvas高度
-        this.ratio = this.canvaswidth / this.baseWidth;
         this.canvaswidth = canvasWidth ? canvasWidth : baseWidth; // canvas实际宽度
+        this.ratio = this.canvaswidth / this.baseWidth;
         this.canvasheight = this.baseHeight * this.ratio; // canvas实际高度
         this.fileImages = fileImages; // 所有图片路径
         this.fileDots = fileDots; // 图片空位坐标 [{ left, top }, { left, top }]

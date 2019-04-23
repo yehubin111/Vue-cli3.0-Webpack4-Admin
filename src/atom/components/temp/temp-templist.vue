@@ -1,27 +1,33 @@
 <template>
-    <ul class="templist">
-      <li v-for="img in tempimages" :key="img.id">
-        <p class="image">
-          <img :src="img.filePath" alt>
-        </p>
-        <el-checkbox v-model="img.select" class="select"></el-checkbox>
-      </li>
-    </ul>
+  <ul class="templist">
+    <li v-for="img in tempimages" :key="img.id">
+      <p class="image">
+        <img :src="img.filePath" alt>
+      </p>
+      <el-checkbox v-model="img.select" class="select" @change="changeSelect"></el-checkbox>
+    </li>
+  </ul>
 </template>
 
 <script>
 import { mapState } from "vuex";
 export default {
+  props: ["selectall"],
   data() {
-    return {
-     
-    };
+    return {};
   },
   computed: {
     ...mapState(["tempimages"])
   },
   methods: {
-    
+    changeSelect() {
+      // 没找到未选的，则为全选
+      if (!this.tempimages.find(v => !v.select)) {
+        this.$emit("update:selectall", true);
+      } else {
+        this.$emit("update:selectall", false);
+      }
+    }
   }
 };
 </script>

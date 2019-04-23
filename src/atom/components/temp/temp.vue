@@ -13,9 +13,9 @@
           <el-dropdown-item command="b">删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-button type="text" class="add">全选</el-button>
+      <el-button type="text" class="add" @click="selectAll">{{selectall? '取消全选': '全选'}}</el-button>
     </div>
-    <temp-list></temp-list>
+    <temp-list :selectall.sync="selectall"></temp-list>
     <div class="pageswitch">
       <el-pagination
         @size-change="pageSizeChange"
@@ -32,7 +32,6 @@
 
 <script>
 import TempList from "./temp-templist";
-
 import exportTemplate from "@/atom/js/imageTemplate";
 import { mapState } from "vuex";
 import { Msgsuccess, Msgerror } from "@/atom/js/message";
@@ -44,6 +43,7 @@ export default {
   data() {
     return {
       createstatus: true,
+      selectall: false,
       pageindex: 1,
       pagesize: 20
     };
@@ -51,10 +51,17 @@ export default {
   mounted() {
     this.getData();
   },
+  watch: {},
   computed: {
     ...mapState(["tempimages", "tempimagestotal"])
   },
   methods: {
+    selectAll() {
+      this.selectall = !this.selectall;
+      this.tempimages.forEach(v => {
+        v.select = this.selectall;
+      });
+    },
     pageSizeChange(size) {
       this.pagesize = size;
       this.getData();

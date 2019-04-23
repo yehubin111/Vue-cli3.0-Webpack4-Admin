@@ -6,8 +6,8 @@
           class="size"
           v-for="tag in tempsize"
           :key="tag.name"
-          :closable="tag.delete"
-          @close="deleteSize(tag.name)"
+          closable
+          @close="deleteSize(tag.name, tag.delete)"
         >{{tag.name}}</el-tag>
       </el-form-item>
       <el-form-item label="新增尺寸">
@@ -57,7 +57,11 @@ export default {
       this.form.sizewidth = 0;
       this.form.sizeheight = 0;
     },
-    deleteSize(tag) {
+    deleteSize(tag, del) {
+      if(!del) {
+        Msgwarning('当前尺寸下有模板不可删除，请修改或删除模板');
+        return;
+      }
       let value = tag;
       this.$store.dispatch("deleteSizeTrade", { key: "template_size", value });
     },

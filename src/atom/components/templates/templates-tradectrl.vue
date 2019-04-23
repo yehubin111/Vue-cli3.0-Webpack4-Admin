@@ -6,8 +6,8 @@
           class="size"
           v-for="tag in temptrade"
           :key="tag.name"
-          :closable="tag.delete"
-          @close="deleteTrade(tag.name)"
+          closable
+          @close="deleteTrade(tag.name, tag.delete)"
         >{{tag.name}}</el-tag>
       </el-form-item>
       <el-form-item label="新增行业">
@@ -53,7 +53,11 @@ export default {
     reset() {
       this.form.trade = "";
     },
-    deleteTrade(tag) {
+    deleteTrade(tag, del) {
+      if(!del) {
+        Msgwarning('当前行业下有模板不可删除，请修改或删除模板');
+        return;
+      }
       let value = tag;
       this.$store.dispatch("deleteSizeTrade", {
         key: "template_business",

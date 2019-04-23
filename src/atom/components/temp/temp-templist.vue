@@ -3,7 +3,7 @@
     <ul class="templist">
       <li v-for="img in tempimages" :key="img.id">
         <p class="image">
-          <img :src="img.path" alt>
+          <img :src="img.filePath" alt>
         </p>
         <el-checkbox v-model="img.select" class="select"></el-checkbox>
       </li>

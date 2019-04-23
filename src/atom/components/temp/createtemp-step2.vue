@@ -76,7 +76,7 @@
     </div>
     <div class="button">
       <el-button @click="goBack">上一步</el-button>
-      <el-button type="primary">生成图片</el-button>
+      <el-button type="primary" @click="saveTempImages">生成图片</el-button>
     </div>
   </div>
 </template>
@@ -84,7 +84,9 @@
 <script>
 import ImageTemplate from "./createtemp-template";
 import TemplatesUpload from "../templates/addtemplates-upload";
+import exportTemplate from "@/atom/js/imageTemplate";
 import { mapState } from "vuex";
+import { Loading } from "element-ui";
 export default {
   components: {
     ImageTemplate,
@@ -117,7 +119,7 @@ export default {
     let res = await this.$store.dispatch("getTempDetail", {
       id: this.$route.params.tempid
     });
-    this.baseImage = location.origin + res["designMaterial"];
+    this.baseImage = location.origin + res["designMaterial"]; // location.origin
     this.baseWidth = res["size"].split("x")[0] * 1;
     this.baseHeight = res["size"].split("x")[1] * 1;
     this.canvasWidth = 560;
@@ -153,9 +155,34 @@ export default {
     ...mapState(["templatelist"])
   },
   methods: {
+    async saveTempImages() {
+      // let load = Loading.service({ fullscreen: true });
+      let images = [];
+      // 导出图片
+      for (let i = 0; i < this.allImages.length; i++) {
+        console.log(this.allImages[i]);
+        let img = await new exportTemplate({
+          baseImage: this.baseImage,
+          baseWidth: this.baseWidth,
+          baseHeight: this.baseHeight,
+          canvasWidth: this.canvasWidth,
+          logoDots: this.logoDots,
+          logoImages: this.logoImages,
+          fileImages: this.allImages[i].map(v => v.imageUrl),
+          fileDots: this.fileDots
+        });
+        images.push(img);
+        console.log(img);
+      }
+      console.log(images);
+      return;
+      let res = await this.$store.dispatch("saveTempImages");
+
+      if (load) load.close();
+    },
     tempUploading(res) {
       this.logo = res;
-      this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl;
+      this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl; // location.origin
       if (this.logourl) {
         this.logoImages = [];
         this.logoImages.push(this.logourl);

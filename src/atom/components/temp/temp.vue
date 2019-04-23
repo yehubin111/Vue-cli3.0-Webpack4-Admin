@@ -45,6 +45,9 @@ export default {
       createstatus: true
     };
   },
+  mounted() {
+    this.$store.dispatch("getTempImages");
+  },
   methods: {
     toCreateImage() {
       this.$router.push({

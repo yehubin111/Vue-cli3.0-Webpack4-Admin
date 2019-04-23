@@ -3409,4 +3409,26 @@ export default {
             }
         })
     },
+    getTempImages({ state, commit }) {
+        let url = URL.tempimagelist;
+
+        Axios({
+            url,
+            success: res => {
+
+            }
+        })
+    },
+    saveTempImages({ state, commit }, { images }) {
+        let url = URL.savetempimage;
+        let option = new FormData();
+        option.append('file', images);
+
+        return Axios({
+            url,
+            method: 'post',
+            fullscreen: true,
+            success: res => res
+        })
+    }
 }

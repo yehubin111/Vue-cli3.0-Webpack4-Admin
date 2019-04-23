@@ -160,7 +160,6 @@ export default {
       let images = [];
       // 导出图片
       for (let i = 0; i < this.allImages.length; i++) {
-        console.log(this.allImages[i]);
         let img = await new exportTemplate({
           baseImage: this.baseImage,
           baseWidth: this.baseWidth,
@@ -172,11 +171,16 @@ export default {
           fileDots: this.fileDots
         });
         images.push(img);
-        console.log(img);
       }
       console.log(images);
-      return;
-      let res = await this.$store.dispatch("saveTempImages");
+      images = images.map(v => {
+        var bl = convertBase64UrlToBlob(v);
+        var formdata = new FormData();
+        formdata.append("file", bl, "file_" + Date.parse(new Date()) + ".jpg");
+        return formdata;
+      });
+
+      let res = await this.$store.dispatch("saveTempImages", { images });
 
       if (load) load.close();
     },

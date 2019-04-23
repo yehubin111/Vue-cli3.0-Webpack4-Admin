@@ -26,14 +26,12 @@ class exportTemplate {
     }
 
     async drawImages() {
-        console.log('%cdraw1', 'color: green');
         let me = this;
         // 清空canvas
         this.ctx.clearRect(0, 0, this.canvaswidth, this.canvasheight);
         // 超過位置最大數量，截取前幾張
         let maxcount = this.fileDots.length;
         this.fileImages = this.fileImages.slice(0, maxcount);
-        console.log(this.fileImages);
         // 在指定位置渲染圖片
         for (let i = 0; i < this.fileImages.length; i++) {
             let start = this.fileDots[i].start;
@@ -60,13 +58,10 @@ class exportTemplate {
                 });
             })();
         }
-        console.log('%cdraw2', 'color: green');
         // 渲染背景
         await this.drawBackground();
-        console.log('%cdraw3', 'color: green');
         // 渲染LOGO
         if (this.logoDots.length != 0) await this.drawLogo();
-        console.log('%cdraw4', 'color: green');
         // 导出
         return this.exportTemplate();
     }

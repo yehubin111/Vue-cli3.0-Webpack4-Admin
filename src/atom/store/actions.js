@@ -3409,8 +3409,8 @@ export default {
             }
         })
     },
-    getTempImages({ state, commit }) {
-        let url = URL.tempimagelist;
+    getTempImages({ state, commit }, { pageIndex = 1, pageSize = 20 } = {}) {
+        let url = `${URL.tempimagelist}pageIndex=${pageIndex}&pageSize=${pageSize}`;
 
         Axios({
             url,
@@ -3429,5 +3429,22 @@ export default {
             method: 'post',
             success: res => res
         })
-    }
+    },
+    deleteTempImages({ state, commit }, { fileIds }) {
+        let url = `${URL.deletetempimage}fileIds=${fileIds}`;
+
+        return Axios({
+            url,
+            fullscreen: true,
+            success: res => res
+        })
+    },
+    downloadTempImages({ state, commit, }, { fileIds }) {
+        let url = `${URL.downloadtempimage}fileIds=${fileIds}`;
+
+        return Axios({
+            url,
+            success: res => res
+        })
+    },
 }

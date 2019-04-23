@@ -214,6 +214,8 @@ export default {
     'deletesort': 'template/deleteValue?', // 删除条件
     'tempdetail': 'template/findById?', // 模板详细信息
     'edittemp': 'template/updateTemplate', // 编辑模板
-    'tempimagelist': 'files/getAll', // 模板图片列表
+    'tempimagelist': 'files/getAll?', // 模板图片列表
     'savetempimage': 'files/saveFile', // 保存模板图片
+    'deletetempimage': 'files/deleteFile?', // 删除模板图片
+    'downloadtempimage': 'files/downloadZip?', // 下载模板图片
 }

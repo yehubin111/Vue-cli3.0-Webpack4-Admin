@@ -173,6 +173,7 @@ export default {
       let imagesarr = [];
       // 导出图片
       for (let i = 0; i < this.allImages.length; i++) {
+        if(this.allImages[i].length == 0) continue;
         let img = await new exportTemplate({
           baseImage: this.baseImage,
           baseWidth: this.baseWidth,

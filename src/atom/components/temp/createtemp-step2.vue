@@ -28,7 +28,7 @@
         <!-- <transition-group type="transition" name="flip-list"> -->
         <div v-for="(matter, index) in allImages" :key="index">
           <p class="theme">第{{index + 1}}张</p>
-          <draggable tag="ul" class="imagelist" :list="matter" group="people">
+          <draggable tag="ul" class="imagelist" :list="matter" group="people" @change="dragImages">
             <!-- <transition-group type="transition" name="flip-list"> -->
             <li v-for="m in matter" :key="m.name">
               <p>
@@ -163,6 +163,11 @@ export default {
     ...mapState(["templatelist"])
   },
   methods: {
+    dragImages() {
+      // 设置canvas参数
+      this.fileImages1 = this.allImages[0].map(v => v.imageUrl);
+      this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
+    },
     async saveTempImages() {
       let load = Loading.service({ fullscreen: true });
       let imagesarr = [];

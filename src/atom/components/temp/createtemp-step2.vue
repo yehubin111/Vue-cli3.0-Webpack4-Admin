@@ -342,6 +342,7 @@ export default {
           height: 100px;
           margin-bottom: 3px;
           position: relative;
+          overflow: hidden;
           img {
             width: 100%;
           }

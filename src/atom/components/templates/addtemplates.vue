@@ -413,6 +413,7 @@ export default {
         align-items: center;
         justify-content: center;
         margin-bottom: 5px;
+        overflow: hidden;
         img {
           width: 100%;
         }

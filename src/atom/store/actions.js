@@ -585,19 +585,13 @@ export default {
     getManagelist({ state, commit }, { status = '1', pageIndex = 1, pageSize = 20 }) {
         let url = `${URL.managelist}keywords=${state.projectkwd}&status=${status}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
 
-        let load = Loading.service({ target: document.getElementById('manageTable') });
-        _axios.get(url, { loadDom: 'manageTable' })
-            .then(res => {
-                if (load) {
-                    load.close();
-                }
-
-                if (res.code == 0)
-                    commit('MANAGELIST', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        Axios({
+            url,
+            fullscreen: true,
+            success: res => {
+                commit('MANAGELIST', res);
+            }
+        })
     },
     manageApplist({ state, commit }) {
         let url = URL.applist;
@@ -714,6 +708,36 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    getUsersList({state, commit}) {
+        let url = URL.userslist;
+
+        Axios({
+            url,
+            success: res => {
+                commit('USERSLIST', res);
+            }
+        })
+    },
+    getAdAccount({state, commit}) {
+        let url = URL.adaccount;
+
+        Axios({
+            url,
+            success: res => {
+                commit('ADACCOUNTLIST', res);
+            }
+        })
+    },
+    getAdPages({ state, commit }) {
+        let url = URL.allpagelist;
+
+        Axios({
+            url,
+            success: res => {
+                commit('ADPAGES', res);
+            }
+        });
     },
     // project rules
     getRules({ state, commit }, id) {

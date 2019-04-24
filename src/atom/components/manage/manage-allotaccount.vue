@@ -5,23 +5,9 @@
         <p class="title">参与成员</p>
         <el-input v-model="member" placeholder="搜索姓名/邮箱" prefix-icon="el-icon-search"></el-input>
         <div class="list">
-          <p class="line">
-            <span class="head">
-              <img
-                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                alt
-              >
-            </span>
-            <span class="name">周文熙</span>
-          </p>
-          <p class="line">
-            <span class="head">
-              <img
-                src="http://172.31.1.45/file/image/2019/01/21/a2a167f0-4220-4d52-9abe-f2c9e1d3f7a4.jpg"
-                alt
-              >
-            </span>
-            <span class="name">周文熙</span>
+          <p class="line" v-for="member in createoption.member" :key="member.id">
+            <span class="head">{{member.split('|')[0].substr(0,1)}}</span>
+            <span class="name">{{member.split('|')[0]}}</span>
           </p>
         </div>
       </div>
@@ -54,6 +40,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   props: ["status"],
   data() {
@@ -61,6 +48,9 @@ export default {
       member: "",
       account: ""
     };
+  },
+  computed: {
+    ...mapState(['createoption'])
   },
   methods: {
     toCancel() {},
@@ -90,16 +80,21 @@ export default {
         .head {
           width: 30px;
           height: 30px;
-          border: 1px solid #ddd;
+          // border: 1px solid #ddd;
           flex-basis: 32px;
           margin-right: 10px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           overflow: hidden;
-          img {
-            width: 100%;
-          }
+          text-align: center;
+          line-height: 30px;
+          font-size: 14px;
+          color: #fff;
+        
+          // img {
+          //   width: 100%;
+          // }
         }
         .name {
         }

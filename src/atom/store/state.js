@@ -67,6 +67,18 @@ export default {
   pagesize: 20,  // managelist 单页数量
   total: 0, // managelist 总条数
   projectkwd: '', //项目搜索关键字
+  userslist: [], // 参与成员列表，创建项目用
+  adaccountslist: [], // 广告账户列表，创建项目用
+  adpages: [], // 主页列表，创建项目用
+  createoption: {
+    projectname: "",
+    radio1: "",
+    radio2: "",
+    region: [],
+    page: [],
+    member: [],
+    account: []
+  }, // 创建项目填充数据
   // project rules
   rulelist: [], // 规则管理列表
   ruleapp: [],  // 优化记录规则列表
@@ -202,7 +214,7 @@ export default {
         ]
     },
     {
-      name: '按轮播卡片', key: 'partOptions', importkey: 'material_id', list:[]
+      name: '按轮播卡片', key: 'partOptions', importkey: 'material_id', list: []
     }
   ],
   adapplicationid: '', // appid 保存广告管理自定义列

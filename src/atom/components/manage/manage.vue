@@ -29,7 +29,8 @@
         </div>
       </div>
     </div>
-    <manage-add :status="status" :title="title" :id="editid" @cancelAddbm="cancelAddbm"></manage-add>
+    <manage-add :status.sync="status" :allotStatus.sync="allotstatus" :id="editid"></manage-add>
+    <allot-account :status.sync="allotstatus"></allot-account>
   </div>
 </template>
 
@@ -37,23 +38,25 @@
 import ManageList from "./manage-list";
 import ManageAdd from "./manage-add";
 import ManageOver from "./manage-over";
+import AllotAccount from "./manage-allotaccount";
 import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   components: {
     ManageList,
     ManageAdd,
-    ManageOver
+    ManageOver,
+    AllotAccount
   },
   data() {
     return {
       size: 20,
       status: false,
       status2: false,
+      allotstatus: false,
       state4: "",
       editid: "",
-      overid: "",
-      title: "创建项目"
+      overid: ""
     };
   },
   computed: {
@@ -63,6 +66,7 @@ export default {
   created() {},
   mounted() {
     this.SETSTATE({ k: "managelist", v: [] });
+    this.$store.dispatch("getManagelist", {});
   },
   watch: {},
   methods: {
@@ -88,13 +92,10 @@ export default {
     },
     cancelAddbm(k) {
       this[k] = false;
-      this.editid = "";
-      this.title = "创建项目";
     },
     editProject(id) {
       this.status = true;
       this.editid = id;
-      this.title = "编辑项目";
     },
     overProject(id) {
       this.status2 = true;

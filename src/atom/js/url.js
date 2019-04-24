@@ -40,6 +40,8 @@ export default {
     'managelist': 'project/getProjectsRichInfo?', // 项目管理列表
     'addproject': 'project/addProject',  // 添加项目
     'editproject': 'project/updateProject',  // 编辑项目
+    'userslist': 'project/users', // 参与成员列表
+    'adaccount': 'project/getAllAdaccountWithoutBm', // 广告账户列表，创建项目用
     // 'projectover': 'project/projectIsOFF', //项目归档
     'projectover': 'project/offProject', //项目归档
     'projectbegin': 'project/projectIsON',  // 项目激活

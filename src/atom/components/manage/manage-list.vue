@@ -17,34 +17,27 @@
           <span class="name" :title="item.projectName">{{item.projectName}}</span>
           <div class="member">
             <p>
-              <span class="head">
-                <img
-                  src="http://172.31.1.45/file/image/2019/01/21/e9903413-1837-4a21-b15c-2885679dbf14.jpg"
-                  alt
-                >
-              </span>
+              <span class="head" v-for="head in item.participaterNames" :key="head">{{head.substr(0,1)}}</span>
             </p>
-            <span class="more">···</span>
+            <span class="more" v-show="item.participaterNames.length > 5">···</span>
           </div>
         </div>
       </li>
     </ul>
-    <allot-account :status.sync="allotstatus"></allot-account>
   </div>
 </template>
 
 <script>
-import AllotAccount from "./manage-allotaccount";
+
 
 import { mapGetters, mapMutations } from "vuex";
 export default {
   components: {
-    AllotAccount
+    
   },
   data() {
     return {
       // value2: 1
-      allotstatus: false
     };
   },
   computed: {
@@ -57,7 +50,7 @@ export default {
     this.SETSTATE({ k, v });
   },
   mounted() {
-    this.$store.dispatch("getManagelist", {});
+    
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -122,8 +115,9 @@ export default {
         flex-grow: 1;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-end;
         overflow: hidden;
+        padding-right: 10px;
         p {
           width: 80%;
           display: flex;
@@ -135,13 +129,18 @@ export default {
             height: 30px;
             overflow: hidden;
             border-radius: 50%;
-            border: 1px solid #ddd;
+            border: 1px solid #fff;
             margin-left: -10px;
-            background-color: #fff;
+            background-color: #409eff;
             overflow: hidden;
-            img {
-              width: 100%;
-            }
+            font-size: 14px;
+            // font-weight: bold;
+            color: #fff;
+            text-align: center;
+            line-height: 30px;
+            // img {
+            //   width: 100%;
+            // }
           }
         }
         .more {

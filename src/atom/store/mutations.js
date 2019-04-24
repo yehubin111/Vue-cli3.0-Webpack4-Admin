@@ -387,6 +387,15 @@ export default {
     MANAGEAPPLIST(state, r) {
         state.manageapplist = r.data;
     },
+    USERSLIST(state, r) {
+        state.userslist = r.data;
+    },
+    ADACCOUNTLIST(state, r) {
+        state.adaccountslist = r.data;  
+    },
+    ADPAGES(state, r) {
+        state.adpages = r.data;  
+    },
     // project rules
     RULES(state, r) {
         state.rulelist = r.data;

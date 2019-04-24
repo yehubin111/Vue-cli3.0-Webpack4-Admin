@@ -184,8 +184,8 @@ export default {
         trade: "",
         face: [],
         faceurl: "",
-        facewidth: 0,
-        faceheight: 0,
+        // facewidth: 0,
+        // faceheight: 0,
         temp: [],
         tempurl: "",
         tempwidth: 0,
@@ -235,6 +235,8 @@ export default {
           }
         ];
         this.form.tempurl = n.designMaterial;
+        this.form.tempwidth = n.size.split('x')[0];
+        this.form.tempheight = n.size.split('x')[1];
         this.form.logo["with"] = n.isLogo == 1 ? true : false;
         if (n.isLogo == 1) {
           let xy = n.logoLocation.split(",");
@@ -282,16 +284,16 @@ export default {
     imgUploading(res) {
       this.form.face = res;
       this.form.faceurl = res[0].imageUrl;
-      this.form.facewidth = res[0].imageWidth;
-      this.form.faceheight = res[0].imageHeight;
+      // this.form.facewidth = res[0].imageWidth;
+      // this.form.faceheight = res[0].imageHeight;
     },
     dataCheck() {
       if (!this.form.size) return [false, "请选择尺寸"];
       if (!this.form.trade) return [false, "请选择行业"];
       if (!this.form.faceurl) return [false, "请上传封面"];
       let size = this.form.size.split("x");
-      if (this.form.facewidth != size[0] || this.form.faceheight != size[1])
-        return [false, "封面图尺寸与所选尺寸不一致，请重新上传"];
+      // if (this.form.facewidth != size[0] || this.form.faceheight != size[1])
+      //   return [false, "封面图尺寸与所选尺寸不一致，请重新上传"];
       if (!this.form.tempurl) return [false, "请上传模板"];
       if (this.form.tempwidth != size[0] || this.form.tempheight != size[1])
         return [false, "模板尺寸与所选尺寸不一致，请重新上传"];

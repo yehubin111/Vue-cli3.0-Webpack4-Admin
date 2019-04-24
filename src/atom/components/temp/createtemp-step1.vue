@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="contain">
     <div class="sort">
       <p>
         <span class="title">尺寸</span>
@@ -96,6 +96,10 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.contain{
+  width: 1200px;
+  margin: 0 auto;
+}
 .sort {
   margin-bottom: 20px;
   overflow: hidden;

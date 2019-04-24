@@ -165,8 +165,10 @@ export default {
   methods: {
     dragImages() {
       // 设置canvas参数
-      this.fileImages1 = this.allImages[0].map(v => v.imageUrl);
-      this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
+      if(this.allImages[0])
+        this.fileImages1 = this.allImages[0].map(v => v.imageUrl);
+      if(this.allImages[1])
+        this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
     },
     async saveTempImages() {
       // 素材必须上传，并且不能出现素材不全的情况

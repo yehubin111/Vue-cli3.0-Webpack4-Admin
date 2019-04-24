@@ -33,7 +33,7 @@
 <script>
 import TemplatesList from "./templates-list";
 import SizeCtrl from "./templates-sizectrl";
-import TradeCtrl from './templates-tradectrl';
+import TradeCtrl from "./templates-tradectrl";
 import { mapState } from "vuex";
 export default {
   components: {
@@ -54,10 +54,8 @@ export default {
   mounted() {
     // 获取模板列表
     this.getTemplateList();
-    // 获取尺寸列表
-    this.$store.dispatch("getSizeTrade", "template_size");
-    // 获取行业列表
-    this.$store.dispatch("getSizeTrade", "template_business");
+    // 获取筛选条件列表
+    this.getSortList();
   },
   computed: {
     ...mapState(["tempsize", "temptrade", "templatetotal"])
@@ -71,9 +69,17 @@ export default {
       this.pageindex = idx;
       this.getTemplateList();
     },
+    getSortList() {
+      // 获取尺寸列表
+      this.$store.dispatch("getSizeTrade", "template_size");
+      // 获取行业列表
+      this.$store.dispatch("getSizeTrade", "template_business");
+    },
     templistReset() {
       this.pageindex = 1;
       this.getTemplateList();
+      // 删除列表项之后，需要重置尺寸行业列表，改变是否可删除状态
+      this.getSortList();
     },
     getTemplateList() {
       let option = {

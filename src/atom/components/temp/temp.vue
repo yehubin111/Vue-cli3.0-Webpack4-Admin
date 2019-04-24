@@ -94,9 +94,7 @@ export default {
             type: "warning"
           })
             .then(async () => {
-              window.open(
-                `/api/files/downloadZip?fileIds=${fileIds.join(",")}`
-              );
+              location.href = `/api/files/downloadZip?fileIds=${fileIds.join(",")}`;
             })
             .catch(() => {});
           break;

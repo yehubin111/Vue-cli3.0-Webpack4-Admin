@@ -110,6 +110,9 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    resetUploaded(url) {
+      this.processIMG = this.processIMG.filter(v => v.imageUrl != url);
+    },
     /**
      * 20181107新增，图片视频素材库
      * 选择文件之后，JS获取MD5值（brower-file-md5），传到后台，如果已上传过，则进度直接为100%
@@ -129,7 +132,13 @@ export default {
         type,
         on: "",
         vdname: this.fmvideoname,
-        callback: () => {
+        callback: (res) => {
+          this.processIMG.forEach(v => {
+            if(v.imageHash == res.data[0].md5) {
+              v.imageWidth = res.data[0].width;
+              v.imageHeight = res.data[0].height;
+            }
+          })
           this.$emit("imgUploading", this.processIMG);
         }
       });
@@ -147,6 +156,8 @@ export default {
         if (v.name == res.data[0].originName) {
           v.imageUrl = res.data[0].targetName;
           v.imageHash = res.data[0].md5;
+          v.imageWidth = res.data[0].width;
+          v.imageHeight = res.data[0].height;
         }
       });
       this.$emit("imgUploading", this.processIMG);
@@ -173,8 +184,9 @@ export default {
       if (!this.processIMG.find(v => v.name == file.name)) {
         this.processIMG.push(obj);
       }
-
-      // this.$emit("imgUploading", this.processIMG);
+      // 单图情况，支持进度条
+      if(this.type == "SINGLE")
+        this.$emit("imgUploading", this.processIMG);
     },
     delIMG(file, name) {
       if (file && file.isUploading) {

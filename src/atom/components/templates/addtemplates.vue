@@ -33,7 +33,7 @@
           <div class="upbox">
             <templates-upload @imgUploading="tempUploading" class="uploadline"></templates-upload>
             <span class="size">{{form.size}}</span>
-            <div slot="tip" class="el-upload__tip">素材放好位置后，会讲模板覆盖在上面</div>
+            <div slot="tip" class="el-upload__tip">素材放好位置后，会将模板覆盖在上面</div>
             <p class="image" v-for="img in form.temp" :key="img.imageUrl">
               <span class="box">
                 <img :src="form.tempurl" alt>
@@ -47,15 +47,39 @@
             <el-checkbox v-model="form.logo['with']">支持放置logo</el-checkbox>
             <div class="sizeinput" v-show="form.logo['with']">
               <span class="font">位置</span>
-              <el-input class="smallinput" v-model="form.logo['x']" size="mini" placeholder="x"></el-input>
+              <el-input-number
+                class="smallinput"
+                size="mini"
+                v-model="form.logo['x']"
+                :min="0"
+                placeholder="x"
+              ></el-input-number>
               <span class="between">,</span>
-              <el-input class="smallinput" v-model="form.logo['y']" size="mini" placeholder="y"></el-input>
+              <el-input-number
+                class="smallinput"
+                size="mini"
+                v-model="form.logo['y']"
+                :min="0"
+                placeholder="y"
+              ></el-input-number>
             </div>
             <div class="sizeinput" v-show="form.logo['with']">
               <span class="font">宽高</span>
-              <el-input class="smallinput" v-model="form.logo['w']" size="mini" placeholder="宽"></el-input>
+              <el-input-number
+                class="smallinput"
+                size="mini"
+                v-model="form.logo['w']"
+                :min="0"
+                placeholder="宽"
+              ></el-input-number>
               <span class="between">x</span>
-              <el-input class="smallinput" v-model="form.logo['h']" size="mini" placeholder="高"></el-input>
+              <el-input-number
+                class="smallinput"
+                size="mini"
+                v-model="form.logo['h']"
+                :min="0"
+                placeholder="高"
+              ></el-input-number>
             </div>
           </div>
         </el-form-item>
@@ -64,9 +88,21 @@
             <div class="matter" v-for="(mt, index) in form.matter" :key="index">
               <div class="sizeinput">
                 <span class="font">位置</span>
-                <el-input class="smallinput" v-model="mt['x']" size="mini" placeholder="x"></el-input>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="mt['x']"
+                  :min="0"
+                  placeholder="x"
+                ></el-input-number>
                 <span class="between">,</span>
-                <el-input class="smallinput" v-model="mt['y']" size="mini" placeholder="y"></el-input>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="mt['y']"
+                  :min="0"
+                  placeholder="y"
+                ></el-input-number>
                 <el-button
                   class="close"
                   type="text"
@@ -77,9 +113,21 @@
               </div>
               <div class="sizeinput">
                 <span class="font">宽高</span>
-                <el-input class="smallinput" v-model="mt['w']" size="mini" placeholder="宽"></el-input>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="mt['w']"
+                  :min="0"
+                  placeholder="宽"
+                ></el-input-number>
                 <span class="between">x</span>
-                <el-input class="smallinput" v-model="mt['h']" size="mini" placeholder="高"></el-input>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="mt['h']"
+                  :min="0"
+                  placeholder="高"
+                ></el-input-number>
               </div>
             </div>
             <el-button type="primary" size="mini" @click="moreMatter">新增</el-button>
@@ -130,16 +178,18 @@ export default {
   },
   data() {
     return {
-      // sizes: ["1200x628", "1080x1080", "320x480", "300x250", "300x50"],
-      // trades: ["电商", "短视频", "社交", "工具"],
       editid: "",
       form: {
         size: "",
         trade: "",
         face: [],
         faceurl: "",
+        facewidth: 0,
+        faceheight: 0,
         temp: [],
         tempurl: "",
+        tempwidth: 0,
+        tempheight: 0,
         logo: {
           with: true,
           x: 0,
@@ -226,17 +276,43 @@ export default {
     tempUploading(res) {
       this.form.temp = res;
       this.form.tempurl = res[0].imageUrl;
+      this.form.tempwidth = res[0].imageWidth;
+      this.form.tempheight = res[0].imageHeight;
     },
     imgUploading(res) {
       this.form.face = res;
       this.form.faceurl = res[0].imageUrl;
+      this.form.facewidth = res[0].imageWidth;
+      this.form.faceheight = res[0].imageHeight;
     },
     dataCheck() {
       if (!this.form.size) return [false, "请选择尺寸"];
       if (!this.form.trade) return [false, "请选择行业"];
       if (!this.form.faceurl) return [false, "请上传封面"];
+      let size = this.form.size.split("x");
+      if (this.form.facewidth != size[0] || this.form.faceheight != size[1])
+        return [false, "封面图尺寸与所选尺寸不一致，请重新上传"];
       if (!this.form.tempurl) return [false, "请上传模板"];
-
+      if (this.form.tempwidth != size[0] || this.form.tempheight != size[1])
+        return [false, "模板尺寸与所选尺寸不一致，请重新上传"];
+      if (
+        this.form.logo["with"] &&
+        (this.form.logo["x"] === undefined ||
+          this.form.logo["y"] === undefined ||
+          this.form.logo["w"] === undefined ||
+          this.form.logo["h"] === undefined)
+      )
+        return [false, "logo位置或者宽高不能为空"];
+      if (
+        this.form.matter.find(
+          v =>
+            v["x"] === undefined ||
+            v["y"] === undefined ||
+            v["w"] === undefined ||
+            v["h"] === undefined
+        )
+      )
+        return [false, "素材位置或者宽高不能为空"];
       if (this.form.tags.length == 0) return [false, "请设置标签"];
 
       return [true];
@@ -319,10 +395,10 @@ export default {
       color: #999;
       margin-left: 5px;
     }
-    .upbox{
+    .upbox {
       // overflow: hidden;
     }
-    .upload{
+    .upload {
       // margin-top: 5px;
     }
     .image {
@@ -347,7 +423,7 @@ export default {
       }
       .smallinput {
         display: inline-block;
-        width: 80px;
+        width: 100px;
       }
       .between {
         width: 10px;

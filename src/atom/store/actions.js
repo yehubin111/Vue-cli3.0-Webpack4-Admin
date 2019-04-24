@@ -583,10 +583,9 @@ export default {
     },
     // manage
     getManagelist({ state, commit }, { status = '1', pageIndex = 1, pageSize = 20 }) {
-        let url = URL.managelist.replace("{keywords}", state.projectkwd).replace("{status}", status).replace("{pageIndex}", pageIndex).replace("{pageSize}", pageSize);
+        let url = `${URL.managelist}keywords=${state.projectkwd}&status=${status}&pageIndex=${pageIndex}&pageSize=${pageSize}`;
 
         let load = Loading.service({ target: document.getElementById('manageTable') });
-
         _axios.get(url, { loadDom: 'manageTable' })
             .then(res => {
                 if (load) {
@@ -1111,7 +1110,7 @@ export default {
                     file.cancel();
                     file.remove();
                     // 计算总条数，适用于批量新增创意
-                    if (callback) callback();
+                    if (callback) callback(res);
                 } else if (type == 'fm') {
                     file.upload();
                 }

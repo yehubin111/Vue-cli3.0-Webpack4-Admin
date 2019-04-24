@@ -21,7 +21,7 @@
         <div class="upload">
           <span class="name">上传图片</span>
           <div class="uploadbtn">
-            <templates-upload @imgUploading="matterUploading" type="MUTIPLE"></templates-upload>
+            <templates-upload @imgUploading="matterUploading" type="MUTIPLE" ref="templatesUpload"></templates-upload>
             <div slot="tip" class="el-upload__tip">可上传多张图片，可调整图片顺序，不支持裁剪</div>
           </div>
         </div>
@@ -30,9 +30,10 @@
           <p class="theme">第{{index + 1}}张</p>
           <draggable tag="ul" class="imagelist" :list="matter" group="people" @change="dragImages">
             <!-- <transition-group type="transition" name="flip-list"> -->
-            <li v-for="m in matter" :key="m.name">
+            <li v-for="(m, idx) in matter" :key="m.name">
               <p>
-                <img :src="'http://172.31.1.76' + m.imageUrl" alt>
+                <img :src="m.imageUrl" alt>
+                <span class="close" v-show="m.process == 100" @click="deleteImage(index, idx, m.imageUrl)">x</span>
               </p>
               <el-progress :percentage="m.process" :status="m.process == 100?'success':''"></el-progress>
             </li>
@@ -163,12 +164,23 @@ export default {
     ...mapState(["templatelist"])
   },
   methods: {
-    dragImages() {
+    deleteImage(index, idx, url) {
+      console.log(index, idx);
+      this.allImages[index].splice(idx, 1);
+      // 需要在删除图片之后，删除上传队列中对应的文件，防止再次上传重复添加
+      this.$refs.templatesUpload.resetUploaded(url);
       // 设置canvas参数
+      this.setCanvas();
+    },
+    setCanvas() {
       if(this.allImages[0])
         this.fileImages1 = this.allImages[0].map(v => v.imageUrl);
       if(this.allImages[1])
         this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
+    },
+    dragImages() {
+      // 设置canvas参数
+      this.setCanvas();
     },
     async saveTempImages() {
       // 素材必须上传，并且不能出现素材不全的情况
@@ -329,8 +341,23 @@ export default {
           width: 100px;
           height: 100px;
           margin-bottom: 3px;
+          position: relative;
           img {
             width: 100%;
+          }
+          .close{
+            width: 16px;
+            height: 16px;
+            background-color: #666;
+            position: absolute;
+            right: -16px;
+            top: -1px;
+            color: #fff;
+            text-align: center;
+            line-height: 16px;
+            cursor: pointer;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
           }
         }
       }

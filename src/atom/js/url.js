@@ -36,7 +36,8 @@ export default {
     'delset': 'facebook/application/delAdaccounts',  // 取消设置app
     'setaf': 'facebook/application/bangdingAf?', // 设置af
     // manage
-    'managelist': 'project/getProjects?keywords={keywords}&status={status}&pageIndex={pageIndex}&pageSize={pageSize}', // 项目管理列表
+    // 'managelist': 'project/getProjects?keywords={keywords}&status={status}&pageIndex={pageIndex}&pageSize={pageSize}', // 项目管理列表
+    'managelist': 'project/getProjectsRichInfo?', // 项目管理列表
     'addproject': 'project/addProject',  // 添加项目
     'editproject': 'project/updateProject',  // 编辑项目
     // 'projectover': 'project/projectIsOFF', //项目归档

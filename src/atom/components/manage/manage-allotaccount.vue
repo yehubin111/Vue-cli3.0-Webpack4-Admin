@@ -27,7 +27,7 @@
       </div>
       <div class="account">
         <p class="title">周文熙的广告账户</p>
-        <el-input v-model="member" placeholder="搜索姓名/邮箱" prefix-icon="el-icon-search"></el-input>
+        <el-input v-model="account" placeholder="搜索广告账户ID/名称" prefix-icon="el-icon-search"></el-input>
         <div class="list">
           <div class="line">
             <div class="accountname">
@@ -47,15 +47,25 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="toOver">确 定</el-button>
+      <el-button @click="toCancel">取 消</el-button>
+      <el-button type="primary" @click="toSubmit">确 定</el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
 export default {
-  props: ["status"]
+  props: ["status"],
+  data() {
+    return {
+      member: "",
+      account: ""
+    };
+  },
+  methods: {
+    toCancel() {},
+    toSubmit() {}
+  }
 };
 </script>
 

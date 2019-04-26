@@ -41,7 +41,7 @@ export default {
   },
   mounted() {
     let status = 0;
-    this.$store.dispatch("getManagelist", { status });
+    this.$store.dispatch("getManageOffList", { status });
   },
   methods: {
     ...mapMutations(['SETSTATE']),

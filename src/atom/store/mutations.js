@@ -422,6 +422,9 @@ export default {
     OPTIMIZEDETAIL(state, r) {
         state.optimizedetail = r.data;
     },
+    GETALLOT(state, r) {
+        state.projectallot = r.data;
+    },
     // create
     CREATE(state, r) {
         state.createlist = r.data.list;

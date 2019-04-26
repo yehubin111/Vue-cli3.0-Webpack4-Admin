@@ -1,23 +1,27 @@
 <template>
   <div>
     <ul class="contain">
-      <li v-for="item in dismanage" :key="item.id">
+      <li v-for="(item, index) in dismanage" :key="item.id">
         <p class="title">一周花费</p>
-        <el-dropdown placement="bottom-start">
-          <el-button class="ctrl" icon="el-icon-more" type="text"></el-button>
+        <el-dropdown placement="bottom-start" @command="manageCtrl">
+          <el-button class="ctrl" icon="el-icon-more" type="text" v-show="myid == item.createrId"></el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>编辑</el-dropdown-item>
-            <el-dropdown-item>分配账户</el-dropdown-item>
-            <el-dropdown-item divided>归档</el-dropdown-item>
-            <el-dropdown-item>删除</el-dropdown-item>
+            <el-dropdown-item :command="`a|${item.id}`">编辑</el-dropdown-item>
+            <el-dropdown-item :command="`b|${item.id}`">分配账户</el-dropdown-item>
+            <el-dropdown-item :command="`c|${item.id}`" divided>归档</el-dropdown-item>
+            <el-dropdown-item :command="`d|${item.id}`" style="color: red;">删除</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <div class="chart"></div>
+        <div class="chart" :id="`Chart${index}`"></div>
         <div class="info">
           <span class="name" :title="item.projectName">{{item.projectName}}</span>
           <div class="member">
             <p>
-              <span class="head" v-for="head in item.participaterNames" :key="head">{{head.substr(0,1)}}</span>
+              <span
+                class="head"
+                v-for="head in item.participaterNames"
+                :key="head"
+              >{{head.substr(0,1)}}</span>
             </p>
             <span class="more" v-show="item.participaterNames.length > 5">···</span>
           </div>
@@ -28,20 +32,43 @@
 </template>
 
 <script>
-
-
+import echarts from "@echarts/js/charts.require.js";
+import chart from "@/atom/js/charts";
 import { mapGetters, mapMutations } from "vuex";
 export default {
-  components: {
-    
-  },
+  props: ["allotStatus"],
+  components: {},
   data() {
     return {
-      // value2: 1
+      mychart: {},
+      myid: localStorage.getItem("atom_id")
     };
   },
   computed: {
     ...mapGetters(["dismanage"])
+  },
+  watch: {
+    async dismanage(n, v) {
+      if (n.length > 0) {
+        await this.$barrageTime(500);
+        n.forEach((v, i) => {
+          if (v.last7DaySpends && v.last7DaySpends.length > 0) {
+            let charts = echarts.init(document.getElementById(`Chart${i}`));
+            let data = [
+              {
+                name: "花费",
+                type: "bar",
+                data: v.last7DaySpends.map(v => v.spend)
+              }
+            ];
+            let x = v.last7DaySpends.map(v =>
+              this.$timeFormat(v.insightDate, "yyyy-MM-dd")
+            );
+            charts.setOption(chart.manageWeekSpend(x, data));
+          }
+        });
+      }
+    }
   },
   created() {
     let v = "";
@@ -49,23 +76,69 @@ export default {
 
     this.SETSTATE({ k, v });
   },
-  mounted() {
-    
-  },
+  mounted() {},
   methods: {
-    ...mapMutations(["SETSTATE"]),
-    toEdit(id) {
-      this.$emit("editProject", id);
+    ...mapMutations(["SETSTATE", "SETOBJSTATE"]),
+    async setAllotData(projectId) {
+      // 获取广告账户列表
+      let res = await this.$store.dispatch("getAdAccount");
+      // 获取成员列表
+      let memberres = await this.$store.dispatch("getUsersList");
+      // 获取分配信息
+      await this.$store.dispatch("getAllot", { projectId });
+      let project = this.dismanage.find(v => v.id == projectId);
+      let projectaccount = project.fbAccountIds.split(",");
+      let projectmember = project.participaterIds.split(",");
+      let account = res.data.filter(v =>
+        projectaccount.includes(v.fbAccountId)
+      );
+      let member = memberres.data.filter(v =>
+        projectmember.includes(v.id.toString())
+      );
+      let arr = [];
+      account.forEach(v => {
+        let obj = {
+          name: v.name,
+          fbId: v.fbId,
+          select: false
+        };
+        arr.push(obj);
+      });
+      this.SETOBJSTATE({ obj: "createoption", name: "account", v: arr });
+      let arr2 = [];
+      member.forEach(v => {
+        let obj = {
+          nickName: v.nickName,
+          loginName: v.loginName,
+          id: v.id
+        };
+        arr2.push(obj);
+      });
+      this.SETOBJSTATE({ obj: "createoption", name: "member", v: arr2 });
     },
-    toOver(id) {
-      this.$emit("overProject", id);
+    async manageCtrl(command) {
+      let cmd = command.split("|");
+      let key = cmd[0];
+      let id = cmd[1];
+      switch (key) {
+        case "a":
+          this.$emit("editProject", id);
+          break;
+        case "b":
+          // 设置分配广告账户所需数据
+          this.setAllotData(id);
+          this.$emit("update:allotStatus", true);
+          break;
+        case "c":
+          this.$emit("overProject", id);
+          break;
+        case "d":
+          this.$emit("deleteProject", id);
+          break;
+        default:
+          break;
+      }
     }
-    // switchChange(status, id) {
-    //   this.$store.dispatch("accountStatus", { status, id });
-    // },
-    // setApp(id) {
-    //   this.$store.dispatch("setApp", id);
-    // }
   }
 };
 </script>
@@ -78,15 +151,17 @@ export default {
 <style lang="less" scoped>
 .contain {
   display: grid;
-  height: 1000px;
+  // height: 1000px;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  // grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 20px;
+  margin-bottom: 60px;
   li {
     border: 1px solid #ddd;
     position: relative;
     display: flex;
     flex-direction: column;
+    height: 235px;
     .title {
       font-size: 14px;
       line-height: 40px;

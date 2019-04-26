@@ -593,6 +593,18 @@ export default {
             }
         })
     },
+    getManageOffList({ state, commit }, { status = '1', pageIndex = 1, pageSize = 20 }) {
+        let url = URL.manageofflist.replace("{keywords}", state.projectkwd).replace("{status}", status).replace("{pageIndex}", pageIndex).replace("{pageSize}", pageSize);
+
+        Axios({
+            url,
+            fullscreen: true,
+            success: res => {
+                if (res.code == 0)
+                    commit('MANAGELIST', res);
+            }
+        })
+    },
     manageApplist({ state, commit }) {
         let url = URL.applist;
 
@@ -604,26 +616,40 @@ export default {
                 console.log(err);
             })
     },
-    addProject({ state, commit, dispatch }, { appid, pname, pplat, ptag, id }) {
+    addProject({ state, commit, dispatch }, { memberaccount }) {
         let url = URL.addproject;
+        let arr = [];
+        for (let i in memberaccount) {
+            let select = state.createoption['member'].find(v => v.id == i);
+            if (select) {
+                let obj = {
+                    fbAccountIds: memberaccount[i].map(v => v.fbId.replace('act_', '')).join(','),
+                    nickName: state.createoption['member'].find(v => v.id == i)['nickName'],
+                    userId: i
+                }
+                arr.push(obj);
+            }
+        }
         let params = {
-            applicationId: appid,
-            id: id,
-            projectName: pname,
-            projectPlatForm: pplat,
-            projectTarget: ptag,
+            applicationId: state.createoption['region'].join(','),
+            fbAccountIds: state.createoption['account'].map(v => v.fbId.replace('act_', '')).join(','),
+            fbPageIds: state.createoption['page'].join(','),
+            participaterIds: state.createoption['member'].map(v => v.id).join(','),
+            projectName: state.createoption['projectname'],
+            projectPlatForm: 0,
+            projectTarget: 0,
+            projectUserAccountVos: arr,
             status: true,
             token: localStorage.getItem('atom_token')
         }
 
-        _axios.post(url, params)
-            .then(res => {
-                dispatch('getManagelist', {});
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
+        return Axios({
+            url,
+            method: 'post',
+            data: params,
+            fullscreen: true,
+            success: res => res
+        })
     },
     headerAddProject({ state, commit, dispatch }, { appid, pname, pplat, ptag, route }) {
         let url = URL.addproject;
@@ -651,26 +677,41 @@ export default {
             })
 
     },
-    editProject({ state, commit, dispatch }, { appid, pname, pplat, ptag, id }) {
+    editProject({ state, commit, dispatch }, { memberaccount }) {
         let url = URL.editproject;
+        let arr = [];
+        for (let i in memberaccount) {
+            let select = state.createoption['member'].find(v => v.id == i);
+            if (select) {
+                let obj = {
+                    fbAccountIds: memberaccount[i].map(v => v.fbId.replace('act_', '')).join(','),
+                    nickName: state.createoption['member'].find(v => v.id == i)['nickName'],
+                    userId: i
+                }
+                arr.push(obj);
+            }
+        }
         let params = {
-            applicationId: appid,
-            id: id,
-            projectName: pname,
-            projectPlatForm: pplat,
-            projectTarget: ptag,
+            applicationId: state.createoption['region'].join(','),
+            fbAccountIds: state.createoption['account'].map(v => v.fbId.replace('act_', '')).join(','),
+            fbPageIds: state.createoption['page'].join(','),
+            participaterIds: state.createoption['member'].map(v => v.id).join(','),
+            projectName: state.createoption['projectname'],
+            id: state.createeditid,
+            projectPlatForm: 0,
+            projectTarget: 0,
+            projectUserAccountVos: arr,
             status: true,
             token: localStorage.getItem('atom_token')
         }
 
-        _axios.post(url, params)
-            .then(res => {
-                dispatch('getManagelist', {});
-            })
-            .catch(err => {
-                console.log(err);
-            })
-
+        return Axios({
+            url,
+            method: 'post',
+            data: params,
+            fullscreen: true,
+            success: res => res
+        })
     },
     overProject({ state, commit, dispatch }, { id, adIsOff }) {
         let url = URL.projectover;
@@ -679,17 +720,35 @@ export default {
             adIsOff
         };
 
-        _axios.post(url, params)
-            .then(res => {
-                if (res.code == 0) {
-                    dispatch('getManagelist', {});
-                    dispatch("getItemList");
-                }
+        return Axios({
+            url,
+            method: 'post',
+            data: params,
+            fullscreen: true,
+            success: res => res
+        })
+    },
+    deleteProject({ state, commit, dispatch }, { projectId, pauseCampaigns }) {
+        let url = URL.projectdelete.replace('{projectId}', projectId) + '&pauseCampaigns=' + pauseCampaigns;
 
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        return Axios({
+            url,
+            method: 'post',
+            data: {},
+            fullscreen: true,
+            success: res => res
+        })
+    },
+    getAllot({ state, commit }, { projectId }) {
+        let url = URL.getallot.replace('{projectId}', projectId);
+
+        return Axios({
+            url,
+            success: res => {
+                commit("GETALLOT", res);
+                return res;
+            }
+        })
     },
     beginProject({ state, commit, dispatch }, { id }) {
         let url = URL.projectbegin;
@@ -709,23 +768,25 @@ export default {
                 console.log(err);
             })
     },
-    getUsersList({state, commit}) {
+    getUsersList({ state, commit }) {
         let url = URL.userslist;
 
-        Axios({
+        return Axios({
             url,
             success: res => {
                 commit('USERSLIST', res);
+                return res;
             }
         })
     },
-    getAdAccount({state, commit}) {
+    getAdAccount({ state, commit }) {
         let url = URL.adaccount;
 
-        Axios({
+        return Axios({
             url,
             success: res => {
                 commit('ADACCOUNTLIST', res);
+                return res;
             }
         })
     },

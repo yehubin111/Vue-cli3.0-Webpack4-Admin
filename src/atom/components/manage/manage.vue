@@ -14,8 +14,9 @@
             @input="projectSearch"
           ></el-input>
         </div>
-        <manage-list @editProject="editProject" @overProject="overProject"></manage-list>
-        <manage-over :id="overid" :status="status2" @cancelAddbm="cancelAddbm"></manage-over>
+        <manage-list :allotStatus.sync="allotstatus" @editProject="editProject" @overProject="overProject" @deleteProject="deleteProject"></manage-list>
+        <manage-over :id="overid" :status.sync="status2" @cancelAddbm="cancelAddbm" @resetList="resetList"></manage-over>
+        <manage-delete :id="deleteid" :status.sync="status3" @cancelAddbm="cancelAddbm" @resetList="resetList"></manage-delete>
         <div class="pageswitch">
           <el-pagination
             background
@@ -24,13 +25,14 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total"
             :page-size="pagesize"
+            :current-page.sync="pageindex"
             @current-change="pageSwitch"
           ></el-pagination>
         </div>
       </div>
     </div>
-    <manage-add :status.sync="status" :allotStatus.sync="allotstatus" :id="editid"></manage-add>
-    <allot-account :status.sync="allotstatus"></allot-account>
+    <manage-add :status.sync="status" :allotStatus.sync="allotstatus" :id.sync="editid"></manage-add>
+    <allot-account :status.sync="status" :allotStatus.sync="allotstatus" @resetList="resetList"></allot-account>
   </div>
 </template>
 
@@ -38,6 +40,7 @@
 import ManageList from "./manage-list";
 import ManageAdd from "./manage-add";
 import ManageOver from "./manage-over";
+import ManageDelete from './manage-delete';
 import AllotAccount from "./manage-allotaccount";
 import { mapState, mapGetters, mapMutations } from "vuex";
 
@@ -46,17 +49,21 @@ export default {
     ManageList,
     ManageAdd,
     ManageOver,
-    AllotAccount
+    AllotAccount,
+    ManageDelete
   },
   data() {
     return {
+      pageindex: 1,
       size: 20,
       status: false,
       status2: false,
+      status3: false,
       allotstatus: false,
       state4: "",
       editid: "",
-      overid: ""
+      overid: "",
+      deleteid: ''
     };
   },
   computed: {
@@ -66,29 +73,35 @@ export default {
   created() {},
   mounted() {
     this.SETSTATE({ k: "managelist", v: [] });
-    this.$store.dispatch("getManagelist", {});
+    this.getData();
   },
   watch: {},
   methods: {
     ...mapMutations(["SETSTATE"]),
+    resetList() {
+      this.pageindex = 1;
+      this.getData();
+      // 重新获取头部项目列表
+      this.$store.dispatch("getItemList");
+    },
     pageSizeChange(size) {
-      let pageSize = size;
+      this.pageindex = 1;
       this.size = size;
-      this.$store.dispatch("getManagelist", { pageSize });
+      this.getData();
     },
     pageSwitch(page) {
-      let pageIndex = page;
+      this.pageindex = page;
+      this.getData();
+    },
+    getData() {
+      let pageIndex = this.pageindex;
       let pageSize = this.size;
       this.$store.dispatch("getManagelist", { pageIndex, pageSize });
     },
     projectSearch() {
-      let v = this.state4;
-      let k = "projectkwd";
-
-      this.SETSTATE({ k, v });
-
-      let pageSize = this.size;
-      this.$store.dispatch("getManagelist", { pageSize });
+      this.SETSTATE({ k: "projectkwd", v: this.state4 });
+      this.pageindex = 1;
+      this.getData();
     },
     cancelAddbm(k) {
       this[k] = false;
@@ -100,6 +113,10 @@ export default {
     overProject(id) {
       this.status2 = true;
       this.overid = id;
+    },
+    deleteProject(id) {
+      this.status3 = true;
+      this.deleteid = id;
     }
   }
 };

@@ -273,7 +273,13 @@ export default {
         }
     },
     daycpilist: state => {
-        // console.log(state.daycpilist.length);
         return state.daycpilist;
+    },
+    //
+    members: state => {
+        return state.createoption.member;
+    },
+    accounts: state => {
+        return state.createoption.account;
     }
 }

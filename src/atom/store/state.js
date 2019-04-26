@@ -72,13 +72,24 @@ export default {
   adpages: [], // 主页列表，创建项目用
   createoption: {
     projectname: "",
-    radio1: "",
-    radio2: "",
+    radio1: "Facebook ADS",
+    radio2: "安装应用",
     region: [],
     page: [],
     member: [],
     account: []
   }, // 创建项目填充数据
+  createeditid: '', // 项目编辑id
+  createreset: {
+    projectname: "",
+    radio1: "Facebook ADS",
+    radio2: "安装应用",
+    region: [],
+    page: [],
+    member: [],
+    account: []
+  },
+  projectallot: [], // 广告账户分配情况
   // project rules
   rulelist: [], // 规则管理列表
   ruleapp: [],  // 优化记录规则列表

@@ -51,13 +51,13 @@ export default {
       let pageSize = size;
       this.size = size;
       let status = 0;
-      this.$store.dispatch("getManagelist", { pageSize, status });
+      this.$store.dispatch("getManageOffList", { pageSize, status });
     },
     pageSwitch(page) {
       let pageIndex = page;
       let pageSize = this.size;
       let status = 0;
-      this.$store.dispatch("getManagelist", { pageIndex, pageSize, status });
+      this.$store.dispatch("getManageOffList", { pageIndex, pageSize, status });
     },
     projectSearch() {
       let v = this.state4;
@@ -66,7 +66,7 @@ export default {
 
       this.SETSTATE({ k, v });
       let pageSize = this.size;
-      this.$store.dispatch("getManagelist", { pageSize, status });
+      this.$store.dispatch("getManageOffList", { pageSize, status });
     },
     cancelAddbm(k) {
       this[k] = false;

@@ -49,8 +49,14 @@
           collapse-tags
           placeholder="请选择此项目的成员，多选"
         >
-          <el-option v-for="(l, index) in userslist" :key="index" :label="l.nickName" :value="l.name + '|' + l.id"></el-option>
+          <el-option
+            v-for="(l, index) in allusers"
+            :key="index"
+            :label="l.nickName"
+            :value="l.nickName + '|' + l.id + '|' + l.loginName"
+          ></el-option>
         </el-select>
+        <p>项目创建者会自动添加到参与成员列表中，无需选择</p>
       </el-form-item>
       <el-form-item label="广告账户">
         <el-select
@@ -81,7 +87,20 @@
 import { mapState, mapGetters, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 export default {
-  props: ["status", "id", "allotStatus"],
+  props: {
+    status: {
+      type: Boolean,
+      required: true
+    },
+    id: {
+      type: String,
+      default: ""
+    },
+    allotStatus: {
+      type: Boolean,
+      required: true
+    }
+  },
   data() {
     return {
       form: {
@@ -93,38 +112,94 @@ export default {
         member: [],
         account: []
       },
+      myid: localStorage.getItem("atom_id"),
+      next: false,
       formLabelWidth: "100px"
     };
   },
   mounted() {},
   computed: {
-    ...mapState(["manageapplist", "userslist", "adaccountslist", "adpages"]),
-    ...mapGetters(["dismanage"])
+    ...mapState([
+      "manageapplist",
+      "userslist",
+      "adaccountslist",
+      "adpages",
+      "createoption",
+      "createreset"
+    ]),
+    ...mapGetters(["dismanage"]),
+    allusers() {
+      return this.userslist.filter(v => v.id != this.myid);
+    }
   },
   watch: {
-    status(n, v) {
+    async status(n, v) {
       if (n) {
         // 获取参与成员列表
-        this.$store.dispatch("getUsersList");
+        await this.$store.dispatch("getUsersList");
         // 获取广告账户列表
-        this.$store.dispatch("getAdAccount");
+        await this.$store.dispatch("getAdAccount");
         // 获取主页列表
         this.$store.dispatch("getAdPages");
         // 获取应用列表
         this.$store.dispatch("manageApplist");
-      }
-    },
-    id(n, v) {
-      if (n != "") {
-        let proj = this.dismanage.find(v => v.id == n);
-
-        this.form.projectname = proj.projectName;
-        this.form.region = proj.applicationId;
+        // 编辑项目
+        if (this.id) {
+          // 获取账号分配情况
+          this.$store.dispatch("getAllot", { projectId: this.id });
+          // 设置编辑数据
+          this.editDataSet();
+        }
+        // 如果有数据保存，则初始化设置
+        else this.dataSet();
       }
     }
   },
   methods: {
-    ...mapMutations(["SETOBJSTATE"]),
+    ...mapMutations(["SETOBJSTATE", "SETSTATE"]),
+    editDataSet() {
+      let proj = this.dismanage.find(v => v.id == this.id);
+
+      this.form.projectname = proj.projectName;
+      this.form.region = proj.applicationId.split(",");
+      this.form.page = proj.fbPageIds.split(",");
+      this.form.member = proj.participaterIds
+        .split(",")
+        .filter(v => v != this.myid)
+        .map(v => {
+          let mb = this.userslist.find(g => g.id == v);
+          return mb.nickName + "|" + mb.id + "|" + mb.loginName;
+        });
+      this.form.account = proj.fbAccountIds.split(",").map(v => {
+        let act = this.adaccountslist.find(g => g.fbAccountId == v);
+        return act.name + "|" + act.fbId;
+      });
+    },
+    dataSet() {
+      for (let i in this.createoption) {
+        let data;
+        switch (i) {
+          case "member":
+            data = [];
+            this.createoption[i].forEach(v => {
+              if (v.id != this.myid)
+                data.push(`${v.nickName}|${v.id}|${v.loginName}`);
+            });
+            break;
+          case "account":
+            data = [];
+            this.createoption[i].forEach(v => {
+              data.push(`${v.name}|${v.fbId}`);
+            });
+            break;
+          default:
+            data = this.createoption[i];
+            break;
+        }
+
+        this.form[i] = data;
+      }
+    },
     dataCheck() {
       if (this.form.projectname == "") return [false, "请输入项目名称"];
       if (
@@ -147,29 +222,78 @@ export default {
 
       // 跳转下一步之前，保存数据
       for (let i in this.form) {
-        switch(i) {
-          case 'member':
-          break;
-          case 'account':
-          break;
+        let data, arr;
+        switch (i) {
+          case "member":
+            data = [];
+            // 先保存创建者自身
+            let me = this.userslist.find(v => v.id == this.myid);
+            let { loginName, id, nickName } = me;
+            data.push({
+              loginName,
+              id,
+              nickName
+            });
+            this.form[i].forEach(v => {
+              let s = v.split("|");
+              data.push({
+                nickName: s[0],
+                id: s[1],
+                loginName: s[2]
+              });
+            });
+            break;
+          case "account":
+            data = [];
+            this.form[i].forEach(v => {
+              let s = v.split("|");
+              data.push({
+                name: s[0],
+                fbId: s[1],
+                select: false
+              });
+            });
+            break;
           default:
-          break;
+            data = this.form[i];
+            break;
         }
-          this.SETOBJSTATE({ obj: "createoption", name: i, v: this.form[i] });
+        this.SETOBJSTATE({ obj: "createoption", name: i, v: data });
       }
+      // 编辑的时候将id保存到state再跳到下一步
+      if (this.id) this.SETSTATE({ k: "createeditid", v: this.id });
 
       // 点击下一步打开分配界面
       this.$emit("update:allotStatus", true);
-      this.toCancel();
-    },
-    toCancel() {
+      this.next = true;
       this.$emit("update:status", false);
-
+    },
+    dataReset() {
       this.form.projectname = "";
       this.form.region = [];
       this.form.page = [];
       this.form.member = [];
       this.form.account = [];
+      this.next = false;
+    },
+    stateReset() {
+      this.SETSTATE({ k: "createeditid", v: "" });
+      for (let i in this.createreset) {
+        this.SETOBJSTATE({
+          obj: "createoption",
+          name: i,
+          v: this.createreset[i]
+        });
+      }
+    },
+    toCancel() {
+      this.$emit("update:status", false);
+      // 数据已经保存到state，无需editid
+      this.$emit("update:id", "");
+      // 重置state里面的数据
+      if (!this.next) this.stateReset();
+      // 重置数据
+      this.dataReset();
     }
   }
 };

@@ -1,4 +1,60 @@
 export default {
+    // 項目一周花費
+    manageWeekSpend(x, data) {
+        return {
+            tooltip: {
+                trigger: 'axis',
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 12
+                },
+                position: function (point, params, dom, rect, size) {
+                    return [point[1], 0];
+                }
+            },
+            legend: {
+                bottom: '0',
+                show: false
+            },
+            xAxis: {
+                type: 'category',
+                data: x,
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: false
+                },
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '20px',
+                right: '20px',
+                top: '25px',
+                bottom: '33px'
+            },
+            yAxis: {
+                type: 'value',
+                name: '',
+                splitLine: {
+                    show: false
+                },
+                axisLine: {
+                    show: false
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    show: false
+                }
+            },
+            color: ['#409eff', '#94a6e7', '#b3cef9', '#dbe4ff', '#749f83', '#ca8622', '#bda29a', '#6e7074', '#546570', '#c4ccd3'],
+            series: data
+        }
+    },
     // 创建推广计划 出价指南
     bidGuide(x, data) {
         return {
@@ -6,7 +62,7 @@ export default {
                 trigger: 'axis',
                 formatter: function (params) {
                     var res = '<p style="color: #fff;">价位：$' + params[0].name + '</p>';
-                    res += '<p style="color: #fff;">' + params[0].seriesName + '：' + (params[0].seriesName == 'CPI' || params[0].seriesName == '花费'?'$':'') + params[0].data + '</p>';
+                    res += '<p style="color: #fff;">' + params[0].seriesName + '：' + (params[0].seriesName == 'CPI' || params[0].seriesName == '花费' ? '$' : '') + params[0].data + '</p>';
                     return res;
                 },
                 textStyle: {

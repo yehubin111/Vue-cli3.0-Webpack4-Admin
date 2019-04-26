@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="contain">
-      <li v-for="(item, index) in dismanage" :key="item.id">
+      <li v-for="(item, index) in dismanage" :key="item.id" @click="openProject(item.id)">
         <p class="title">一周花费</p>
         <el-dropdown placement="bottom-start" @command="manageCtrl">
           <el-button class="ctrl" icon="el-icon-more" type="text" v-show="myid == item.createrId"></el-button>
@@ -16,13 +16,13 @@
         <div class="info">
           <span class="name" :title="item.projectName">{{item.projectName}}</span>
           <div class="member">
-            <p>
-              <span
-                class="head"
-                v-for="head in item.participaterNames"
-                :key="head"
-              >{{head.substr(0,1)}}</span>
-            </p>
+            <div>
+              <p v-for="head in item.participaterNames" class="head" :key="head">
+                <el-tooltip class="item" effect="dark" :content="head" placement="bottom">
+                  <span class="headname">{{head.substr(0,1)}}</span>
+                </el-tooltip>
+              </p>
+            </div>
             <span class="more" v-show="item.participaterNames.length > 5">···</span>
           </div>
         </div>
@@ -79,7 +79,16 @@ export default {
   mounted() {},
   methods: {
     ...mapMutations(["SETSTATE", "SETOBJSTATE"]),
+    openProject(id) {
+      this.$router.push({
+        name: "project",
+        params: {
+          id
+        }
+      });
+    },
     async setAllotData(projectId) {
+      this.SETSTATE({k: 'allotid', v: projectId});
       // 获取广告账户列表
       let res = await this.$store.dispatch("getAdAccount");
       // 获取成员列表
@@ -162,6 +171,7 @@ export default {
     display: flex;
     flex-direction: column;
     height: 235px;
+    cursor: pointer;
     .title {
       font-size: 14px;
       line-height: 40px;
@@ -193,7 +203,7 @@ export default {
         justify-content: flex-end;
         overflow: hidden;
         padding-right: 10px;
-        p {
+        &>div {
           width: 80%;
           display: flex;
           align-items: center;
@@ -213,6 +223,9 @@ export default {
             color: #fff;
             text-align: center;
             line-height: 30px;
+            .headname{
+              display: block;
+            }
             // img {
             //   width: 100%;
             // }

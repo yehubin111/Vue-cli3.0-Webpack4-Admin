@@ -48,6 +48,7 @@ export default {
     'projectdelete': 'project/{projectId}/deleteProject?', // 删除项目
     'getallot': 'project/{projectId}/assignedFbAccountIds', // 获取项目分配情况
     'setallot': 'project/{projectId}/assignFbAccountIds', // 设置项目分配
+    'commonaccount': 'project/getAdaccounts?', // 获取指定用户下的广告账户
     // project rules
     // 'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表
     'getrulelist': 'adRule/list?', // 规则管理列表

@@ -209,7 +209,7 @@ export default {
         return [false, "项目名称不能有空格，且长度不能大于50个字符"];
       if (this.form.region.length == 0) return [false, "请选择应用"];
       if (this.form.page.length == 0) return [false, "请选择主页"];
-      if (this.form.member.length == 0) return [false, "请选择参与成员"];
+      // if (this.form.member.length == 0) return [false, "请选择参与成员"];
 
       return [true];
     },

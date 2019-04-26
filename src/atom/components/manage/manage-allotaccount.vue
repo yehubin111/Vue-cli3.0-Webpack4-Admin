@@ -31,7 +31,7 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button v-if="createeditid || projectallot.length == 0" @click="toPrev">上一步</el-button>
+      <el-button v-if="createeditid || !allotid" @click="toPrev">上一步</el-button>
       <el-button v-else @click="toCancel">取消</el-button>
       <el-button type="primary" @click="toSubmit">确 定</el-button>
     </span>
@@ -81,7 +81,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["createreset", "projectallot", "createeditid"]),
+    ...mapState(["createreset", "projectallot", "createeditid", "allotid"]),
     ...mapGetters(["members", "accounts"]),
     memberslist() {
       return this.members.filter(
@@ -136,6 +136,7 @@ export default {
     stateReset() {
       this.memberaccount = {};
       this.SETSTATE({ k: "createeditid", v: "" });
+      this.SETSTATE({ k: "allotid", v: "" });
       // 重置state数据
       for (let i in this.createreset) {
         this.SETOBJSTATE({
@@ -147,12 +148,18 @@ export default {
     },
     async toSubmit() {
       let res;
-      let ctrlname = '创建';
+      let ctrlname = "创建";
       if (this.createeditid) {
         res = await this.$store.dispatch("editProject", {
           memberaccount: this.memberaccount
         });
-        ctrlname = '编辑';
+        ctrlname = "编辑";
+      } else if (this.allotid) {
+        // 单纯去分配账户
+        res = await this.$store.dispatch("setAllot", {
+          memberaccount: this.memberaccount
+        });
+        ctrlname = "分配";
       } else {
         res = await this.$store.dispatch("addProject", {
           memberaccount: this.memberaccount

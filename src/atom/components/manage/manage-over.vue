@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title :visible.sync="status" width="30%" @close="toCancel">
+  <el-dialog title :visible="status" width="30%" @close="toCancel">
     <span>归档后将不可进入，确认归档？</span>
     <el-checkbox class="checkbox" v-model="checked">停用广告系列</el-checkbox>
     <span slot="footer" class="dialog-footer">

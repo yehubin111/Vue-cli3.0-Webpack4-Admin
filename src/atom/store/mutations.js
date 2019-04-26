@@ -425,6 +425,9 @@ export default {
     GETALLOT(state, r) {
         state.projectallot = r.data;
     },
+    COMMONACCOUNT(state, r) {
+        state.commonaccount = r.data;
+    },
     // create
     CREATE(state, r) {
         state.createlist = r.data.list;

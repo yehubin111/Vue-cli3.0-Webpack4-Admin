@@ -15,10 +15,11 @@
         @change="toSortAccount"
       >
         <el-option
-          v-for="item in adaccountlist"
+          v-for="item in commonaccount"
           :key="item.fbId"
           :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
           :value="item.fbId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
       <!-- <el-select class="select" v-model="value4" placeholder="推广计划" @change="toSortPlan">
@@ -761,9 +762,8 @@ export default {
     let projectId = this.$route.params.id;
 
     this.SETSTATE({ k: "adlist", v: [] });
-
-    this.$store.dispatch("getAdaccount", projectId);
-    // this.$store.dispatch("getAdPlanlist", projectId);
+    // 获取广告账户列表
+    this.$store.dispatch("commonAccount", { project_id: projectId });
 
     if (this.itemlist.length > 0) {
       this.applicationid = this.itemlist.find(
@@ -1466,7 +1466,7 @@ export default {
         // 初始化筛选条件
         this.disCondition = this.allCondition[n] ? this.allCondition[n] : [];
         // 初始化广告账户列表
-        this.$store.dispatch("getAdaccount", n);
+        this.$store.dispatch("commonAccount", { project_id: n });
         // 从本地缓存获取当前项目已选广告账户
         this.value3 = this.accountStorage[n]
           ? this.accountStorage[n].split("|")
@@ -1493,7 +1493,8 @@ export default {
   computed: {
     ...mapState([
       "itemlist",
-      "adaccountlist",
+      // "adaccountlist",
+      "commonaccount",
       "adalllist",
       // "customeventcampain",
       // "customeventset",

@@ -89,7 +89,9 @@ export default {
     member: [],
     account: []
   },
+  allotid: '', // 分配所需项目id
   projectallot: [], // 广告账户分配情况
+  commonaccount: [], // 指定用户的广告账户
   // project rules
   rulelist: [], // 规则管理列表
   ruleapp: [],  // 优化记录规则列表

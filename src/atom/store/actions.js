@@ -750,6 +750,27 @@ export default {
             }
         })
     },
+    setAllot({ state, commit }, { memberaccount }) {
+        let url = URL.setallot.replace('{projectId}', state.allotid);
+        let arr = [];
+        for (let i in memberaccount) {
+            let select = state.createoption['member'].find(v => v.id == i);
+            if (select) {
+                let obj = {
+                    fbAccountIds: memberaccount[i].map(v => v.fbId.replace('act_', '')).join(','),
+                    nickName: state.createoption['member'].find(v => v.id == i)['nickName'],
+                    userId: i
+                }
+                arr.push(obj);
+            }
+        }
+        return Axios({
+            url,
+            method: 'post',
+            data: arr,
+            success: res => res
+        })
+    },
     beginProject({ state, commit, dispatch }, { id }) {
         let url = URL.projectbegin;
         let params = {
@@ -799,6 +820,16 @@ export default {
                 commit('ADPAGES', res);
             }
         });
+    },
+    commonAccount({ state, commit }, { project_id }) {
+        let url = `${URL.commonaccount}project_id=${project_id}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit("COMMONACCOUNT", res);
+            }
+        })
     },
     // project rules
     getRules({ state, commit }, id) {

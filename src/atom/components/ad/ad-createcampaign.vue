@@ -11,7 +11,7 @@
           :disabled="editId.length > 0"
         >
           <el-option
-            v-for="item in adaccountlist"
+            v-for="item in commonaccount"
             :key="item.fbId"
             :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
             :value="item.fbId"
@@ -117,7 +117,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["adaccountlist", "adaccountid", "editcampaignlist"])
+    ...mapState(["commonaccount", "adaccountid", "editcampaignlist"])
   },
   watch: {
     editcampaignlist(n, o) {

@@ -64,6 +64,7 @@
           v-model="form.account"
           multiple
           collapse-tags
+          filterable
           placeholder="请选择此项目的广告账户，多选"
         >
           <el-option

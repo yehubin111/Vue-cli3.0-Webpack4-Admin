@@ -1,35 +1,54 @@
 <template>
   <div class="sync">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>同步记录</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="同步记录"></bread-crumb>
     <div class="ctrl">
       <el-select class="selectr" v-model="value" filterable placeholder="广告账户" @change="filterList">
-        <el-option v-for="item in ruleapp" :key="item.fbId" :label="item.name + (item.fbId != -1?'('+item.fbAccountId+')':'')" :value="item.fbId">
-        </el-option>
+        <el-option
+          v-for="item in commonaccount"
+          :key="item.fbId"
+          :label="item.name + (item.fbId != -1?'('+item.fbAccountId+')':'')"
+          :value="item.fbId"
+          :disabled="item.accountStatus != 1"
+        ></el-option>
       </el-select>
       <el-select class="selectr" v-model="value2" placeholder="状态" @change="filterList">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        ></el-option>
       </el-select>
       <el-button class="add" @click="syncAll">同步</el-button>
-      <el-input class="search" v-model="state" placeholder="搜索创意编号" suffix-icon="el-icon-search" @input="createSearch"></el-input>
+      <el-input
+        class="search"
+        v-model="state"
+        placeholder="搜索创意编号"
+        suffix-icon="el-icon-search"
+        @input="createSearch"
+      ></el-input>
     </div>
     <div class="list" id="syncList">
       <sync-list @multiSelect="multiSelect"></sync-list>
     </div>
     <div class="pageswitch">
-      <el-pagination background @size-change="pageSizeChange" :page-sizes="[20, 200, 500]" layout="total, sizes, prev, pager, next, jumper" :total="synctotal" :page-size="20" @current-change="pageSwitch">
-      </el-pagination>
+      <el-pagination
+        background
+        @size-change="pageSizeChange"
+        :page-sizes="[20, 200, 500]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="synctotal"
+        :page-size="20"
+        @current-change="pageSwitch"
+      ></el-pagination>
     </div>
   </div>
-
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
 import SyncList from "./sync-list";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
+import { mapState, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 let tosearch;
 export default {
@@ -37,7 +56,7 @@ export default {
     return {
       value: "",
       value2: "",
-      state: '',
+      state: "",
       pageindex: 1,
       pagesize: 20,
       idlist: [],
@@ -62,7 +81,8 @@ export default {
     };
   },
   components: {
-    SyncList
+    SyncList,
+    BreadCrumb
   },
   created() {
     let option = {
@@ -89,18 +109,12 @@ export default {
 
     this.$store.dispatch("syncList", { loading: "syncList" });
 
-    let application = this.itemlist.find(v => v.id == this.$route.params.id);
-    if (application)
-      this.$store.dispatch("getRuleAccount", application.applicationId);
+    // 获取广告账户
+    this.$store.dispatch("commonAccount", {
+      project_id: this.$route.params.id
+    });
   },
   watch: {
-    itemlist(n, v) {
-      if (n.length != 0) {
-        let applicationid = n.find(v => v.id == this.$route.params.id)
-          .applicationId;
-        this.$store.dispatch("getRuleAccount", applicationid);
-      }
-    }
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -164,29 +178,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(["itemlist", "ruleapp", "synctotal"]),
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    }
+    ...mapState(["commonaccount", "synctotal"]),
   }
 };
 </script>
 
 <style lang="less" scoped>
 .sync {
-  flex-grow: 1;
   .title {
     line-height: 60px;
     font-size: 20px;
     margin-bottom: 20px;
-    margin-left: 40px;
     .back {
       color: #333;
     }
   }
   .ctrl {
-    margin-left: 40px;
     margin-bottom: 20px;
     overflow: hidden;
     .selectr {
@@ -197,13 +204,12 @@ export default {
     .add {
       float: left;
     }
-    .search{
+    .search {
       float: right;
       width: 300px;
     }
   }
   .list {
-    margin-left: 40px;
     min-height: 400px;
   }
   .pageswitch {

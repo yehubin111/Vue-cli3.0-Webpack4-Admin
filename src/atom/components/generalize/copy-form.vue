@@ -34,10 +34,11 @@
           @change="accountToAudience"
         >
           <el-option
-            v-for="item in generaccount"
+            v-for="item in commonaccount"
             :key="item.code"
             :label="item.name + '(' + item.fbId.split('_')[1] + ')'"
             :value="item.fbId"
+            :disabled="item.accountStatus != 1"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -54,7 +55,7 @@
       <el-form-item label="应用" class="cline">
         <el-select class="select" disabled v-model="actions" placeholder="请选择应用">
           <el-option
-            v-for="(l, index) in applist"
+            v-for="(l, index) in commonapp"
             :key="index"
             :label="l.name"
             :value="l.applicationId"
@@ -81,7 +82,6 @@
           multiple
           filterable
           placeholder="请选择受众，可搜索"
-          @change="targetToAccount"
         >
           <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label.split('_')[1]">
             <el-option
@@ -105,7 +105,6 @@
           multiple
           filterable
           placeholder="请选择受众，可搜索"
-          @change="targetToAccount"
         >
           <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label.split('_')[1]">
             <el-option
@@ -278,7 +277,7 @@
         <div class="moneyinput" v-show="form.filtra && form.filtra.indexOf('2') != -1">
           <el-select class="select" v-model="form.filtrapage" multiple placeholder="请选择要过滤的主页，必选">
             <el-option
-              v-for="(l, index) in allpagelist"
+              v-for="(l, index) in commonpage"
               :key="index"
               :label="l.name"
               :value="l.pageId"
@@ -542,12 +541,12 @@ export default {
       "othercountries",
       "language",
       "interests",
-      "applist",
+      "commonapp",
       "createplatform",
       "system",
-      "allpagelist",
+      "commonpage",
       "genertarget",
-      "generaccount",
+      "commonaccount",
       "classifyforplan",
       "classifyfiltercount"
     ]),
@@ -722,9 +721,6 @@ export default {
       }
       let fb_account_ids = this.form.account.join(",");
       this.$store.dispatch("generTargetList", { fb_account_ids });
-    },
-    targetToAccount() {
-
     },
     moneytypeChange() {
       this.form.money = "";
@@ -948,7 +944,6 @@ export default {
 
 <style lang="less" scoped>
 .formlist {
-  margin-left: 40px;
   position: relative;
   .bidguide {
     position: absolute;

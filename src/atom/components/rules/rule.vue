@@ -1,9 +1,6 @@
 <template>
   <div class="rule">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>规则管理</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="规则管理"></bread-crumb>
     <div class="ctrlline">
       <el-select
         class="select"
@@ -15,10 +12,11 @@
         @change="selectCondition"
       >
         <el-option
-          v-for="item in adaccountlist"
-          :key="item.fbId"
-          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-          :value="item.fbId"
+          v-for="item in commonaccount"
+          :key="item.fbAccountId"
+          :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
       <el-button type="primary" @click="addStatus = true">创建</el-button>
@@ -40,13 +38,15 @@
 <script>
 import RuleAdd from "./rule-add";
 import RuleList from "./rule-list";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import { mapState, mapMutations } from "vuex";
 import { clearTimeout, setTimeout } from "timers";
 let keywordsearch;
 export default {
   components: {
     RuleList,
-    RuleAdd
+    RuleAdd,
+    BreadCrumb
   },
   data() {
     return {
@@ -65,15 +65,11 @@ export default {
     });
     // 获取规则列表数据
     this.getRuleDate();
-    // 获取广告账户数据
-    this.$store.dispatch("getAdaccount", this.$route.params.id);
+    // 获取广告账户
+    this.$store.dispatch("commonAccount", { project_id: this.$route.params.id });
   },
   computed: {
-    ...mapState(["itemlist", "adaccountlist"]),
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    }
+    ...mapState(["commonaccount"])
   },
   methods: {
     ...mapMutations(["SETOBJSTATE"]),
@@ -130,18 +126,7 @@ export default {
 
 <style lang="less" scoped>
 .rule {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .ctrlline {
-    margin-left: 40px;
     margin-bottom: 30px;
     .select {
       width: 400px;
@@ -153,7 +138,6 @@ export default {
     }
   }
   .rulelist {
-    margin-left: 40px;
   }
 }
 </style>

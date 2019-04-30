@@ -12,9 +12,10 @@
           <el-option-group v-for="group in adaccountOption" :key="group.label" :label="group.label">
             <el-option
               v-for="item in group.options"
-              :key="item.fbId"
-              :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-              :value="item.fbId"
+              :key="item.fbAccountId"
+              :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+              :value="item.fbAccountId"
+              :disabled="item.accountStatus != 1"
             ></el-option>
           </el-option-group>
         </el-select>
@@ -71,9 +72,10 @@
                 >
                   <el-option
                     v-for="item in group.options"
-                    :key="item.fbId"
-                    :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-                    :value="item.fbId"
+                    :key="item.fbAccountId"
+                    :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+                    :value="item.fbAccountId"
+                    :disabled="item.accountStatus != 1"
                   ></el-option>
                 </el-option-group>
               </el-select>
@@ -225,13 +227,13 @@ export default {
       let presentaccount = [
         {
           label: "所在广告账户",
-          options: this.adaccountlist.filter(v => v.fbId == this.accountId)
+          options: this.commonaccount.filter(v => v.fbId == this.accountId)
         }
       ];
       let otheraccount = [
         {
           label: "其他",
-          options: this.adaccountlist.filter(v => v.fbId != this.accountId)
+          options: this.commonaccount.filter(v => v.fbId != this.accountId)
         }
       ];
       this.adaccountOption = presentaccount.concat(otheraccount);
@@ -348,7 +350,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["copycampaignlist", "copyadsetlist", "adaccountlist"]),
+    ...mapState(["copycampaignlist", "copyadsetlist", "commonaccount"]),
     copyCampaign() {
       return this.copycampaignlist.filter(v => v.campaignId != this.originId);
     },

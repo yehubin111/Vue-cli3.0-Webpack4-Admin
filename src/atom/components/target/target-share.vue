@@ -19,10 +19,11 @@
         placeholder="暂只支持同BM下的广告账户，可搜索"
       >
         <el-option
-          v-for="(item, index) in adaccountlist"
+          v-for="(item, index) in commonaccount"
           :key="index"
-          :label="item.name + (item.fbId?'('+item.fbId+')':'')"
-          :value="item.fbId"
+          :label="item.name + (item.fbAccountId?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
     </div>
@@ -45,7 +46,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["adaccountlist"])
+    ...mapState(["commonaccount"])
   },
   methods: {
     toCancel() {

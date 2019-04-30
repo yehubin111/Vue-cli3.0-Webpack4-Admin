@@ -3,7 +3,7 @@
     <el-form-item label="主页" class="cline">
       <el-select v-model="form.homepage" placeholder="请选择主页" filterable @change="selectHomepage">
         <el-option v-if="otherpageid" :label="otherpagename" :value="otherpageid"></el-option>
-        <el-option v-for="(l,index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
+        <el-option v-for="(l,index) in commonpage" :key="index" :label="l.name" :value="l.pageId"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item v-show="createType == 0" label="图片" class="cline uploadfile">
@@ -302,7 +302,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["allpagelist", "adcreateadd", "wantupload", "edittype"]),
+    ...mapState(["commonpage", "adcreateadd", "wantupload", "edittype"]),
     ...mapGetters(["allactions"]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
@@ -311,7 +311,7 @@ export default {
   mounted() {
     let n = this.createObject;
     if (n) {
-      if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
+      if (!this.commonpage.find(v => v.pageId == n.pageId)) {
         this.otherpagename = n.pageName ? n.pageName : "";
         this.otherpageid = n.pageId ? n.pageId : "";
       }
@@ -331,7 +331,7 @@ export default {
       this.reset();
 
       if (n && !n.cards && !n.assetFeedSpec) {
-        if (!this.allpagelist.find(v => v.pageId == n.pageId)) {
+        if (!this.commonpage.find(v => v.pageId == n.pageId)) {
           this.otherpageid = n.pageId ? n.pageId : "";
           this.otherpagename = n.pageName ? n.pageName : "";
         }
@@ -498,7 +498,7 @@ export default {
             videoName: "",
             videoUrl: ""
           };
-      let homepage = this.allpagelist.filter(
+      let homepage = this.commonpage.filter(
         v => v.pageId == this.form.homepage
       )[0];
       let action = this.allactions.filter(v => v.code == this.form.actions)[0];
@@ -703,7 +703,7 @@ export default {
       this.SETSTATE({ k: "adcreateadd", v: true });
     },
     selectHomepage() {
-      let h = this.allpagelist.filter(v => v.pageId == this.form.homepage)[0];
+      let h = this.commonpage.filter(v => v.pageId == this.form.homepage)[0];
       if (h && !h.insId) {
         this.form.homepage = "";
         Msgwarning("此主页无PBIA，请先同步");

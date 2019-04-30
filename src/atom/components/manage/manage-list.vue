@@ -23,7 +23,7 @@
                 </el-tooltip>
               </p>
             </div>
-            <span class="more" v-show="item.participaterNames.length > 5">···</span>
+            <span class="more" v-show="item.participaterNames && item.participaterNames.length > 5">···</span>
           </div>
         </div>
       </li>

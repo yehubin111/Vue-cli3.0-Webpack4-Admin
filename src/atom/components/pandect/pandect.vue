@@ -17,7 +17,7 @@
       <el-main class="main2">
         <app-chart></app-chart>
       </el-main>
-      <el-main class="main1" v-if="ifapp && countryfilter.length > 0">
+      <el-main class="main1" v-if="ifapp">
         <other-table :name="appname"></other-table>
         <div class="pageswitch">
           <el-pagination
@@ -76,14 +76,12 @@ export default {
     if (pandectEventLS.old && localStorage.getItem(pandectEventLS.old)) {
       localStorage.removeItem(pandectEventLS.old);
     }
+    if (pandectSelectLS.old && localStorage.getItem(pandectSelectLS.old)) {
+      localStorage.removeItem(pandectSelectLS.old);
+    }
 
-    let k = "ifapp";
-    let v = "";
-    this.SETSTATE({ k, v });
-
-    k = "ifaccount";
-    v = false;
-    this.SETSTATE({ k, v });
+    this.SETSTATE({ k: 'ifapp', v: '' });
+    this.SETSTATE({ k: 'ifaccount', v: false });
 
     let startDate = this.$timeFormat(
       new Date().getTime() - 7 * 24 * 3600 * 1000,
@@ -91,12 +89,8 @@ export default {
     );
     let endDate = this.$timeFormat(new Date(), "yyyy-MM-dd");
 
-    k = "appdatastartdate";
-    v = startDate;
-    this.SETSTATE({ k, v });
-
-    (k = "appdataenddate"), (v = endDate);
-    this.SETSTATE({ k, v });
+    this.SETSTATE({ k: "appdatastartdate", v: startDate });
+    this.SETSTATE({ k: "appdataenddate", v: endDate });
 
     this.$store.dispatch("infoInit", { startDate, endDate });
 

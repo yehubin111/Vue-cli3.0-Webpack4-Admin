@@ -14,6 +14,8 @@ export default {
     'appcpitotal': 'report/sumAppcpi', // 合计
     'counturl': 'report/countRecharge', // 待充值广告
     'customevent': 'report/afEvents?', // 自定义事件列表
+    'gettag': 'report/queryTag?', // 获取保存的自定义列
+    'savetag': 'report/saveTag?', // 获取保存的自定义列
     // bm
     'bmlist': 'facebook/bms',  // bm列表
     'addbmlist': 'facebook/sync/bms',  // 添加bm列表
@@ -34,7 +36,9 @@ export default {
     'cansetapp': 'facebook/application/canSyncAdaccount?application_id={applicationid}',  // 设置app 未加入
     'saveset': 'facebook/application/saveAdaccounts', // 保存设置app
     'delset': 'facebook/application/delAdaccounts',  // 取消设置app
+    // 'setaf': 'facebook/application/bangdingAf?', // 设置af
     'setaf': 'facebook/application/bangdingAf?', // 设置af
+    'getafstate': 'facebook/application/afState', // 获取af绑定状态
     // manage
     'manageofflist': 'project/getProjects?keywords={keywords}&status={status}&pageIndex={pageIndex}&pageSize={pageSize}', // 项目管理列表
     'managelist': 'project/getProjectsRichInfo?', // 项目管理列表
@@ -48,7 +52,9 @@ export default {
     'projectdelete': 'project/{projectId}/deleteProject?', // 删除项目
     'getallot': 'project/{projectId}/assignedFbAccountIds', // 获取项目分配情况
     'setallot': 'project/{projectId}/assignFbAccountIds', // 设置项目分配
-    'commonaccount': 'project/getAdaccounts?', // 获取指定用户下的广告账户
+    'commonaccounts': 'project/getAdaccounts?', // 获取指定项目下的广告账户
+    'commonpages': 'project/getPages?', // 获取指定项目下的主页
+    'commonapps': 'project/getApplications?', // 获取指定项目下的应用
     // project rules
     // 'getrules': 'optimize/{projectId}/ruleGroups',  // 规则管理列表
     'getrulelist': 'adRule/list?', // 规则管理列表
@@ -128,7 +134,7 @@ export default {
     'adlist': 'projectad/getProjectsAd?', // 广告列表
     'adlistnew': 'projectad/getFbAdList', // 新版广告列表
     'adlistdata': 'projectad/getProjectsAdCpi?', //广告列表其他数据
-    'adaccountlist': 'projectad/getAdaccountLists?', // 广告账户列表
+    // 'adaccountlist': 'projectad/getAdaccountLists?', // 广告账户列表
     'changeadstatus': 'projectad/updateStatus?', //修改广告状态
     'adafdata': 'projectad/getAfDatas?', // af数据
     'eventdata': 'projectad/getAfEvents?', // 事件数据

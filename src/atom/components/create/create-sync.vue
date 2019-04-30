@@ -1,11 +1,26 @@
 <template>
   <el-dialog title="选择需要同步的广告账户" :visible.sync="dialogFormVisible" class="dialog" @close="toCancel">
-    <el-select class="select" v-model="account" multiple filterable collapse-tags placeholder="请选择广告账户，可搜索" @change="toGettime">
-      <el-option v-for="item in ruleappforCreate" :key="item.fbId" :label="item.name + '('+item.fbAccountId+')'" :value="item.fbId">
-      </el-option>
+    <el-select
+      class="select"
+      v-model="account"
+      multiple
+      filterable
+      collapse-tags
+      placeholder="请选择广告账户，可搜索"
+      @change="toGettime"
+    >
+      <el-option
+        v-for="item in commonaccount"
+        :key="item.fbId"
+        :label="item.name + '('+item.fbAccountId+')'"
+        :value="item.fbId"
+        :disabled="item.accountStatus != 1"
+      ></el-option>
     </el-select>
-    <p class="tip" v-show="account.length > 0">预计同步
-      <span>{{synctime}}</span>，同步时间随创意和广告账户数量而减少</p>
+    <p class="tip" v-show="account.length > 0">
+      预计同步
+      <span>{{synctime}}</span>，同步时间随创意和广告账户数量而减少
+    </p>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
       <el-button @click="toAdd" type="primary">确 定</el-button>
@@ -31,8 +46,8 @@ export default {
     }
   },
   computed: {
-    ...mapState(["synctime"]),
-    ...mapGetters(["ruleappforCreate", "allcheckidstatus"])
+    ...mapState(["synctime", "commonaccount"]),
+    ...mapGetters(["allcheckidstatus"])
   },
   methods: {
     toGettime() {

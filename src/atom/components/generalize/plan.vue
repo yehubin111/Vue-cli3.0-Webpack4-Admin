@@ -1,9 +1,6 @@
 <template>
   <div class="plan">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>推广计划管理</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="推广计划管理"></bread-crumb>
     <div class="ctrlbutton">
       <el-dropdown class="select" split-button type="primary">
         创建
@@ -43,6 +40,7 @@
 </template>
 
 <script>
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import LogCreate from "./plan-logcreate.vue";
 import LogDetail from "./plan-logdetail";
 import SelectAccount from "./plan-selectaccount";
@@ -59,7 +57,8 @@ export default {
     AutoSelect,
     SelectAccount,
     LogDetail,
-    LogCreate
+    LogCreate,
+    BreadCrumb
   },
   beforeRouteLeave(to, from, next) {
     // console.log(to, from, next);
@@ -265,18 +264,7 @@ export default {
   }
 }
 .plan {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .select {
@@ -294,7 +282,6 @@ export default {
     }
   }
   .list {
-    margin-left: 40px;
     min-height: 400px;
   }
   .pageswitch {

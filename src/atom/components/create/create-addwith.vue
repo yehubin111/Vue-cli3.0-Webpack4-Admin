@@ -34,7 +34,7 @@
             @change="selectHomepage"
           >
             <el-option
-              v-for="(l,index) in allpagelist"
+              v-for="(l,index) in commonpage"
               :key="index"
               :label="l.name"
               :value="l.pageId"
@@ -584,7 +584,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["othercountries", "allpagelist", "withcreate", "wantupload"]),
+    ...mapState(["othercountries", "commonpage", "withcreate", "wantupload"]),
     ...mapGetters(["createclassify", "allactions"]),
     cardCount() {
       return (
@@ -926,7 +926,7 @@ export default {
       this.setTotal();
     },
     selectHomepage() {
-      let h = this.allpagelist.filter(v => v.pageId == this.form.homepage)[0];
+      let h = this.commonpage.filter(v => v.pageId == this.form.homepage)[0];
       if (!h.insId) {
         this.form.homepage = "";
         Msgwarning("此主页无PBIA，请先同步");
@@ -996,8 +996,7 @@ export default {
         countryname.push(v.name);
       });
 
-      // console.log(this.allpagelist, this.form.homepage);
-      let homepage = this.allpagelist.filter(
+      let homepage = this.commonpage.filter(
         v => v.pageId == this.form.homepage
       )[0];
 

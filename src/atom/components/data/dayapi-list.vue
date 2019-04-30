@@ -2,7 +2,6 @@
   <el-table
     id="daycpiTable"
     :data="daycpilist"
-    style="width: 960px"
     show-summary
     :summary-method="getSummaries"
     @filter-change="toFilter"
@@ -156,7 +155,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .tablelist {
   .download {
     font-size: 14px;

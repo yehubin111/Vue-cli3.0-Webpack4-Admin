@@ -104,7 +104,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .tablelist {
   .download {
     font-size: 14px;

@@ -14,14 +14,22 @@ export default {
     // ...mapState(["ifapp"])
   },
   mounted() {
-    myChart4 = echarts.init(document.getElementById("appChart"));
+    this.initChart();
+  },
+  methods: {
+    initChart() {
+      myChart4 = echarts.init(document.getElementById("appChart"));
+    },
+    resizeChart() {
+      myChart4.resize();
+    }
   }
 };
 </script>
 
 <style lang="less" scoped>
 .chart {
-  width: 1000px;
+  width: 100%;
   height: 450px;
   margin-bottom: 40px;
 }

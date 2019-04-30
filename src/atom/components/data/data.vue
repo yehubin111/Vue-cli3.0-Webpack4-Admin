@@ -1,15 +1,7 @@
 <template>
   <div class="ad">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>账户报表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="账户报表"></bread-crumb>
     <div class="ctrlbutton">
-      <!-- <el-select class="select" v-model="form.value1" filterable multiple remote collapse-tags no-data-text="无数据，请输入或者改变关键字" placeholder="广告系列" :remote-method="searchCampaign" @blur="clearArr('adcampaign')" @change="toSort">
-        <el-option v-for="(item, index) in adcampaign" :key="index" :label="item.campaignName + '('+item.fbAdcampaignId+')'" :value="item.fbAdcampaignId">
-        </el-option>
-        <p class="maxcount">最多显示20条</p>
-      </el-select>-->
       <el-select
         class="select"
         v-model="form.value2"
@@ -147,6 +139,7 @@
 
 <script>
 import DataList from "./data-list";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import { mapState, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 let search;
@@ -192,7 +185,8 @@ export default {
     };
   },
   components: {
-    DataList
+    DataList,
+    BreadCrumb
   },
   mounted() {
     let projectId = this.$route.params.id;
@@ -421,18 +415,7 @@ export default {
 
 <style lang="less" scoped>
 .ad {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .advanceCtr {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     display: flex;
@@ -448,7 +431,6 @@ export default {
     }
   }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .datar {
@@ -501,7 +483,6 @@ export default {
     }
   }
   .list {
-    margin-left: 40px;
     // width: 960px;
   }
   .pageswitch {

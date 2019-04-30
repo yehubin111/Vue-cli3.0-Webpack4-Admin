@@ -162,9 +162,12 @@ export default {
 <style lang="less" scoped>
 .rulelist {
   overflow: hidden;
-  margin-left: 25px;
   margin-right: -15px;
-  min-height: 400px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 30px;
+  margin-bottom: 50px;
+  width: 100%;
   .imgDetail {
     position: fixed;
     top: 0;
@@ -181,10 +184,8 @@ export default {
     }
   }
   .box {
-    width: 33.3%;
-    float: left;
     box-sizing: border-box;
-    padding: 0 15px 30px 15px;
+    // padding: 0 0 30px 0;
     .con {
       //   height: 200px;
       border: 1px solid #e6e6e6;

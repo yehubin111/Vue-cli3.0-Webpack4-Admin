@@ -277,7 +277,7 @@ export default {
           this.$store.dispatch("otherCountries");
           this.$store.dispatch("getLanguage");
           this.$store.dispatch("getInterests");
-          this.$store.dispatch("getAdsetCreateApplist");
+          this.$store.dispatch("getAdsetCreateApplist", { project_id: this.$route.params.id });
           this.$store.dispatch("getAdsetCreateAllpages");
           break;
         case "adName":

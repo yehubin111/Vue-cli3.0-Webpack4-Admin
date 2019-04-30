@@ -1,15 +1,13 @@
 <template>
   <div class="gener">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>编辑推广计划</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="编辑推广计划"></bread-crumb>
     <edit-form v-for="(l, index) in disinfo" :key="index" :createinfo="l" @changeEdit="changeEdit"></edit-form>
   </div>
 </template>
 
 <script>
 import EditForm from "./edit-form";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import { mapState, mapGetters, mapMutations } from "vuex";
 export default {
   beforeRouteLeave(to, from, next) {
@@ -36,7 +34,8 @@ export default {
     };
   },
   components: {
-    EditForm
+    EditForm,
+    BreadCrumb
     // SelectCreate,
     // SelectAccount
   },
@@ -47,24 +46,22 @@ export default {
     this.$store.dispatch("otherCountries");
     this.$store.dispatch("getLanguage");
     this.$store.dispatch("getInterests");
-    this.$store.dispatch("getApplist");
-    this.$store.dispatch("getAllpages");
+    // 获取主页列表
+    let projectId = this.$route.params.id;
+    this.$store.dispatch("commonPage", { project_id: projectId });
+    // 获取应用列表
+    this.$store.dispatch('commonApp', { project_id: projectId });
 
     let plan_id = this.$route.params.pid;
     this.$store.dispatch("getCreateInfo", { plan_id });
 
     let project_id = this.$route.params.id;
-    let audience_ids = this.$route.params.tid ? this.$route.params.tid : "";
-    this.$store.dispatch("generAccountList", { audience_ids, project_id });
+    this.$store.dispatch("commonAccount", { project_id });
     // 获取分类
     this.$store.dispatch("getClassifyForPlan", project_id);
   },
   computed: {
-    ...mapState(["itemlist", "disinfo"]),
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    }
+    ...mapState(["disinfo"])
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -81,14 +78,5 @@ export default {
 <style lang="less" scoped>
 .gener {
   flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
 }
 </style>

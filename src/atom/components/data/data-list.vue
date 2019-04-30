@@ -2,7 +2,6 @@
   <el-table
     id="dataTable"
     :data="datalist"
-    style="width: 960px"
     show-summary
     :summary-method="getSummaries"
     @sort-change="sortChange"
@@ -152,7 +151,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .tablelist {
   .download {
     font-size: 14px;

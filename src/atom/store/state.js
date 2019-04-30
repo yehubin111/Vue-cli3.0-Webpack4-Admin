@@ -32,6 +32,8 @@ export default {
   paycountlist: [],
   paycount: 0, //待充值数量
   countryfilter: [],
+  pandectselect: 'default', // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
+  pandectsave: [], // 总览页面保存的自定义列
   //account
   getbmover: false, // 是否已请求完成
   bmlist: [],
@@ -61,6 +63,7 @@ export default {
   setapplist: [], // app设置列表已加入
   cansetapplist: [],  // app设置列表未加入
   setappstatus: '', // app设置启用未启用筛选
+  afstate: false, // afflyer绑定情况
   // manage
   manageapplist: [],  // 项目添加应用列表
   managelist: [], // 项目未归档列表
@@ -91,7 +94,9 @@ export default {
   },
   allotid: '', // 分配所需项目id
   projectallot: [], // 广告账户分配情况
-  commonaccount: [], // 指定用户的广告账户
+  commonaccount: [], // 指定项目下广告账户
+  commonpage: [], // 指定项目下的主页
+  commonapp: [], // 指定项目下的app
   // project rules
   rulelist: [], // 规则管理列表
   ruleapp: [],  // 优化记录规则列表
@@ -184,6 +189,9 @@ export default {
   classifyforplan: [], // 智能选择分类列表
   classifyfiltercount: 0, // 智能选择符合分类创意数量
   // ad
+  optionselect: 'default', // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
+  saveoption: [], // 保存到服务端的自定义列
+  menushow: true,
   adplanlist: [],
   nowtime: '', // 服务器时间
   updatetime: '', // 更新时间
@@ -231,6 +239,7 @@ export default {
     }
   ],
   adapplicationid: '', // appid 保存广告管理自定义列
+  adprojectid: '', 
   adlisttimeout: false, // 广告管理列表超时情况处理
   adcount: 0,
   adsetcount: 0,
@@ -292,7 +301,7 @@ export default {
   adtab: 'campaignName',
 
   adalllist: [], //广告管理列表所有数据，用于导出全部
-  adaccountlist: [], //广告账户列表
+  // adaccountlist: [], //广告账户列表
   campain_option: '',
   set_option: '',
   ad_option: '',

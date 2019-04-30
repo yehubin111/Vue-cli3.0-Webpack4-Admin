@@ -60,7 +60,7 @@ export default {
       this.$store.dispatch("getManageOffList", { pageIndex, pageSize, status });
     },
     projectSearch() {
-      let v = this.state4;
+      let v = encodeURIComponent(this.state4);
       let k = "projectkwd";
       let status = 0;
 

@@ -15,16 +15,13 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import { Msgwarning } from "../../js/message";
+import { Msgwarning, Msgsuccess, Msgerror } from "../../js/message";
 export default {
   props: ["status", "id", "platform"],
   data() {
     return {
       form: {
-        radio1: "",
-        radio2: "",
-        apikey1: "",
-        apikey2: ""
+        apikey1: ""
       },
       formLabelWidth: "100px"
     };
@@ -33,21 +30,30 @@ export default {
   computed: {
     ...mapGetters(["disapp"])
   },
-  watch: {
-
-  },
+  watch: {},
   methods: {
-    toSet() {
-      
-
-      this.toCancel();
-      this.formReset();
+    async toSet() {
+      if (!this.form.apikey1) {
+        Msgwarning("请输入api密钥");
+        return;
+      }
+      let res = await this.$store.dispatch("setAF", {
+        af_key: this.form.apikey1
+      });
+      if (res.data) {
+        Msgsuccess("绑定成功");
+        this.$store.dispatch('getAfState');
+        this.toCancel();
+      } else {
+        Msgerror("绑定失败");
+      }
     },
     formReset() {
-      
+      this.form.apikey1 = "";
     },
     toCancel() {
       this.$emit("update:status", false);
+      this.formReset();
     }
   }
 };

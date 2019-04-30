@@ -222,6 +222,26 @@ export default {
 
         dispatch('selectApptable');
     },
+    getTag({ state, commit }, { appId, userId, tagType }) {
+        let url = `${URL.gettag}appId=${appId}&userId=${userId}&tagType=${tagType}`;
+
+        return Axios({
+            url,
+            success: res => {
+                commit('PANDECTTAG', res);
+                return res;
+            }
+        })
+    },
+    saveTag({ state, commit }, { appId, userId, tagName, url, tagType }) {
+        let tagurl = `${URL.savetag}url=${url}&appId=${appId}&userId=${userId}&tagName=${tagName}&tagType=${tagType}`;
+
+        return Axios({
+            url: tagurl,
+            fullscreen: true,
+            success: res => res
+        })
+    },
     selectApptable({ state, commit }) {
         let url = URL.appurl;
 
@@ -568,18 +588,24 @@ export default {
                 console.log(err);
             })
     },
-    setAF({ state, commit, dispatch }, { application_id, market_type, af_key }) {
-        let url = `${URL.setaf}application_id=${application_id}&market_type=${market_type}&af_key=${af_key}`;
+    setAF({ state, commit, dispatch }, { af_key }) {
+        let url = `${URL.setaf}af_key=${af_key}`;
 
-        _axios.get(url)
-            .then(res => {
-                Msgsuccess(`${market_type}设置成功`);
+        return Axios({
+            url,
+            fullscreen: true,
+            success: res => res
+        })
+    },
+    getAfState({ state, commit }) {
+        let url = URL.getafstate;
 
-                dispatch('getApplist');
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        Axios({
+            url,
+            success: res => {
+                commit('AFSTATE', res);
+            }
+        })
     },
     // manage
     getManagelist({ state, commit }, { status = '1', pageIndex = 1, pageSize = 20 }) {
@@ -822,12 +848,32 @@ export default {
         });
     },
     commonAccount({ state, commit }, { project_id }) {
-        let url = `${URL.commonaccount}project_id=${project_id}`;
+        let url = `${URL.commonaccounts}project_id=${project_id}`;
 
         Axios({
             url,
             success: res => {
                 commit("COMMONACCOUNT", res);
+            }
+        })
+    },
+    commonPage({ state, commit }, { project_id }) {
+        let url = `${URL.commonpages}project_id=${project_id}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit("COMMONPAGE", res);
+            }
+        })
+    },
+    commonApp({ state, commit }, { project_id }) {
+        let url = `${URL.commonapps}project_id=${project_id}`;
+
+        Axios({
+            url,
+            success: res => {
+                commit("COMMONAPP", res);
             }
         })
     },
@@ -1016,17 +1062,17 @@ export default {
             })
 
     },
-    getRuleAccount({ state, commit }, id) {
-        let url = URL.setapp.replace('{applicationid}', id);
+    // getRuleAccount({ state, commit }, id) {
+    //     let url = URL.setapp.replace('{applicationid}', id);
 
-        _axios.get(url)
-            .then(res => {
-                commit('RULEACCOUNT', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //     _axios.get(url)
+    //         .then(res => {
+    //             commit('RULEACCOUNT', res);
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     getOptimizeAccount({ state, commit }, id) {
         let url = URL.optimizeadaccount + 'projectId=' + id;
 
@@ -1392,17 +1438,17 @@ export default {
                 console.log(err);
             })
     },
-    getAllpages({ state, commit }) {
-        let url = URL.allpagelist;
+    // getAllpages({ state, commit }) {
+    //     let url = URL.allpagelist;
 
-        _axios.get(url)
-            .then(res => {
-                commit('ALLPAGES', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //     _axios.get(url)
+    //         .then(res => {
+    //             commit('ALLPAGES', res);
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     getAllactions({ state, commit }) {
         let url = URL.actionlist;
 
@@ -1983,17 +2029,17 @@ export default {
                 console.log(err);
             })
     },
-    generAccountList({ state, commit }, { audience_ids, project_id }) {
-        let url = `${URL.generaccount}audience_ids=${audience_ids}&project_id=${project_id}`;
+    // generAccountList({ state, commit }, { audience_ids, project_id }) {
+    //     let url = `${URL.generaccount}audience_ids=${audience_ids}&project_id=${project_id}`;
 
-        _axios.get(url)
-            .then(res => {
-                commit('GENERACCOUNT', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //     _axios.get(url)
+    //         .then(res => {
+    //             commit('GENERACCOUNT', res);
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     bidGuide({ state, commit }, { country, fbApplicationId, billingEvent }) {
         let url = `${URL.bidguide}country=${country}&fbApplicationId=${fbApplicationId}&billingEvent=${billingEvent}`;
 
@@ -2059,27 +2105,24 @@ export default {
                 console.log(err);
             })
     },
-    deleteSearchCondition({ state, commit, dispatch }, { id, userId, projectId }) {
+    deleteSearchCondition({ state, commit, dispatch }, { id }) {
         let url = `${URL.deletecondition}id=${id}`;
 
-        _axios.get(url)
-            .then(res => {
-                dispatch('getSearchCondition', { userId: userId, projectId: projectId });
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        return Axios({
+            url,
+            success: res => res
+        })
     },
-    getSearchCondition({ state, commit, dispatch }, { userId, projectId }) {
-        let url = `${URL.getcondition}userId=${userId}&projectId=${projectId}`;
+    getSearchCondition({ state, commit, dispatch }, { userId, projectId, tagType }) {
+        let url = `${URL.getcondition}userId=${userId}&projectId=${projectId}&tagType=${tagType}`;
 
-        _axios.get(url)
-            .then(res => {
-                commit('GETCONDITION', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        return Axios({
+            url,
+            success: res => {
+                commit('GETCONDITION', { res, tagType });
+                return res
+            }
+        })
     },
     saveSearchCondition({ state, commit, dispatch }, option) {
         let url = URL.savecondition;
@@ -2090,13 +2133,11 @@ export default {
         }
         url += str.substring(1);
 
-        _axios.get(url)
-            .then(res => {
-                dispatch('getSearchCondition', { userId: option.userId, projectId: option.projectId });
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        return Axios({
+            url,
+            fullscreen: true,
+            success: res => res
+        })
     },
     getUpdateTime({ state, commit }) {
         let url = URL.updatetime;
@@ -2109,11 +2150,11 @@ export default {
                 console.log(err);
             })
     },
-    async getAdlist({ state, commit, dispatch }, { option, loading = false, fullScreen = true, type, applicationid, editType = '', name = '', customOption = null, outNotify = null }) {
+    async getAdlist({ state, commit, dispatch }, { option, loading = false, fullScreen = true, type, editType = '', name = '', customOption = null, outNotify = null }) {
         let url = URL.adlistnew;
         let load;
-        applicationid = applicationid ? applicationid : state.adapplicationid;
-        let eventsName = localStorage.getItem(adEventLS.new) && JSON.parse(localStorage.getItem(adEventLS.new))[applicationid] ? JSON.parse(localStorage.getItem(adEventLS.new))[applicationid].join(',') : '';
+        let projectId = state.adprojectid;
+        let eventsName = localStorage.getItem(adEventLS.new) && JSON.parse(localStorage.getItem(adEventLS.new))[projectId] ? JSON.parse(localStorage.getItem(adEventLS.new))[projectId].join(',') : '';
         /*
          * 如果广告系列有勾选，则广告组以及广告根据筛选条件来获取数据
          * 如果广告组有勾选，则广告栏根据筛选条件来获取数据，优先级高于广告系列 
@@ -2220,17 +2261,17 @@ export default {
             }
         }
     },
-    getAdaccount({ state, commit }, projectId) {
-        let url = `${URL.adaccountlist}projectId=${projectId}`;
+    // getAdaccount({ state, commit }, projectId) {
+    //     let url = `${URL.adaccountlist}projectId=${projectId}`;
 
-        _axios.get(url)
-            .then(res => {
-                commit('ADACCOUNT', res)
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //     _axios.get(url)
+    //         .then(res => {
+    //             commit('ADACCOUNT', res)
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     changeAdstatus({ state, commit, dispatch }, { option, type, fullScreen }) {
         let url = URL.changeadstatus;
 
@@ -2743,15 +2784,15 @@ export default {
                 console.log(err);
             })
     },
-    getAdsetCreateApplist({ state, commit }) {
-        let url = URL.applist;
-        _axios.get(url)
-            .then(res => {
+    getAdsetCreateApplist({ state, commit }, { project_id }) {
+        let url = URL.commonapps + 'project_id=' + project_id;
+
+        Axios({
+            url,
+            success: res => {
                 commit('SETADCREATEAPPLIST', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            }
+        })
     },
     getAppInfo({ state, commit }, applicationId) {
         let url = `${URL.appinfo}apps=${applicationId}`;
@@ -3223,17 +3264,17 @@ export default {
                 console.log(err);
             })
     },
-    targetApplist({ state, commit }) {
-        let url = URL.applist;
+    // targetApplist({ state, commit }) {
+    //     let url = URL.applist;
 
-        _axios.get(url)
-            .then(res => {
-                commit('TARGETAPPLIST', res);
-            })
-            .catch(err => {
-                console.log(err);
-            })
-    },
+    //     _axios.get(url)
+    //         .then(res => {
+    //             commit('TARGETAPPLIST', res);
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //         })
+    // },
     getTargetCampaignAccount({ state, commit }, { project_id, batch_id }) {
         let url = `${URL.campaigntoaccount}project_id=${project_id}&batch_id=${batch_id}`;
 

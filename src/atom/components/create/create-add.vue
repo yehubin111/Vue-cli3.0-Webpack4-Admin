@@ -187,7 +187,7 @@
             @change="selectHomepage"
           >
             <el-option
-              v-for="(l,index) in allpagelist"
+              v-for="(l,index) in commonpage"
               :key="index"
               :label="l.name"
               :value="l.pageId"
@@ -430,7 +430,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["othercountries", "allpagelist", "addcreate", "wantupload"]),
+    ...mapState(["othercountries", "commonpage", "addcreate", "wantupload"]),
     ...mapGetters(["createclassify", "allactions"]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
@@ -619,7 +619,7 @@ export default {
       this.SETSTATE({ k: "addcreate", v: true });
     },
     selectHomepage() {
-      let h = this.allpagelist.filter(v => v.pageId == this.form.homepage)[0];
+      let h = this.commonpage.filter(v => v.pageId == this.form.homepage)[0];
       if (!h.insId) {
         this.form.homepage = "";
         Msgwarning("此主页无PBIA，请先同步");
@@ -695,7 +695,7 @@ export default {
         countryname.push(v.name);
       });
 
-      let homepage = this.allpagelist.filter(
+      let homepage = this.commonpage.filter(
         v => v.pageId == this.form.homepage
       )[0];
       let action = this.allactions.filter(v => v.code == this.form.actions)[0];

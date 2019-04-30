@@ -4,18 +4,19 @@
       <top-header></top-header>
     </el-header>
     <el-container class="contain">
-      <el-aside width="200px" class="aside">
+      <el-aside width="200px" class="aside" v-show="menushow">
         <left-nav></left-nav>
       </el-aside>
-      <!-- <transition name="right-slide-fade"> -->
-      <router-view></router-view>
-      <!-- </transition> -->
+      <div class="rightcontent">
+        <router-view></router-view>
+      </div>
     </el-container>
   </el-container>
 </template>
 <script>
 import TopHeader from "./header";
 import LeftNav from "./leftnav";
+import { mapState } from "vuex";
 export default {
   components: {
     TopHeader,
@@ -23,6 +24,9 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    ...mapState(["menushow"])
   }
 };
 </script>
@@ -36,11 +40,17 @@ export default {
 .contain {
   width: 1200px;
   margin: 0 auto;
+  display: flex;
   .aside {
-    margin-right: 0;
+    margin-right: 40px;
     text-align: center;
     margin-top: 20px;
     width: 200px;
+    flex-basis: 200px;
+  }
+  .rightcontent{
+    flex: 1;
+    width: 0;
   }
 }
 </style>

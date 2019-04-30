@@ -4,7 +4,6 @@
     ref="dataCard"
     @sort-change="sortChange"
     :data="videomatterlist"
-    style="width: 960px"
     show-summary
     :summary-method="getSummaries"
   >

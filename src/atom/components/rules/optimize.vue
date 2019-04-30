@@ -1,9 +1,6 @@
 <template>
   <div class="optimize">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>优化记录</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="优化记录"></bread-crumb>
     <div class="sort">
       <el-select
         class="select"
@@ -15,10 +12,11 @@
         @change="toSort"
       >
         <el-option
-          v-for="item in adaccountlist"
-          :key="item.fbId"
-          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-          :value="item.fbId"
+          v-for="item in commonaccount"
+          :key="item.fbAccountId"
+          :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
       <el-date-picker
@@ -52,12 +50,14 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
 import OptimizeList from "./optimize-list";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
+import { mapState, mapGetters } from "vuex";
 export default {
   props: ["id"],
   components: {
-    OptimizeList
+    OptimizeList,
+    BreadCrumb
   },
   data() {
     return {
@@ -70,11 +70,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["itemlist", "adaccountlist", "optotal"]),
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    },
+    ...mapState(["commonaccount", "optotal"]),
     ruleId() {
       return this.$route.params.ruleId;
     }
@@ -84,8 +80,8 @@ export default {
     this.toSort();
 
     let n = this.$route.params.id;
-    // this.$store.dispatch("getOptimizeAccount", n);
-    this.$store.dispatch("getAdaccount", n);
+    // 获取广告账户
+    this.$store.dispatch("commonAccount", { project_id: n });
   },
   methods: {
     pageSizeChange(size) {
@@ -130,18 +126,7 @@ export default {
 
 <style lang="less" scoped>
 .optimize {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .sort {
-    margin-left: 40px;
     margin-bottom: 20px;
     .select {
       width: 360px;
@@ -156,7 +141,6 @@ export default {
     }
   }
   .dialog {
-    margin-left: 40px;
     //   width: 100%;
   }
   .pageswitch {

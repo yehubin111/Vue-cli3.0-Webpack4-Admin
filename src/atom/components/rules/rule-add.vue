@@ -17,10 +17,11 @@
           placeholder="请选择广告账户，可搜索"
         >
           <el-option
-            v-for="item in adaccountlist"
-            :key="item.fbId"
-            :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-            :value="item.fbId"
+            v-for="item in commonaccount"
+            :key="item.fbAccountId"
+            :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+            :value="item.fbAccountId"
+            :disabled="item.accountStatus != 1"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -532,7 +533,7 @@ export default {
     this.ctrlList = this.ctrlOption.slice(0, 2);
   },
   computed: {
-    ...mapState(["adaccountlist", "newrulelist"])
+    ...mapState(["commonaccount", "newrulelist"])
   },
   methods: {
     adInit(select, type) {
@@ -958,7 +959,7 @@ export default {
 
       let accountid = this.form.account;
       let accountname = this.form.account.map(
-        v => this.adaccountlist.find(g => g.fbId == v).name
+        v => this.commonaccount.find(g => g.fbAccountId == v).name
       );
       // 统计时间窗逻辑
       let windowcond = "ACCOUNT_DEFAULT";

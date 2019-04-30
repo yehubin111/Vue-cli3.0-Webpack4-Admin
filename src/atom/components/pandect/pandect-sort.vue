@@ -96,7 +96,7 @@ export default {
       v = 1;
       this.SETSTATE({ k, v });
 
-      this.$store.dispatch("selectApp");
+      // this.$store.dispatch("selectApp");
 
       // 20181031新增自定义事件
       this.$store.dispatch('getCustomEvent', this.value);

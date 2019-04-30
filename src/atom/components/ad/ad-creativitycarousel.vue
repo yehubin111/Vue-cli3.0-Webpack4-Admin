@@ -3,7 +3,7 @@
     <el-form-item label="主页" class="cline">
       <el-select v-model="form.homepage" placeholder="请选择主页" filterable @change="selectHomepage">
         <el-option v-if="otherpagename" :label="otherpagename" :value="otherpageid"></el-option>
-        <el-option v-for="(l,index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
+        <el-option v-for="(l,index) in commonpage" :key="index" :label="l.name" :value="l.pageId"></el-option>
       </el-select>
     </el-form-item>
     <div class="carousellist">
@@ -330,7 +330,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["allpagelist"]),
+    ...mapState(["commonpage"]),
     ...mapGetters(["allactions"]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
@@ -340,7 +340,7 @@ export default {
     let n = this.createObject;
     if (n) {
       this.otherpageid = n.pageId ? n.pageId : "";
-      if (!this.allpagelist.find(v => v.pageId == n.pageId))
+      if (!this.commonpage.find(v => v.pageId == n.pageId))
         this.otherpagename = n.pageName ? n.pageName : "";
     }
     if (n && n.cards) {
@@ -564,7 +564,7 @@ export default {
             videoName: "",
             videoUrl: ""
           };
-      let homepage = this.allpagelist.filter(
+      let homepage = this.commonpage.filter(
         v => v.pageId == this.form.homepage
       )[0];
       let action = this.allactions.filter(v => v.code == this.form.actions)[0];
@@ -934,7 +934,7 @@ export default {
       });
     },
     selectHomepage() {
-      let h = this.allpagelist.filter(v => v.pageId == this.form.homepage)[0];
+      let h = this.commonpage.filter(v => v.pageId == this.form.homepage)[0];
       if (h && !h.insId) {
         this.form.homepage = "";
         Msgwarning("此主页无PBIA，请先同步");

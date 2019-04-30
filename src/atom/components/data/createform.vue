@@ -1,33 +1,28 @@
 <template>
   <div class="ad">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>创意报表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="创意报表"></bread-crumb>
     <div class="ctrlbutton">
       <el-select
         class="select"
         v-model="form.value1"
         filterable
-        remote
         multiple
         collapse-tags
         placeholder="广告账户"
-        no-data-text="无数据，请输入或者改变关键字"
-        :remote-method="searchAccount"
-        @blur="clearArr('adaccount')"
         @change="toSort"
       >
         <el-option
-          v-for="(item, index) in adaccount"
+          v-for="(item, index) in commonaccount"
           :key="index"
-          :label="item.accountName + (item.fbAccountId?'('+item.fbAccountId+')':'')"
+          :label="item.name + (item.fbAccountId?'('+item.fbAccountId+')':'')"
           :value="item.fbAccountId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
       <el-button type="text" class="advanceSelect" @click="advanceFilter">高级筛选</el-button>
       <p class="download">
-        <span @click="outTable">导出全部
+        <span @click="outTable">
+          导出全部
           <svg-icon svgname="save" svgclass="save"></svg-icon>
         </span>
       </p>
@@ -163,6 +158,7 @@
 <script>
 import CreateformList from "./createform-list";
 import CreateformCard from "./createform-card";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import { mapState, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 let search;
@@ -175,7 +171,6 @@ export default {
       filter1: true,
       filter2: true,
       sort: "",
-      // ifroll: true,
       cardname: "first",
       activeName: "first",
       form: {
@@ -211,7 +206,8 @@ export default {
   },
   components: {
     CreateformList,
-    CreateformCard
+    CreateformCard,
+    BreadCrumb
   },
   mounted() {
     let projectId = this.$route.params.id;
@@ -226,7 +222,8 @@ export default {
     };
 
     this.$store.dispatch("getCreateformList", { option });
-    // this.$store.dispatch("getCreatecardList", { option: {} });
+    // 获取广告账户
+    this.$store.dispatch("commonAccount", { project_id: projectId });
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -234,42 +231,16 @@ export default {
       console.log(card.name);
       this.cardname = card.name;
 
-      // this.form.value1 = [];
-      // this.form.value2 = [];
-      // this.form.value3 = [];
-      // this.form.value4 = [];
-      // this.form.value5 = [];
-      // this.form.value6 = [];
-      // this.form.value7 = [];
-      // this.state = "";
-      // this.form.value8 = [
-      //   new Date().setDate(new Date().getDate() - 1),
-      //   new Date().setDate(new Date().getDate() - 1)
-      // ];
-      // this.pageindex = 1;
-      // this.pagesize = 20;
-      // this.sort = '';
-
-      // let option = {
-      //   pageNo: 1,
-      //   pageSize: 20,
-      //   projectId: this.$route.params.id,
-      //   endDate: this.$timeFormat(this.form.value8[1], "yyyy-MM-dd"),
-      //   startDate: this.$timeFormat(this.form.value8[0], "yyyy-MM-dd")
-      // };
-
       /**
        * 切换的时候清空排序条件
        */
       this.sort = "";
 
       if (this.cardname == "first") {
-        // this.$store.dispatch("getCreateformList", { option });
         this.SETSTATE({ k: "createcardlist", v: [] });
         // 删除排序
         this.$refs.dataTable.$refs.dataForm.clearSort();
       } else {
-        // this.$store.dispatch("getCreatecardList", { option });
         this.SETSTATE({ k: "createformlist", v: [] });
         // 删除排序
         this.$refs.dataTableCard.$refs.dataCard.clearSort();
@@ -277,32 +248,6 @@ export default {
 
       this.toGetdata();
     },
-    clearArr(k) {
-      let v = [];
-      this.SETSTATE({ k, v });
-    },
-    searchAccount(kword) {
-      let accountKeyword = kword;
-      clearTimeout(moreoption);
-
-      moreoption = setTimeout(() => {
-        this.$store.dispatch("getOptionMore", {
-          projectId: this.$route.params.id,
-          accountKeyword
-        });
-      }, 300);
-    },
-    // searchCampaign(kword) {
-    //   let campaignKeyword = kword;
-    //   clearTimeout(moreoption);
-
-    //   moreoption = setTimeout(() => {
-    //     this.$store.dispatch("getOptionMore", {
-    //       projectId: this.$route.params.id,
-    //       campaignKeyword
-    //     });
-    //   }, 300);
-    // },
     tableSort(sort) {
       this.sort = sort;
       this.toGetdata();
@@ -321,14 +266,12 @@ export default {
         this.form.value5.length > 0 ||
         this.form.value6.length > 0 ||
         this.form.value7.length > 0
-        // this.form.value8.length > 0
       ) {
         this.form.value3 = [];
         this.form.value4 = [];
         this.form.value5 = [];
         this.form.value6 = [];
         this.form.value7 = [];
-        // this.form.value8 = [];
 
         this.filter1 = true;
         this.filter2 = true;
@@ -343,7 +286,6 @@ export default {
         countryList: this.form.value3.join(","),
         endDate: this.$timeFormat(this.form.value8[1], "yyyy-MM-dd"),
         fbAdAccountIdList: this.form.value1.join(","),
-        // fbAdCampaignIdList: this.form.value2.join(","),
         fbAdCreativeIdList: "",
         fbAppId: "",
         flag: "",
@@ -376,7 +318,6 @@ export default {
         )}`;
         this.$store.dispatch("getCreatecardListout", { option, name });
       }
-      // this.$exportHTML("dataTable", name);
     },
     toSort() {
       this.pageindex = 1;
@@ -402,7 +343,6 @@ export default {
         countryList: this.form.value3.join(","),
         endDate: this.$timeFormat(this.form.value8[1], "yyyy-MM-dd"),
         fbAdAccountIdList: this.form.value1.join(","),
-        // fbAdCampaignIdList: this.form.value2.join(","),
         fbAdCreativeIdList: "",
         fbAppId: "",
         flag: "",
@@ -443,7 +383,8 @@ export default {
   computed: {
     ...mapState([
       "itemlist",
-      "adaccount",
+      // "adaccount",
+      "commonaccount",
       "adcampaign",
       "datacountry",
       "dataage",
@@ -493,21 +434,9 @@ export default {
 
 <style lang="less" scoped>
 .ad {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .activeName {
-    margin-left: 40px;
   }
   .advanceCtr {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     display: flex;
@@ -528,7 +457,6 @@ export default {
     }
   }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .datar {

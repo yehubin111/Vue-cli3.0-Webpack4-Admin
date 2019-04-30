@@ -304,6 +304,19 @@ export default {
         // console.log(state.customevent);
 
     },
+    PANDECTTAG(state, res) {
+        state.pandectsave = [];
+        res.data.forEach(v => {
+            let option = v.url.split('@@');
+            let obj = {
+                name: v.tagName,
+                option: option[0] ? JSON.parse(option[0]) : [],
+                id: v.id,
+                event: option[1] ? JSON.parse(option[1]) : []
+            };
+            state.pandectsave.push(obj);
+        })
+    },
     /***************************** bm */
     BMLIST(state, r) {
         let dt = r.data;
@@ -378,6 +391,9 @@ export default {
     CANSETAPP(state, r) {
         state.cansetapplist = r.data;
     },
+    AFSTATE(state, r) {
+        state.afstate = r.data;
+    },
     // manage
     MANAGELIST(state, r) {
         state.managelist = r.data.list;
@@ -391,10 +407,10 @@ export default {
         state.userslist = r.data;
     },
     ADACCOUNTLIST(state, r) {
-        state.adaccountslist = r.data;  
+        state.adaccountslist = r.data;
     },
     ADPAGES(state, r) {
-        state.adpages = r.data;  
+        state.adpages = r.data;
     },
     // project rules
     RULES(state, r) {
@@ -427,6 +443,12 @@ export default {
     },
     COMMONACCOUNT(state, r) {
         state.commonaccount = r.data;
+    },
+    COMMONPAGE(state, r) {
+        state.commonpage = r.data;
+    },
+    COMMONAPP(state, r) {
+        state.commonapp = r.data;
     },
     // create
     CREATE(state, r) {
@@ -734,8 +756,22 @@ export default {
         // console.log(state.customeventcampain);
 
     },
-    GETCONDITION(state, res) {
-        state.conditionlist = res.data;
+    GETCONDITION(state, { res, tagType }) {
+        if (tagType == '1')
+            state.conditionlist = res.data;
+        else if (tagType == '2') {
+            state.saveoption = [];
+            res.data.forEach(v => {
+                let option = v.url.split('@@');
+                let obj = {
+                    name: v.tagName,
+                    option: option[0] ? JSON.parse(option[0]) : [],
+                    id: v.id,
+                    event: option[1] ? JSON.parse(option[1]) : []
+                };
+                state.saveoption.push(obj);
+            })
+        }
     },
     ADLIST(state, { res, type, dateCond, editType, name, customOption }) {
         // 重置超时状态
@@ -999,14 +1035,14 @@ export default {
             state.datestatus = `${parseInt(time / 60000)}分钟前`;
         }
     },
-    ADACCOUNT(state, r) {
-        state.adaccountlist = r.data;
+    // ADACCOUNT(state, r) {
+    //     state.adaccountlist = r.data;
 
-        // state.adaccountlist.unshift({
-        //     fbId: '-1',
-        //     name: '不限'
-        // })
-    },
+    //     // state.adaccountlist.unshift({
+    //     //     fbId: '-1',
+    //     //     name: '不限'
+    //     // })
+    // },
     CHANGESTATUS(state, r) {
         state.adlist.forEach(v => {
             if (r.adIds.indexOf(v.fbAdId) != -1) {
@@ -1804,9 +1840,9 @@ export default {
         if (state.targetcampaigns.length != res.data.total)
             state.ifmorecampaigns = true;
     },
-    TARGETAPPLIST(state, r) {
-        state.targetapplist = r.data;
-    },
+    // TARGETAPPLIST(state, r) {
+    //     state.targetapplist = r.data;
+    // },
     SAMELIKE(state) {
         state.ifsame = true;
     },

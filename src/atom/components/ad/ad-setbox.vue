@@ -65,7 +65,12 @@
         </p>
         <div class="droplist" v-show="sortDown" :style="{width: firstSearch? '280px':'160px'}">
           <div class="listarr" id="firstList">
-            <div class="list" @mouseenter="sweepCare" @click="clearCare">清空所有细分</div>
+            <div
+              class="list"
+              @mouseenter="sweepCare"
+              @click="clearCare"
+              v-show="this.careData.length > 0"
+            >清空所有细分</div>
             <div
               class="list"
               v-for="(lst, lsindex) in searchList"
@@ -87,16 +92,38 @@
           </div>
         </div>
       </div>
-      <p class="autolist">
+      <div class="autolist">
         <span @click="importRemain">
           <i class="el-icon-download"></i>
           导入留存
         </span>
-        <span @click="outListOption">
-          <i class="el-icon-tickets"></i>
-          自定义列
-        </span>
-      </p>
+        <div class="autooption" @mouseenter="optionmenu = true" @mouseleave="optionmenu = false">
+          <span class="el-dropdown-link">
+            自定义列
+            <i class="el-icon-arrow-down el-icon--right"></i>
+          </span>
+          <transition name="fade">
+            <div class="optionlist" v-show="optionmenu">
+              <p :class="{on: optionselect == 'default'}" @click="optionSelect('default')">
+                <span class="name">常用</span>
+              </p>
+              <p
+                :class="{on: optionselect == item.name}"
+                v-for="(item, index) in saveoption"
+                :key="index"
+                @click="optionSelect(item.name)"
+              >
+                <span class="name" :title="item.name">{{item.name}}</span>
+                <i class="el-icon-close other" @click.stop="deleteOption(item.id, item.name)"></i>
+              </p>
+              <p :class="{on: optionselect == 'auto'}">
+                <span class="name" @click="outListOption">自定义</span>
+                <span class="other" v-show="optionselect == 'auto'" @click.stop="saveOption">保存</span>
+              </p>
+            </div>
+          </transition>
+        </div>
+      </div>
     </div>
     <div class="timeout" v-show="adlisttimeout">
       加载失败请
@@ -140,24 +167,19 @@ export default {
   props: ["opDefault", "type", "defaultOption"],
   data() {
     return {
+      optionmenu: false,
       sortDown: false,
       firstSearch: "",
       firstKey: "",
       secondSearchList: [],
-      // defaultSwitch: true, // 广告系列默认筛选状态失效开关，如果有加入新的筛选条件，则失效
-      // careData: [],
       state: "",
       value2: "",
-      // status: false,
       customOption: this.defaultOption.concat(this.opDefault), // 自定义列配置, 默认+常用
       pageindex: 1,
-      // pagesize: 20,
       mutilselect: [],
       archivedbutton: false,
       sort: "",
       order: true,
-      // renameKey: '', // 重命名key，多个逗号间隔
-      // renameName: '', // 重命名原始名称，单个才会有
       statuslist: [
         {
           name: "不限",
@@ -190,9 +212,18 @@ export default {
   watch: {},
   methods: {
     ...mapMutations(["SETSTATE"]),
+    optionSelect(key) {
+      this.$emit("optionSelect", key);
+    },
+    deleteOption(id, name) {
+      this.$emit("deleteSaveSearch", id, '2', name);
+    },
+    saveOption() {
+      this.$emit("setCondition", "2");
+    },
     ruleCtrl(key) {
-      if([...new Set(this.mutilselect.map(v => v.accountId))].length > 1){
-        Msgwarning('暂不支持跨广告账户设置规则，请选择同一个广告账户下的对象');
+      if ([...new Set(this.mutilselect.map(v => v.accountId))].length > 1) {
+        Msgwarning("暂不支持跨广告账户设置规则，请选择同一个广告账户下的对象");
         return;
       }
       switch (key) {
@@ -344,7 +375,7 @@ export default {
         customOption: this.customOptionDefault,
         type: this.type,
         // order: this.order,
-        applicationid: this.applicationId,
+        // applicationid: this.applicationId,
         editType: "export",
         outNotify // notification实例
       });
@@ -395,7 +426,7 @@ export default {
       this.SETSTATE({ k: "sortdefault", v: kdefault.replace(/^,/, "") });
     },
     toGetdata(pageReset) {
-      // console.log(pageReset);
+      // console.log('pageReset');
       let batchId = this.$route.params.bid;
       // 从本地缓存获取筛选条件
       let allCondition = localStorage.getItem(adFilterLS.new)
@@ -452,7 +483,7 @@ export default {
         option,
         type: this.type,
         order: this.order,
-        applicationid: this.applicationId
+        // applicationid: this.applicationId
       });
     },
     mutilSelect(arr) {
@@ -693,7 +724,9 @@ export default {
       "adpagesize",
       "adlisttimeout",
       "exportstatus",
-      "sortdefault"
+      "sortdefault",
+      "optionselect",
+      "saveoption"
     ]),
     customOptionDefault() {
       /**
@@ -903,12 +936,63 @@ export default {
     float: right;
     line-height: 20px;
     margin-bottom: 5px;
-    span {
+    margin-right: 10px;
+    & > span {
       position: relative;
       display: inline-block;
       cursor: pointer;
       line-height: 40px;
       margin-right: 20px;
+    }
+    .autooption {
+      display: inline-block;
+      position: relative;
+      line-height: 40px;
+      .optionlist {
+        position: absolute;
+        color: #3297ff;
+        top: 40px;
+        left: 0px;
+        border-radius: 5px;
+        overflow: hidden;
+        -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        display: block;
+        z-index: 999;
+        background-color: #fff;
+        p {
+          width: 140px;
+          text-align: left;
+          line-height: 40px;
+          height: 40px;
+          padding: 0 10px;
+          cursor: pointer;
+          .other {
+            float: right;
+            line-height: 40px;
+            color: #3297ff;
+          }
+          &:hover {
+            background-color: #deedfd;
+            color: #3297ff;
+          }
+          .name {
+            color: #666;
+            width: 100px;
+            overflow: hidden;
+            display: inline-block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            height: 40px;
+          }
+          &.on {
+            .name {
+              color: #000;
+              font-weight: bold;
+            }
+          }
+        }
+      }
     }
   }
   .download {

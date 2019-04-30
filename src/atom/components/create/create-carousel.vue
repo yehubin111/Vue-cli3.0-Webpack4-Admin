@@ -126,7 +126,7 @@
         </el-form-item>
         <el-form-item label="主页" class="cline">
           <el-select v-model="form.homepage" placeholder="请选择主页" filterable @change="selectHomepage">
-            <el-option v-for="(l,index) in allpagelist" :key="index" :label="l.name" :value="l.pageId"></el-option>
+            <el-option v-for="(l,index) in commonpage" :key="index" :label="l.name" :value="l.pageId"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="分类" class="cline">
@@ -331,7 +331,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["othercountries", "allpagelist", 'cardcreate']),
+    ...mapState(["othercountries", "commonpage", 'cardcreate']),
     ...mapGetters(["createclassify", "allactions"]),
     uploadFileUrl() {
       return `${baseurl[process.env.VUE_APP_URLBASE].UPLOAD_URL}/file/`;
@@ -654,7 +654,7 @@ export default {
       });
     },
     selectHomepage() {
-      let h = this.allpagelist.filter(v => v.pageId == this.form.homepage)[0];
+      let h = this.commonpage.filter(v => v.pageId == this.form.homepage)[0];
       if (!h.insId) {
         this.form.homepage = "";
         Msgwarning("此主页无PBIA，请先同步");
@@ -757,7 +757,7 @@ export default {
         countryname.push(v.name);
       });
 
-      let homepage = this.allpagelist.filter(
+      let homepage = this.commonpage.filter(
         v => v.pageId == this.form.homepage
       )[0];
       let action = this.allactions.filter(v => v.code == this.form.actions)[0];

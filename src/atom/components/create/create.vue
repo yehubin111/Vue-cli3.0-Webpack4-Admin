@@ -1,9 +1,6 @@
 <template>
   <div class="rule">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>创意管理</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="创意管理"></bread-crumb>
     <div class="ctrlbutton">
       <!-- <el-button class="add" type="primary" @click="status4 = true">新增创意</el-button> -->
       <el-dropdown class="add" split-button type="primary" @command="addCreateType">
@@ -62,6 +59,7 @@
 </template>
 
 <script>
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import CreateSync from "./create-sync";
 import EditCountry from "./create-editcountry";
 import EditName from "./create-editname";
@@ -82,7 +80,8 @@ export default {
     EditName,
     EditCountry,
     CreateSync,
-    CreateCarousel
+    CreateCarousel,
+    BreadCrumb
   },
   data() {
     return {
@@ -185,29 +184,23 @@ export default {
     this.$store.dispatch("getCountries", this.$route.params.id);
     this.$store.dispatch("otherCountries");
 
-    let k = "cr_projectId";
-    let v = this.$route.params.id;
-    this.SETSTATE({ k, v });
+    let projectId = this.$route.params.id;
+    this.SETSTATE({ k: 'cr_projectId', v: projectId });
 
     this.SETSTATE({ k: "createlist", v: [] });
 
     this.$store.dispatch("getCreateList", { loading: "createList" });
     // 新增创意用
-    this.$store.dispatch("getAllpages");
+    // 获取主页
+    this.$store.dispatch('commonPage', {project_id: projectId});
     this.$store.dispatch("getAllactions");
 
     let application = this.itemlist.find(v => v.id == this.$route.params.id);
-    if (application)
-      this.$store.dispatch("getRuleAccount", application.applicationId);
+    // 获取广告账户
+    this.$store.dispatch("commonAccount", {project_id:this.$route.params.id});
   },
   watch: {
-    itemlist(n, v) {
-      if (n.length != 0) {
-        let applicationid = n.find(v => v.id == this.$route.params.id)
-          .applicationId;
-        this.$store.dispatch("getRuleAccount", applicationid);
-      }
-    }
+
   },
   computed: {
     ...mapState([
@@ -220,10 +213,6 @@ export default {
       // "createcheckstatus"
     ]),
     ...mapGetters(["allcheckidstatus", "createcheckstatus"]),
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    }
   },
   methods: {
     ...mapMutations(["ALLSELECT", "SETSTATE"]),
@@ -402,19 +391,7 @@ export default {
 
 <style lang="less" scoped>
 .rule {
-  flex-grow: 1;
-  width: 960px;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .add {
@@ -427,7 +404,6 @@ export default {
     }
   }
   .sort {
-    margin-left: 40px;
     margin-bottom: 20px;
     overflow: hidden;
     .fontbtn {

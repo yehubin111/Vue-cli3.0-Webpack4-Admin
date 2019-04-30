@@ -1,15 +1,12 @@
 <template>
   <div class="ad">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>每日CPI</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="每日CPI"></bread-crumb>
     <div class="ctrlbutton">
       <el-date-picker class="datar" v-model="form.value" type="daterange" range-separator="至" :clearable="false" start-placeholder="开始日期" end-placeholder="结束日期" @change="toSort">
       </el-date-picker>
     </div>
     <div class="chart">
-      <dayapi-chart></dayapi-chart>
+      <dayapi-chart ref="daycpiChart"></dayapi-chart>
     </div>
     <p class="download">
       <span @click="outTable"> 导出全部
@@ -29,6 +26,7 @@
 <script>
 import DayapiChart from "./dayapi-chart";
 import DayapiList from "./dayapi-list";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import { mapState, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 let search;
@@ -47,7 +45,8 @@ export default {
   },
   components: {
     DayapiList,
-    DayapiChart
+    DayapiChart,
+    BreadCrumb
   },
   created() {
     // this.$store.dispatch("getCondition");
@@ -66,6 +65,11 @@ export default {
 
     this.$store.dispatch("getDaycpiList", { option });
   },
+  watch: {
+    menushow(n, o) {
+      this.$refs.daycpiChart.resizeChart();
+    }
+  },  
   methods: {
     ...mapMutations(["SETSTATE"]),
     tableFilter(country, platform) {
@@ -146,7 +150,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(["itemlist", "daycpitotal", "cpicountry"]),
+    ...mapState(["itemlist", "daycpitotal", "cpicountry", "menushow"]),
     projectname() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
@@ -157,16 +161,6 @@ export default {
 
 <style lang="less" scoped>
 .ad {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .download {
     font-size: 14px;
     color: #3297ff;
@@ -191,7 +185,6 @@ export default {
     }
   }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .datar {
@@ -200,7 +193,6 @@ export default {
     }
   }
   .list {
-    margin-left: 40px;
     // width: 960px;
   }
   .pageswitch {

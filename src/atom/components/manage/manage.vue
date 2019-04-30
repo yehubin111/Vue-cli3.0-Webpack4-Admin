@@ -99,7 +99,7 @@ export default {
       this.$store.dispatch("getManagelist", { pageIndex, pageSize });
     },
     projectSearch() {
-      this.SETSTATE({ k: "projectkwd", v: this.state4 });
+      this.SETSTATE({ k: "projectkwd", v: encodeURIComponent(this.state4) });
       this.pageindex = 1;
       this.getData();
     },

@@ -1,9 +1,6 @@
 <template>
   <div class="ad">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>素材报表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="素材报表"></bread-crumb>
     <div class="ctrlbutton">
       <el-select
         class="select"
@@ -16,10 +13,11 @@
         @change="toSort"
       >
         <el-option
-          v-for="item in adaccountlist"
-          :key="item.fbId"
-          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-          :value="item.fbId"
+          v-for="item in commonaccount"
+          :key="item.fbAccountId"
+          :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
       <p class="download">
@@ -107,6 +105,7 @@
 <script>
 import ImageList from "./matterform-imagelist";
 import VideoList from "./matterform-videolist";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 import { mapState, mapMutations } from "vuex";
 import { Msgwarning } from "../../js/message";
 let search;
@@ -148,7 +147,8 @@ export default {
   },
   components: {
     ImageList,
-    VideoList
+    VideoList,
+    BreadCrumb
   },
   mounted() {
     let projectId = this.$route.params.id;
@@ -164,8 +164,8 @@ export default {
     };
 
     this.$store.dispatch("getMatterList", { option });
-
-    this.$store.dispatch("getAdaccount", projectId);
+    // 获取广告账户
+    this.$store.dispatch("commonAccount", { project_id: projectId });
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -200,17 +200,6 @@ export default {
       let v = [];
       this.SETSTATE({ k, v });
     },
-    // searchAccount(kword) {
-    //   let accountKeyword = kword;
-    //   clearTimeout(moreoption);
-
-    //   moreoption = setTimeout(() => {
-    //     this.$store.dispatch("getOptionMore", {
-    //       projectId: this.$route.params.id,
-    //       accountKeyword
-    //     });
-    //   }, 300);
-    // },
     tableSort(sort) {
       this.sort = sort;
       this.toGetdata();
@@ -311,7 +300,7 @@ export default {
     ...mapState([
       "itemlist",
       // "adaccount",
-      "adaccountlist",
+      "commonaccount",
       "adcampaign",
       "dataage",
       "imagemattertotal",
@@ -358,18 +347,7 @@ export default {
 
 <style lang="less" scoped>
 .ad {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .activeName {
-    margin-left: 40px;
   }
   .tablist{
     position: relative;
@@ -377,14 +355,13 @@ export default {
       position: absolute;
       font-size: 14px;
       line-height: 40px;
-      left: 200px;
+      left: 165px;
       color: #3297ff;
       cursor: pointer;
       z-index: 90;
     }
   }
   .advanceCtr {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     display: flex;
@@ -402,7 +379,6 @@ export default {
     }
   }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .datar {

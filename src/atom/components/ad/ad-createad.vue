@@ -176,7 +176,7 @@ export default {
     this.$textCopy("#copyButtonAd");
 
     // 新增创意用
-    this.$store.dispatch("getAllpages");
+    this.$store.dispatch('commonPage', { project_id: this.$route.params.id });
     this.$store.dispatch("getAllactions");
   },
   methods: {

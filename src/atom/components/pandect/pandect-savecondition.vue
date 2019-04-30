@@ -1,12 +1,12 @@
 <template>
-  <el-dialog :title="title" :visible.sync="dialogFormVisible">
+  <el-dialog title="保存自定义列" :visible="status" @close="toCancel">
     <el-form>
       <el-form-item label="条件名称" label-width="120px">
         <el-input v-model="conditionName" auto-complete="off"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button @click="toCancel">取 消</el-button>
       <el-button type="primary" @click="saveCondtion">确 定</el-button>
     </div>
   </el-dialog>
@@ -15,36 +15,23 @@
 <script>
 import { Msgwarning } from "../../js/message";
 export default {
-  props: ["savetype"],
+  props: ["status"],
   data() {
     return {
-      dialogFormVisible: false,
       conditionName: ""
     };
   },
-  computed: {
-    title() {
-      switch (this.savetype) {
-        case "1":
-          return "保存筛选条件";
-          break;
-        case "2":
-          return "保存自定义列";
-          break;
-      }
-    }
-  },
+  computed: {},
   methods: {
-    showBox() {
-      this.dialogFormVisible = true;
+    toCancel() {
+      this.$emit("update:status", false);
     },
     saveCondtion() {
       if (this.conditionName.trim() == "") {
         Msgwarning("请输入条件名称");
         return;
       }
-      this.$emit("save", this.conditionName, this.savetype);
-      this.dialogFormVisible = false;
+      this.$emit("save", this.conditionName);
       this.conditionName = "";
     }
   }

@@ -4,7 +4,6 @@
     ref="dataForm"
     @sort-change="sortChange"
     :data="imagematterlist"
-    style="width: 960px"
     show-summary
     :summary-method="getSummaries"
   >

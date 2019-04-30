@@ -1,9 +1,6 @@
 <template>
   <div class="plan">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>受众管理</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="受众管理"></bread-crumb>
     <div class="ctrlbutton">
       <el-select
         class="selectl"
@@ -15,10 +12,11 @@
         @change="toSetAccount"
       >
         <el-option
-          v-for="(item, index) in adaccountlist"
+          v-for="(item, index) in commonaccount"
           :key="index"
-          :label="item.name + (item.fbId?'('+item.fbId+')':'')"
-          :value="item.fbId"
+          :label="item.name + (item.fbAccountId?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
+          :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
     </div>
@@ -154,6 +152,7 @@ import TargetList from "./target-list";
 import TargetAdd from "./target-add";
 import TargetLike from "./target-newlike";
 import TargetSpecial from "./target-special";
+import BreadCrumb from '@/atom/components/project-breadcrumb';
 // import TargetResult from "./target-result";
 import { mapState, mapMutations } from "vuex";
 import { setTimeout } from 'timers';
@@ -166,7 +165,8 @@ export default {
     // TargetResult,
     TargetDelete,
     TargetShare,
-    TargetSpecial
+    TargetSpecial,
+    BreadCrumb
   },
   data() {
     return {
@@ -220,26 +220,22 @@ export default {
     this.SETSTATE({ k, v });
   },
   mounted() {
-    let k = "tg_project_id";
-    let v = this.$route.params.id;
+    let projectId = this.$route.params.id;
 
-    this.SETSTATE({ k: "tg_projectId", v });
+    this.SETSTATE({ k: "tg_projectId", v: projectId });
     // express
     // this.$store.dispatch('expressLink');
 
     this.$store.dispatch("getTargetlist");
 
     this.$store.dispatch("otherCountries");
-    this.$store.dispatch("getAllpages");
+    // 获取主页列表
+    this.$store.dispatch("commonPage", { project_id: projectId });
     // 获取广告账户
-    this.$store.dispatch("getAdaccount", v);
+    this.$store.dispatch("commonAccount", { project_id: projectId });
   },
   computed: {
-    ...mapState(["itemlist", "targettotal", "targettype", "adaccountlist"]),
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    }
+    ...mapState(["targettotal", "targettype", "commonaccount"])
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
@@ -439,18 +435,7 @@ export default {
 //   color: #333;
 // }
 .plan {
-  flex-grow: 1;
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .ctrlbutton {
-    margin-left: 40px;
     overflow: hidden;
     margin-bottom: 10px;
     .select {
@@ -473,7 +458,6 @@ export default {
     }
   }
   .list {
-    margin-left: 40px;
     min-height: 400px;
   }
   .pageswitch {

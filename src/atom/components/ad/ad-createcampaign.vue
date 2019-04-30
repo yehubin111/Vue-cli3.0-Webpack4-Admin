@@ -12,9 +12,10 @@
         >
           <el-option
             v-for="item in commonaccount"
-            :key="item.fbId"
-            :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-            :value="item.fbId"
+            :key="item.fbAccountId"
+            :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+            :value="item.fbAccountId"
+            :disabled="item.accountStatus != 1"
           ></el-option>
         </el-select>
         <p v-if="mutilAccount">多项内容</p>

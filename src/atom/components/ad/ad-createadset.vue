@@ -1174,13 +1174,13 @@ export default {
         }, 100);
       }
     },
-    actions(n, o) {
-      if (n) {
-        let applicationid = n;
-        this.$store.dispatch("getCreatePlatform", { applicationid });
-        this.form.action = n;
-      }
-    },
+    // actions(n, o) {
+      // if (n) {
+      //   let applicationid = n;
+      //   this.$store.dispatch("getCreatePlatform", { applicationid });
+      //   this.form.action = n;
+      // }
+    // },
     equip(n, o) {
       this.form.equip =
         n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];

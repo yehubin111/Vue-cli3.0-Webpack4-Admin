@@ -16,10 +16,11 @@
           @change="selectAccount"
         >
           <el-option
-            v-for="(l,index) in setapplist"
+            v-for="(l,index) in commonaccount"
             :key="index"
             :label="l.name + '('+l.fbId.split('_')[1]+')'"
             :value="l.fbId"
+            :disabled="l.accountStatus != 1"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -71,7 +72,7 @@
           @change="setName"
         >
           <el-option
-            v-for="(l,index) in allpagelist"
+            v-for="(l,index) in commonpage"
             :key="index"
             :label="l.name"
             :value="l.pageId"
@@ -220,7 +221,7 @@ export default {
           if (!this.form.custom || this.form.country.length == 0) {
             return;
           }
-          this.customname = this.allpagelist.find(
+          this.customname = this.commonpage.find(
             v => v.pageId == this.form.custom
           ).name;
           this.form.name = `类似受众（${this.form.country.join(",")},${
@@ -355,14 +356,14 @@ export default {
     ...mapState([
       "othercountries",
       "liketarget",
-      "allpagelist",
+      "commonpage",
       "ifmorecampaigns",
       "itemlist",
+      "commonaccount",
       "liketargetinfo",
       // "targetaccount",
       "targetadsetlist"
     ]),
-    ...mapGetters(["setapplist"]),
     applicationid() {
       if (this.itemlist.length == 0) return;
       return this.itemlist.find(v => v.id == this.$route.params.id)

@@ -1,9 +1,6 @@
 <template>
   <div class="ad" :style="{height: documentHeight + 'px'}">
-    <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>项目{{projectname}}</el-breadcrumb-item>
-      <el-breadcrumb-item>广告管理</el-breadcrumb-item>
-    </el-breadcrumb>
+    <bread-crumb pageName="广告管理"></bread-crumb>
     <div class="ctrlbutton">
       <el-select
         class="selectAccount"
@@ -16,9 +13,9 @@
       >
         <el-option
           v-for="item in commonaccount"
-          :key="item.fbId"
-          :label="item.name + (item.fbId != -1?'('+item.fbId+')':'')"
-          :value="item.fbId"
+          :key="item.fbAccountId"
+          :label="item.name + (item.fbAccountId != -1?'('+item.fbAccountId+')':'')"
+          :value="item.fbAccountId"
           :disabled="item.accountStatus != 1"
         ></el-option>
       </el-select>
@@ -96,7 +93,7 @@
               @click="selectSaveSearch(scd.id)"
             >
               {{scd.tagName}}
-              <i class="el-icon-close" @click.stop="deleteSaveSearch(scd.id)"></i>
+              <i class="el-icon-close" @click.stop="deleteSaveSearch(scd.id, '1')"></i>
             </div>
           </div>
         </div>
@@ -210,7 +207,7 @@
           <el-tag class="tag" closable type @close="deleteCondtion(cond.regkey)">{{cond.name}}</el-tag>
         </span>
         <div class="saveClear" v-if="disCondition.length > 0">
-          <el-button type="primary" @click="setCondition">保存</el-button>
+          <el-button type="primary" @click="setCondition('1')">保存</el-button>
           <el-button @click="clearLocalCondition">清空</el-button>
         </div>
       </div>
@@ -234,6 +231,9 @@
             @ruleCreate="ruleCreate"
             @ruleAdd="ruleAdd"
             @ruleRemove="ruleRemove"
+            @optionSelect="optionSelect"
+            @setCondition="setCondition"
+            @deleteSaveSearch="deleteSaveSearch"
             :opDefault="[{ name: '广告系列名称', key: 'campaignName', tool: true, link: true }]"
             :defaultOption="defaultOption"
             type="campaignName"
@@ -256,6 +256,9 @@
             @ruleCreate="ruleCreate"
             @ruleAdd="ruleAdd"
             @ruleRemove="ruleRemove"
+            @optionSelect="optionSelect"
+            @setCondition="setCondition"
+            @deleteSaveSearch="deleteSaveSearch"
             :opDefault="[{ name: '广告组名称', key: 'adSetName', tool: true, link: true }]"
             :defaultOption="defaultOption"
             type="adSetName"
@@ -278,6 +281,9 @@
             @ruleCreate="ruleCreate"
             @ruleAdd="ruleAdd"
             @ruleRemove="ruleRemove"
+            @optionSelect="optionSelect"
+            @setCondition="setCondition"
+            @deleteSaveSearch="deleteSaveSearch"
             :opDefault="[{ name: '广告名称', key: 'adName', tool: true }]"
             :defaultOption="defaultOption"
             type="adName"
@@ -322,7 +328,7 @@
         </el-tooltip>
       </div>
     </div>
-    <save-condition ref="saveCondtion" @save="saveCondtion"></save-condition>
+    <save-condition ref="saveCondtion" :savetype="savetype" @save="saveCondtion"></save-condition>
     <ad-create ref="adCreate"></ad-create>
     <seek-replace ref="seekReplace" :type="tabtype" @resetPageData="resetPageData"></seek-replace>
     <ad-copy ref="adCopy"></ad-copy>
@@ -345,6 +351,7 @@
 </template>
 
 <script>
+import BreadCrumb from "@/atom/components/project-breadcrumb";
 import RuleAdd from "../rules/rule-add";
 import RuleRemove from "./ad-ruleremove";
 import RuleSelect from "./ad-ruleselect";
@@ -356,7 +363,7 @@ import SaveCondition from "./ad-savecondition";
 import ListOption from "./ad-listoption";
 import ImportRemain from "./ad-importremain";
 import { mapState, mapMutations, mapGetters } from "vuex";
-import { Msgwarning } from "../../js/message";
+import { Msgwarning, Msgsuccess } from "../../js/message";
 let tab = 0;
 export default {
   components: {
@@ -369,7 +376,8 @@ export default {
     ImportRemain,
     RuleSelect,
     RuleRemove,
-    RuleAdd
+    RuleAdd,
+    BreadCrumb
   },
   beforeRouteLeave(to, from, next) {
     switch (this.tabname) {
@@ -395,17 +403,38 @@ export default {
       ruleremovestatus: false, // 移除规则
       ruleaddstatus: false, // 创建规则
       defaultOption: [], // 自定义列配置, 常用，不包含各模块固定列
+      localEvent: [], // 自定义列中的事件
       defaultListOption: [], // 自定义列中的配置
       sortDown: false,
       tabtype: "campaignName",
       prevEdit: null, // 当前编辑的条件，需要先从显示条件中去除
       applicationid: "",
+      savetype: "1",
       opDefault: {
         campaignName: [{ name: "广告系列名称", key: "campaignName" }],
         adSetName: [{ name: "广告组名称", key: "adSetName" }],
         adName: [{ name: "广告名称", key: "adName" }]
       },
       opListDefault: [],
+      optionDefault: [
+        {
+          name: "投放状态",
+          key: "effectiveStatusName",
+          checked: true,
+          isevent: true
+        },
+        { name: "触达", key: "reachNum", checked: true },
+        { name: "展示", key: "showNum", checked: true },
+        { name: "点击", key: "clicksNum", checked: true },
+        { name: "CTR", key: "ctr", checked: true },
+        { name: "CVR", key: "cvr", checked: true },
+        { name: "CPM", key: "cpm", checked: true },
+        { name: "CPC", key: "cpc", checked: true },
+        { name: "相关度", key: "relevanceScore", checked: true },
+        { name: "安装", key: "installNum", checked: true },
+        { name: "花费", key: "spend", checked: true },
+        { name: "CPI", key: "cpi", checked: true }
+      ],
       searchList: [
         // { name: "已保存条件", list: [] },
         {
@@ -680,7 +709,7 @@ export default {
     };
   },
   created() {},
-  mounted() {
+  async mounted() {
     // 清除老的缓存
     if (adFilterLS.old && localStorage.getItem(adFilterLS.old)) {
       localStorage.removeItem(adFilterLS.old);
@@ -690,6 +719,9 @@ export default {
     }
     if (adEventLS.old && localStorage.getItem(adEventLS.old)) {
       localStorage.removeItem(adEventLS.old);
+    }
+    if (adOptionSelectLS.old && localStorage.getItem(adOptionSelectLS.old)) {
+      localStorage.removeItem(adOptionSelectLS.old);
     }
 
     let dt = this.date;
@@ -764,25 +796,50 @@ export default {
     this.SETSTATE({ k: "adlist", v: [] });
     // 获取广告账户列表
     this.$store.dispatch("commonAccount", { project_id: projectId });
+    // 初始化获取已保存筛选条件和自定义列
+    this.getSaveData("1");
+    await this.getSaveData("2");
 
     if (this.itemlist.length > 0) {
       this.applicationid = this.itemlist.find(
         v => v.id == projectId
       ).applicationId;
 
-      this.SETSTATE({ k: "adapplicationid", v: this.applicationid });
+      this.SETSTATE({ k: "adprojectid", v: projectId });
       this.initData(this.applicationid);
     }
-    // 初始化获取已保存筛选条件
-    this.$store.dispatch("getSearchCondition", {
-      projectId: this.projectId,
-      userId: this.userId
-    });
     // 初始化获取更新时间情况
     this.$store.dispatch("getUpdateTime");
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    async getSaveData(type) {
+      await this.$store.dispatch("getSearchCondition", {
+        projectId: this.$route.params.id,
+        userId: localStorage.getItem("atom_id"),
+        tagType: type
+      });
+    },
+    optionSelect(key, frm) {
+      let event = [];
+      if (key == "default") {
+        this.defaultOption = this.optionDefault;
+      } else {
+        let seek = this.saveoption.find(v => v.name == key);
+        this.defaultOption = seek.option;
+        event = seek.event;
+      }
+      this.defaultOption.forEach(v => {
+        this.defaultListOption.push(Object.assign({}, v));
+      });
+      this.SETSTATE({ k: "optionselect", v: key });
+      // 保存选择类型
+      this.saveLocalstorage(adOptionSelectLS.new, key);
+      // 保存当前事件
+      this.saveLocalstorage(adEventLS.new, event);
+
+      if (frm != "init") this.resetPageData();
+    },
     ruleAdd(select, type) {
       this.ruleaddstatus = true;
       this.$refs.ruleAdd.adInit(select, type);
@@ -819,12 +876,24 @@ export default {
     hideRemainBox() {
       this.remainstatus = false;
     },
+    saveLocalstorage(name, val) {
+      let projectid = this.$route.params.id;
+      let savedata = localStorage.getItem(name);
+      if (!savedata) {
+        savedata = {};
+      } else savedata = JSON.parse(savedata);
+      savedata[projectid] = val;
+      localStorage.setItem(name, JSON.stringify(savedata));
+    },
     outOption(opt, selectOption, localEvent) {
       this.defaultOption = selectOption;
+      this.localEvent = localEvent;
       this.defaultListOption = [];
       selectOption.forEach(v => {
         this.defaultListOption.push(Object.assign({}, v));
       });
+      this.SETSTATE({ k: "optionselect", v: "auto" });
+
       /**
        * 20181127新增
        * 配置项改变的同时，筛选栏指标同时改变
@@ -835,23 +904,17 @@ export default {
        * 20181116新增，根据appid存储自定义列配置
        * 解决不同app不同事件问题
        */
-      let applicationid = this.itemlist.find(v => v.id == this.$route.params.id)
-        .applicationId;
-      let pandectOption = localStorage.getItem(adOptionLS.new);
-      if (!pandectOption) {
-        pandectOption = {};
-      } else pandectOption = JSON.parse(pandectOption);
-
-      pandectOption[applicationid] = selectOption;
-      localStorage.setItem(adOptionLS.new, JSON.stringify(pandectOption));
-
-      let pandectEvent = localStorage.getItem(adEventLS.new);
-      if (!pandectEvent) {
-        pandectEvent = {};
-      } else pandectEvent = JSON.parse(pandectEvent);
-
-      pandectEvent[applicationid] = localEvent;
-      localStorage.setItem(adEventLS.new, JSON.stringify(pandectEvent));
+      // 保存自定义列
+      this.saveLocalstorage(adOptionLS.new, selectOption);
+      // 保存自定义事件
+      this.saveLocalstorage(adEventLS.new, localEvent);
+      /**
+       * 20190429新增
+       * 保存自定义列到缓存的同时，保存特别参数到 adOptionSelectLS.new
+       * 标明当前是选择的自定义
+       */
+      // 保存选择类型
+      this.saveLocalstorage(adOptionSelectLS.new, "auto");
 
       this.resetPageData();
     },
@@ -884,17 +947,30 @@ export default {
       this.resetPageData();
     },
     // 保存条件到数据库
-    saveCondtion(name) {
+    async saveCondtion(name, type) {
       let option = {
-        url: encodeURIComponent(JSON.stringify(this.disCondition)),
+        url:
+          type == "1"
+            ? encodeURIComponent(JSON.stringify(this.disCondition))
+            : encodeURIComponent(
+                JSON.stringify(this.defaultOption) +
+                  "@@" +
+                  JSON.stringify(this.localEvent)
+              ),
         projectId: this.$route.params.id,
         userId: localStorage.getItem("atom_id"),
-        tagName: name
+        tagName: name,
+        tagType: type // 1 广告管理筛选标签 ；2 广告管理自定义列标签
       };
 
-      this.$store.dispatch("saveSearchCondition", option);
+      let res = await this.$store.dispatch("saveSearchCondition", option);
+      if (res.data) {
+        Msgsuccess("保存成功");
+        this.getSaveData(type);
+      }
     },
-    setCondition() {
+    setCondition(type) {
+      this.savetype = type;
       this.$refs.saveCondtion.showBox();
     },
     // 筛选条件删除
@@ -1247,18 +1323,34 @@ export default {
       // 重置列表数据
       this.resetPageData();
     },
-    deleteSaveSearch(id) {
-      this.$confirm("确定删除此已保存条件？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          this.$store.dispatch("deleteSearchCondition", {
-            id,
-            userId: this.userId,
-            projectId: this.projectId
+    deleteSaveSearch(id, type, name) {
+      this.$confirm(
+        `确定删除此已保存${type == "1" ? "条件" : "自定义列"}？`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(async () => {
+          let res = await this.$store.dispatch("deleteSearchCondition", {
+            id
           });
+          if (res.data) {
+            Msgsuccess("删除成功");
+            this.$store.dispatch("getSearchCondition", {
+              userId: this.userId,
+              projectId: this.projectId,
+              tagType: type
+            });
+            // 如果删除了当前选择自定义列，则切换到常用
+            if (type == "2" && name == this.optionselect) {
+              this.optionSelect("default");
+            }
+          } else {
+            Msgsuccess("删除失败");
+          }
         })
         .catch(() => {});
     },
@@ -1316,7 +1408,6 @@ export default {
        * 如果有操作过相关条件，则取消默认
        */
       option.adCampaignStatusStr = this.sortdefault;
-      console.log(this.disCondition);
       this.disCondition.forEach(v => {
         if (option[v.key] && v.key != "adCampaignStatusStr")
           option[v.key] += " and " + v.option;
@@ -1339,37 +1430,40 @@ export default {
       }
       this.SETSTATE({ k, v: option });
 
+      /**
+       * 20190429新增逻辑
+       * 初始化获取上一次操作的自定义列，可能为常用(default) or 保存的(optionname) or 自定义的(auto)
+       * 保存在本地缓存 adOptionSelectLS.new 中
+       * 如果为auto，则从本地缓存获取上次选的自定义列
+       * 其他两种情况，从接口或者默认数据获取
+       */
+      let optionkey =
+        localStorage.getItem(adOptionSelectLS.new) &&
+        JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
+          ? JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
+          : "default";
+      console.log(optionkey);
+      if (optionkey == "auto") {
+        this.defaultOption = JSON.parse(localStorage.getItem(adOptionLS.new))
+          ? JSON.parse(localStorage.getItem(adOptionLS.new))[projectId]
+          : [];
+        this.defaultListOption = [];
+        this.defaultOption.forEach(v => {
+          this.defaultListOption.push(Object.assign({}, v));
+        });
+      } else {
+        this.optionSelect(optionkey, "init");
+      }
+
       // 获取joblist
       this.$store.dispatch("jobList");
 
-      this.defaultOption =
-        localStorage.getItem(adOptionLS.new) &&
-        JSON.parse(localStorage.getItem(adOptionLS.new))[applicationid]
-          ? JSON.parse(localStorage.getItem(adOptionLS.new))[applicationid]
-          : [
-              // { name: '广告系列名称', key: '' },
-              {
-                name: "投放状态",
-                key: "effectiveStatusName",
-                checked: true,
-                isevent: true
-              },
-              { name: "触达", key: "reachNum", checked: true },
-              { name: "展示", key: "showNum", checked: true },
-              { name: "点击", key: "clicksNum", checked: true },
-              { name: "CTR", key: "ctr", checked: true },
-              { name: "CVR", key: "cvr", checked: true },
-              { name: "CPM", key: "cpm", checked: true },
-              { name: "CPC", key: "cpc", checked: true },
-              { name: "相关度", key: "relevanceScore", checked: true },
-              { name: "安装", key: "installNum", checked: true },
-              { name: "花费", key: "spend", checked: true },
-              { name: "CPI", key: "cpi", checked: true }
-            ];
-      this.defaultListOption = [];
-      this.defaultOption.forEach(v => {
-        this.defaultListOption.push(Object.assign({}, v));
-      });
+      let optionselect =
+        localStorage.getItem(adOptionSelectLS.new) &&
+        JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
+          ? JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
+          : "default";
+      this.SETSTATE({ k: "optionselect", v: optionselect });
 
       // 20181031新增自定义事件
       this.$store.dispatch("getCustomEventAd", applicationid);
@@ -1446,17 +1540,17 @@ export default {
     }
   },
   watch: {
-    itemlist(n, v) {
-      if (n.length != 0) {
-        let applicationid = n.find(v => v.id == this.$route.params.id)
-          .applicationId;
+    // itemlist(n, v) {
+    //   if (n.length != 0) {
+    //     let applicationid = n.find(v => v.id == this.$route.params.id)
+    //       .applicationId;
 
-        this.SETSTATE({ k: "adapplicationid", v: applicationid });
-
-        this.initData(applicationid);
-      }
-    },
-    projectid(n, o) {
+    //     this.SETSTATE({ k: "adapplicationid", v: applicationid });
+    //     console.log('itemlist');
+    //     this.initData(applicationid);
+    //   }
+    // },
+    async projectid(n, o) {
       if (n != "") {
         let k = "pl_project_id";
         let v = n;
@@ -1471,34 +1565,28 @@ export default {
         this.value3 = this.accountStorage[n]
           ? this.accountStorage[n].split("|")
           : [];
+        // 初始化从本地缓存获取已选广告账户，存到state中
+        this.SETSTATE({ k: "adaccountid", v: this.value3 });
         // 初始化列表数据
         this.tabname = "first";
         this.SETSTATE({ k: "adtab", v: "campaignName" });
         let applicationid = this.itemlist.find(v => v.id == n).applicationId;
-        this.SETSTATE({ k: "adapplicationid", v: applicationid });
-        // 重置开关
-        // this.$refs["campaignName"].changeFilterSwitch(true);
-        // this.$refs["adSetName"].changeFilterSwitch(true);
-        // this.$refs["adName"].changeFilterSwitch(true);
+        this.SETSTATE({ k: "adprojectid", v: this.projectId });
+
+        // 初始化获取已保存筛选条件和自定义列列表
+        this.getSaveData("1");
+        await this.getSaveData("2");
 
         this.initData(applicationid);
-        // 初始化获取已保存筛选条件
-        this.$store.dispatch("getSearchCondition", {
-          projectId: n,
-          userId: this.userId
-        });
       }
     }
   },
   computed: {
     ...mapState([
+      "menushow",
       "itemlist",
-      // "adaccountlist",
       "commonaccount",
       "adalllist",
-      // "customeventcampain",
-      // "customeventset",
-      // "customeventad",
       "adcustomevent",
       "customunit",
       "adplanlist",
@@ -1507,7 +1595,9 @@ export default {
       "jobtotal",
       "jobcomplete",
       "copyjoblistdetail",
-      "sortdefault"
+      "sortdefault",
+      "saveoption",
+      "optionselect"
     ]),
     projectid() {
       return this.$route.params.id;
@@ -1537,10 +1627,6 @@ export default {
     },
     documentHeight() {
       return document.documentElement.clientHeight - 60;
-    },
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
     }
   }
 };
@@ -1574,10 +1660,10 @@ export default {
   }
 }
 .ad {
-  flex-grow: 1;
+  // flex-grow: 1;
   .tablist {
-    margin: 30px 0 0 40px;
-    width: 960px;
+    margin: 30px 0 0 0;
+    // width: 960px;
     overflow: hidden;
     position: relative;
     .updatetime {
@@ -1610,19 +1696,10 @@ export default {
       }
     }
   }
-  .title {
-    line-height: 60px;
-    font-size: 20px;
-    margin-bottom: 20px;
-    margin-left: 40px;
-    .back {
-      color: #333;
-    }
-  }
   .ctrlbutton {
-    margin-left: 40px;
+    // margin-left: 40px;
     // overflow: hidden;
-    // height: 40px;
+    height: 40px;
     margin-bottom: 10px;
     .tagall {
       // float: left;

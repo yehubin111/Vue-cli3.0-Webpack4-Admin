@@ -47,6 +47,7 @@
           class="select"
           v-model="form.country"
           filterable
+          multiple
           placeholder="请选择国家，可搜索"
           @change="selectCountry"
         >
@@ -59,7 +60,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="应用" class="cline">
-        <el-select class="select" v-model="actions" disabled placeholder="请选择应用">
+        <el-select class="select" v-model="form.actions" placeholder="请选择应用" @change="selectAction">
           <el-option
             v-for="(l, index) in commonapp"
             :key="index"
@@ -68,7 +69,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="平台" class="cline timerange">
+      <el-form-item label="平台" class="cline timerange" v-show="form.actions">
         <el-radio-group v-model="form.platform" @change="toGetsystem">
           <el-radio :label="l.marketType" v-for="l in createplatform" :key="l.marketType"></el-radio>
         </el-radio-group>
@@ -92,14 +93,15 @@
           <el-option-group
             v-for="group in genertarget"
             :key="group.label"
-            :label="group.label.split('_')[1]">
+            :label="group.label.split('_')[1]"
+          >
             <el-option
               v-for="item in group.options"
               :key="item.code"
               :label="`${item.name}（${item.audienceId}）`"
               :value="`${item.audienceId}|${group.label}`"
-              v-show="form.notarget.indexOf(`${item.audienceId}|${group.label}`) == -1">
-            </el-option>
+              v-show="form.notarget.indexOf(`${item.audienceId}|${group.label}`) == -1"
+            ></el-option>
           </el-option-group>
         </el-select>
         <el-checkbox-group v-model="form.iftarget">
@@ -118,14 +120,15 @@
           <el-option-group
             v-for="group in genertarget"
             :key="group.label"
-            :label="group.label.split('_')[1]">
+            :label="group.label.split('_')[1]"
+          >
             <el-option
               v-for="item in group.options"
               :key="item.code"
               :label="`${item.name}（${item.audienceId}）`"
               :value="`${item.audienceId}|${group.label}`"
-              v-show="form.target.indexOf(`${item.audienceId}|${group.label}`) == -1">
-            </el-option>
+              v-show="form.target.indexOf(`${item.audienceId}|${group.label}`) == -1"
+            ></el-option>
           </el-option-group>
         </el-select>
       </el-form-item>
@@ -137,8 +140,7 @@
             :label="l.os + ' ' + l.version"
             :value="l.version"
           ></el-option>
-        </el-select>
-        --
+        </el-select>--
         <el-select class="selectHalf" v-model="form.maxversion" placeholder="最高版本">
           <el-option
             v-for="(l, index) in system"
@@ -322,8 +324,19 @@
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="选择分类" class="cline" v-show="form.type == 'auto'">
-        <el-select class="select" multiple v-model="form.classify" placeholder="选填，为空则不限制分类" @change="getFilterCount">
-          <el-option v-for="(item, index) in classifyforplan" :key="index" :label="item" :value="item"></el-option>
+        <el-select
+          class="select"
+          multiple
+          v-model="form.classify"
+          placeholder="选填，为空则不限制分类"
+          @change="getFilterCount"
+        >
+          <el-option
+            v-for="(item, index) in classifyforplan"
+            :key="index"
+            :label="item"
+            :value="item"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="创意数量" class="cline ctype" v-show="form.type == 'auto'">
@@ -405,7 +418,8 @@ export default {
       form: {
         name: "",
         type: this.$route.params.fid == 1 ? "manual" : "auto",
-        country: "",
+        country: [],
+        actions: "",
         platform: "",
 
         target: [],
@@ -445,6 +459,7 @@ export default {
       msg: {
         name: "请输入推广计划名称",
         country: "请选择国家",
+        actions: "请选择应用",
         platform: "请选择平台",
         version: "请选择系统版本",
         money: "请输入预算金额",
@@ -463,10 +478,10 @@ export default {
     };
   },
   mounted() {
-    if (this.actions) {
-      let applicationid = this.actions;
-      this.$store.dispatch("getCreatePlatform", { applicationid });
-    }
+    // if (this.actions) {
+    //   let applicationid = this.actions;
+    //   this.$store.dispatch("getCreatePlatform", { applicationid });
+    // }
   },
   computed: {
     ...mapState([
@@ -485,20 +500,14 @@ export default {
     ]),
     equip() {
       return this.form.platform;
-    },
-    actions() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id)
-        .applicationId;
     }
+    // actions() {
+    //   if (this.itemlist.length == 0) return;
+    //   return this.itemlist.find(v => v.id == this.$route.params.id)
+    //     .applicationId;
+    // }
   },
   watch: {
-    actions(n, o) {
-      if (n) {
-        let applicationid = n;
-        this.$store.dispatch("getCreatePlatform", { applicationid });
-      }
-    },
     equip(n, o) {
       this.form.equip =
         n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];
@@ -595,19 +604,34 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['SETSTATE']),
-    getFilterCount() {
-      if(this.form.createtype.length == 0 || !this.form.country) {
-        this.SETSTATE({k: 'classifyfiltercount', v: 0});
-        return
-      };
+    ...mapMutations(["SETSTATE"]),
+    selectAction() {
+      this.form.platform = '';
+      let applicationid = this.form.actions;
+      this.$store.dispatch("getCreatePlatform", { applicationid });
 
-      let country = this.form.country;
+      this.form.minversion = "";
+      this.form.maxversion = "";
+      this.SETSTATE({k: 'system', v: []});
+    },
+    getFilterCount() {
+      if (this.form.createtype.length == 0 || this.form.country.length == 0) {
+        this.SETSTATE({ k: "classifyfiltercount", v: 0 });
+        return;
+      }
+
+      let country = this.form.country.join(",");
       let gender = this.form.sex;
       let projectId = this.$route.params.id;
-      let creativetype = this.form.createtype.join(',');
-      let classify = this.form.classify.join(',');
-      this.$store.dispatch('classifyFilterCountNoPlan', {country, gender, projectId, creativetype, classify})
+      let creativetype = this.form.createtype.join(",");
+      let classify = this.form.classify.join(",");
+      this.$store.dispatch("classifyFilterCountNoPlan", {
+        country,
+        gender,
+        projectId,
+        creativetype,
+        classify
+      });
     },
     selectCountry() {
       this.getFilterCount();
@@ -615,16 +639,16 @@ export default {
       this.showBidChart();
     },
     showBidChart() {
-      if (!this.form.country) {
+      if (this.form.country.length == 0) {
         return;
       }
       // 20181105新增出价指南数据
-      let country = this.form.country;
+      let country = this.form.country.join(",");
       let billingEvent =
         this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
       this.$store.dispatch("bidGuide", {
         country,
-        fbApplicationId: this.actions,
+        fbApplicationId: this.form.actions,
         billingEvent
       });
     },
@@ -632,10 +656,10 @@ export default {
       this.form.target = [];
       this.form.notarget = [];
 
-      if(this.form.account.length == 0) {
-        this.SETSTATE({k: 'genertarget', v: []});
+      if (this.form.account.length == 0) {
+        this.SETSTATE({ k: "genertarget", v: [] });
         return;
-      };
+      }
       let fb_account_ids = this.form.account.join(",");
       this.$store.dispatch("generTargetList", { fb_account_ids });
     },
@@ -730,19 +754,20 @@ export default {
       }
     },
     toDispatch() {
-      let target = {}, notarget = {};
+      let target = {},
+        notarget = {};
       this.form.target.forEach(v => {
-        let k = v.split('|');
+        let k = v.split("|");
         let account = k[1];
-        if(!target[account]) {
+        if (!target[account]) {
           target[account] = [];
         }
         target[account].push(k[0]);
       });
       this.form.notarget.forEach(v => {
-        let k = v.split('|');
+        let k = v.split("|");
         let account = k[1];
-        if(!notarget[account]) {
+        if (!notarget[account]) {
           notarget[account] = [];
         }
         notarget[account].push(k[0]);
@@ -753,7 +778,7 @@ export default {
         // planCreativeVOList: [],
         planInfoVO: {
           adNum: this.form.count,
-          applicationId: this.actions,
+          applicationId: this.form.actions,
           bidAmount:
             this.form.maxbid === "" ? null : parseInt(this.form.maxbid * 100),
           billingType: this.form.bid,
@@ -788,7 +813,8 @@ export default {
           totalBudget: parseInt(this.form.money * 100),
           fbAccountIds: this.form.account,
           includeAudiences: JSON.stringify(target),
-          excludedAudiences: this.form.iftarget[0] == 1?'':JSON.stringify(notarget),
+          excludedAudiences:
+            this.form.iftarget[0] == 1 ? "" : JSON.stringify(notarget),
           version: this.form.minversion,
           maxVersion: this.form.maxversion ? this.form.maxversion : null,
           adsetNum: this.form.adcount,
@@ -805,8 +831,8 @@ export default {
     },
     dataChecked() {
       if (this.form.name == "") return [false, this.msg.name];
-      if (this.form.country == "") return [false, this.msg.country];
-      //   if (this.form.actions == "") return [false, this.msg.actions];
+      if (this.form.country.length == 0) return [false, this.msg.country];
+      if (this.form.actions == "") return [false, this.msg.actions];
       if (this.form.platform == "") return [false, this.msg.platform];
 
       if (this.form.minversion == "") return [false, this.msg.version];
@@ -817,7 +843,8 @@ export default {
         if (this.form.timerange == "schedule" && this.form.rdate.length == 0)
           return [false, this.msg.rdate];
       }
-      if (this.form.equip.filter(v => v).length == 0) return [false, this.msg.equip];
+      if (this.form.equip.filter(v => v).length == 0)
+        return [false, this.msg.equip];
       // if (this.form.language.length == 0) return [false, this.msg.language];
       //   if (this.form.interest.length == 0) return [false, this.msg.interest];
       if (this.form.auto.length == 0 && this.form.verpla.length == 0)

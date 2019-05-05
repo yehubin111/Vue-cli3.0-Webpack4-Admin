@@ -43,7 +43,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="国家" class="cline">
-        <el-select class="select" v-model="form.country" filterable placeholder="请选择国家，可搜索">
+        <el-select class="select" v-model="form.country" multiple filterable placeholder="请选择国家，可搜索">
           <el-option
             v-for="item in othercountries"
             :key="item.code"
@@ -53,7 +53,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="应用" class="cline">
-        <el-select class="select" disabled v-model="actions" placeholder="请选择应用">
+        <el-select class="select" disabled v-model="form.actions" placeholder="请选择应用">
           <el-option
             v-for="(l, index) in commonapp"
             :key="index"
@@ -400,8 +400,8 @@ export default {
       form: {
         name: this.createinfo.name,
         type: this.createinfo.createType,
-        // actions: this.applicationId,
-        country: this.createinfo.country,
+        actions: this.createinfo.applicationId,
+        country: this.createinfo.country ? this.createinfo.country : [],
         platform: this.createinfo.platform,
 
         target: this.createinfo.included,
@@ -508,13 +508,13 @@ export default {
     };
   },
   mounted() {
-    if (this.actions) {
-      let applicationid = this.actions;
+    if (this.form.actions) {
+      let applicationid = this.form.actions;
       this.$store.dispatch("getCreatePlatform", { applicationid });
 
       // 20181105新增出价指南数据
-      if (!this.form.country) return;
-      let country = this.form.country;
+      if (this.form.country.length == 0) return;
+      let country = this.form.country.join(',');
       let billingEvent =
         this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
       this.$store.dispatch("bidGuide", {
@@ -563,19 +563,8 @@ export default {
         v => this.form.notarget.indexOf(v.id.toString()) == -1
       );
     },
-    actions() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id)
-        .applicationId;
-    }
   },
   watch: {
-    actions(n, o) {
-      if (n) {
-        let applicationid = n;
-        this.$store.dispatch("getCreatePlatform", { applicationid });
-      }
-    },
     equip(n, o) {
       this.form.equip =
         n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];
@@ -674,12 +663,12 @@ export default {
   methods: {
     ...mapMutations(['SETSTATE']),
     getFilterCount() {
-      if(this.form.createtype.length == 0 || !this.form.country) {
+      if(this.form.createtype.length == 0 || this.form.country.length == 0) {
         this.SETSTATE({k: 'classifyfiltercount', v: 0});
         return
       };
 
-      let country = this.form.country;
+      let country = this.form.country.join(',');
       let gender = this.form.sex;
       let projectId = this.$route.params.id;
       let creativetype = this.form.createtype.join(',');
@@ -698,16 +687,16 @@ export default {
     //   this.$store.dispatch('classifyFilterCount', {planid, creativetype, classify})
     // },
     showBidChart() {
-      if (!this.form.country) {
+      if (this.form.country.length == 0) {
         return;
       }
       // 20181105新增出价指南数据
-      let country = this.form.country;
+      let country = this.form.country.join(',');
       let billingEvent =
         this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
       this.$store.dispatch("bidGuide", {
         country,
-        fbApplicationId: this.actions,
+        fbApplicationId: this.form.actions,
         billingEvent
       });
     },
@@ -836,7 +825,7 @@ export default {
         // planCreativeVOList: [],
         planInfoVO: {
           adNum: this.form.count,
-          applicationId: this.actions,
+          applicationId: this.form.actions,
           bidAmount:
             this.form.maxbid === "" ? null : parseInt(this.form.maxbid * 100),
           billingType: this.form.bid,
@@ -890,7 +879,7 @@ export default {
     },
     dataChecked() {
       if (this.form.name == "") return [false, this.msg.name];
-      if (this.form.country == "") return [false, this.msg.country];
+      if (this.form.country.length == 0) return [false, this.msg.country];
       //   if (this.form.actions == "") return [false, this.msg.actions];
       if (this.form.platform == "") return [false, this.msg.platform];
 

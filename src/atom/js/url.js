@@ -19,6 +19,7 @@ export default {
     // bm
     'bmlist': 'facebook/bms',  // bm列表
     'addbmlist': 'facebook/sync/bms',  // 添加bm列表
+    'deletebm': 'facebook/delBadAccount?', // 删除bm异常账户
     'savebm': 'facebook/save/bms',  // 保存添加bm
     'bmaccountlist': 'facebook/adaccounts?bm_id={bmid}',  // 当前bmid 广告账户列表
     'addaccountlist': 'facebook/sync/adaccounts?bm_id={bmid}',  // 当前bmid 添加广告账户列表

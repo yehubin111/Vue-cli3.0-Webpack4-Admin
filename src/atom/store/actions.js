@@ -327,6 +327,22 @@ export default {
                 console.log(err);
             })
     },
+    deleteBM({ state, commit, dispatch }, { bmid }) {
+        let url = `${URL.deletebm}bmId=${bmid}`;
+
+        Axios({
+            url,
+            success: res => {
+                if(res.data) {
+                    Msgsuccess('删除成功');
+                    state.bm_pageIndex = 1;
+                    dispatch('getAccount', bmid);
+                } else {
+                    Msgsuccess('删除失败');
+                }
+            }
+        })
+    },
     getAddBmlist({ state, commit }, { loadDom }) {
         let url = URL.addbmlist;
 

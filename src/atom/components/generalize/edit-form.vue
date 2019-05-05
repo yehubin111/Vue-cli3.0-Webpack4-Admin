@@ -48,6 +48,7 @@
           v-model="form.country"
           disabled
           filterable
+          multiple
           placeholder="请选择国家，可搜索"
           @change="showBidChart"
         >
@@ -60,7 +61,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="应用" class="cline">
-        <el-select class="select" v-model="actions" disabled placeholder="请选择应用">
+        <el-select class="select" v-model="form.actions" disabled placeholder="请选择应用">
           <el-option
             v-for="(l, index) in commonapp"
             :key="index"
@@ -409,8 +410,8 @@ export default {
       form: {
         name: this.createinfo.name,
         type: this.createinfo.createType,
-        // actions: this.applicationId,
-        country: this.createinfo.country,
+        actions: this.createinfo.applicationId,
+        country: this.createinfo.country ? this.createinfo.country : [],
         platform: this.createinfo.platform,
 
         target: this.createinfo.included,
@@ -515,13 +516,13 @@ export default {
     };
   },
   mounted() {
-    if (this.actions) {
-      let applicationid = this.actions;
+    if (this.form.actions) {
+      let applicationid = this.form.actions;
       this.$store.dispatch("getCreatePlatform", { applicationid });
 
       // 20181105新增出价指南数据
-      if (!this.form.country) return;
-      let country = this.form.country;
+      if (this.form.country.length == 0) return;
+      let country = this.form.country.join(',');
       let billingEvent =
         this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
       this.$store.dispatch("bidGuide", {
@@ -558,19 +559,8 @@ export default {
       "classifyfiltercount"
 
     ]),
-    actions() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id)
-        .applicationId;
-    }
   },
   watch: {
-    actions(n, o) {
-      if (n) {
-        let applicationid = n;
-        this.$store.dispatch("getCreatePlatform", { applicationid });
-      }
-    },
     "form.name": {
       handler(n, o) {
         this.$emit("changeEdit", false);
@@ -670,7 +660,7 @@ export default {
         return
       };
 
-      let country = this.form.country;
+      let country = this.form.country.join(',');
       let gender = this.form.sex;
       let projectId = this.$route.params.id;
       let creativetype = this.form.createtype.join(',');
@@ -693,12 +683,12 @@ export default {
         return;
       }
       // 20181105新增出价指南数据
-      let country = this.form.country;
+      let country = this.form.country.join(',');
       let billingEvent =
         this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
       this.$store.dispatch("bidGuide", {
         country,
-        fbApplicationId: this.actions,
+        fbApplicationId: this.form.actions,
         billingEvent
       });
     },
@@ -845,7 +835,7 @@ export default {
         // planCreativeVOList: [],
         planInfoVO: {
           adNum: this.form.count,
-          applicationId: this.actions,
+          applicationId: this.form.actions,
           bidAmount:
             this.form.maxbid === "" ? null : parseInt(this.form.maxbid * 100),
           billingType: this.form.bid,
@@ -899,7 +889,7 @@ export default {
     },
     dataChecked() {
       if (this.form.name == "") return [false, this.msg.name];
-      if (this.form.country == "") return [false, this.msg.country];
+      if (this.form.country.length == 0) return [false, this.msg.country];
       //   if (this.form.actions == "") return [false, this.msg.actions];
       if (this.form.platform == "") return [false, this.msg.platform];
 

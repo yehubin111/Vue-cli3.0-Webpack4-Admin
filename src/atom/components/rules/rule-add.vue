@@ -337,6 +337,10 @@ export default {
             {
               value: "totalbudget_other",
               label: "根据目标调整总预算"
+            },
+            {
+              value: "balance_resize",
+              label: "重新平衡预算"
             }
           ]
         },
@@ -882,6 +886,9 @@ export default {
           },
           bid: {
             name: "竞价"
+          },
+          balance: {
+            name: '平衡'
           }
         };
         this.form.ctrlmethodname = caseoption[key[0]]["name"];

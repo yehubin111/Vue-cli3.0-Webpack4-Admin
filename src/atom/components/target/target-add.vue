@@ -21,6 +21,7 @@
               :key="index"
               :label="l.name + '('+l.fbId.split('_')[1]+')'"
               :value="l.fbId"
+              :disabled="l.accountStatus != 1"
             ></el-option>
           </el-select>
         </el-form-item>

@@ -80,7 +80,7 @@
             :key="index"
             :label="l.name + '('+l.fbAccountId+')'"
             :value="l.name + '|' + l.fbId"
-            :disabled="l.accountStatus == 0"
+            :disabled="l.accountStatus != 1"
           ></el-option>
         </el-select>
       </el-form-item>

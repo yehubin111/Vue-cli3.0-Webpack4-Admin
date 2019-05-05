@@ -450,8 +450,33 @@ export default {
         list: type == "img" ? this.processIMG : this.processVIO,
         type,
         on: "addcreate",
-        vdname: this.fmvideoname
+        vdname: this.fmvideoname,
+        callback: () => {
+          /**
+           * 20190505新增
+           * 上传完封面之后，与视频匹配保存到服务端
+           * 上传完视频之后，匹配之前保存的封面图
+           */
+          this.setVideoImage(type);
+        }
       });
+    },
+    async setVideoImage(type) {
+      let vio = this.processVIO[0];
+      if (type == "video") {
+        let res = await this.$store.dispatch("getVideoImg", {
+          videoMd5: vio.videoHash
+        });
+      }
+      if (type == "fm") {
+        let option = {
+          imageMd5: vio.fmHash,
+          imageUrl: vio.fmUrl,
+          videoMd5: vio.videoHash,
+          videoUrl: vio.videoUrl
+        };
+        this.$store.dispatch("saveVideoImg", { option });
+      }
     },
     onAddItem(files) {
       console.log(files);

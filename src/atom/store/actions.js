@@ -333,7 +333,7 @@ export default {
         Axios({
             url,
             success: res => {
-                if(res.data) {
+                if (res.data) {
                     Msgsuccess('删除成功');
                     state.bm_pageIndex = 1;
                     dispatch('getAccount', bmid);
@@ -1300,6 +1300,24 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+    },
+    saveVideoImg({ state, commit }, { option }) {
+        let url = URL.savevideoimage;
+
+        Axios({
+            url,
+            method: 'post',
+            data: option,
+            success: res => { }
+        })
+    },
+    getVideoImg({ state, commit }, { videoMd5 }) {
+        let url = `${URL.getvideoimage}videoMd5=${videoMd5}`;
+
+        return Axios({
+            url,
+            success: res => res
+        })
     },
     fileUpload({ state, commit }, { option }) {
         let url = URL.fileupload;

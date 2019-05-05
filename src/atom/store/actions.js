@@ -1137,7 +1137,7 @@ export default {
         }, 300);
     },
     // create
-    matchFileMD5({ state, commit }, { md5, file, list, type, tabvalue, on, vdname }) {
+    matchFileMD5({ state, commit }, { md5, file, list, type, tabvalue, on, vdname, callback }) {
         let url = URL.matchmd5;
 
         // console.log(list);
@@ -1194,6 +1194,7 @@ export default {
                     file.remove();
 
                     console.log(list);
+                    if (callback) callback();
                 } else {
                     file.upload();
                 }

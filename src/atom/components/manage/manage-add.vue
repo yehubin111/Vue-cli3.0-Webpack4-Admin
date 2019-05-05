@@ -56,7 +56,15 @@
             :value="l.nickName + '|' + l.id + '|' + l.loginName"
           ></el-option>
         </el-select>
-        <p>项目创建者会自动添加到参与成员列表中，无需选择</p>
+        <p class="creator">
+          <span class="cp">创建者</span>：{{myname}}
+          <el-tooltip class="item2" effect="dark" placement="top-start">
+            <div slot="content">
+              项目创建者会自动添加到参与成员列表中，无需选择
+            </div>
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+        </p>
       </el-form-item>
       <el-form-item label="广告账户">
         <el-select
@@ -114,6 +122,7 @@ export default {
         account: []
       },
       myid: localStorage.getItem("atom_id"),
+      myname: localStorage.getItem("atom_nickname"),
       next: false,
       formLabelWidth: "100px"
     };
@@ -314,6 +323,17 @@ export default {
   }
   .dialog-footer {
     margin-top: -20px;
+  }
+  .creator {
+    position: relative;
+    .cp{
+      margin-right: 10px;
+    }
+    .item2 {
+      position: absolute;
+      left: 3em;
+      top: 14px;
+    }
   }
 }
 .addselect {

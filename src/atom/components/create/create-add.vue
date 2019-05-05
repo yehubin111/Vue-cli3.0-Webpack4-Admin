@@ -7,9 +7,6 @@
   >
     <el-form ref="form" :model="form" label-width="80px" class="cform">
       <div class="leftform">
-        <!-- <el-form-item label="创意名称" class="cline">
-          <el-input v-model="form.name" placeholder="请输入创意名称"></el-input>
-        </el-form-item>-->
         <el-form-item label="性别" class="cline">
           <el-radio-group v-model="form.sex">
             <el-radio label="0">全部</el-radio>

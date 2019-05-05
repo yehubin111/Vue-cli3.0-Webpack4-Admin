@@ -59,7 +59,7 @@
             @change="selectCtrl"
           ></el-cascader>
           <el-input
-            v-show="form.ctrlmethodwant && form.ctrlmethodwant != 'other'"
+            v-show="form.ctrlmethodwant && (form.ctrlmethodwant == 'increase' || form.ctrlmethodwant == 'decrease')"
             class="ctrlnum"
             v-model="ctrlway1.ctrlnum"
             placeholder
@@ -69,18 +69,21 @@
             v-model="ctrlway1.ruleunit"
             filterable
             placeholder
-            v-show="form.ctrlmethodwant && form.ctrlmethodwant != 'other'"
+            v-show="form.ctrlmethodwant && (form.ctrlmethodwant == 'increase' || form.ctrlmethodwant == 'decrease')"
           >
             <el-option label="%" value="PERCENTAGE"></el-option>
             <el-option label="$" value="ACCOUNT_CURRENCY"></el-option>
           </el-select>
         </div>
-        <p
-          v-show="form.ctrlmethodwant"
-        >只有使用{{form.ctrlmethodname}}的{{form.ruleobjectname}}能受这个规则操作控制。</p>
+        <p class="methodtip" v-show="form.ctrlmethodwant">
+          <span
+            v-if="form.ctrlmethodwant == 'resize'"
+          >使用每日预算和总预算的将分为两个存储桶，即每日预算移至其他每日预算且时间相同的广告组；总预算则用剩余预算来计算分配金额</span>
+          <span v-else>只有使用{{form.ctrlmethodname}}的{{form.ruleobjectname}}能受这个规则操作控制。</span>
+        </p>
         <el-form-item
           class="maxdaybudget"
-          v-show="form.ctrlmethodwant && form.ctrlmethodwant != 'other'"
+          v-show="form.ctrlmethodwant && (form.ctrlmethodwant == 'increase' || form.ctrlmethodwant == 'decrease')"
           :label="`${form.ctrlmethodname}${form.ctrlmethodwant == 'decrease'?'下限':'上限'}`"
           label-width="110px"
         >
@@ -156,7 +159,11 @@
             <i class="el-icon-warning"></i>
           </el-tooltip>
         </el-form-item>
-        <el-form-item label="操作频率" v-show="form.ctrlmethodwant" label-width="110px">
+        <el-form-item
+          label="操作频率"
+          v-show="form.ctrlmethodwant && form.ctrlmethodwant != 'resize'"
+          label-width="110px"
+        >
           <el-select class="wid200" v-model="frequency" filterable placeholder="操作频率">
             <el-option
               v-for="item in frequencyList"
@@ -165,6 +172,72 @@
               :value="item.key"
             ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="类型" v-show="form.ctrlmethodkey == 'balance'" label-width="110px">
+          <el-tooltip class="item2" style="left: -78px;" effect="dark" placement="top-start">
+            <div slot="content">
+              暂停平分：暂停符合条件的广告组，平均分配给其他广告组
+              <br>暂停按比例分：暂停符合条件的广告组，根据调整目标按比例分配给其他广告组
+              <br>不暂停按比例分：根据调整目标按比例把符合条件的广告组预算分配给其他广告组，其他广告组预算=原预算+被分配的预算，符合条件的广告组预算=被分配的预算；例如5个广告组，展示量分别是10到50，每日预算均为3000，设置规则为展示量＜20，则预算分别是400、800、4200、4600、5000
+              <br>不暂停按比例分总预算：不暂停广告组，根据调整目标按比例把所有广告组预算重新分配给所有广告组，无法保证更好的广告组的预算不会减少；例如5个广告组，展示量分别是10到50，每日预算均为3000，设置规则为展示量＜20，则预算分别是1000、2000、3000、4000、5000
+            </div>
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-select class="wid200" v-model="ctrlway3.type" filterable placeholder="类型">
+            <el-option
+              v-for="item in typeOption"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="调整目标" v-show="form.ctrlmethodkey == 'balance'" label-width="110px">
+          <el-tooltip class="item2" effect="dark" placement="top-start">
+            <div slot="content">预算将按照此目标按比例调整</div>
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-select class="wid200" v-model="ctrlway3.target" filterable placeholder="调整目标">
+            <el-option
+              v-for="item in targetOption"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+          <p>
+            <span>
+              {{ctrlway3.opposite ? '正': '反'}}比，值越{{ctrlway3.opposite ? '大': '小'}}预算越多，
+              <el-button
+                type="text"
+                @click="ctrlway3.opposite = !ctrlway3.opposite"
+              >{{ctrlway3.opposite ? '改为反比': '改为正比'}}</el-button>
+            </span>
+          </p>
+        </el-form-item>
+        <el-form-item label="接收对象" v-show="form.ctrlmethodkey == 'balance'" label-width="110px">
+          <el-tooltip class="item2" effect="dark" placement="top-start">
+            <div slot="content">即接受预算的对象，所有则平衡到所有对象；此外，还可指定是根据调整目标从大到小或者从小到大排的前几个作为接受对象</div>
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-radio-group v-model="ctrlway3.accept">
+            <el-radio :label="1"> 所有</el-radio>
+            <el-radio :label="2">
+              {{ctrlway3.opposite ? '从大到小': '从小到大'}}排 前<el-input size="mini" style="width: 50px" v-model="ctrlway3.arrange"></el-input>个
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="广告系列" v-show="form.ctrlmethodkey == 'balance'" label-width="110px">
+          <el-tooltip class="item2" effect="dark" placement="top-start">
+            <div
+              slot="content"
+            >选择总预算不变，则代表预算只会在同一个广告系列下的广告组之间移动，一个广告系列下的广告组的总预算不变；选择总预算可变，则代表预算在所有广告系列的广告组之间移动，一个广告系列下的广告组的总预算也会变化</div>
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-radio-group v-model="ctrlway3.campaign">
+            <el-radio :label="1">总预算不变</el-radio>
+            <el-radio :label="2">总预算可变</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form-item>
       <el-form-item label="条件" label-width="110px">
@@ -298,6 +371,12 @@ export default {
         { name: "投放中的全部广告组", key: "ADSET", difkey: 5 },
         { name: "投放中的全部广告", key: "AD", difkey: 6 }
       ],
+      typeOption: [
+        { name: "暂停平分", key: "1" },
+        { name: "暂停按比例分", key: "2" },
+        { name: "不暂停按比例分", key: "3" },
+        { name: "不暂停按比例分总预算", key: "4" }
+      ],
       ctrlList: [],
       ctrlOption: [
         {
@@ -363,6 +442,7 @@ export default {
           ]
         }
       ],
+      targetOption: [{ name: "CPC", key: "cpc" }],
       form: {
         account: [],
         ruleobject: "",
@@ -396,6 +476,15 @@ export default {
         targetworth: "", // 目标价值
         firstdist: "", // 范围
         seconddist: "" // 范围
+      },
+      ctrlway3: {
+        // 第三种操作方式
+        type: "",
+        target: "",
+        opposite: true,
+        accept: "",
+        arrange: "",
+        campaign: 1
       },
       frequency: "720", // 操作频率
       frequencyList: [
@@ -888,7 +977,7 @@ export default {
             name: "竞价"
           },
           balance: {
-            name: '平衡'
+            name: "平衡"
           }
         };
         this.form.ctrlmethodname = caseoption[key[0]]["name"];
@@ -1177,6 +1266,7 @@ export default {
       this.ctrlname = ""; // 操作类型名称， 单日预算 or 总预算 or 竞价 or ''
       this.ctrlsort = ""; // 操作类型方式， 增加 or 减少
 
+      // 第一种操作方式
       this.ctrlway1.ctrlnum = "";
       this.ctrlway1.ruleunit = "PERCENTAGE";
       this.ctrlway1.daybudget = ""; // 单日预算上限
@@ -1186,6 +1276,14 @@ export default {
       this.ctrlway2.targetworth = ""; // 目标价值
       this.ctrlway2.firstdist = ""; // 范围
       this.ctrlway2.seconddist = ""; // 范围
+
+      // 第三种操作方式
+      this.ctrlway3.type = '';
+      this.ctrlway3.target = '';
+      this.ctrlway3.opposite = true;
+      this.ctrlway3.accept = '';
+      this.ctrlway3.arrange = '';
+      this.ctrlway3.campaign = 1;
 
       this.frequency = "720"; // 操作频率
       this.timerange = ["LIFETIME"];
@@ -1213,6 +1311,10 @@ export default {
 </style>
 
 <style lang="less" scoped>
+.methodtip {
+  line-height: 24px;
+  margin: 10px 0;
+}
 .tagline {
   margin-right: 10px;
 }

@@ -829,6 +829,7 @@ export default {
         this.defaultOption = seek.option;
         event = seek.event;
       }
+      this.defaultListOption = [];
       this.defaultOption.forEach(v => {
         this.defaultListOption.push(Object.assign({}, v));
       });

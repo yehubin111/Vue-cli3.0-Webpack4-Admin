@@ -230,6 +230,8 @@ export default {
     'edittemp': 'template/updateTemplate', // 编辑模板
     'tempimagelist': 'files/getAll?', // 模板图片列表
     'savetempimage': 'files/saveFile', // 保存模板图片
+    'savevideoimage': 'files/saveVideoImage', // 保存视频封面
+    'getvideoimage': 'files/findImage?', // 获取视频封面
     'deletetempimage': 'files/deleteFile?', // 删除模板图片
     'downloadtempimage': 'files/downloadZip?', // 下载模板图片
 }

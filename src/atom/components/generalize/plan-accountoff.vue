@@ -28,7 +28,7 @@
             </el-table-column>
             <el-table-column label="操作" width="80">
                 <template slot-scope="scope">
-                    <el-button @click="toSelect(scope.row.fbId, scope.row.status)" type="text" size="small">添加</el-button>
+                    <el-button :disabled="scope.row.accountStatus != 1" @click="toSelect(scope.row.fbId, scope.row.status)" type="text" size="small">添加</el-button>
                 </template>
             </el-table-column>
         </el-table>

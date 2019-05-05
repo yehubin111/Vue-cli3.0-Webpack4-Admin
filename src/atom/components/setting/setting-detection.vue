@@ -40,6 +40,7 @@ export default {
       let res = await this.$store.dispatch("setAF", {
         af_key: this.form.apikey1
       });
+      if(!res) return;
       if (res.data) {
         Msgsuccess("绑定成功");
         this.$store.dispatch('getAfState');

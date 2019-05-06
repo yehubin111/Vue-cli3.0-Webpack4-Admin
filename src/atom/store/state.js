@@ -189,6 +189,8 @@ export default {
   classifyforplan: [], // 智能选择分类列表
   classifyfiltercount: 0, // 智能选择符合分类创意数量
   // ad
+  bigimagevisible: false, // 大图显示状态
+  bigimageurl: '',  // 大图地址
   optionselect: 'default', // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
   saveoption: [], // 保存到服务端的自定义列
   menushow: true,

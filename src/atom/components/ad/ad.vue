@@ -347,10 +347,12 @@
     <rule-select ref="ruleSelect" :status.sync="ruleselectstatus"></rule-select>
     <rule-remove ref="ruleRemove" :status.sync="ruleremovestatus"></rule-remove>
     <rule-add ref="ruleAdd" :status.sync="ruleaddstatus"></rule-add>
+    <big-image @hideBig="hideBig" :bigImageUrl="bigImageUrl" :status="bigImageVisible"></big-image>
   </div>
 </template>
 
 <script>
+import BigImage from "../create/create-bigimage";
 import BreadCrumb from "@/atom/components/project-breadcrumb";
 import RuleAdd from "../rules/rule-add";
 import RuleRemove from "./ad-ruleremove";
@@ -377,7 +379,8 @@ export default {
     RuleSelect,
     RuleRemove,
     RuleAdd,
-    BreadCrumb
+    BreadCrumb,
+    BigImage
   },
   beforeRouteLeave(to, from, next) {
     switch (this.tabname) {
@@ -813,6 +816,9 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    hideBig() {
+      this.SETSTATE({k: 'bigimagevisible', v: false});
+    },
     async getSaveData(type) {
       await this.$store.dispatch("getSearchCondition", {
         projectId: this.$route.params.id,
@@ -1598,8 +1604,16 @@ export default {
       "copyjoblistdetail",
       "sortdefault",
       "saveoption",
-      "optionselect"
+      "optionselect",
+      "bigimagevisible",
+      "bigimageurl"
     ]),
+    bigImageVisible() {
+      return this.bigimagevisible;
+    },
+    bigImageUrl() {
+      return this.bigimageurl;
+    },
     projectid() {
       return this.$route.params.id;
     },

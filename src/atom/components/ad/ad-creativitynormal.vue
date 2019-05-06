@@ -1,90 +1,88 @@
 <template>
-  <div>
-    <big-image @hideBig="hideBig" :bigImageUrl="bigImageUrl" :status="bigImageVisible"></big-image>
-    <el-form ref="form" :model="form" label-width="80px" class="cform" label-position="left">
-      <el-form-item label="主页" class="cline">
-        <el-select v-model="form.homepage" placeholder="请选择主页" filterable @change="selectHomepage">
-          <el-option v-if="otherpageid" :label="otherpagename" :value="otherpageid"></el-option>
-          <el-option v-for="(l,index) in commonpage" :key="index" :label="l.name" :value="l.pageId"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item v-show="createType == 0" label="图片" class="cline uploadfile">
-        <el-button v-show="processIMG.length == 0" class="moreInfo" type="primary" size="small">上传图片</el-button>
-        <vue-file-upload
-          v-show="processIMG.length == 0"
-          ref="vueFileUploaderSINGER"
-          @matchMD5="matchMD5"
-          @onAdd="onAddItem"
-          @uploadPic="uploadPic"
-          @uploadRes="uploadRes"
-          @uploadError="uploadError"
-          name="file"
-          class="fileinput"
-          :url="uploadFileUrl"
-          :events="eventsIMG"
-          :requestOptions="fileOption"
-          :filters="imgfilters"
-        >
-          <span slot="label"></span>
-        </vue-file-upload>
-        <ul class="reslist">
-          <li v-for="(item, index) in processIMG" :key="index">
-            <div class="image">
-              <p class="processname">
-                <span class="el-icon-picture-outline"></span>
-                <span class="name" :title="item.name">{{item.name}}</span>
-                <transition name="fade">
-                  <span class="el-icon-check" v-show="item.process == 100"></span>
-                </transition>
-              </p>
-              <p class="processline">
-                <i class="line">
-                  <em :style="'width:' + item.process + '%' "></em>
-                </i>
-                <span>{{item.process}}%</span>
-              </p>
-            </div>
-            <i class="el-icon-error processclose" @click="delIMG(item.file, item.name)"></i>
-          </li>
-        </ul>
-      </el-form-item>
-      <el-form-item v-show="createType == 1" label="视频" class="cline uploadfile">
-        <el-button v-show="processVIO.length == 0" class="moreInfo" type="primary" size="small">上传视频</el-button>
-        <vue-file-upload
-          v-show="processVIO.length == 0"
-          ref="vueFileUploaderVioSINGER"
-          @matchMD5="matchMD5"
-          @onAdd="onAddItem"
-          @uploadVio="uploadVio"
-          @uploadVioRes="uploadVioRes"
-          @uploadVioError="uploadVioError"
-          name="file"
-          class="fileinput"
-          :url="uploadFileUrl"
-          :events="eventsVIO"
-          :requestOptions="fileOption"
-          :filters="videofilters"
-        >
-          <span slot="label"></span>
-        </vue-file-upload>
-        <ul class="reslist">
-          <li v-for="(item, index) in processVIO" :key="index" @mouseover="fmvideoname = item.name">
-            <div class="video">
-              <p class="processname">
-                <span class="el-icon-document"></span>
-                <span class="name" :title="item.name">{{item.name}}</span>
-                <transition name="fade">
-                  <span class="el-icon-check" v-show="item.process == 100"></span>
-                </transition>
-              </p>
-              <p class="processline">
-                <i class="line">
-                  <em :style="'width:' + item.process + '%' "></em>
-                </i>
-                <span>{{item.process}}%</span>
-              </p>
-            </div>
-            <!-- <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
+  <el-form ref="form" :model="form" label-width="80px" class="cform" label-position="left">
+    <el-form-item label="主页" class="cline">
+      <el-select v-model="form.homepage" placeholder="请选择主页" filterable @change="selectHomepage">
+        <el-option v-if="otherpageid" :label="otherpagename" :value="otherpageid"></el-option>
+        <el-option v-for="(l,index) in commonpage" :key="index" :label="l.name" :value="l.pageId"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item v-show="createType == 0" label="图片" class="cline uploadfile">
+      <el-button v-show="processIMG.length == 0" class="moreInfo" type="primary" size="small">上传图片</el-button>
+      <vue-file-upload
+        v-show="processIMG.length == 0"
+        ref="vueFileUploaderSINGER"
+        @matchMD5="matchMD5"
+        @onAdd="onAddItem"
+        @uploadPic="uploadPic"
+        @uploadRes="uploadRes"
+        @uploadError="uploadError"
+        name="file"
+        class="fileinput"
+        :url="uploadFileUrl"
+        :events="eventsIMG"
+        :requestOptions="fileOption"
+        :filters="imgfilters"
+      >
+        <span slot="label"></span>
+      </vue-file-upload>
+      <ul class="reslist">
+        <li v-for="(item, index) in processIMG" :key="index">
+          <div class="image">
+            <p class="processname">
+              <span class="el-icon-picture-outline"></span>
+              <span class="name" :title="item.name">{{item.name}}</span>
+              <transition name="fade">
+                <span class="el-icon-check" v-show="item.process == 100"></span>
+              </transition>
+            </p>
+            <p class="processline">
+              <i class="line">
+                <em :style="'width:' + item.process + '%' "></em>
+              </i>
+              <span>{{item.process}}%</span>
+            </p>
+          </div>
+          <i class="el-icon-error processclose" @click="delIMG(item.file, item.name)"></i>
+        </li>
+      </ul>
+    </el-form-item>
+    <el-form-item v-show="createType == 1" label="视频" class="cline uploadfile">
+      <el-button v-show="processVIO.length == 0" class="moreInfo" type="primary" size="small">上传视频</el-button>
+      <vue-file-upload
+        v-show="processVIO.length == 0"
+        ref="vueFileUploaderVioSINGER"
+        @matchMD5="matchMD5"
+        @onAdd="onAddItem"
+        @uploadVio="uploadVio"
+        @uploadVioRes="uploadVioRes"
+        @uploadVioError="uploadVioError"
+        name="file"
+        class="fileinput"
+        :url="uploadFileUrl"
+        :events="eventsVIO"
+        :requestOptions="fileOption"
+        :filters="videofilters"
+      >
+        <span slot="label"></span>
+      </vue-file-upload>
+      <ul class="reslist">
+        <li v-for="(item, index) in processVIO" :key="index" @mouseover="fmvideoname = item.name">
+          <div class="video">
+            <p class="processname">
+              <span class="el-icon-document"></span>
+              <span class="name" :title="item.name">{{item.name}}</span>
+              <transition name="fade">
+                <span class="el-icon-check" v-show="item.process == 100"></span>
+              </transition>
+            </p>
+            <p class="processline">
+              <i class="line">
+                <em :style="'width:' + item.process + '%' "></em>
+              </i>
+              <span>{{item.process}}%</span>
+            </p>
+          </div>
+          <!-- <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
           <div class="uploadFmbox">
             <vue-file-upload
               v-show="!item.fmname"
@@ -101,76 +99,71 @@
             >
               <span slot="label"></span>
             </vue-file-upload>
-            </div>-->
-            <div class="videofm" v-show="item.fmname">
-              <p class="processname">
-                <span class="el-icon-picture-outline"></span>
-                <span class="name" :title="item.fmname">{{item.fmname}}</span>
-                <transition name="fade">
-                  <span class="el-icon-check" v-show="item.fmprocess == 100"></span>
-                </transition>
-              </p>
-              <p class="processline">
-                <i class="line">
-                  <em :style="'width:' + item.fmprocess + '%' "></em>
-                </i>
-                <span>{{item.fmprocess}}%</span>
-              </p>
-              <div class="fmctrl">
-                <el-button type="text" size="mini" @click="randomCreate(item.videoHash)">随机生成</el-button>
-                <el-button type="text" size="mini">上传封面</el-button>
-                <el-button type="text" size="mini" @click="showBig(item.fmUrl)">查看大图</el-button>
-                <div class="uploadFmbox">
-                  <vue-file-upload
-                    @matchMD5="matchMD5"
-                    @uploadFm="uploadFm"
-                    @uploadFmRes="uploadFmRes"
-                    @uploadFmError="uploadFmError"
-                    name="file"
-                    class="fileinputfm"
-                    :url="uploadFileUrl"
-                    :events="eventsFM"
-                    :requestOptions="fileOptionFM"
-                    :filters="imgfilters"
-                  >
-                    <span slot="label"></span>
-                  </vue-file-upload>
-                </div>
+          </div>-->
+          <div class="videofm" v-show="item.fmname">
+            <p class="processname">
+              <span class="el-icon-picture-outline"></span>
+              <span class="name" :title="item.fmname">{{item.fmname}}</span>
+              <transition name="fade">
+                <span class="el-icon-check" v-show="item.fmprocess == 100"></span>
+              </transition>
+            </p>
+            <p class="processline">
+              <i class="line">
+                <em :style="'width:' + item.fmprocess + '%' "></em>
+              </i>
+              <span>{{item.fmprocess}}%</span>
+            </p>
+            <div class="fmctrl">
+              <el-button type="text" size="mini" @click="randomCreate(item.videoHash)">随机生成</el-button>
+              <el-button type="text" size="mini">上传封面</el-button>
+              <el-button type="text" size="mini" @click="showBig(item.fmUrl)">查看大图</el-button>
+              <div class="uploadFmbox">
+                <vue-file-upload
+                  @matchMD5="matchMD5"
+                  @uploadFm="uploadFm"
+                  @uploadFmRes="uploadFmRes"
+                  @uploadFmError="uploadFmError"
+                  name="file"
+                  class="fileinputfm"
+                  :url="uploadFileUrl"
+                  :events="eventsFM"
+                  :requestOptions="fileOptionFM"
+                  :filters="imgfilters"
+                >
+                  <span slot="label"></span>
+                </vue-file-upload>
               </div>
             </div>
-            <i
-              class="el-icon-error processclose processvideo"
-              @click="delVIO(item.file, item.name)"
-            ></i>
-          </li>
-        </ul>
-      </el-form-item>
-      <el-form-item label="文本" class="cline">
-        <el-input
-          type="textarea"
-          v-model="form.desc"
-          class="textarea"
-          placeholder="请输入文字说明，介绍推广内容"
-          :autosize="{ minRows: 3.5, maxRows: 3.5 }"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="标题" class="cline">
-        <el-input v-model="form.title" placeholder="请输入标题"></el-input>
-      </el-form-item>
-      <el-form-item label="行动号召" class="cline">
-        <el-select v-model="form.actions" placeholder="行动号召">
-          <el-option v-for="(l, index) in allactions" :key="index" :label="l.name" :value="l.code"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="deeplink" class="cline">
-        <el-input v-model="form.deeplink" placeholder="可跳转到APP指定页面，选填，为空则仅下载APP"></el-input>
-      </el-form-item>
-    </el-form>
-  </div>
+          </div>
+          <i class="el-icon-error processclose processvideo" @click="delVIO(item.file, item.name)"></i>
+        </li>
+      </ul>
+    </el-form-item>
+    <el-form-item label="文本" class="cline">
+      <el-input
+        type="textarea"
+        v-model="form.desc"
+        class="textarea"
+        placeholder="请输入文字说明，介绍推广内容"
+        :autosize="{ minRows: 3.5, maxRows: 3.5 }"
+      ></el-input>
+    </el-form-item>
+    <el-form-item label="标题" class="cline">
+      <el-input v-model="form.title" placeholder="请输入标题"></el-input>
+    </el-form-item>
+    <el-form-item label="行动号召" class="cline">
+      <el-select v-model="form.actions" placeholder="行动号召">
+        <el-option v-for="(l, index) in allactions" :key="index" :label="l.name" :value="l.code"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="deeplink" class="cline">
+      <el-input v-model="form.deeplink" placeholder="可跳转到APP指定页面，选填，为空则仅下载APP"></el-input>
+    </el-form-item>
+  </el-form>
 </template>
 
 <script>
-import BigImage from "../create/create-bigimage";
 import VueFileUpload from "vue-file-upload";
 import BMF from "browser-md5-file";
 import { mapState, mapGetters, mapMutations } from "vuex";
@@ -180,8 +173,7 @@ let bmf = new BMF();
 export default {
   props: ["createType", "createObject"],
   components: {
-    VueFileUpload,
-    BigImage
+    VueFileUpload
   },
   data() {
     return {
@@ -194,8 +186,6 @@ export default {
       },
       otherpageid: "",
       otherpagename: "",
-      bigImageVisible: false,
-      bigImageUrl: "",
       msg: {
         homepage: "请选择主页",
         desc: "请输入文本",
@@ -605,11 +595,8 @@ export default {
       this.setVideoImage("video");
     },
     showBig(url) {
-      this.bigImageVisible = true;
-      this.bigImageUrl = url;
-    },
-    hideBig() {
-      this.bigImageVisible = false;
+      this.SETSTATE({k: 'bigimagevisible', v: true});
+      this.SETSTATE({k: 'bigimageurl', v: url});
     },
     async setVideoImage(type) {
       let vio = this.processVIO[0];
@@ -660,6 +647,12 @@ export default {
           v.fmHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("fm");
     },
     // 封面图上传中回调
     uploadFm(file, process) {
@@ -703,6 +696,12 @@ export default {
           v.videoHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("video");
     },
     uploadVio(file, process) {
       this.disfile = file;

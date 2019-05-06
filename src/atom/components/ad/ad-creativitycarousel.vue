@@ -112,7 +112,7 @@
                     <span>{{g.process}}%</span>
                   </p>
                 </div>
-                <el-button type="text" class="fmbutton" v-show="!g.fmname && g.process == 100">上传封面图</el-button>
+                <!-- <el-button type="text" class="fmbutton" v-show="!g.fmname && g.process == 100">上传封面图</el-button>
                 <div class="uploadFmbox">
                   <vue-file-upload
                     v-show="!g.fmname && g.process == 100"
@@ -129,7 +129,7 @@
                   >
                     <span slot="label"></span>
                   </vue-file-upload>
-                </div>
+                </div>-->
                 <div class="videofm" v-show="g.fmname">
                   <p class="processname">
                     <span class="el-icon-picture-outline"></span>
@@ -144,6 +144,27 @@
                     </i>
                     <span>{{g.fmprocess}}%</span>
                   </p>
+                  <div class="fmctrl">
+                    <el-button type="text" size="mini" @click="randomCreate(g.videoHash)">随机生成</el-button>
+                    <el-button type="text" size="mini">上传封面</el-button>
+                    <el-button type="text" size="mini" @click="showBig(g.fmUrl)">查看大图</el-button>
+                    <div class="uploadFmbox">
+                      <vue-file-upload
+                        @checkUploadFm="checkUploadFm"
+                        @uploadFm="uploadFm"
+                        @uploadFmRes="uploadFmRes"
+                        @uploadFmError="uploadFmError"
+                        name="file"
+                        class="fileinputfm"
+                        :url="uploadFileUrl"
+                        :events="eventsFM"
+                        :requestOptions="fileOptionFM"
+                        :filters="imgfilters"
+                      >
+                        <span slot="label"></span>
+                      </vue-file-upload>
+                    </div>
+                  </div>
                 </div>
                 <i class="el-icon-error processclose processvideo" @click="delVIO(g.file)"></i>
               </li>
@@ -345,7 +366,7 @@ export default {
     }
     if (n && n.cards) {
       // 20190130新增逻辑，编辑单个广告组，初始化保存该创意类型，切换的时候数据填充
-      this.SETSTATE({ k: "edittype", v: '2' });
+      this.SETSTATE({ k: "edittype", v: "2" });
 
       this.form.homepage = n.pageId ? n.pageId : "";
       this.form.deeplink = n.deeplink ? n.deeplink : "";
@@ -631,8 +652,59 @@ export default {
         type,
         tabvalue: this.tabvalue,
         on: "cardcreate",
-        vdname: this.fmvideoname
+        vdname: this.fmvideoname,
+        callback: () => {
+          /**
+           * 20190505新增
+           * 上传完封面之后，与视频匹配保存到服务端
+           * 上传完视频之后，匹配之前保存的封面图
+           */
+          this.setVideoImage(type);
+        }
       });
+    },
+    randomCreate() {
+      // 随机再生成一张
+      this.setVideoImage("video");
+    },
+    showBig(url) {
+      this.SETSTATE({ k: "bigimagevisible", v: true });
+      this.SETSTATE({ k: "bigimageurl", v: url });
+    },
+    async setVideoImage(type) {
+      console.log(type);
+      let idx = 0;
+      let tab = this.tablist.find((v, i) => {
+        if (v.name == this.tabvalue) {
+          idx = i;
+          return v;
+        }
+      });
+      let vio = tab.processVIO[0];
+      if (type == "video") {
+        let res = await this.$store.dispatch("getVideoImg", {
+          videoMd5: vio.videoHash,
+          videoUrl: vio.videoUrl
+        });
+        if (res.data) {
+          tab.processVIO[0].fmname = res.data.imageMd5;
+          tab.processVIO[0].fmUrl = res.data.imageUrl;
+          tab.processVIO[0].fmHash = res.data.imageMd5;
+          tab.processVIO[0].fmprocess = 100;
+
+          this.tablist.splice(idx, 1);
+          this.tablist.splice(idx, 0, tab);
+        }
+      }
+      if (type == "fm") {
+        let option = {
+          imageMd5: vio.fmHash,
+          imageUrl: vio.fmUrl,
+          videoMd5: vio.videoHash,
+          videoUrl: vio.videoUrl
+        };
+        this.$store.dispatch("saveVideoImg", { option });
+      }
     },
     resetImgVideo(name) {
       /**
@@ -730,6 +802,12 @@ export default {
           g.processVIO[0].fmHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("fm");
     },
     uploadFm(file, process) {
       let self = this;
@@ -768,6 +846,12 @@ export default {
           g.processVIO[0].videoHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("video");
     },
     uploadVio(file, process) {
       let obj = {};
@@ -1039,10 +1123,22 @@ export default {
         display: block;
       }
     }
+    .fmctrl {
+      width: 200px;
+      padding-left: 6px;
+      .uploadFmbox {
+        position: absolute;
+        left: 226px;
+        top: 58px;
+        width: 49px;
+        height: 16px;
+        overflow: hidden;
+      }
+    }
     .processclose {
       position: absolute;
       left: 160px;
-      top: 50%;
+      top: 24px;
       transform: translate(0, -50%);
       color: #909399;
       cursor: pointer;

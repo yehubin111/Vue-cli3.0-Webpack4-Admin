@@ -107,7 +107,6 @@ export default {
   margin-bottom: 100px;
 }
 .contain {
-  width: 1200px;
   margin: 0 auto 50px auto;
   .title {
     line-height: 60px;

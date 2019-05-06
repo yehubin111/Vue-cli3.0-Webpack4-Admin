@@ -38,7 +38,6 @@ export default {
   min-width: 1200px;
 }
 .contain {
-  width: 1200px;
   margin: 0 auto;
   display: flex;
   .aside {

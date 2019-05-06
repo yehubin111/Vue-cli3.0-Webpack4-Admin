@@ -18,6 +18,12 @@ export default {
   }
 };
 </script>
+<style lang="less">
+.contain {
+  width: 1440px;
+}
+</style>
+
 <style lang="less" scoped>
 .el-header {
   padding: 0;

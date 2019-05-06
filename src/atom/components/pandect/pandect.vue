@@ -130,7 +130,7 @@ export default {
   padding: 20px 0;
 }
 .contain {
-  width: 1200px;
+  // width: 1200px;
   margin: 0 auto;
 }
 .topselect {
@@ -141,10 +141,10 @@ export default {
   margin-top: 20px;
 }
 .hasapp {
-  width: 1200px;
+  width: 100%;
 }
 .noapp {
-  width: 1200px;
+  width: 100%;
   margin: 0 auto;
   text-align: center;
   .title {

@@ -21,7 +21,7 @@ export default {
 
 <style lang="less" scoped>
 .chart {
-  width: 1200px;
+  width: 1440px;
   height: 450px;
 }
 </style>

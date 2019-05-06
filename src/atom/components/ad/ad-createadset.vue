@@ -1129,7 +1129,7 @@ export default {
           target: n.length > 1 ? true : false,
           action: !this.form.action ? true : false,
           platform: !this.form.platform ? true : false,
-          version: !this.form.lowversion ? true : false,
+          version: n.length > 1 && !this.form.lowversion ? true : false,
           moneytype: !this.form.moneytype ? true : false,
           equip: this.form.equip.length == 0 ? true : false,
           sex: this.form.sex === null ? true : false,
@@ -1143,7 +1143,7 @@ export default {
             n.length > 1 && this.form.interest.length == 0 ? true : false,
           auto: !auto ? true : false,
           bid: !this.form.bid ? true : false,
-          filtra: this.form.filtra.length == 0 ? true : false
+          filtra: n.length > 1 && this.form.filtra.length == 0 ? true : false
         };
 
         this.mutilstatus = Object.assign({}, this.mutil);

@@ -121,7 +121,7 @@ export default {
   cr_sex: '',
   cr_status: '',
   cr_pageIndex: 1,
-  cr_pageSize: 21,
+  cr_pageSize: 20,
   cr_projectId: '',
   allpagelist: [], // 新增创意主页列表
   allactions: [], // 新增创意行动号召列表

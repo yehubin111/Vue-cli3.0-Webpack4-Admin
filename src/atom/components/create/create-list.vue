@@ -164,7 +164,7 @@ export default {
   overflow: hidden;
   margin-right: -15px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-gap: 30px;
   margin-bottom: 50px;
   width: 100%;

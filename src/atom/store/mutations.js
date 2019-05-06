@@ -1086,8 +1086,8 @@ export default {
             v.excluded = target.excluded_custom_audiences ? target.excluded_custom_audiences.map(v => v.id) : [];
             v.country = v.countries.split(',');
             v.platform = userOs[0].toLocaleLowerCase().indexOf('android') != -1 ? 'google_play' : 'itunes';
-            v.lowversion = userOs[2];
-            v.highversion = userOs[4] == 'above' ? '' : userOs[4];
+            v.lowversion = userOs[2] ? userOs[2] : '2.0';
+            v.highversion = !userOs[4] || userOs[4] == 'above' ? '' : userOs[4];
             v.moneytype = v.dailyBudget > 0 ? 'day_budget' : 'total_budget';
             v.minage = target.age_min;
             v.maxage = target.age_max;

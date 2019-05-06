@@ -45,7 +45,7 @@
     </div>
     <create-list @changeName="changeName" @changeCountry="changeCountry"></create-list>
     <div class="pageswitch">
-      <el-pagination background @size-change="pageSizeChange" :page-sizes="[21, 201, 501]" layout="total, sizes, prev, pager, next, jumper" :total="crtotal" :page-size="21" @current-change="pageSwitch">
+      <el-pagination background @size-change="pageSizeChange" :page-sizes="[20, 200, 500]" layout="total, sizes, prev, pager, next, jumper" :total="crtotal" :page-size="21" @current-change="pageSwitch">
       </el-pagination>
     </div>
     <add-country :status="status3" @cancelAddbm="cancelAddbm" @toAddCountries="toAddCountries"></add-country>
@@ -103,7 +103,7 @@ export default {
       value5: "",
       state4: "", // 搜索关键字
       pageindex: 1,
-      pagesize: 21,
+      pagesize: 20,
       oldid: "",
       ifsyncall: false,
       oldname: "",
@@ -169,7 +169,7 @@ export default {
       sex: "",
       status: "",
       pageIndex: 1,
-      pageSize: 21
+      pageSize: 20
     };
 
     for (let i in option) {

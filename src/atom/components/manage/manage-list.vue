@@ -187,7 +187,7 @@ export default {
       border-top: 1px solid #ddd;
       display: flex;
       .name {
-        flex-basis: 100px;
+        flex-basis: 130px;
         line-height: 50px;
         font-size: 14px;
         padding-left: 10px;

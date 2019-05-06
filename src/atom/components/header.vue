@@ -68,7 +68,7 @@ export default {
 
 <style lang="less" scoped>
 .head {
-  width: 1200px;
+  width: 1440px;
   margin: 0 auto;
   height: 60px;
   .logo {

@@ -51,7 +51,6 @@ export default {
 
 <style lang="less" scoped>
 .contain {
-  width: 1200px;
   margin: 0 auto 50px auto;
   .title {
     line-height: 60px;

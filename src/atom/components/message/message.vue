@@ -1,6 +1,6 @@
 <template>
 
-  <div class="msgpage">
+  <div class="contain">
     <div class="ctrl">
       <p class="title">消息中心</p>
       <el-button class="add" type="primary" @click="setRead">全部已读</el-button>
@@ -70,8 +70,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.msgpage {
-  width: 1200px;
+.contain {
   margin: 0 auto 50px auto;
   .ctrl {
     margin-top: 20px;

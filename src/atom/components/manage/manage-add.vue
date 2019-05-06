@@ -57,11 +57,10 @@
           ></el-option>
         </el-select>
         <p class="creator">
-          <span class="cp">创建者</span>：{{myname}}
+          <span class="cp">创建者</span>
+          ：{{myname}}
           <el-tooltip class="item2" effect="dark" placement="top-start">
-            <div slot="content">
-              项目创建者会自动添加到参与成员列表中，无需选择
-            </div>
+            <div slot="content">项目创建者会自动添加到参与成员列表中，无需选择</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
         </p>
@@ -171,19 +170,25 @@ export default {
       let proj = this.dismanage.find(v => v.id == this.id);
 
       this.form.projectname = proj.projectName;
-      this.form.region = proj.applicationId.split(",");
-      this.form.page = proj.fbPageIds.split(",");
+      this.form.region = proj.applicationId
+        ? proj.applicationId.split(",")
+        : "";
+      this.form.page = proj.fbPageIds ? proj.fbPageIds.split(",") : "";
       this.form.member = proj.participaterIds
-        .split(",")
-        .filter(v => v != this.myid)
-        .map(v => {
-          let mb = this.userslist.find(g => g.id == v);
-          return mb.nickName + "|" + mb.id + "|" + mb.loginName;
-        });
-      this.form.account = proj.fbAccountIds.split(",").map(v => {
-        let act = this.adaccountslist.find(g => g.fbAccountId == v);
-        return act.name + "|" + act.fbId;
-      });
+        ? proj.participaterIds
+            .split(",")
+            .filter(v => v != this.myid)
+            .map(v => {
+              let mb = this.userslist.find(g => g.id == v);
+              return mb.nickName + "|" + mb.id + "|" + mb.loginName;
+            })
+        : [];
+      this.form.account = proj.fbAccountIds
+        ? proj.fbAccountIds.split(",").map(v => {
+            let act = this.adaccountslist.find(g => g.fbAccountId == v);
+            return act.name + "|" + act.fbId;
+          })
+        : [];
     },
     dataSet() {
       for (let i in this.createoption) {
@@ -326,7 +331,7 @@ export default {
   }
   .creator {
     position: relative;
-    .cp{
+    .cp {
       margin-right: 10px;
     }
     .item2 {

@@ -87,6 +87,8 @@ export default {
     // 获取行业列表
     await this.$store.dispatch("getSizeTrade", "template_business");
 
+    if(this.tempsize.length == 0 || this.temptrade.length == 0) return;
+
     this.size = this.tempsize[0].name;
     this.trade = this.temptrade[0].name;
     // 获取模板列表

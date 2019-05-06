@@ -189,20 +189,21 @@
               :key="item.key"
               :label="item.name"
               :value="item.key"
+              @change="typeChange"
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="调整目标" v-show="form.ctrlmethodkey == 'balance'" label-width="110px">
+        <el-form-item label="调整目标" v-show="form.ctrlmethodkey == 'balance' && ctrlway3.type != 'EVEN'" label-width="110px">
           <el-tooltip class="item2" effect="dark" placement="top-start">
             <div slot="content">预算将按照此目标按比例调整</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
           <el-select class="wid200" v-model="ctrlway3.target" filterable placeholder="调整目标">
             <el-option
-              v-for="item in targetOption"
-              :key="item.key"
-              :label="item.name"
-              :value="item.key"
+              v-for="item in customIndicator"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value.split('|')[0]"
             ></el-option>
           </el-select>
           <p>
@@ -215,15 +216,16 @@
             </span>
           </p>
         </el-form-item>
-        <el-form-item label="接收对象" v-show="form.ctrlmethodkey == 'balance'" label-width="110px">
+        <el-form-item label="接收对象" v-show="form.ctrlmethodkey == 'balance' && ctrlway3.type != 'EVEN'" label-width="110px">
           <el-tooltip class="item2" effect="dark" placement="top-start">
             <div slot="content">即接受预算的对象，所有则平衡到所有对象；此外，还可指定是根据调整目标从大到小或者从小到大排的前几个作为接受对象</div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
           <el-radio-group v-model="ctrlway3.accept">
-            <el-radio :label="1"> 所有</el-radio>
+            <el-radio :label="1">所有</el-radio>
             <el-radio :label="2">
-              {{ctrlway3.opposite ? '从大到小': '从小到大'}}排 前<el-input size="mini" style="width: 50px" v-model="ctrlway3.arrange"></el-input>个
+              {{ctrlway3.opposite ? '从大到小': '从小到大'}}排 前
+              <el-input size="mini" style="width: 50px" v-model="ctrlway3.arrange"></el-input>个
             </el-radio>
           </el-radio-group>
         </el-form-item>
@@ -235,8 +237,8 @@
             <i class="el-icon-warning"></i>
           </el-tooltip>
           <el-radio-group v-model="ctrlway3.campaign">
-            <el-radio :label="1">总预算不变</el-radio>
-            <el-radio :label="2">总预算可变</el-radio>
+            <el-radio :label="false">总预算不变</el-radio>
+            <el-radio :label="true">总预算可变</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form-item>
@@ -372,10 +374,10 @@ export default {
         { name: "投放中的全部广告", key: "AD", difkey: 6 }
       ],
       typeOption: [
-        { name: "暂停平分", key: "1" },
-        { name: "暂停按比例分", key: "2" },
-        { name: "不暂停按比例分", key: "3" },
-        { name: "不暂停按比例分总预算", key: "4" }
+        { name: "暂停平分", key: 'EVEN' },
+        { name: "暂停按比例分", key: 'PROPORTIONAL' },
+        { name: "不暂停按比例分", key: 'NO_PAUSE_PROPORTIONAL' },
+        { name: "不暂停按比例分总预算", key: 'MATCHED_ONLY_PROPORTIONAL' }
       ],
       ctrlList: [],
       ctrlOption: [
@@ -442,7 +444,6 @@ export default {
           ]
         }
       ],
-      targetOption: [{ name: "CPC", key: "cpc" }],
       form: {
         account: [],
         ruleobject: "",
@@ -482,9 +483,9 @@ export default {
         type: "",
         target: "",
         opposite: true,
-        accept: "",
+        accept: 1,
         arrange: "",
-        campaign: 1
+        campaign: false
       },
       frequency: "720", // 操作频率
       frequencyList: [
@@ -617,9 +618,16 @@ export default {
     this.ctrlList = this.ctrlOption.slice(0, 2);
   },
   computed: {
-    ...mapState(["commonaccount", "newrulelist"])
+    ...mapState(["commonaccount", "newrulelist", "indicator"]),
+    // 统计指标, 不选择统计指标的情况下无法使用实时
+    customIndicator() {
+      return this.indicator.filter(v => !this.specialIndicator.includes(v.value.split('|')[0]));
+    }
   },
   methods: {
+    typeChange() {
+
+    },
     adInit(select, type) {
       this.adselect = select;
       this.form.account = [select[0].accountId];
@@ -902,7 +910,8 @@ export default {
       if (
         this.form.ctrlmethodkey == "daybudget" ||
         this.form.ctrlmethodkey == "totalbudget" ||
-        this.form.ctrlmethodkey == "bid"
+        this.form.ctrlmethodkey == "bid" || 
+        this.form.ctrlmethodkey == 'balance'
       ) {
         this.trigger = false;
       }
@@ -1019,7 +1028,11 @@ export default {
       if (!this.form.ruleobject) return [false, "请选择规则应用对象"];
       if (this.form.ctrlmethod.length == 0) return [false, "请选择操作"];
       // 操作情况分类
-      if (this.form.ctrlmethodwant && this.form.ctrlmethodwant != "other") {
+      if(this.form.ctrlmethodkey == 'balance') {
+        if (!this.ctrlway3.type) return [false, "请选择类型"];
+        if (this.ctrlway3.type != 'EVEN' && !this.ctrlway3.target) return [false, "请选择调整目标"];
+        if (this.ctrlway3.type != 'EVEN' && this.ctrlway3.accept == 2 && !this.ctrlway3.arrange) return [false, "请输入接收对象排列顺序"];
+      } else if (this.form.ctrlmethodwant && this.form.ctrlmethodwant != "other") {
         if (!this.ctrlway1.ctrlnum) return [false, "请输入操作信息"];
         if (!this.ctrlway1.daybudget) return [false, "请输入预算"];
       } else if (this.form.ctrlmethodwant) {
@@ -1171,7 +1184,19 @@ export default {
         option["evaluationSpec"]["filters"].push(adobj);
       }
       // 关闭或者开启操作无需传该条件
-      if (this.form.ctrlmethodwant)
+      if (this.form.ctrlmethodkey == 'balance') {
+        let balanceobj = {
+          type: this.ctrlway3.type,
+          is_cross_campaign: this.ctrlway3.campaign
+        };
+        if(this.ctrlway3.type != 'EVEN') {
+          balanceobj['target_field'] = this.ctrlway3.target;
+          balanceobj['is_inverse'] = !this.ctrlway3.opposite;
+          if(this.ctrlway3.accept == 2)
+            balanceobj['target_count'] = this.ctrlway3.arrange;
+        }
+        option["executionSpec"]["rebalance_spec"] = balanceobj;
+      } else 
         option["executionSpec"]["execution_options"].push(obj);
       /**
        * 条件传参逻辑
@@ -1269,12 +1294,12 @@ export default {
       this.ctrlway2.seconddist = ""; // 范围
 
       // 第三种操作方式
-      this.ctrlway3.type = '';
-      this.ctrlway3.target = '';
+      this.ctrlway3.type = "";
+      this.ctrlway3.target = "";
       this.ctrlway3.opposite = true;
-      this.ctrlway3.accept = '';
-      this.ctrlway3.arrange = '';
-      this.ctrlway3.campaign = 1;
+      this.ctrlway3.accept = 2;
+      this.ctrlway3.arrange = "";
+      this.ctrlway3.campaign = false;
 
       this.frequency = "720"; // 操作频率
       this.timerange = ["LIFETIME"];

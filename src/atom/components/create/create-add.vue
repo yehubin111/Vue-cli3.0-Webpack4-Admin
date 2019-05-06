@@ -23,6 +23,13 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item v-show="form.type == 0" label="图片" class="cline uploadfile">
+            <!-- <el-button
+              v-show="processIMG.length == 0"
+              class="moreInfo"
+              size="small"
+              plain
+              @click="toSelectImage"
+            >选择图片</el-button> -->
             <el-button
               v-show="processIMG.length == 0"
               class="moreInfo"
@@ -39,6 +46,7 @@
               @uploadError="uploadError"
               name="file"
               class="fileinput"
+              style="left: 90px;"
               :url="uploadFileUrl"
               :events="eventsIMG"
               :requestOptions="fileOption"
@@ -444,6 +452,9 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    toSelectImage() {
+      this.SETSTATE({k: 'imgselect', v: true});
+    },
     /**
      * 20181107新增，图片视频素材库
      * 选择文件之后，JS获取MD5值（brower-file-md5），传到后台，如果已上传过，则进度直接为100%

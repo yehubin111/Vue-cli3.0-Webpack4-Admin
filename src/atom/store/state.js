@@ -1,4 +1,5 @@
-export default {
+import stateData from './state-data';
+export default Object.assign({}, stateData, {
   nickname: '',
   itemlist: [],
 
@@ -130,6 +131,7 @@ export default {
   withcreate: true,
   cardcreate: true,
   wantupload: 0, // 将要上传的文件数量
+  imgselect: false, // 模板图片选择框状态
   // sync
   synclist: [], // 同步记录列表
   synctotal: 0,
@@ -241,7 +243,7 @@ export default {
     }
   ],
   adapplicationid: '', // appid 保存广告管理自定义列
-  adprojectid: '', 
+  adprojectid: '',
   adlisttimeout: false, // 广告管理列表超时情况处理
   adcount: 0,
   adsetcount: 0,
@@ -417,4 +419,4 @@ export default {
   tempdetail: null, // 模板详情
   tempimages: [], // 模板图片列表
   tempimagestotal: 0,
-}
+})

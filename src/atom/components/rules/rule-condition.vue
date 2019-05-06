@@ -372,11 +372,8 @@ export default {
             { label: "点击量", value: "clicks|1|点击量|true" },
             { label: "CPA", value: "cpa|1|CPA|true" },
             { label: "CPC", value: "cpc|1|CPC|true" },
-            // { label: "每点成本", value: "13|1" },
             { label: "点击率", value: "ctr|1|点击率|true" },
             { label: "成效率", value: "result_rate|1|成效率|true" },
-            // { label: "社交点击量", value: "16|1" },
-            // { label: "社交展示次数", value: "17|1" },
             {
               label: "单次独立点击费用",
               value: "cost_per_unique_click|1|单次独立点击费用|true"
@@ -385,8 +382,6 @@ export default {
               label: "独立用户点击量",
               value: "unique_clicks|1|独立用户点击量|true"
             },
-            // { label: "独立用户社交点击量", value: "20|1" },
-            // { label: "独立用户社交展示次数", value: "21|1" },
             { label: "今日花费", value: "today_spent|1|今日花费|false" },
             { label: "昨日花费", value: "yesterday_spent|1|昨日花费|false" },
             { label: "帖文互动", value: "post_engagement|1|帖文互动|true" },

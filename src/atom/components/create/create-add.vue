@@ -472,7 +472,7 @@ export default {
     },
     randomCreate() {
       // 随机再生成一张
-      this.setVideoImage("video");
+      this.setVideoImage("video", 1);
     },
     showBig(url) {
       this.bigImageVisible = true;
@@ -481,12 +481,13 @@ export default {
     hideBig() {
       this.bigImageVisible = false;
     },
-    async setVideoImage(type) {
+    async setVideoImage(type, rdtype) {
       let vio = this.processVIO[0];
       if (type == "video") {
         let res = await this.$store.dispatch("getVideoImg", {
           videoMd5: vio.videoHash,
-          videoUrl: vio.videoUrl
+          videoUrl: vio.videoUrl,
+          type: rdtype
         });
         if (res.data) {
           let obj = {

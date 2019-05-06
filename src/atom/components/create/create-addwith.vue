@@ -702,7 +702,7 @@ export default {
     },
     randomCreate(md5) {
       // 随机再生成一张
-      this.setVideoImage("video", md5);
+      this.setVideoImage("video", md5, 1);
     },
     showBig(url) {
       this.bigImageVisible = true;
@@ -711,13 +711,14 @@ export default {
     hideBig() {
       this.bigImageVisible = false;
     },
-    async setVideoImage(type, md5) {
+    async setVideoImage(type, md5, rdtype) {
       for (let i = 0; i < this.processVIO.length; i++) {
         let vio = this.processVIO[i];
         if (type == "video" && vio.videoHash == md5) {
           let res = await this.$store.dispatch("getVideoImg", {
             videoMd5: vio.videoHash,
-            videoUrl: vio.videoUrl
+            videoUrl: vio.videoUrl,
+            type: rdtype
           });
           if (res.data) {
             let obj = {

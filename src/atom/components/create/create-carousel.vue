@@ -493,7 +493,7 @@ export default {
     },
     randomCreate() {
       // 随机再生成一张
-      this.setVideoImage("video");
+      this.setVideoImage("video", 1);
     },
     showBig(url) {
       this.bigImageVisible = true;
@@ -502,7 +502,7 @@ export default {
     hideBig() {
       this.bigImageVisible = false;
     },
-    async setVideoImage(type) {
+    async setVideoImage(type, rdtype) {
       console.log(type);
       let idx = 0;
       let tab = this.tablist.find((v, i) => {
@@ -515,7 +515,8 @@ export default {
       if (type == "video") {
         let res = await this.$store.dispatch("getVideoImg", {
           videoMd5: vio.videoHash,
-          videoUrl: vio.videoUrl
+          videoUrl: vio.videoUrl,
+          type: rdtype
         });
         if (res.data) {
           tab.processVIO[0].fmname = res.data.imageMd5;

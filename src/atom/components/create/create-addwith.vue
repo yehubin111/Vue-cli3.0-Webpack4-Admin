@@ -1,5 +1,6 @@
 <template>
   <div class="alldialog">
+    <big-image @hideBig="hideBig" :bigImageUrl="bigImageUrl" :status="bigImageVisible"></big-image>
     <el-dialog title="批量新增创意" :visible.sync="dialogFormVisible" class="dialog" @close="toCancel">
       <el-form ref="form" :model="form" label-width="80px" class="cform">
         <el-form-item label="国家" class="cline">
@@ -151,7 +152,7 @@
                   <span>{{item.process}}%</span>
                 </p>
               </div>
-              <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
+              <!-- <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
               <div class="uploadFmbox" @click="showUploading(item.name)">
                 <vue-file-upload
                   v-show="!item.fmname"
@@ -169,7 +170,7 @@
                 >
                   <span slot="label"></span>
                 </vue-file-upload>
-              </div>
+              </div>-->
               <div class="videofm" v-show="item.fmname">
                 <p class="processname">
                   <span class="el-icon-picture-outline"></span>
@@ -184,6 +185,27 @@
                   </i>
                   <span>{{item.fmprocess}}%</span>
                 </p>
+                <div class="fmctrl">
+                  <el-button type="text" size="mini" @click="randomCreate(item.videoHash)">随机生成</el-button>
+                  <el-button type="text" size="mini">上传封面</el-button>
+                  <el-button type="text" size="mini" @click="showBig(item.fmUrl)">查看大图</el-button>
+                  <div class="uploadFmbox" @click="showUploading(item.name)">
+                    <vue-file-upload
+                      @matchMD5="matchMD5"
+                      @uploadFm="uploadFm"
+                      @uploadFmRes="uploadFmRes"
+                      @uploadFmError="uploadFmError"
+                      name="file"
+                      class="fileinputfm"
+                      :url="uploadFileUrl"
+                      :events="eventsFM"
+                      :requestOptions="fileOptionFM"
+                      :filters="imgfilters"
+                    >
+                      <span slot="label"></span>
+                    </vue-file-upload>
+                  </div>
+                </div>
               </div>
               <i
                 class="el-icon-error processclose processvideo"
@@ -407,6 +429,7 @@
 </template>
 
 <script>
+import BigImage from "./create-bigimage";
 import VueFileUpload from "vue-file-upload";
 import BMF from "browser-md5-file";
 import { mapState, mapGetters, mapMutations } from "vuex";
@@ -416,15 +439,16 @@ let bmf = new BMF();
 export default {
   props: ["status"],
   components: {
-    VueFileUpload
+    VueFileUpload,
+    BigImage
   },
   data() {
     return {
       ifcreate: true,
       dialogFormVisible: false,
       dialogFormVisible2: false,
-      dialogImageUrl: "",
-      dialogVisible: false,
+      bigImageVisible: false,
+      bigImageUrl: "",
       xtoken: localStorage.getItem("atom_token"),
       state: "",
       // desclength: [],
@@ -643,11 +667,63 @@ export default {
         type,
         on: "withcreate",
         vdname: this.fmvideoname,
-        callback: () => {
+        callback: res => {
           // 计算总数
           this.setTotal();
+          /**
+           * 20190505新增
+           * 上传完封面之后，与视频匹配保存到服务端
+           * 上传完视频之后，匹配之前保存的封面图
+           */
+          this.setVideoImage(type, res.data[0].md5);
         }
       });
+    },
+    randomCreate(md5) {
+      // 随机再生成一张
+      this.setVideoImage("video", md5);
+    },
+    showBig(url) {
+      this.bigImageVisible = true;
+      this.bigImageUrl = url;
+    },
+    hideBig() {
+      this.bigImageVisible = false;
+    },
+    async setVideoImage(type, md5) {
+      for (let i = 0; i < this.processVIO.length; i++) {
+        let vio = this.processVIO[i];
+        if (type == "video" && vio.videoHash == md5) {
+          let res = await this.$store.dispatch("getVideoImg", {
+            videoMd5: vio.videoHash,
+            videoUrl: vio.videoUrl
+          });
+          if (res.data) {
+            let obj = {
+              ...vio,
+              fmname: res.data.imageMd5 ? res.data.imageMd5 : "封面图",
+              fmUrl: res.data.imageUrl,
+              fmHash: res.data.imageMd5,
+              fmprocess: 100
+            };
+            this.processVIO.splice(i, 1);
+            this.processVIO.splice(i, 0, obj);
+          }
+          break;
+        }
+        if (type == "fm" && vio.fmHash == md5) {
+          let option = {
+            imageMd5: vio.fmHash,
+            imageUrl: vio.fmUrl,
+            videoMd5: vio.videoHash,
+            videoUrl: vio.videoUrl
+          };
+          this.$store.dispatch("saveVideoImg", { option });
+          break;
+        }
+      }
+      // if (type == "video") {
+      // }
     },
     onAddItem(files) {
       console.log(files);
@@ -686,12 +762,21 @@ export default {
       });
     },
     uploadFmRes(res) {
+      let that = this;
       this.SETSTATE({ k: "withcreate", v: true });
 
       this.processVIO.forEach(v => {
         if (v.fmname == res.data[0].originName) {
           v.fmUrl = res.data[0].targetName;
           v.fmHash = res.data[0].md5;
+
+          /**
+           * 20190505新增
+           * 上传完封面之后，与视频匹配保存到服务端
+           * 上传完视频之后，匹配之前保存的封面图
+           */
+          console.log(res.data[0].md5);
+          that.setVideoImage('fm', res.data[0].md5);
         }
       });
 
@@ -700,12 +785,6 @@ export default {
     },
     showUploading(name) {
       this.fmvideoname = name;
-      // uploading = Loading.service({
-      //   fullscreen: true,
-      //   background: "rgba(0, 0, 0, 0.8)",
-      //   text: "封面图上传中",
-      //   spinner: 'el-icon-loading'
-      // });
     },
     uploadFm(file, process) {
       this.disfile = file;
@@ -744,6 +823,13 @@ export default {
         if (v.name == res.data[0].originName) {
           v.videoUrl = res.data[0].targetName;
           v.videoHash = res.data[0].md5;
+
+          /**
+           * 20190505新增
+           * 上传完封面之后，与视频匹配保存到服务端
+           * 上传完视频之后，匹配之前保存的封面图
+           */
+          this.setVideoImage('video', res.data[0].md5);
         }
       });
     },
@@ -1109,29 +1195,16 @@ export default {
                   classify: self.form.classify.trim(),
                   countryId: countryid.join(","),
                   countryName: countryname.join(","),
-                  // createTime: "2018-07-24T05:46:07.326Z",
-                  // creater: "string",
-                  // creativityName: "string",
                   creativityText: b,
-                  // creativityTitle: c,
                   creativityType: self.form.type,
                   deeplink: self.form.deeplink,
                   card: JSON.stringify(a),
-                  // id: 0,
-                  // imageUrl:
-                  //   self.form.type == "0"
-                  //     ? JSON.stringify(a)
-                  //     : JSON.stringify(obj),
-                  // imageName: self.form.type == "1" ? fmname : imgname,
                   pageId: homepage.pageId,
                   pageLogo: homepage.picture,
                   pageName: homepage.name,
                   projectId: self.$route.params.id,
                   sex: this.form.sex == "0" ? "1,2" : this.form.sex,
-                  // status: 0,
                   token: self.xtoken
-                  // videoUrl: self.form.type == "1" ? JSON.stringify(a) : "",
-                  // videoName: self.form.type == "1" ? imgname : ""
                 };
 
                 option.push(item);
@@ -1173,14 +1246,10 @@ export default {
                   classify: self.form.classify.trim(),
                   countryId: countryid.join(","),
                   countryName: countryname.join(","),
-                  // createTime: "2018-07-24T05:46:07.326Z",
-                  // creater: "string",
-                  // creativityName: "string",
                   creativityText: b,
                   creativityTitle: c,
                   creativityType: self.form.type,
                   deeplink: self.form.deeplink,
-                  // id: 0,
                   imageUrl:
                     self.form.type == "0"
                       ? JSON.stringify(a)
@@ -1191,7 +1260,6 @@ export default {
                   pageName: homepage.name,
                   projectId: self.$route.params.id,
                   sex: this.form.sex == "0" ? "1,2" : this.form.sex,
-                  // status: 0,
                   token: self.xtoken,
                   videoUrl: self.form.type == "1" ? JSON.stringify(a) : "",
                   videoName: self.form.type == "1" ? imgname : ""
@@ -1204,9 +1272,13 @@ export default {
                  * 暂时做强制排除处理
                  */
                 if (item.imageUrl.length < 10)
-                  Msgerror(`imageName: ${imgname} 创建失败，请联系开发人员，并重新创建`);
+                  Msgerror(
+                    `imageName: ${imgname} 创建失败，请联系开发人员，并重新创建`
+                  );
                 else if (self.form.type == "1" && item.videoUrl.length < 10)
-                  Msgerror(`videoName: ${imgname} 创建失败，请联系开发人员，并重新创建`);
+                  Msgerror(
+                    `videoName: ${imgname} 创建失败，请联系开发人员，并重新创建`
+                  );
                 else option.push(item);
               });
             });
@@ -1401,6 +1473,18 @@ export default {
         height: 18px;
         line-height: 18px;
         display: block;
+      }
+    }
+    .fmctrl {
+      width: 200px;
+      padding-left: 6px;
+      .uploadFmbox {
+        position: absolute;
+        left: 226px;
+        top: 58px;
+        width: 49px;
+        height: 16px;
+        overflow: hidden;
       }
     }
     .processclose {

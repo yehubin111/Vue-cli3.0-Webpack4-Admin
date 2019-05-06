@@ -1312,8 +1312,8 @@ export default {
             success: res => { }
         })
     },
-    getVideoImg({ state, commit }, { videoMd5 }) {
-        let url = `${URL.getvideoimage}videoMd5=${videoMd5}`;
+    getVideoImg({ state, commit }, { videoMd5, videoUrl }) {
+        let url = `${URL.getvideoimage}videoMd5=${videoMd5}&videoUrl=${videoUrl}`;
 
         return Axios({
             url,

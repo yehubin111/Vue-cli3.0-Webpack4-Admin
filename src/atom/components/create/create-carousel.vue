@@ -171,7 +171,7 @@
                           <el-button type="text" size="mini" @click="showBig(g.fmUrl)">查看大图</el-button>
                           <div class="uploadFmbox">
                             <vue-file-upload
-                              @matchMD5="matchMD5"
+                              @checkUploadFm="checkUploadFm"
                               @uploadFm="uploadFm"
                               @uploadFmRes="uploadFmRes"
                               @uploadFmError="uploadFmError"
@@ -514,7 +514,8 @@ export default {
       let vio = tab.processVIO[0];
       if (type == "video") {
         let res = await this.$store.dispatch("getVideoImg", {
-          videoMd5: vio.videoHash
+          videoMd5: vio.videoHash,
+          videoUrl: vio.videoUrl
         });
         if (res.data) {
           tab.processVIO[0].fmname = res.data.imageMd5;
@@ -632,6 +633,12 @@ export default {
           g.processVIO[0].fmHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("fm");
     },
     uploadFm(file, process) {
       let self = this;
@@ -670,6 +677,12 @@ export default {
           g.processVIO[0].videoHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("video");
     },
     uploadVio(file, process) {
       let obj = {};

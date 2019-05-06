@@ -472,7 +472,7 @@ export default {
     },
     randomCreate() {
       // 随机再生成一张
-      this.setVideoImage('video');
+      this.setVideoImage("video");
     },
     showBig(url) {
       this.bigImageVisible = true;
@@ -485,12 +485,13 @@ export default {
       let vio = this.processVIO[0];
       if (type == "video") {
         let res = await this.$store.dispatch("getVideoImg", {
-          videoMd5: vio.videoHash
+          videoMd5: vio.videoHash,
+          videoUrl: vio.videoUrl
         });
         if (res.data) {
           let obj = {
             ...vio,
-            fmname: res.data.imageMd5,
+            fmname: res.data.imageMd5 ? res.data.imageMd5 : '封面图',
             fmUrl: res.data.imageUrl,
             fmHash: res.data.imageMd5,
             fmprocess: 100
@@ -550,6 +551,12 @@ export default {
           v.fmHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("fm");
     },
     // 封面图上传中回调
     uploadFm(file, process) {
@@ -593,6 +600,12 @@ export default {
           v.videoHash = res.data[0].md5;
         }
       });
+      /**
+       * 20190505新增
+       * 上传完封面之后，与视频匹配保存到服务端
+       * 上传完视频之后，匹配之前保存的封面图
+       */
+      this.setVideoImage("video");
     },
     uploadVio(file, process) {
       this.disfile = file;

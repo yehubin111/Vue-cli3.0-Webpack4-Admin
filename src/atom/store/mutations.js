@@ -1073,7 +1073,7 @@ export default {
         state.editcampaignlist = res.data;
     },
     CREATECAMPAIGNLIST(state, res) {
-        state.createcampaignlist = res.data;
+        state.createcampaignlist = res.data.list;
     },
     ADSETINFO(state, { res, applicationid }) {
         state.editadsetlist = res.data;

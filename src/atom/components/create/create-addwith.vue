@@ -327,7 +327,7 @@
                     <span>{{item.process}}%</span>
                   </p>
                 </div>
-                <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
+                <!-- <el-button type="text" class="fmbutton" v-show="!item.fmname">上传封面图</el-button>
                 <div class="uploadFmbox" @click="showUploading(item.name)">
                   <vue-file-upload
                     v-show="!item.fmname"
@@ -345,7 +345,7 @@
                   >
                     <span slot="label"></span>
                   </vue-file-upload>
-                </div>
+                </div> -->
                 <div class="videofm" v-show="item.fmname">
                   <p class="processname">
                     <span class="el-icon-picture-outline"></span>
@@ -360,6 +360,27 @@
                     </i>
                     <span>{{item.fmprocess}}%</span>
                   </p>
+                  <div class="fmctrl">
+                    <el-button type="text" size="mini" @click="randomCreate(item.videoHash)">随机生成</el-button>
+                    <el-button type="text" size="mini">上传封面</el-button>
+                    <el-button type="text" size="mini" @click="showBig(item.fmUrl)">查看大图</el-button>
+                    <div class="uploadFmbox" @click="showUploading(item.name)">
+                      <vue-file-upload
+                        @matchMD5="matchMD5"
+                        @uploadFm="uploadFm"
+                        @uploadFmRes="uploadFmRes"
+                        @uploadFmError="uploadFmError"
+                        name="file"
+                        class="fileinputfm"
+                        :url="uploadFileUrl"
+                        :events="eventsFM"
+                        :requestOptions="fileOptionFM"
+                        :filters="imgfilters"
+                      >
+                        <span slot="label"></span>
+                      </vue-file-upload>
+                    </div>
+                  </div>
                 </div>
                 <i
                   class="el-icon-error processclose processvideo"
@@ -1490,7 +1511,7 @@ export default {
     .processclose {
       position: absolute;
       left: 160px;
-      top: 50%;
+      top: 24px;
       transform: translate(0, -50%);
       color: #909399;
       cursor: pointer;

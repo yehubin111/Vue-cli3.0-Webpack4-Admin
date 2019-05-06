@@ -1209,7 +1209,7 @@ export default {
     .processclose {
       position: absolute;
       left: 160px;
-      top: 50%;
+      top: 24px;
       transform: translate(0, -50%);
       color: #909399;
       cursor: pointer;

@@ -1,6 +1,6 @@
 <template>
     <el-dialog :visible.sync="bigImageVisible" @close="toCancel">
-      <img width="100%" :src="'http://172.31.1.76/' + bigImageUrl" alt>
+      <img width="100%" :src="bigImageUrl" alt>
     </el-dialog>
 </template>
 

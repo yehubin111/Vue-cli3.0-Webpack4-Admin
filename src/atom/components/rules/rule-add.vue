@@ -193,7 +193,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="调整目标" v-show="form.ctrlmethodkey == 'balance' && ctrlway3.type != 'EVEN'" label-width="110px">
+        <el-form-item
+          label="调整目标"
+          v-show="form.ctrlmethodkey == 'balance' && ctrlway3.type != 'EVEN'"
+          label-width="110px"
+        >
           <el-tooltip class="item2" effect="dark" placement="top-start">
             <div slot="content">预算将按照此目标按比例调整</div>
             <i class="el-icon-warning"></i>
@@ -216,7 +220,11 @@
             </span>
           </p>
         </el-form-item>
-        <el-form-item label="接收对象" v-show="form.ctrlmethodkey == 'balance' && ctrlway3.type != 'EVEN'" label-width="110px">
+        <el-form-item
+          label="接收对象"
+          v-show="form.ctrlmethodkey == 'balance' && ctrlway3.type != 'EVEN'"
+          label-width="110px"
+        >
           <el-tooltip class="item2" effect="dark" placement="top-start">
             <div slot="content">即接受预算的对象，所有则平衡到所有对象；此外，还可指定是根据调整目标从大到小或者从小到大排的前几个作为接受对象</div>
             <i class="el-icon-warning"></i>
@@ -326,7 +334,7 @@
             :key="item.key"
             :label="item.name"
             :value="item.key"
-            :disabled="editschedulestatus == 'TRIGGER'"
+            :disabled="editschedulestatus == 'TRIGGER' || (form.ctrlmethodkey == 'balance' && !(item.key.split('|')[1] == 'DAILY' || item.key.split('|')[1] == 'CUSTOM'))"
           ></el-option>
         </el-select>
         <p v-show="form.schedulegrade == 'TRIGGER'">实时无需设置统计时间窗</p>
@@ -374,10 +382,10 @@ export default {
         { name: "投放中的全部广告", key: "AD", difkey: 6 }
       ],
       typeOption: [
-        { name: "暂停平分", key: 'EVEN' },
-        { name: "暂停按比例分", key: 'PROPORTIONAL' },
-        { name: "不暂停按比例分", key: 'NO_PAUSE_PROPORTIONAL' },
-        { name: "不暂停按比例分总预算", key: 'MATCHED_ONLY_PROPORTIONAL' }
+        { name: "暂停平分", key: "EVEN" },
+        { name: "暂停按比例分", key: "PROPORTIONAL" },
+        { name: "不暂停按比例分", key: "NO_PAUSE_PROPORTIONAL" },
+        { name: "不暂停按比例分总预算", key: "MATCHED_ONLY_PROPORTIONAL" }
       ],
       ctrlList: [],
       ctrlOption: [
@@ -621,13 +629,13 @@ export default {
     ...mapState(["commonaccount", "newrulelist", "indicator"]),
     // 统计指标, 不选择统计指标的情况下无法使用实时
     customIndicator() {
-      return this.indicator.filter(v => !this.specialIndicator.includes(v.value.split('|')[0]));
+      return this.indicator.filter(
+        v => !this.specialIndicator.includes(v.value.split("|")[0])
+      );
     }
   },
   methods: {
-    typeChange() {
-
-    },
+    typeChange() {},
     adInit(select, type) {
       this.adselect = select;
       this.form.account = [select[0].accountId];
@@ -736,14 +744,23 @@ export default {
       /**
        * 操作部分数据初始化逻辑
        */
-      this.form.ctrlmethod.push(executionSpec["execution_type"]);
+      this.form.ctrlmethod.push(
+        executionSpec["execution_type"] == "REBALANCE_BUDGET"
+          ? "CHANGE_BUDGET"
+          : executionSpec["execution_type"]
+      );
       let budget = evaluationSpec["filters"].find(
         v => v.field.indexOf("budget_reset_period") != -1
       );
       let changespec = executionSpec["execution_options"]
         ? executionSpec["execution_options"].find(v => v.field == "change_spec")
         : null;
-      // 如果存在则表示不是开启或关闭
+      let balancespec = executionSpec["execution_options"]
+        ? executionSpec["execution_options"].find(
+            v => v.field == "rebalance_spec"
+          )
+        : null;
+      // 如果存在则表示不是开启或关闭或重新平衡预算
       if (changespec) {
         if (budget)
           this.form.ctrlmethodkey =
@@ -785,6 +802,24 @@ export default {
         this.form.ctrlmethod.push(
           this.form.ctrlmethodkey + "_" + this.form.ctrlmethodwant
         );
+      } else if (balancespec) {
+        console.log(balancespec);
+        this.form.ctrlmethodkey = "balance";
+        this.form.ctrlmethodname = "平衡";
+        this.form.ctrlmethodwant = "resize";
+        this.form.ctrlmethod.push(
+          this.form.ctrlmethodkey + "_" + this.form.ctrlmethodwant
+        );
+        this.ctrlway3.type = balancespec["value"]["type"];
+        this.ctrlway3.campaign = balancespec["value"]["is_cross_campaign"];
+        this.ctrlway3.target = balancespec["value"]["target_field"];
+        this.ctrlway3.opposite = balancespec["value"]["is_inverse"];
+        this.ctrlway3.accept = balancespec["value"]["target_count"]
+          ? 2
+          : 1;
+        this.ctrlway3.arrange = balancespec["value"]["target_count"]
+          ? balancespec["value"]["target_count"]
+          : "";
       }
       /**
        * 操作部分数据初始化逻辑
@@ -910,8 +945,8 @@ export default {
       if (
         this.form.ctrlmethodkey == "daybudget" ||
         this.form.ctrlmethodkey == "totalbudget" ||
-        this.form.ctrlmethodkey == "bid" || 
-        this.form.ctrlmethodkey == 'balance'
+        this.form.ctrlmethodkey == "bid" ||
+        this.form.ctrlmethodkey == "balance"
       ) {
         this.trigger = false;
       }
@@ -929,9 +964,17 @@ export default {
         });
       }
       if (!this.editid) {
-        this.form.schedule = this.trigger ? "TRIGGER|" : "SCHEDULE|SEMI_HOURLY";
-        this.form.schedulegrade = this.trigger ? "TRIGGER" : "SCHEDULE";
-        this.form.schedulekey = this.trigger ? "" : "SEMI_HOURLY";
+        if (this.form.ctrlmethodkey == "balance") {
+          this.form.schedule = "SCHEDULE|DAILY";
+          this.form.schedulegrade = "SCHEDULE";
+          this.form.schedulekey = "DAILY";
+        } else {
+          this.form.schedule = this.trigger
+            ? "TRIGGER|"
+            : "SCHEDULE|SEMI_HOURLY";
+          this.form.schedulegrade = this.trigger ? "TRIGGER" : "SCHEDULE";
+          this.form.schedulekey = this.trigger ? "" : "SEMI_HOURLY";
+        }
       } else {
         this.form.schedule = "";
         this.form.schedulegrade = "";
@@ -1028,11 +1071,20 @@ export default {
       if (!this.form.ruleobject) return [false, "请选择规则应用对象"];
       if (this.form.ctrlmethod.length == 0) return [false, "请选择操作"];
       // 操作情况分类
-      if(this.form.ctrlmethodkey == 'balance') {
+      if (this.form.ctrlmethodkey == "balance") {
         if (!this.ctrlway3.type) return [false, "请选择类型"];
-        if (this.ctrlway3.type != 'EVEN' && !this.ctrlway3.target) return [false, "请选择调整目标"];
-        if (this.ctrlway3.type != 'EVEN' && this.ctrlway3.accept == 2 && !this.ctrlway3.arrange) return [false, "请输入接收对象排列顺序"];
-      } else if (this.form.ctrlmethodwant && this.form.ctrlmethodwant != "other") {
+        if (this.ctrlway3.type != "EVEN" && !this.ctrlway3.target)
+          return [false, "请选择调整目标"];
+        if (
+          this.ctrlway3.type != "EVEN" &&
+          this.ctrlway3.accept == 2 &&
+          !this.ctrlway3.arrange
+        )
+          return [false, "请输入接收对象排列顺序"];
+      } else if (
+        this.form.ctrlmethodwant &&
+        this.form.ctrlmethodwant != "other"
+      ) {
         if (!this.ctrlway1.ctrlnum) return [false, "请输入操作信息"];
         if (!this.ctrlway1.daybudget) return [false, "请输入预算"];
       } else if (this.form.ctrlmethodwant) {
@@ -1107,29 +1159,16 @@ export default {
           ]
         },
         executionSpec: {
-          execution_type: this.form.ctrlmethod[0],
-          execution_options: [
-            {
-              field: "action_frequency",
-              value: parseInt(this.frequency), // 频率分钟数
-              operator: "EQUAL"
-            }
-          ]
+          execution_type:
+            this.form.ctrlmethodkey == "balance"
+              ? "REBALANCE_BUDGET"
+              : this.form.ctrlmethod[0],
+          execution_options: []
         },
 
         name: this.form.rulename
       };
-      // 单日预算或者总预算
-      if (
-        this.form.ctrlmethodkey == "daybudget" ||
-        this.form.ctrlmethodkey == "totalbudget"
-      ) {
-        option["evaluationSpec"]["filters"].push({
-          field: "budget_reset_period",
-          value: [this.form.ctrlmethodkey == "daybudget" ? "DAY" : "LIFETIME"],
-          operator: "IN"
-        });
-      }
+
       let obj = {
         field: "change_spec",
         value: {
@@ -1183,21 +1222,49 @@ export default {
         };
         option["evaluationSpec"]["filters"].push(adobj);
       }
-      // 关闭或者开启操作无需传该条件
-      if (this.form.ctrlmethodkey == 'balance') {
-        let balanceobj = {
-          type: this.ctrlway3.type,
-          is_cross_campaign: this.ctrlway3.campaign
-        };
-        if(this.ctrlway3.type != 'EVEN') {
-          balanceobj['target_field'] = this.ctrlway3.target;
-          balanceobj['is_inverse'] = !this.ctrlway3.opposite;
-          if(this.ctrlway3.accept == 2)
-            balanceobj['target_count'] = this.ctrlway3.arrange;
-        }
-        option["executionSpec"]["rebalance_spec"] = balanceobj;
-      } else 
-        option["executionSpec"]["execution_options"].push(obj);
+      switch (this.form.ctrlmethodkey) {
+        case "daybudget":
+        case "totalbudget":
+          option["evaluationSpec"]["filters"].push({
+            field: "budget_reset_period",
+            value: [
+              this.form.ctrlmethodkey == "daybudget" ? "DAY" : "LIFETIME"
+            ],
+            operator: "IN"
+          });
+        case "bid":
+          // 添加操作频率
+          option["executionSpec"]["execution_options"].push({
+            field: "action_frequency",
+            value: parseInt(this.frequency), // 频率分钟数
+            operator: "EQUAL"
+          });
+          // 添加操作额外项
+          option["executionSpec"]["execution_options"].push(obj);
+          break;
+        /**
+         * 20190507新增逻辑，重新平衡预算操作
+         * 关闭或者开启操作无需执行这一步逻辑
+         */
+        case "balance":
+          let balanceobj = {
+            field: "rebalance_spec",
+            value: {
+              type: this.ctrlway3.type,
+              is_cross_campaign: this.ctrlway3.campaign
+            },
+            operator: "EQUAL"
+          };
+          if (this.ctrlway3.type != "EVEN") {
+            balanceobj["value"]["target_field"] = this.ctrlway3.target;
+            balanceobj["value"]["is_inverse"] = this.ctrlway3.opposite;
+            if (this.ctrlway3.accept == 2)
+              balanceobj["value"]["target_count"] = this.ctrlway3.arrange * 1;
+          }
+          option["executionSpec"]["execution_options"].push(balanceobj);
+          break;
+      }
+
       /**
        * 条件传参逻辑
        * 如果是选择了统计条件，并且选择了实时排期，则需要传trigger字段，参数为第一个统计条件

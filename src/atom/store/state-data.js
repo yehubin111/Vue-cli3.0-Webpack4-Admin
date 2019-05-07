@@ -1,7 +1,7 @@
 export default {
     // 规则管理全部指标
     indicator: [
-        { label: "已花费", value: "spent|true" }, // key | 操作类型 | name | 是否支持实时排期
+        { label: "已花费", value: "spent|true" }, // key | 是否支持实时排期
         { label: "总花费", value: "lifetime_spent|false" },
         { label: "频次", value: "frequency|true" },
         { label: "成效", value: "result|true" },

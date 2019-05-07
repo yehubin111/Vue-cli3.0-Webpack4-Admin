@@ -14,7 +14,8 @@
         content="亮起日期有数据，建议上传无数据的日期。上传亮起日期的留存，旧数据会被覆盖"
         placement="top-start"
       >
-        <div slot="content">图片总数：小于 10
+        <div slot="content">
+          图片总数：小于 10
           <br>推荐图片参数：宽高比 1.9:1
           <br>如果包含 Instagram 版位，请考虑使用正方形图片，以获得更好的表现
           <br>推荐图片尺寸：1,200 x 628 像素
@@ -131,13 +132,21 @@
         content="亮起日期有数据，建议上传无数据的日期。上传亮起日期的留存，旧数据会被覆盖"
         placement="top-start"
       >
-        <div slot="content">图片总数：小于 10
+        <div slot="content">
+          图片总数：小于 10
           <br>推荐图片参数：宽高比 1.9:1
           <br>如果包含 Instagram 版位，请考虑使用正方形图片，以获得更好的表现
           <br>推荐图片尺寸：1,200 x 628 像素
         </div>
         <i class="el-icon-question elnotice2"></i>
       </el-tooltip>
+      <el-button
+        :disabled="processIMG.length >= 10"
+        class="moreInfo"
+        size="small"
+        plain
+        @click="showTempImages"
+      >选择图片</el-button>
       <el-button
         class="moreInfo"
         type="primary"
@@ -423,6 +432,20 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    // 20190507新增，可以直接选择模板制作的图片
+    showTempImages() {
+      this.$emit("showTempImages", "active");
+    },
+    selectImage(img) {
+      this.processIMG = [];
+      this.processIMG.push({
+        name: img[0].md5,
+        process: 100,
+        imageUrl: img[0].filePath,
+        imageHash: img[0].md5
+      });
+      console.log(img);
+    },
     dataSet(n) {
       let create = JSON.parse(n.assetFeedSpec);
       this.form.homepage = n.pageId ? n.pageId : "";

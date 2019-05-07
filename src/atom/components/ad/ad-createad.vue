@@ -1,133 +1,138 @@
 <template>
-    <el-form class="form" :model="form" label-width="110px" label-position="left">
-      <el-form-item label="当前广告组">
-        <p v-if="mutil.adset">多项内容</p>
-        <el-select
-          class="formselect"
-          v-model="form.adset"
-          v-show="!mutil.adset"
-          :disabled="editId.length > 0"
-          filterable
-          remote
-          :remote-method="remoteMethod"
-          placeholder="请选择广告组"
-          @change="setFbAccountId"
-          :loading="adsetlistload"
-          loading-text="加载中..."
-        >
-          <el-option
-            v-for="item in createadsetlist"
-            :key="item.adSetId"
-            :label="item.adSetName+'('+item.adSetId+')'"
-            :value="item.adSetId + '|' + item.fbAccountId"
-          ></el-option>
-        </el-select>
-        <p class="wrongti" v-show="hascreatead">广告组不可用，此动态创意广告组已有广告</p>
-      </el-form-item>
-      <el-form-item label="广告编号" v-if="editId.length > 0">
-        <span class="adnum" id="copyAd">{{editId.length > 1? '多项内容': editId[0]}}</span>
-        <el-button
-          id="copyButtonAd"
-          data-clipboard-action="copy"
-          data-clipboard-target="#copyAd"
-          type="primary"
-          size="mini"
-          v-show="editId.length == 1"
-        >复制</el-button>
-      </el-form-item>
-      <el-form-item label="广告名称">
-        <p v-if="mutil.name">
-          <span v-show="mutilstatus.name">
-            多项内容，
-            <el-button type="text" @click="mutilstatus.name = !mutilstatus.name">编辑</el-button>
-          </span>
-          <span v-show="!mutilstatus.name">
-            多项内容，已编辑，
-            <el-button type="text" @click="mutilstatus.name = !mutilstatus.name">撤销编辑</el-button>
-          </span>
-        </p>
-        <el-input
-          class="forminput"
-          v-model="form.name"
-          placeholder="请输入广告名称"
-          v-show="!mutilstatus.name"
-        ></el-input>
-      </el-form-item>
-      <!--动态创意-->
-      <el-form-item label="创意" v-if="isactive">
-        <p v-if="mutil.type">
-          <span v-show="mutilstatus.type">
-            多项内容，{{activespecial? '不可同时编辑普通创意和动态创意':''}}
-            <el-button
-              type="text"
-              v-show="!activespecial"
-              @click="mutilstatus.type = !mutilstatus.type"
-            >编辑</el-button>
-          </span>
-          <span v-show="!mutilstatus.type">
-            多项内容，已编辑，将替换旧创意，
-            <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">撤销编辑</el-button>
-          </span>
-        </p>
-        <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
-          <el-radio :label="0">图片或视频</el-radio>
-          <el-radio :label="1">轮播图片</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label v-if="isactive" v-show="!mutilstatus.type">
-        <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
-          <el-tab-pane :label="'创建创意'" name="first">
-            <active-create :createType="form.type" :createObject="createObject" ref="activeCreate"></active-create>
-          </el-tab-pane>
-        </el-tabs>
-      </el-form-item>
-      <!--动态创意-->
-      <!--普通创意-->
-      <el-form-item label="创意" v-if="!isactive">
-        <p v-if="mutil.type">
-          <span v-show="mutilstatus.type">
-            多项内容，
-            <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">编辑</el-button>
-          </span>
-          <span v-show="!mutilstatus.type">
-            多项内容，已编辑，将替换旧创意，
-            <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">撤销编辑</el-button>
-          </span>
-        </p>
-        <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
-          <el-radio :label="0">单图片</el-radio>
-          <el-radio :label="1">单视频</el-radio>
-          <el-radio :label="2">轮播</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label v-if="!isactive" v-show="!mutilstatus.type">
-        <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
-          <el-tab-pane :label="editId.length > 0?'编辑创意':'创建创意'" name="first">
-            <creativity-carousel
-              ref="createCarousel"
-              v-if="form.type == 2"
-              :createObject="createObject"
-              @changeEdit="changeEdit"
-              @showTempImages="showTempImages"
-            ></creativity-carousel>
-            <creativity-normal
-              ref="createNormal"
-              v-else
-              :createType="form.type"
-              :createObject="createObject"
-              @changeEdit="changeEdit"
-              @showTempImages="showTempImages"
-            ></creativity-normal>
-          </el-tab-pane>
-          <el-tab-pane label="选择创意" name="second">
-            <div class="createlist">
-              <create-list ref="createList" :creativeType="form.type" @selectCreate="selectCreate"></create-list>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </el-form-item>
-      <!--普通创意-->
-    </el-form>
+  <el-form class="form" :model="form" label-width="110px" label-position="left">
+    <el-form-item label="当前广告组">
+      <p v-if="mutil.adset">多项内容</p>
+      <el-select
+        class="formselect"
+        v-model="form.adset"
+        v-show="!mutil.adset"
+        :disabled="editId.length > 0"
+        filterable
+        remote
+        :remote-method="remoteMethod"
+        placeholder="请选择广告组"
+        @change="setFbAccountId"
+        :loading="adsetlistload"
+        loading-text="加载中..."
+      >
+        <el-option
+          v-for="item in createadsetlist"
+          :key="item.adSetId"
+          :label="item.adSetName+'('+item.adSetId+')'"
+          :value="item.adSetId + '|' + item.fbAccountId"
+        ></el-option>
+      </el-select>
+      <p class="wrongti" v-show="hascreatead">广告组不可用，此动态创意广告组已有广告</p>
+    </el-form-item>
+    <el-form-item label="广告编号" v-if="editId.length > 0">
+      <span class="adnum" id="copyAd">{{editId.length > 1? '多项内容': editId[0]}}</span>
+      <el-button
+        id="copyButtonAd"
+        data-clipboard-action="copy"
+        data-clipboard-target="#copyAd"
+        type="primary"
+        size="mini"
+        v-show="editId.length == 1"
+      >复制</el-button>
+    </el-form-item>
+    <el-form-item label="广告名称">
+      <p v-if="mutil.name">
+        <span v-show="mutilstatus.name">
+          多项内容，
+          <el-button type="text" @click="mutilstatus.name = !mutilstatus.name">编辑</el-button>
+        </span>
+        <span v-show="!mutilstatus.name">
+          多项内容，已编辑，
+          <el-button type="text" @click="mutilstatus.name = !mutilstatus.name">撤销编辑</el-button>
+        </span>
+      </p>
+      <el-input
+        class="forminput"
+        v-model="form.name"
+        placeholder="请输入广告名称"
+        v-show="!mutilstatus.name"
+      ></el-input>
+    </el-form-item>
+    <!--动态创意-->
+    <el-form-item label="创意" v-if="isactive">
+      <p v-if="mutil.type">
+        <span v-show="mutilstatus.type">
+          多项内容，{{activespecial? '不可同时编辑普通创意和动态创意':''}}
+          <el-button
+            type="text"
+            v-show="!activespecial"
+            @click="mutilstatus.type = !mutilstatus.type"
+          >编辑</el-button>
+        </span>
+        <span v-show="!mutilstatus.type">
+          多项内容，已编辑，将替换旧创意，
+          <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">撤销编辑</el-button>
+        </span>
+      </p>
+      <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
+        <el-radio :label="0">图片或视频</el-radio>
+        <el-radio :label="1">轮播图片</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label v-if="isactive" v-show="!mutilstatus.type">
+      <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
+        <el-tab-pane :label="'创建创意'" name="first">
+          <active-create
+            :createType="form.type"
+            @showTempImages="showTempImages"
+            :createObject="createObject"
+            ref="activeCreate"
+          ></active-create>
+        </el-tab-pane>
+      </el-tabs>
+    </el-form-item>
+    <!--动态创意-->
+    <!--普通创意-->
+    <el-form-item label="创意" v-if="!isactive">
+      <p v-if="mutil.type">
+        <span v-show="mutilstatus.type">
+          多项内容，
+          <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">编辑</el-button>
+        </span>
+        <span v-show="!mutilstatus.type">
+          多项内容，已编辑，将替换旧创意，
+          <el-button type="text" @click="mutilstatus.type = !mutilstatus.type">撤销编辑</el-button>
+        </span>
+      </p>
+      <el-radio-group v-model="form.type" v-show="!mutilstatus.type">
+        <el-radio :label="0">单图片</el-radio>
+        <el-radio :label="1">单视频</el-radio>
+        <el-radio :label="2">轮播</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item label v-if="!isactive" v-show="!mutilstatus.type">
+      <el-tabs v-model="form.activeName" class="cardtab" type="card" @tab-click="handleClick">
+        <el-tab-pane :label="editId.length > 0?'编辑创意':'创建创意'" name="first">
+          <creativity-carousel
+            ref="createCarousel"
+            v-if="form.type == 2"
+            :createObject="createObject"
+            @changeEdit="changeEdit"
+            @showTempImages="showTempImages"
+          ></creativity-carousel>
+          <creativity-normal
+            ref="createNormal"
+            v-else
+            :createType="form.type"
+            :createObject="createObject"
+            @changeEdit="changeEdit"
+            @showTempImages="showTempImages"
+          ></creativity-normal>
+        </el-tab-pane>
+        <el-tab-pane label="选择创意" name="second">
+          <div class="createlist">
+            <create-list ref="createList" :creativeType="form.type" @selectCreate="selectCreate"></create-list>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </el-form-item>
+    <!--普通创意-->
+  </el-form>
 </template>
 
 <script>
@@ -167,7 +172,7 @@ export default {
         name: false,
         type: false
       },
-      selectkey: ''
+      selectkey: ""
     };
   },
   computed: {
@@ -191,16 +196,19 @@ export default {
     ...mapMutations(["SETSTATE"]),
     showTempImages(key) {
       this.selectkey = key;
-      this.$emit("showTempImages");
+      this.$emit("showTempImages", key);
     },
     selectImage(img) {
-      switch(this.selectkey) {
-        case 'normal':
+      switch (this.selectkey) {
+        case "normal":
           this.$refs.createNormal.selectImage(img);
-        break;
-        case 'carousel':
+          break;
+        case "carousel":
           this.$refs.createCarousel.selectImage(img);
-        break;
+          break;
+        case "active":
+          this.$refs.activeCreate.selectImage(img);
+          break;
       }
     },
     selectCreate(create) {

@@ -821,7 +821,11 @@ export default {
           this.form.ctrlmethodkey + "_" + this.form.ctrlmethodwant
         );
         this.ctrlway3.type = balancespec["value"]["type"];
-        this.ctrlway3.campaign = balancespec["value"]["is_cross_campaign"];
+        this.ctrlway3.campaign =
+          balancespec["value"]["is_cross_campaign"] == true ||
+          balancespec["value"]["is_cross_campaign"] == "1"
+            ? true
+            : false;
         this.ctrlway3.target = balancespec["value"]["target_field"]
           ? balancespec["value"]["target_field"]
           : "";

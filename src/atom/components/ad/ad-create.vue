@@ -1,6 +1,6 @@
 <template>
   <div class="create">
-    <select-img :status.sync="selectstatus" @select="selectImage"></select-img>
+    <select-img :status.sync="selectstatus" @select="selectImage" :multiple="selectkey == 'active'"></select-img>
     <transition name="slide-fade">
       <div class="cr-content" v-show="status">
         <div class="title">
@@ -59,14 +59,16 @@ export default {
       type: "",
       editId: [],
       editName: [],
-      ifEdit: false
+      ifEdit: false,
+      selectkey: ''
     };
   },
   mounted() {},
   methods: {
     ...mapMutations(["SETSTATE"]),
     // 20190507新增，可以直接选择模板制作的图片
-    showTempImages() {
+    showTempImages(key) {
+      this.selectkey = key;
       this.selectstatus = true;
     },
     selectImage(img) {

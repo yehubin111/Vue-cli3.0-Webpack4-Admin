@@ -465,7 +465,6 @@ export default {
         imageUrl: img[0].filePath,
         imageHash: img[0].md5
       });
-      console.log(img);
     },
     /**
      * 20181107新增，图片视频素材库

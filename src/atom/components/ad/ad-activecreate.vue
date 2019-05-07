@@ -24,6 +24,13 @@
         <i class="el-icon-question elnotice"></i>
       </el-tooltip>
       <el-button
+        :disabled="processIMG.length >= 10"
+        class="moreInfo"
+        size="small"
+        plain
+        @click="showTempImages"
+      >选择图片</el-button>
+      <el-button
         class="moreInfo"
         type="primary"
         size="small"
@@ -39,6 +46,7 @@
         @uploadError="uploadError"
         name="file"
         class="fileinput"
+        style="left: 90px"
         :url="uploadFileUrl"
         :events="eventsIMG"
         multiple
@@ -438,14 +446,23 @@ export default {
       this.$emit("showTempImages", "active");
     },
     selectImage(img) {
-      this.processIMG = [];
-      this.processIMG.push({
-        name: img[0].md5,
-        process: 100,
-        imageUrl: img[0].filePath,
-        imageHash: img[0].md5
-      });
-      console.log(img);
+      let addimg = [];
+      img.forEach(v => {
+        if(!this.processIMG.find(g => g.name == v.md5)) {
+          let obj = {
+            name: v.md5,
+            process: 100,
+            imageHash: v.md5,
+            imageUrl: v.filePath
+          }
+          addimg.push(obj);
+        }
+      })
+      this.processIMG = this.processIMG.concat(addimg);
+      if(this.processIMG.length > 10) {
+        this.processIMG = this.processIMG.slice(0, 10);
+        Msgwarning('图片素材最多上传10张');
+      }
     },
     dataSet(n) {
       let create = JSON.parse(n.assetFeedSpec);

@@ -1376,10 +1376,11 @@ export default {
       this.ctrlway3.type = "";
       this.ctrlway3.target = "";
       this.ctrlway3.opposite = true;
-      this.ctrlway3.accept = 2;
+      this.ctrlway3.accept = 1;
       this.ctrlway3.arrange = "";
       this.ctrlway3.campaign = false;
 
+      this.ctrlList = this.ctrlOption.slice(0, 2);
       this.frequency = "720"; // 操作频率
       this.timerange = ["LIFETIME"];
       this.editrule = null;

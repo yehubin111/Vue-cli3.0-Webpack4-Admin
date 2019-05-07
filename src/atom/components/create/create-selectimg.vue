@@ -1,7 +1,8 @@
 <template>
-  <el-dialog :visible.sync="selectimagestatus" @close="toCancel">
-    <temp-list :selectall.sync="selectall" :ctrluse.sync="ctrluse"></temp-list>
+  <el-dialog title="选择图片" :visible.sync="selectimagestatus" @close="toCancel" class="imgdialog">
+    <temp-list @change="selectChange"></temp-list>
     <div class="pageswitch">
+      <span>已选0/{{tempimagestotal}}</span>
       <el-pagination
         @size-change="pageSizeChange"
         @current-change="pageSwitch"
@@ -16,7 +17,7 @@
 </template>
 
 <script>
-import TempList from "../temp/temp-templist";
+import TempList from "./create-imagelist";
 import { mapState } from "vuex";
 export default {
   components: {
@@ -34,7 +35,8 @@ export default {
       pageindex: 1,
       pagesize: 20,
       selectall: false,
-      ctrluse: false
+      ctrluse: false,
+      selectcount: 0
     };
   },
   computed: {
@@ -64,5 +66,18 @@ export default {
 };
 </script>
 
-<style>
+<style lang="less">
+.imgdialog{
+  .el-dialog{
+    width: 70%;
+  }
+}
 </style>
+<style lang="less" scoped>
+.pageswitch{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
+

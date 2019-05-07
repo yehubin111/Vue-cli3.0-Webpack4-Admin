@@ -21,18 +21,7 @@ export default {
   },
   methods: {
     changeSelect() {
-      // 有勾选的情况下，可以用操作
-      if(this.tempimages.find(v => v.select)) {
-        this.$emit('update:ctrluse', true);
-      } else {
-        this.$emit('update:ctrluse', false);
-      }
-      // 没找到未选的，则为全选
-      if (!this.tempimages.find(v => !v.select)) {
-        this.$emit("update:selectall", true);
-      } else {
-        this.$emit("update:selectall", false);
-      }
+      this.$emit('change');
     }
   }
 };
@@ -49,7 +38,7 @@ export default {
     border: 1px solid #ddd;
     overflow: hidden;
     position: relative;
-    height: 285px;
+    height: 185px;
     .image {
       width: 100%;
       display: flex;

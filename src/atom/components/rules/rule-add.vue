@@ -812,8 +812,8 @@ export default {
         );
         this.ctrlway3.type = balancespec["value"]["type"];
         this.ctrlway3.campaign = balancespec["value"]["is_cross_campaign"];
-        this.ctrlway3.target = balancespec["value"]["target_field"];
-        this.ctrlway3.opposite = balancespec["value"]["is_inverse"];
+        this.ctrlway3.target = balancespec["value"]["target_field"] ? balancespec["value"]["target_field"] : '';
+        this.ctrlway3.opposite = balancespec["value"]["is_inverse"] ? balancespec["value"]["is_inverse"] : true;
         this.ctrlway3.accept = balancespec["value"]["target_count"]
           ? 2
           : 1;

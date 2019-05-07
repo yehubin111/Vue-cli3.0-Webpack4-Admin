@@ -456,6 +456,7 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    // 20190507新增，可以直接选择模板制作的图片
     selectImage(img) {
       this.processIMG = [];
       this.processIMG.push({

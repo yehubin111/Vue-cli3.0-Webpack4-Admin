@@ -20,7 +20,7 @@
       ></el-pagination>
     </div>
     <div class="selectctrl" v-if="multiple">
-      <span>已选0/{{tempimagestotal}}</span>
+      <span>已选{{selectcount}}/{{tempimagestotal}}</span>
       <p>
         <el-button @click="toCancel">取消</el-button>
         <el-button type="primary" @click="toSelect">确定</el-button>
@@ -87,6 +87,7 @@ export default {
       this.pageindex = 1;
       this.pagesize = 20;
       this.select = [];
+      this.selectcount = 0;
     },
     toSelect() {
       this.$emit("select", this.select);

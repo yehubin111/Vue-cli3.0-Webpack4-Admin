@@ -1,6 +1,7 @@
 <template>
   <div>
     <big-image @hideBig="hideBig" :bigImageUrl="bigImageUrl" :status="bigImageVisible"></big-image>
+    <select-img :status.sync="selectstatus" @select="selectImage"></select-img>
     <el-dialog
       title="新增轮播创意"
       :visible.sync="dialogFormVisible"
@@ -46,6 +47,13 @@
                   <el-button
                     v-show="item.processIMG.length == 0"
                     class="moreInfo"
+                    size="small"
+                    plain
+                    @click="selectstatus = !selectstatus"
+                  >选择图片</el-button>
+                  <el-button
+                    v-show="item.processIMG.length == 0"
+                    class="moreInfo"
                     type="primary"
                     size="small"
                   >上传图片</el-button>
@@ -58,6 +66,7 @@
                       @uploadError="uploadError"
                       name="file"
                       class="fileinput"
+                      style="left: 90px;"
                       :url="uploadFileUrl"
                       :events="eventsIMG"
                       :requestOptions="fileOption"
@@ -279,6 +288,7 @@
 </template>
 
 <script>
+import SelectImg from "./create-selectimg";
 import BigImage from "./create-bigimage";
 import VueFileUpload from "vue-file-upload";
 import BMF from "browser-md5-file";
@@ -290,10 +300,12 @@ export default {
   props: ["status"],
   components: {
     VueFileUpload,
-    BigImage
+    BigImage,
+    SelectImg
   },
   data() {
     return {
+      selectstatus: false,
       tablist: [
         {
           tab: "1",
@@ -466,6 +478,17 @@ export default {
     }
   },
   methods: {
+    // 20190507新增，可以直接选择模板制作的图片
+    selectImage(img) {
+      let prelist = this.tablist.find(v => v.name == this.tabvalue);
+      prelist.processIMG = [];
+      prelist.processIMG.push({
+        name: img[0].md5,
+        process: 100,
+        imageUrl: img[0].filePath,
+        imageHash: img[0].md5
+      });
+    },
     /**
      * 20181107新增，图片视频素材库
      * 选择文件之后，JS获取MD5值（brower-file-md5），传到后台，如果已上传过，则进度直接为100%

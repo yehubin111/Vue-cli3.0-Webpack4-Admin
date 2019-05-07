@@ -1,6 +1,7 @@
 <template>
   <div class="alldialog">
     <big-image @hideBig="hideBig" :bigImageUrl="bigImageUrl" :status="bigImageVisible"></big-image>
+    <select-img :status.sync="selectstatus" @select="selectImage" multiple></select-img>
     <el-dialog title="批量新增创意" :visible.sync="dialogFormVisible" class="dialog" @close="toCancel">
       <el-form ref="form" :model="form" label-width="80px" class="cform">
         <el-form-item label="国家" class="cline">
@@ -72,6 +73,7 @@
       <el-form ref="form" :model="form2" label-width="80px" class="cform">
         <!--非轮播类型图片上传-->
         <el-form-item v-show="form.type == 0" label="图片" class="cline uploadfile">
+          <el-button class="moreInfo" size="small" plain @click="selectstatus = !selectstatus">选择图片</el-button>
           <el-button class="moreInfo" type="primary" size="small">上传图片</el-button>
           <vue-file-upload
             ref="vueFileUploader"
@@ -82,6 +84,7 @@
             @uploadError="uploadError"
             name="file"
             class="fileinput"
+            style="left: 90px;"
             :url="uploadFileUrl"
             :events="eventsIMG"
             multiple
@@ -345,7 +348,7 @@
                   >
                     <span slot="label"></span>
                   </vue-file-upload>
-                </div> -->
+                </div>-->
                 <div class="videofm" v-show="item.fmname">
                   <p class="processname">
                     <span class="el-icon-picture-outline"></span>
@@ -450,6 +453,7 @@
 </template>
 
 <script>
+import SelectImg from "./create-selectimg";
 import BigImage from "./create-bigimage";
 import VueFileUpload from "vue-file-upload";
 import BMF from "browser-md5-file";
@@ -461,7 +465,8 @@ export default {
   props: ["status"],
   components: {
     VueFileUpload,
-    BigImage
+    BigImage,
+    SelectImg
   },
   data() {
     return {
@@ -625,7 +630,8 @@ export default {
         actions: "请选择行动号召",
         imgvideo: "请上传图片",
         videoUrl: "请上传视频"
-      }
+      },
+      selectstatus: false
     };
   },
   computed: {
@@ -672,6 +678,22 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    // 20190507新增，可以直接选择模板制作的图片
+    selectImage(img) {
+      let addimg = [];
+      img.forEach(v => {
+        if(!this.processIMG.find(g => g.name == v.md5)) {
+          let obj = {
+            name: v.md5,
+            process: 100,
+            imageHash: v.md5,
+            imageUrl: v.filePath
+          }
+          addimg.push(obj);
+        }
+      })
+      this.processIMG = this.processIMG.concat(addimg);
+    },
     /**
      * 20181107新增，图片视频素材库
      * 选择文件之后，JS获取MD5值（brower-file-md5），传到后台，如果已上传过，则进度直接为100%
@@ -798,7 +820,7 @@ export default {
            * 上传完视频之后，匹配之前保存的封面图
            */
           console.log(res.data[0].md5);
-          that.setVideoImage('fm', res.data[0].md5);
+          that.setVideoImage("fm", res.data[0].md5);
         }
       });
 
@@ -851,7 +873,7 @@ export default {
            * 上传完封面之后，与视频匹配保存到服务端
            * 上传完视频之后，匹配之前保存的封面图
            */
-          this.setVideoImage('video', res.data[0].md5);
+          this.setVideoImage("video", res.data[0].md5);
         }
       });
     },

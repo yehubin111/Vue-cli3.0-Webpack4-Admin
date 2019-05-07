@@ -35,7 +35,7 @@ export default {
 .el-header {
   padding: 0;
   background: linear-gradient(to right, #445ed2, #3297ff);
-  min-width: 1200px;
+  min-width: 1440px;
 }
 .contain {
   margin: 0 auto;

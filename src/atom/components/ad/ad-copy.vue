@@ -56,7 +56,7 @@
         <div class="target">
           <el-radio v-model="targetArea" :label="3">新广告系列</el-radio>
           <p v-show="targetArea == 3">
-            <el-input v-model="newName" class="alreadyHas" placeholder="请输入内容"></el-input>
+            <el-input v-model="newName" class="alreadyHas" placeholder="请输入新广告系列名称"></el-input>
             <el-form-item label="目标广告账户" label-width="100px">
               <el-select
                 v-model="account"

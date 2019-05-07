@@ -519,6 +519,15 @@ export default {
         "updated_time",
         "start_time"
       ],
+      // 排除特殊指标，不能当成重新平衡预算调整目标
+      otherIndicator: [
+        "daily_ratio_spent",
+        "lifetime_ratio_spent",
+        "audience_reached_percentage",
+        "link_clicks",
+        "actions",
+        "estimated_budget_spending_percentage"
+      ],
       targetList: [
         // 调整目标list
         {
@@ -627,10 +636,12 @@ export default {
   },
   computed: {
     ...mapState(["commonaccount", "newrulelist", "indicator"]),
-    // 统计指标, 不选择统计指标的情况下无法使用实时
+    // 统计指标, 重新平衡预算调整目标列表
     customIndicator() {
       return this.indicator.filter(
-        v => !this.specialIndicator.includes(v.value.split("|")[0])
+        v =>
+          !this.specialIndicator.includes(v.value.split("|")[0]) &&
+          !this.otherIndicator.includes(v.value.split("|")[0])
       );
     }
   },
@@ -803,7 +814,6 @@ export default {
           this.form.ctrlmethodkey + "_" + this.form.ctrlmethodwant
         );
       } else if (balancespec) {
-        console.log(balancespec);
         this.form.ctrlmethodkey = "balance";
         this.form.ctrlmethodname = "平衡";
         this.form.ctrlmethodwant = "resize";
@@ -812,11 +822,13 @@ export default {
         );
         this.ctrlway3.type = balancespec["value"]["type"];
         this.ctrlway3.campaign = balancespec["value"]["is_cross_campaign"];
-        this.ctrlway3.target = balancespec["value"]["target_field"] ? balancespec["value"]["target_field"] : '';
-        this.ctrlway3.opposite = balancespec["value"]["is_inverse"] ? balancespec["value"]["is_inverse"] : true;
-        this.ctrlway3.accept = balancespec["value"]["target_count"]
-          ? 2
-          : 1;
+        this.ctrlway3.target = balancespec["value"]["target_field"]
+          ? balancespec["value"]["target_field"]
+          : "";
+        this.ctrlway3.opposite = balancespec["value"]["is_inverse"]
+          ? balancespec["value"]["is_inverse"]
+          : true;
+        this.ctrlway3.accept = balancespec["value"]["target_count"] ? 2 : 1;
         this.ctrlway3.arrange = balancespec["value"]["target_count"]
           ? balancespec["value"]["target_count"]
           : "";

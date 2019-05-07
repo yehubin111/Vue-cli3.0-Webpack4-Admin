@@ -21,6 +21,7 @@ export default {
   },
   methods: {
     changeSelect() {
+      this.$emit('change');
       // 有勾选的情况下，可以用操作
       if(this.tempimages.find(v => v.select)) {
         this.$emit('update:ctrluse', true);

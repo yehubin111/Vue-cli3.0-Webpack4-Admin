@@ -23,13 +23,13 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item v-show="form.type == 0" label="图片" class="cline uploadfile">
-            <!-- <el-button
+            <el-button
               v-show="processIMG.length == 0"
               class="moreInfo"
               size="small"
               plain
               @click="toSelectImage"
-            >选择图片</el-button> -->
+            >选择图片</el-button>
             <el-button
               v-show="processIMG.length == 0"
               class="moreInfo"

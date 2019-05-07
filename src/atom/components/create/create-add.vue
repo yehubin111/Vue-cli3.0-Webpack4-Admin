@@ -1,6 +1,7 @@
 <template>
   <div>
     <big-image @hideBig="hideBig" :bigImageUrl="bigImageUrl" :status="bigImageVisible"></big-image>
+    <select-img :status.sync="selectstatus" @select="selectImage"></select-img>
     <el-dialog
       title="新增创意"
       :visible.sync="dialogFormVisible"
@@ -28,7 +29,7 @@
               class="moreInfo"
               size="small"
               plain
-              @click="toSelectImage"
+              @click="selectstatus = !selectstatus"
             >选择图片</el-button>
             <el-button
               v-show="processIMG.length == 0"
@@ -249,6 +250,7 @@
 </template>
 
 <script>
+import SelectImg from "./create-selectimg";
 import BigImage from "./create-bigimage";
 import VueFileUpload from "vue-file-upload";
 import BMF from "browser-md5-file";
@@ -260,10 +262,12 @@ export default {
   props: ["status"],
   components: {
     VueFileUpload,
-    BigImage
+    BigImage,
+    SelectImg
   },
   data() {
     return {
+      selectstatus: false,
       ifcreate: true, // 为false则视频或者图片正在上传中，此时无法提交当前表单
       bigImageVisible: false,
       bigImageUrl: "",
@@ -452,8 +456,15 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
-    toSelectImage() {
-      this.SETSTATE({k: 'imgselect', v: true});
+    selectImage(img) {
+      this.processIMG = [];
+      this.processIMG.push({
+        name: img[0].md5,
+        process: 100,
+        imageUrl: img[0].filePath,
+        imageHash: img[0].md5
+      });
+      console.log(img);
     },
     /**
      * 20181107新增，图片视频素材库
@@ -503,7 +514,7 @@ export default {
         if (res.data) {
           let obj = {
             ...vio,
-            fmname: res.data.imageMd5 ? res.data.imageMd5 : '封面图',
+            fmname: res.data.imageMd5 ? res.data.imageMd5 : "封面图",
             fmUrl: res.data.imageUrl,
             fmHash: res.data.imageMd5,
             fmprocess: 100

@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="ie=edge"><link rel=bookmark type=image/x-icon href=/favicon.ico><link rel="shortcut icon" href=/favicon.ico><link rel=icon href=/favicon.ico><title>总览</title><style>.el-menu-item.specialitem {
             color: #303133;
-        }</style><link href=/css/chunk-vendors.9c8e3772.css rel=preload as=style><link href=/css/index.1d5e9ca9.css rel=preload as=style><link href=/js/chunk-vendors.5ab2e0d7.js rel=preload as=script><link href=/js/index.bd4b5609.js rel=preload as=script><link href=/css/chunk-vendors.9c8e3772.css rel=stylesheet><link href=/css/index.1d5e9ca9.css rel=stylesheet></head><body><div id=app></div><script>function taskDetail() {
+        }</style><link href=/css/chunk-vendors.6c51e417.css rel=preload as=style><link href=/css/index.6248e1b0.css rel=preload as=style><link href=/js/chunk-vendors.141fe86b.js rel=preload as=script><link href=/js/index.651a66ff.js rel=preload as=script><link href=/css/chunk-vendors.6c51e417.css rel=stylesheet><link href=/css/index.6248e1b0.css rel=stylesheet></head><body><div id=app></div><script>function taskDetail() {
 
         }
 
@@ -30,22 +30,32 @@
             new: 'adfilter-condition'
         }
         // 广告管理自定义列缓存名称
+        // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
+        const adOptionSelectLS = {
+            old: '',
+            new: 'admanage-select'
+        }
         const adOptionLS = {
-            old: 'adManage-option',
-            new: 'admanage-option'
+            old: 'admanage-option',
+            new: 'admanage-option-v2'
         }
         const adEventLS = {
-            old: '',
-            new: 'adManage-event'
+            old: 'adManage-event',
+            new: 'admanage-event-v2'
         }
         // 总览自定义列缓存名称
+        // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
+        const pandectSelectLS = {
+            old: '',
+            new: 'pandect-select'
+        }
         const pandectOptionLS = {
-            old: 'pandect-option',
-            new: 'pandectfilter-option'
+            old: 'pandectfilter-option',
+            new: 'pandectfilter-option-v2'
         }
         const pandectEventLS = {
-            old: '',
-            new: 'pandect-event'
+            old: 'pandect-event',
+            new: 'pandect-event-v2'
         }</script><style>.el-tooltip__popper {
             max-width: 80%;
         }
@@ -129,4 +139,4 @@
 
         body .el-table colgroup.gutter {
             display: table-cell !important;
-        } */</style><script src=/js/chunk-vendors.5ab2e0d7.js></script><script src=/js/index.bd4b5609.js></script></body></html>
+        } */</style><script src=/js/chunk-vendors.141fe86b.js></script><script src=/js/index.651a66ff.js></script></body></html>

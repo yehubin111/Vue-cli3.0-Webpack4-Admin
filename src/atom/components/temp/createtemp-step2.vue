@@ -230,7 +230,7 @@ export default {
           });
         }, 500);
       } else {
-        Msgsuccess("制作失败");
+        Msgerror("制作失败");
       }
     },
     convertBase64UrlToBlob(urlData) {

@@ -55,12 +55,10 @@
     <edit-country :status="status7" @cancelAddbm="cancelAddbm" :oldid="oldid" :oldcountry="oldcountry"></edit-country>
     <create-sync :status="status8" @cancelAddbm="cancelAddbm" @toSync="toSync" :ifsyncall="ifsyncall"></create-sync>
     <create-carousel :status="status9" @cancelAddbm="cancelAddbm"></create-carousel>
-    <select-img @hideSelect="hideSelect" :status="selectstatus"></select-img>
   </div>
 </template>
 
 <script>
-import SelectImg from './create-selectimg';
 import BreadCrumb from '@/atom/components/project-breadcrumb';
 import CreateSync from "./create-sync";
 import EditCountry from "./create-editcountry";
@@ -83,8 +81,7 @@ export default {
     EditCountry,
     CreateSync,
     CreateCarousel,
-    BreadCrumb,
-    SelectImg
+    BreadCrumb
   },
   data() {
     return {
@@ -212,20 +209,13 @@ export default {
       "countries",
       "crtotal",
       "crpagesize",
-      "createchecked",
-      "imgselect"
+      "createchecked"
       // "createcheckstatus"
     ]),
-    ...mapGetters(["allcheckidstatus", "createcheckstatus"]),
-    selectstatus() {
-      return this.imgselect;
-    }
+    ...mapGetters(["allcheckidstatus", "createcheckstatus"])
   },
   methods: {
     ...mapMutations(["ALLSELECT", "SETSTATE"]),
-    hideSelect() {
-      this.SETSTATE({k: 'imgselect', v: false});
-    },
     toSync(ar) {
       let accountIds = ar.join(",");
       let ids = this.allcheckidstatus.map(v => v.id).join(",");

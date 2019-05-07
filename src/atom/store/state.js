@@ -131,7 +131,7 @@ export default Object.assign({}, stateData, {
   withcreate: true,
   cardcreate: true,
   wantupload: 0, // 将要上传的文件数量
-  imgselect: false, // 模板图片选择框状态
+  // imgselect: false, // 模板图片选择框状态
   // sync
   synclist: [], // 同步记录列表
   synctotal: 0,

@@ -36,10 +36,12 @@
       </el-form-item>
       <el-form-item label="广告组名称">
         <p v-if="mutil.name">
-          <span v-show="mutilstatus.name">多项内容，
+          <span v-show="mutilstatus.name">
+            多项内容，
             <el-button type="text" @click="mutilstatus.name = !mutilstatus.name">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.name">多项内容，已编辑，
+          <span v-show="!mutilstatus.name">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.name = !mutilstatus.name">撤销编辑</el-button>
           </span>
         </p>
@@ -60,10 +62,12 @@
       </el-form-item>
       <el-form-item label="国家">
         <p v-if="mutil.country">
-          <span v-show="mutilstatus.country">多项内容，
+          <span v-show="mutilstatus.country">
+            多项内容，
             <el-button type="text" @click="mutilstatus.country = !mutilstatus.country">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.country">多项内容，已编辑，
+          <span v-show="!mutilstatus.country">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.country = !mutilstatus.country">撤销编辑</el-button>
           </span>
         </p>
@@ -89,9 +93,9 @@
         <el-select
           class="formselect"
           v-model="form.action"
-          disabled
           placeholder="请选择应用"
           v-show="!mutilstatus.action"
+          @change="getPlatform"
         >
           <el-option
             v-for="(l, index) in adapplist"
@@ -101,7 +105,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="平台">
+      <el-form-item label="平台" v-show="form.action">
         <p v-if="mutil.platform">多项内容</p>
         <el-radio-group v-model="form.platform" @change="toGetsystem" v-show="!mutil.platform">
           <el-radio
@@ -114,10 +118,12 @@
       </el-form-item>
       <el-form-item label="系统版本" class="cline versionline" v-show="form.platform != ''">
         <p v-if="mutil.version">
-          <span v-show="mutilstatus.version">多项内容，
+          <span v-show="mutilstatus.version">
+            多项内容，
             <el-button type="text" @click="mutilstatus.version = !mutilstatus.version">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.version">多项内容，已编辑，
+          <span v-show="!mutilstatus.version">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.version = !mutilstatus.version">撤销编辑</el-button>
           </span>
         </p>
@@ -152,10 +158,12 @@
       </el-form-item>
       <el-form-item label="受众" class="cline">
         <p v-if="mutil.target">
-          <span v-show="mutilstatus.target">多项内容，
+          <span v-show="mutilstatus.target">
+            多项内容，
             <el-button type="text" @click="mutilstatus.target = !mutilstatus.target">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.target">多项内容，已编辑，
+          <span v-show="!mutilstatus.target">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.target = !mutilstatus.target">撤销编辑</el-button>
           </span>
         </p>
@@ -169,7 +177,11 @@
           filterable
           placeholder="请选择受众，可搜索"
         >
-          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label.split('_')[1]">
+          <el-option-group
+            v-for="group in genertarget"
+            :key="group.label"
+            :label="group.label.split('_')[1]"
+          >
             <el-option
               v-for="item in group.options"
               :key="item.code"
@@ -196,7 +208,11 @@
           filterable
           placeholder="请选择受众，可搜索"
         >
-          <el-option-group v-for="group in genertarget" :key="group.label" :label="group.label.split('_')[1]">
+          <el-option-group
+            v-for="group in genertarget"
+            :key="group.label"
+            :label="group.label.split('_')[1]"
+          >
             <el-option
               v-for="item in group.options"
               :key="item.code"
@@ -209,10 +225,12 @@
       </el-form-item>
       <el-form-item label="预算">
         <p v-if="mutil.moneytype">
-          <span v-show="mutilstatus.moneytype">多项内容，
+          <span v-show="mutilstatus.moneytype">
+            多项内容，
             <el-button type="text" @click="mutilstatus.moneytype = !mutilstatus.moneytype">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.moneytype">多项内容，已编辑，
+          <span v-show="!mutilstatus.moneytype">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.moneytype = !mutilstatus.moneytype">撤销编辑</el-button>
           </span>
         </p>
@@ -263,10 +281,12 @@
       </el-form-item>
       <el-form-item label="设备" v-show="form.platform != ''">
         <p v-if="mutil.equip">
-          <span v-show="mutilstatus.equip">多项内容，
+          <span v-show="mutilstatus.equip">
+            多项内容，
             <el-button type="text" @click="mutilstatus.equip = !mutilstatus.equip">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.equip">多项内容，已编辑，
+          <span v-show="!mutilstatus.equip">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.equip = !mutilstatus.equip">撤销编辑</el-button>
           </span>
         </p>
@@ -282,10 +302,12 @@
       </el-form-item>
       <el-form-item label="性别">
         <p v-if="mutil.sex">
-          <span v-show="mutilstatus.sex">多项内容，
+          <span v-show="mutilstatus.sex">
+            多项内容，
             <el-button type="text" @click="mutilstatus.sex = !mutilstatus.sex">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.sex">多项内容，已编辑，
+          <span v-show="!mutilstatus.sex">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.sex = !mutilstatus.sex">撤销编辑</el-button>
           </span>
         </p>
@@ -297,10 +319,12 @@
       </el-form-item>
       <el-form-item label="年龄" class="cline">
         <p v-if="mutil.age">
-          <span v-show="mutilstatus.age">多项内容，
+          <span v-show="mutilstatus.age">
+            多项内容，
             <el-button type="text" @click="mutilstatus.age = !mutilstatus.age">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.age">多项内容，已编辑，
+          <span v-show="!mutilstatus.age">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.age = !mutilstatus.age">撤销编辑</el-button>
           </span>
         </p>
@@ -315,10 +339,12 @@
       </el-form-item>
       <el-form-item label="语言">
         <p v-if="mutil.language">
-          <span v-show="mutilstatus.language">多项内容，
+          <span v-show="mutilstatus.language">
+            多项内容，
             <el-button type="text" @click="mutilstatus.language = !mutilstatus.language">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.language">多项内容，已编辑，
+          <span v-show="!mutilstatus.language">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.language = !mutilstatus.language">撤销编辑</el-button>
           </span>
         </p>
@@ -340,10 +366,12 @@
       </el-form-item>
       <el-form-item label="兴趣">
         <p v-if="mutil.interest">
-          <span v-show="mutilstatus.interest">多项内容，
+          <span v-show="mutilstatus.interest">
+            多项内容，
             <el-button type="text" @click="mutilstatus.interest = !mutilstatus.interest">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.interest">多项内容，已编辑，
+          <span v-show="!mutilstatus.interest">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.interest = !mutilstatus.interest">撤销编辑</el-button>
           </span>
         </p>
@@ -365,10 +393,12 @@
       </el-form-item>
       <el-form-item label="自动版位">
         <p v-if="mutil.auto">
-          <span v-show="mutilstatus.auto">多项内容，
+          <span v-show="mutilstatus.auto">
+            多项内容，
             <el-button type="text" @click="mutilstatus.auto = !mutilstatus.auto">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.auto">多项内容，已编辑，
+          <span v-show="!mutilstatus.auto">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.auto = !mutilstatus.auto">撤销编辑</el-button>
           </span>
         </p>
@@ -398,10 +428,12 @@
       </el-form-item>
       <el-form-item label="出价" class="cline">
         <p v-if="mutil.bid">
-          <span v-show="mutilstatus.bid">多项内容，
+          <span v-show="mutilstatus.bid">
+            多项内容，
             <el-button type="text" @click="mutilstatus.bid = !mutilstatus.bid">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.bid">多项内容，已编辑，
+          <span v-show="!mutilstatus.bid">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.bid = !mutilstatus.bid">撤销编辑</el-button>
           </span>
         </p>
@@ -418,10 +450,12 @@
       </el-form-item>
       <el-form-item label="用户过滤" class="cline">
         <p v-if="mutil.filtra">
-          <span v-show="mutilstatus.filtra">多项内容，
+          <span v-show="mutilstatus.filtra">
+            多项内容，
             <el-button type="text" @click="mutilstatus.filtra = !mutilstatus.filtra">编辑</el-button>
           </span>
-          <span v-show="!mutilstatus.filtra">多项内容，已编辑，
+          <span v-show="!mutilstatus.filtra">
+            多项内容，已编辑，
             <el-button type="text" @click="mutilstatus.filtra = !mutilstatus.filtra">撤销编辑</el-button>
           </span>
         </p>
@@ -586,7 +620,7 @@ export default {
       this.$store.dispatch("generTargetList", { fb_account_ids });
     },
     showBidChart() {
-      if (!this.form.country) {
+      if (this.form.country.length == 0 || !this.form.action) {
         return;
       }
       // 20181105新增出价指南数据
@@ -595,7 +629,7 @@ export default {
         this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
       this.$store.dispatch("bidGuide", {
         country,
-        fbApplicationId: this.actions,
+        fbApplicationId: this.form.action,
         billingEvent
       });
     },
@@ -699,8 +733,6 @@ export default {
         return;
       }
 
-      this.form.applicationid = this.actions;
-
       /**
        * 组合数据
        * 如果是多项已编辑状态，或者单项情况，则获取form中已编辑数据
@@ -715,7 +747,7 @@ export default {
             : this.form.campaign.split("|")[1];
           obj.adSet = v.adsetId;
           obj.adSetName = this.mutilstatus.name ? v.name : this.form.name;
-          obj.applicationId = this.form.applicationid;
+          obj.applicationId = this.form.action;
           obj.dynamicCreative = v.isDynamicCreative;
           /**
            * 受众
@@ -881,12 +913,11 @@ export default {
       this.SETSTATE({ k: "genertarget", v: [] });
       this.editArray = [];
 
-      let action = this.form.action;
       this.form = {
         campaign: "",
         name: "",
         country: [],
-        action: action,
+        action: "",
         activecreate: false,
         platform: "",
         target: [],
@@ -964,16 +995,22 @@ export default {
         });
       }
 
-      if (this.actions) {
-        this.form.action = this.actions;
-        this.$store.dispatch("getCreatePlatform", {
-          applicationid: this.form.action
-        });
-      }
       // 初始化重置是否已改动状态
       setTimeout(() => {
         this.$emit("changeEdit", false);
       }, 100);
+    },
+    getPlatform() {
+      // 选择应用之后获取出价指南数据
+      this.showBidChart();
+
+      this.form.platform = '';
+      this.form.lowversion = "";
+      this.form.highversion = "";
+      this.SETSTATE({k: 'system', v: []});
+      this.$store.dispatch("getCreatePlatform", {
+        applicationid: this.form.action
+      });
     }
   },
   computed: {
@@ -994,11 +1031,6 @@ export default {
     equip() {
       return this.form.platform;
     },
-    actions() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id)
-        .applicationId;
-    }
   },
   mounted() {
     // 新建编辑实例，绑定到操作按钮上
@@ -1138,7 +1170,8 @@ export default {
             [...new Set(n.map(v => v.maxage))].length > 1
               ? true
               : false,
-          language: n.length > 1 && this.form.language.length == 0 ? true : false,
+          language:
+            n.length > 1 && this.form.language.length == 0 ? true : false,
           interest:
             n.length > 1 && this.form.interest.length == 0 ? true : false,
           auto: !auto ? true : false,
@@ -1174,13 +1207,6 @@ export default {
         }, 100);
       }
     },
-    // actions(n, o) {
-      // if (n) {
-      //   let applicationid = n;
-      //   this.$store.dispatch("getCreatePlatform", { applicationid });
-      //   this.form.action = n;
-      // }
-    // },
     equip(n, o) {
       this.form.equip =
         n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];

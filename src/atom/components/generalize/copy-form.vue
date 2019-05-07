@@ -687,7 +687,7 @@ export default {
     //   this.$store.dispatch('classifyFilterCount', {planid, creativetype, classify})
     // },
     showBidChart() {
-      if (this.form.country.length == 0) {
+      if (this.form.country.length == 0 || !this.form.actions) {
         return;
       }
       // 20181105新增出价指南数据

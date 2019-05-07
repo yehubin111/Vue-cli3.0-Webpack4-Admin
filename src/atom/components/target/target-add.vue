@@ -26,7 +26,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="应用">
-          <el-select class="search" v-model="form.app" disabled placeholder="请选择应用" filterable>
+          <el-select class="search" v-model="form.app" @change="toGetUser" placeholder="请选择应用" filterable>
             <el-option
               v-for="(l,index) in commonapp"
               :key="index"
@@ -211,7 +211,7 @@ export default {
       relativearr: ["任意", "所有"],
       form: {
         type: "应用事件",
-        app: "",
+        app: '',
         relative: "任意",
         name: "",
         desc: "",
@@ -375,12 +375,9 @@ export default {
 
       let option = {
         fbAudienceId: this.audienceId ? this.audienceId : "",
-        // applicationId: this.form.app,
-        // audienceType: "app",
         description: this.form.desc,
         adaccountId: this.form.account,
         name: this.form.name,
-        // projectId: this.$route.params.id,
         rule: JSON.stringify(rule)
       };
 
@@ -391,15 +388,15 @@ export default {
       // 创建与编辑用同一逻辑
       let res = await this.$store.dispatch("addTarget", { option });
 
-      // this.$emit("showResult", this.form.account);
-
       if (res.data.status != "failed") this.dialogFormVisible = false;
+    },
+    toGetUser() {
+      // 获取用户
+      this.$store.dispatch("appToAccount", { appid: this.form.app });
     },
     formReset() {
       this.form.type = "应用事件";
-      this.form.app = this.itemlist.find(
-        v => v.id == this.$route.params.id
-      ).applicationId;
+      this.form.app = '';
       this.form.relative = "任意";
       this.form.name = "";
       this.form.desc = "";
@@ -419,6 +416,7 @@ export default {
           percent: "25%"
         }
       ];
+      this.SETSTATE({k: 'appaccount', v: []});
     },
     addCondition() {
       this.form.condition.push({
@@ -469,13 +467,6 @@ export default {
     }
   },
   mounted() {
-    if (this.itemlist.length != 0) {
-      this.form.app = this.itemlist.find(
-        v => v.id == this.$route.params.id
-      ).applicationId;
-      // 初始化根据所选应用，获取应用的所有用户
-      this.$store.dispatch("appToAccount", { appid: this.form.app });
-    }
   },
   watch: {
     status(n, v) {
@@ -486,21 +477,6 @@ export default {
         this.$store.dispatch("commonApp", { project_id: this.$route.params.id });
       }
     },
-    itemlist(n, v) {
-      if (n.length != 0) {
-        this.form.app = this.itemlist.find(
-          v => v.id == this.$route.params.id
-        ).applicationId;
-
-        this.$store.dispatch("appToAccount", { appid: this.form.app });
-      }
-    },
-    // // 根据获取到的已创建受众信息，提取已选择广告账户列表
-    // addtargetaccount(n, v) {
-    //   if (n.length > 0) {
-    //     this.form.account = n[0].fbAccountId;
-    //   }
-    // },
     targetinfo(n, v) {
       if (n) {
         this.form.name = n.name;

@@ -606,10 +606,12 @@ export default {
   methods: {
     ...mapMutations(["SETSTATE"]),
     selectAction() {
+      // 选择应用之后获取出价指南数据
+      this.showBidChart();
+
       this.form.platform = '';
       let applicationid = this.form.actions;
       this.$store.dispatch("getCreatePlatform", { applicationid });
-
       this.form.minversion = "";
       this.form.maxversion = "";
       this.SETSTATE({k: 'system', v: []});
@@ -639,7 +641,7 @@ export default {
       this.showBidChart();
     },
     showBidChart() {
-      if (this.form.country.length == 0) {
+      if (this.form.country.length == 0 || !this.form.actions) {
         return;
       }
       // 20181105新增出价指南数据

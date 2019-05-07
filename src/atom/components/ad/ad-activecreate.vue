@@ -163,6 +163,7 @@
         @uploadError="uploadError"
         name="file"
         class="fileinput"
+        style="left: 90px;"
         :url="uploadFileUrl"
         :events="eventsIMG"
         multiple

@@ -252,6 +252,7 @@
             <span class="cardtotal">共{{cardCount}}个图片/视频，单个轮播创意中图片/视频不会重复</span>
           </p>
           <el-form-item label="图片" class="cline uploadfile">
+            <el-button class="moreInfo" size="small" plain @click="selectstatus = !selectstatus">选择图片</el-button>
             <el-button class="moreInfo" type="primary" size="small">上传图片</el-button>
             <vue-file-upload
               ref="vueFileUploaderLB"
@@ -262,6 +263,7 @@
               @uploadError="uploadError"
               name="file"
               class="fileinput"
+              style="left: 90px;"
               :url="uploadFileUrl"
               :events="eventsIMG"
               multiple

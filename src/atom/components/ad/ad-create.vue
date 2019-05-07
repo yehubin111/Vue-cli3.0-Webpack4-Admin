@@ -1,5 +1,6 @@
 <template>
   <div class="create">
+    <select-img :status.sync="selectstatus" @select="selectImage"></select-img>
     <transition name="slide-fade">
       <div class="cr-content" v-show="status">
         <div class="title">
@@ -19,7 +20,7 @@
           <create-adset ref="createAdset" :editId="editId" @changeEdit="changeEdit"></create-adset>
         </div>
         <div class="infobox" v-show="type == 'adName'">
-          <create-ad ref="createAd" :editId="editId" @changeEdit="changeEdit"></create-ad>
+          <create-ad ref="createAd" @showTempImages="showTempImages" :editId="editId" @changeEdit="changeEdit"></create-ad>
         </div>
         <div class="buttomctrl">
           <el-button size="medium" @click="hideBox">取消</el-button>
@@ -34,6 +35,7 @@
 </template>
 
 <script>
+import SelectImg from "../create/create-selectimg";
 import CreateCampaign from "./ad-createcampaign";
 import CreateAdset from "./ad-createadset";
 import CreateAd from "./ad-createad";
@@ -45,10 +47,12 @@ export default {
   components: {
     CreateAdset,
     CreateCampaign,
-    CreateAd
+    CreateAd,
+    SelectImg
   },
   data() {
     return {
+      selectstatus: false,
       typeName: "",
       status: false,
       breadcrumb: [],
@@ -61,6 +65,13 @@ export default {
   mounted() {},
   methods: {
     ...mapMutations(["SETSTATE"]),
+    // 20190507新增，可以直接选择模板制作的图片
+    showTempImages() {
+      this.selectstatus = true;
+    },
+    selectImage(img) {
+      this.$refs.createAd.selectImage(img);
+    },
     async saveInfo() {
       let option, res, msg;
       switch (this.type) {
@@ -123,7 +134,7 @@ export default {
               minVersion: opt.lowversion,
               maxVersion: opt.highversion,
               includeAudience: opt.target,
-              excludeAudience: opt.iftarget[0] == '1'?[]:opt.notarget
+              excludeAudience: opt.iftarget[0] == "1" ? [] : opt.notarget
             };
 
             res = await this.$store.dispatch("createAdset", option);
@@ -277,7 +288,9 @@ export default {
           this.$store.dispatch("otherCountries");
           this.$store.dispatch("getLanguage");
           this.$store.dispatch("getInterests");
-          this.$store.dispatch("getAdsetCreateApplist", { project_id: this.$route.params.id });
+          this.$store.dispatch("getAdsetCreateApplist", {
+            project_id: this.$route.params.id
+          });
           this.$store.dispatch("getAdsetCreateAllpages");
           break;
         case "adName":

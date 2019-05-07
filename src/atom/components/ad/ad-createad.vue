@@ -108,6 +108,7 @@
               v-if="form.type == 2"
               :createObject="createObject"
               @changeEdit="changeEdit"
+              @showTempImages="showTempImages"
             ></creativity-carousel>
             <creativity-normal
               ref="createNormal"
@@ -115,6 +116,7 @@
               :createType="form.type"
               :createObject="createObject"
               @changeEdit="changeEdit"
+              @showTempImages="showTempImages"
             ></creativity-normal>
           </el-tab-pane>
           <el-tab-pane label="选择创意" name="second">
@@ -164,7 +166,8 @@ export default {
         adset: false,
         name: false,
         type: false
-      }
+      },
+      selectkey: ''
     };
   },
   computed: {
@@ -186,6 +189,20 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    showTempImages(key) {
+      this.selectkey = key;
+      this.$emit("showTempImages");
+    },
+    selectImage(img) {
+      switch(this.selectkey) {
+        case 'normal':
+          this.$refs.createNormal.selectImage(img);
+        break;
+        case 'carousel':
+          this.$refs.createCarousel.selectImage(img);
+        break;
+      }
+    },
     selectCreate(create) {
       // console.log(create);
       this.form.checkcreate = create ? create.id : null;

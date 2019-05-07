@@ -32,6 +32,13 @@
             <el-button
               v-show="item.processIMG.length == 0"
               class="moreInfo"
+              size="small"
+              plain
+              @click="showTempImages"
+            >选择图片</el-button>
+            <el-button
+              v-show="item.processIMG.length == 0"
+              class="moreInfo"
               type="primary"
               size="small"
             >上传图片</el-button>
@@ -44,6 +51,7 @@
                 @uploadError="uploadError"
                 name="file"
                 class="fileinput"
+                style="left: 90px;"
                 :url="uploadFileUrl"
                 :events="eventsIMG"
                 :requestOptions="fileOption"
@@ -503,6 +511,20 @@ export default {
   },
   methods: {
     ...mapMutations(["SETSTATE"]),
+    // 20190507新增，可以直接选择模板制作的图片
+    showTempImages() {
+      this.$emit('showTempImages', 'carousel');
+    },
+    selectImage(img) {
+      let prelist = this.tablist.find(v => v.name == this.tabvalue);
+      prelist.processIMG = [];
+      prelist.processIMG.push({
+        name: img[0].md5,
+        process: 100,
+        imageUrl: img[0].filePath,
+        imageHash: img[0].md5
+      });
+    },
     getCheckData() {
       let data = this.form;
 

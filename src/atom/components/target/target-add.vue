@@ -26,7 +26,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="应用">
-          <el-select class="search" v-model="form.app" @change="toGetUser" placeholder="请选择应用" filterable>
+          <el-select
+            class="search"
+            v-model="form.app"
+            :disabled="editid != ''"
+            @change="toGetUser"
+            placeholder="请选择应用"
+            filterable
+          >
             <el-option
               v-for="(l,index) in commonapp"
               :key="index"
@@ -211,7 +218,7 @@ export default {
       relativearr: ["任意", "所有"],
       form: {
         type: "应用事件",
-        app: '',
+        app: "",
         relative: "任意",
         name: "",
         desc: "",
@@ -396,7 +403,7 @@ export default {
     },
     formReset() {
       this.form.type = "应用事件";
-      this.form.app = '';
+      this.form.app = "";
       this.form.relative = "任意";
       this.form.name = "";
       this.form.desc = "";
@@ -416,7 +423,7 @@ export default {
           percent: "25%"
         }
       ];
-      this.SETSTATE({k: 'appaccount', v: []});
+      this.SETSTATE({ k: "appaccount", v: [] });
     },
     addCondition() {
       this.form.condition.push({
@@ -444,7 +451,13 @@ export default {
     }
   },
   computed: {
-    ...mapState(["commonapp", "itemlist", "appaccount", "targetinfo", "commonaccount"]),
+    ...mapState([
+      "commonapp",
+      "itemlist",
+      "appaccount",
+      "targetinfo",
+      "commonaccount"
+    ]),
     // ...mapGetters(["setapplist"]),
     relativekey() {
       return this.form.relative == "任意" ? "或" : "且";
@@ -466,15 +479,16 @@ export default {
       );
     }
   },
-  mounted() {
-  },
+  mounted() {},
   watch: {
     status(n, v) {
       this.dialogFormVisible = n;
 
       if (n) {
         // 获取应用列表，新增受众用
-        this.$store.dispatch("commonApp", { project_id: this.$route.params.id });
+        this.$store.dispatch("commonApp", {
+          project_id: this.$route.params.id
+        });
       }
     },
     targetinfo(n, v) {
@@ -484,6 +498,9 @@ export default {
         this.form.account = "act_" + n.accountId;
 
         let rule = eval("(" + n.rule + ")");
+        this.form.app = rule["inclusions"]["rules"][0]["event_sources"][0][
+          "id"
+        ].toString();
 
         this.form.relative = rule.inclusions.operator == "or" ? "任意" : "所有";
 

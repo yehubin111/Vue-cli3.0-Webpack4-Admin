@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header>
+    <el-header class="elheader">
       <top-header></top-header>
     </el-header>
     <router-view></router-view>
@@ -19,15 +19,12 @@ export default {
 };
 </script>
 <style lang="less">
-.contain {
-  width: 1440px;
-}
+@import "../../common/less/media.less";
 </style>
 
 <style lang="less" scoped>
-.el-header {
+.elheader {
   padding: 0;
   background: linear-gradient(to right, #445ed2, #3297ff);
-  min-width: 1440px;
 }
 </style>

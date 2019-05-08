@@ -14,6 +14,7 @@
 
 <script>
 import { Msgwarning } from "../../js/message";
+import { mapState } from 'vuex';
 export default {
   props: ["savetype"],
   data() {
@@ -23,6 +24,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(['saveoption']),
     title() {
       switch (this.savetype) {
         case "1":
@@ -41,6 +43,10 @@ export default {
     saveCondtion() {
       if (this.conditionName.trim() == "") {
         Msgwarning("请输入条件名称");
+        return;
+      }
+      if(this.saveoption.find(v => v.name == this.conditionName.trim())) {
+        Msgwarning("已存在同名自定义列，请重新命名");
         return;
       }
       this.$emit("save", this.conditionName, this.savetype);

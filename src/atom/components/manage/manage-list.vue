@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <ul class="contain">
+  <div class="contain">
+    <ul class="grid">
       <li v-for="(item, index) in dismanage" :key="item.id" @click="openProject(item.id)">
         <p class="title">一周花费</p>
         <el-dropdown placement="bottom-start" @command="manageCtrl">
@@ -160,10 +160,12 @@ export default {
 </style>
 
 <style lang="less" scoped>
-.contain {
+.grid {
   display: grid;
+  width: 100%;
   // height: 1000px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  // grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
   // grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 20px;
   margin-bottom: 60px;

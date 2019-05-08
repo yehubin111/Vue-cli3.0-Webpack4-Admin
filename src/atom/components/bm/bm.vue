@@ -333,6 +333,7 @@ export default {
     .right {
       flex-grow: 1;
       float: left;
+      overflow: hidden;
       .ctrl {
         overflow: hidden;
         margin-bottom: 10px;

@@ -84,6 +84,7 @@ export default {
 .contain {
   margin: 0 auto 50px auto;
   .title {
+    width: 100%;
     line-height: 60px;
     font-size: 20px;
     margin-bottom: 20px;
@@ -103,7 +104,7 @@ export default {
     margin-bottom: 20px;
   }
   .list {
-    display: flex;
+    width: 100%;
     .leftnav {
       flex-basis: 60px;
       border-right: 1px solid #e6e6e6;
@@ -121,7 +122,7 @@ export default {
       }
     }
     .right {
-      flex-grow: 1;
+      width: 100%;
       float: left;
       .ctrl {
         overflow: hidden;

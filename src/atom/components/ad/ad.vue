@@ -973,7 +973,9 @@ export default {
       let res = await this.$store.dispatch("saveSearchCondition", option);
       if (res.data) {
         Msgsuccess("保存成功");
-        this.getSaveData(type);
+        await this.getSaveData(type);
+        // 保存完自定义列之后，切换到之前保存的
+        this.optionSelect(name);
       }
     },
     setCondition(type) {

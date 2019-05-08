@@ -1,7 +1,7 @@
 <template>
   <div class="contain">
     <el-breadcrumb class="title" separator=">">
-      <el-breadcrumb-item>首页</el-breadcrumb-item>
+      <!-- <el-breadcrumb-item>首页</el-breadcrumb-item> -->
       <el-breadcrumb-item>设置</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="bindlist">

@@ -1,5 +1,5 @@
 <template>
-  <div class="head">
+  <div class="header">
     <p class="logo">
       <router-link to="/pandect"></router-link>
     </p>
@@ -67,8 +67,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.head {
-  width: 1440px;
+.header {
   margin: 0 auto;
   height: 60px;
   .logo {

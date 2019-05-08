@@ -1,7 +1,7 @@
 <template>
   <el-dialog title :visible="status" width="30%" @close="toCancel">
     <span>归档后将不可进入，确认归档？</span>
-    <el-checkbox class="checkbox" v-model="checked">停用广告系列</el-checkbox>
+    <el-checkbox class="checkbox" v-model="checked">暂停所有广告系列</el-checkbox>
     <span slot="footer" class="dialog-footer">
       <el-button @click="toCancel">取 消</el-button>
       <el-button type="primary" @click="toOver">确 定</el-button>

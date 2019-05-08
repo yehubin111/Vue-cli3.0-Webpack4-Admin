@@ -7,7 +7,7 @@
           <span class="name">上传logo</span>
           <div class="uploadbtn">
             <templates-upload @imgUploading="tempUploading" :disabled="!islogo"></templates-upload>
-            <div slot="tip" class="el-upload__tip">有些模板可上传logo，有些不可上传，具体位置通过后台设定</div>
+            <div slot="tip" class="el-upload__tip">可不上传，建议分辨率{{!islogo ? '--' : logoResolution}}</div>
           </div>
         </div>
         <ul class="imagelist">
@@ -22,7 +22,7 @@
           <span class="name">上传图片</span>
           <div class="uploadbtn">
             <templates-upload @imgUploading="matterUploading" type="MUTIPLE" ref="templatesUpload"></templates-upload>
-            <div slot="tip" class="el-upload__tip">可上传多张图片，可调整图片顺序，不支持裁剪</div>
+            <div slot="tip" class="el-upload__tip">建议分辨率{{imageResolution}}</div>
           </div>
         </div>
         <!-- <transition-group type="transition" name="flip-list"> -->
@@ -120,7 +120,9 @@ export default {
       fileImages2: [],
       allImages: [],
       logoDots: [],
-      logoImages: []
+      logoImages: [],
+      logoResolution: '', // Logo分辨率
+      imageResolution: '' // 素材分辨率
     };
   },
   async mounted() {
@@ -137,6 +139,7 @@ export default {
     this.logoDots = [];
     this.islogo = res.isLogo == "1" ? true : false;
     if (this.islogo) {
+      this.logoResolution = res["logoWidthHeight"];
       let logoxy = res["logoLocation"].split(",").map(v => v * 1);
       let logowh = res["logoWidthHeight"].split("x").map(v => v * 1);
       let obj = {
@@ -148,7 +151,10 @@ export default {
 
     this.fileDots = [];
     let temp = JSON.parse(res["templateImage"]);
-    temp.forEach(v => {
+    temp.forEach((v, i) => {
+      if(i == 0) {
+        this.imageResolution = v.width_height;
+      }
       let xy = v.location.split(",").map(v => v * 1);
       let wh = v.width_height.split("x").map(v => v * 1);
 

@@ -4,7 +4,7 @@
       <li v-for="(item, index) in dismanage" :key="item.id" @click="openProject(item.id)">
         <p class="title">一周花费</p>
         <el-dropdown placement="bottom-start" @command="manageCtrl">
-          <el-button class="ctrl" icon="el-icon-more" type="text" v-show="myid == item.createrId"></el-button>
+          <el-button class="ctrl" icon="el-icon-more" type="text" @click.stop="showMenu" v-show="myid == item.createrId"></el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item :command="`a|${item.id}`">编辑</el-dropdown-item>
             <el-dropdown-item :command="`b|${item.id}`">分配账户</el-dropdown-item>
@@ -79,6 +79,8 @@ export default {
   mounted() {},
   methods: {
     ...mapMutations(["SETSTATE", "SETOBJSTATE"]),
+    showMenu() {
+    },
     openProject(id) {
       this.$router.push({
         name: "project",

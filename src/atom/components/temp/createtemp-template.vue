@@ -221,10 +221,11 @@ export default {
           let ctx = canvas.getContext("2d");
           canvas.width = realwidth;
           canvas.height = realheight;
-          console.log(realwidth, realheight);
           ctx.drawImage(img, 0, 0, realwidth, realheight );
           let scaleurl = canvas.toDataURL("image/jpeg");
-          console.log(scaleurl);
+          /**
+           * 使用缩放后的图片截取
+           */
           let img2 = new Image();
           img2.src = scaleurl;
           img2.onload = () => {
@@ -235,7 +236,7 @@ export default {
             canvas.width = width;
             canvas.height = height;
             console.log(destx, desty, width, height, 0, 0, width, height);
-            ctx.drawImage(img, destx, desty, width, height, 0, 0, width, height );
+            ctx.drawImage(img2, destx, desty, width, height, 0, 0, width, height );
 
             url = canvas.toDataURL("image/jpeg");
             resolve(url);

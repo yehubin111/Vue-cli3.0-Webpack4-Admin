@@ -111,11 +111,15 @@ export default {
         let width = end[0] - start[0];
         let height = end[1] - start[1];
 
+        // 图片在使用之前先进行裁剪
+        let origin = await this.imageSnip(images[i], width, height);
+        console.log(origin);
+
         await (() => {
           return new Promise((resolve, reject) => {
             let img = new Image();
-            img.crossOrigin = "Anonymous";
-            img.src = images[i];
+            // img.crossOrigin = "Anonymous";
+            img.src = origin;
             img.onload = () => {
               me.ctx.drawImage(
                 img,
@@ -149,7 +153,7 @@ export default {
         let height = end[1] - start[1];
 
         let img = new Image();
-        img.crossOrigin = "Anonymous";
+        // img.crossOrigin = "Anonymous";
         img.src = images[i];
         img.onload = () => {
           me.ctx.drawImage(
@@ -163,9 +167,10 @@ export default {
       }
     },
     drawBackground() {
+      console.log("draw background");
       let me = this;
       let img = new Image();
-      img.crossOrigin = "Anonymous";
+      // img.crossOrigin = "Anonymous";
       img.src = this.baseImage;
       return new Promise((resolve, reject) => {
         img.onload = () => {
@@ -178,6 +183,45 @@ export default {
       let url = this.canvas.toDataURL("image/jpeg");
       let res = new Image();
       res.src = url;
+    },
+    async imageSnip(url, width, height) {
+      return await new Promise((resolve, reject) => {
+        let img = new Image();
+        // img.crossOrigin = "Anonymous";
+        img.src = url;
+        img.onload = () => {
+          if (img.width == width && img.height == height) {
+            resolve(url);
+          }
+          console.log(img.width, "--", img.height);
+          /**
+           * 判断短边
+           * 如果计算出的等比高度，大于图片实际高度，则表示高是短边，反之则宽是短边
+           * 然后按照短边的比例缩放图片
+           */
+          let scaleheight = img.width * (height / width);
+          let ratio = 1;
+          if (scaleheight > img.height) {
+            ratio = img.height / height;
+          } else {
+            ratio = img.width / width;
+          }
+          let realwidth = img.width * ratio;
+          let realheight = img.height * ratio;
+          let destx = realwidth / 2 - width / 2;
+          let desty = realheight / 2 - height / 2;
+
+          let canvas = document.createElement("canvas");
+          let ctx = canvas.getContext("2d");
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx.drawImage(img, 0, 0, width, height, destx, destx, width, height);
+
+          url = canvas.toDataURL("image/jpeg");
+          resolve(url);
+        };
+      });
     }
   }
 };

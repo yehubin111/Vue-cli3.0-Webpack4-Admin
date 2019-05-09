@@ -33,7 +33,11 @@
             <li v-for="(m, idx) in matter" :key="m.name">
               <p>
                 <img :src="m.imageUrl" alt>
-                <span class="close" v-show="m.process == 100" @click="deleteImage(index, idx, m.imageUrl)">x</span>
+                <span
+                  class="close"
+                  v-show="m.process == 100"
+                  @click="deleteImage(index, idx, m.imageUrl)"
+                >x</span>
               </p>
               <el-progress :percentage="m.process" :status="m.process == 100?'success':''"></el-progress>
             </li>
@@ -121,12 +125,11 @@ export default {
       allImages: [],
       logoDots: [],
       logoImages: [],
-      logoResolution: '', // Logo分辨率
-      imageResolution: '' // 素材分辨率
+      logoResolution: "", // Logo分辨率
+      imageResolution: "" // 素材分辨率
     };
   },
   async mounted() {
-    console.log("step 2");
     let res = await this.$store.dispatch("getTempDetail", {
       id: this.$route.params.tempid
     });
@@ -152,7 +155,7 @@ export default {
     this.fileDots = [];
     let temp = JSON.parse(res["templateImage"]);
     temp.forEach((v, i) => {
-      if(i == 0) {
+      if (i == 0) {
         this.imageResolution = v.width_height;
       }
       let xy = v.location.split(",").map(v => v * 1);
@@ -179,9 +182,9 @@ export default {
       this.setCanvas();
     },
     setCanvas() {
-      if(this.allImages[0])
+      if (this.allImages[0])
         this.fileImages1 = this.allImages[0].map(v => v.imageUrl);
-      if(this.allImages[1])
+      if (this.allImages[1])
         this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
     },
     dragImages() {
@@ -252,7 +255,8 @@ export default {
     },
     tempUploading(res) {
       this.logo = res;
-      this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl; // location.origin
+      this.logourl =
+        (res[0].imageUrl ? location.origin : "") + res[0].imageUrl; // location.origin
       if (this.logourl) {
         this.logoImages = [];
         this.logoImages.push(this.logourl);
@@ -269,6 +273,14 @@ export default {
           }
         });
       this.allImages = arr;
+
+      // this.allImages.forEach(v => {
+      //   v.imageUrl =
+      //     v.imageUrl.indexOf("http") == -1
+      //       ? "http://172.31.1.76" + v.imageUrl
+      //       : v.imageUrl;
+      // });
+
       // 设置canvas参数
       this.fileImages1 = this.allImages
         .slice(0, this.imagecount)
@@ -352,7 +364,7 @@ export default {
           img {
             width: 100%;
           }
-          .close{
+          .close {
             width: 16px;
             height: 16px;
             background-color: #666;

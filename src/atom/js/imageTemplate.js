@@ -80,9 +80,6 @@ class exportTemplate {
             // 計算圖片寬高
             let width = end[0] - start[0];
             let height = end[1] - start[1];
-
-            // 图片在使用之前先进行裁剪
-            let origin = await this.imageSnip(images[i], width, height);
             
             return new Promise((resolve, reject) => {
                 let img = new Image();

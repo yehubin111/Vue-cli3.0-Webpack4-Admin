@@ -215,7 +215,7 @@ export default {
           let ctx = canvas.getContext("2d");
           canvas.width = width;
           canvas.height = height;
-
+          console.log(destx, desty, width, height, 0, 0, width, height);
           ctx.drawImage(img, destx, desty, width, height, 0, 0, width, height );
 
           url = canvas.toDataURL("image/jpeg");

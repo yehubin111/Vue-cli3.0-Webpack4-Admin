@@ -222,18 +222,21 @@ export default {
           canvas.width = realwidth;
           canvas.height = realheight;
           ctx.drawImage(img, 0, 0, realwidth, realheight );
-          img.src = canvas.toDataURL("image/jpeg");
-          ctx.clearRect(0, 0, realwidth, realheight);
+          let img2 = new Image();
+          img2.src = canvas.toDataURL("image/jpeg");
+          img2.onload = () => {
+            ctx.clearRect(0, 0, realwidth, realheight);
 
-          let destx = realwidth / 2 - width / 2;
-          let desty = realheight / 2 - height / 2;
-          canvas.width = width;
-          canvas.height = height;
-          console.log(destx, desty, width, height, 0, 0, width, height);
-          ctx.drawImage(img, destx, desty, width, height, 0, 0, width, height );
+            let destx = realwidth / 2 - width / 2;
+            let desty = realheight / 2 - height / 2;
+            canvas.width = width;
+            canvas.height = height;
+            console.log(destx, desty, width, height, 0, 0, width, height);
+            ctx.drawImage(img, destx, desty, width, height, 0, 0, width, height );
 
-          url = canvas.toDataURL("image/jpeg");
-          resolve(url);
+            url = canvas.toDataURL("image/jpeg");
+            resolve(url);
+          }
         };
       });
     }

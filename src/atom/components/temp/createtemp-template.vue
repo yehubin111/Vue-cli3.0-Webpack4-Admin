@@ -185,6 +185,12 @@ export default {
       res.src = url;
     },
     async imageSnip(url, width, height) {
+      /**
+       * 图片裁剪逻辑
+       * 1.按照短边比例缩放图片
+       * 2.把图片合适位置渲染到画布上
+       * 3.导出图片url
+       */
       return await new Promise((resolve, reject) => {
         let img = new Image();
         // img.crossOrigin = "Anonymous";
@@ -208,11 +214,19 @@ export default {
           }
           let realwidth = img.width / ratio;
           let realheight = img.height / ratio;
-          let destx = realwidth / 2 - width / 2;
-          let desty = realheight / 2 - height / 2;
-
+          /**
+           * 先缩放图片
+           */
           let canvas = document.createElement("canvas");
           let ctx = canvas.getContext("2d");
+          canvas.width = realwidth;
+          canvas.height = realheight;
+          ctx.drawImage(img, 0, 0, realwidth, realheight );
+          img.src = canvas.toDataURL("image/jpeg");
+          ctx.clearRect(0, 0, realwidth, realheight);
+
+          let destx = realwidth / 2 - width / 2;
+          let desty = realheight / 2 - height / 2;
           canvas.width = width;
           canvas.height = height;
           console.log(destx, desty, width, height, 0, 0, width, height);

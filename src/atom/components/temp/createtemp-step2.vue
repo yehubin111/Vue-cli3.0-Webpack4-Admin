@@ -355,9 +355,6 @@ export default {
         width: 153px;
         margin-bottom: 20px;
         p {
-          display: flex;
-          align-items: center;
-          justify-content: center;
           border: 1px solid #ddd;
           width: 100px;
           height: 100px;
@@ -369,6 +366,9 @@ export default {
             width: 100%;
             height: 100%;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             img {
               width: 100%;
             }

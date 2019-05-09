@@ -74,6 +74,10 @@ export default {
   mounted() {
     this.SETSTATE({ k: "managelist", v: [] });
     this.getData();
+
+    setTimeout(() => {
+      this.SETSTATE({k: 'testuser', v: '123'});
+    }, 1000)
   },
   watch: {},
   methods: {

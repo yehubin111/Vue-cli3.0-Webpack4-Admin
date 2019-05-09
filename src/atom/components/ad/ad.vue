@@ -775,9 +775,7 @@ export default {
     this.SETSTATE({ k: "adtab", v: tabname });
 
     // 初始化从本地缓存获取广告账户
-    this.accountStorage = localStorage.getItem("ad-account")
-      ? JSON.parse(localStorage.getItem("ad-account"))
-      : {};
+    this.accountStorage = this.ad_account ? JSON.parse(this.ad_account) : {};
     this.value3 = this.accountStorage[this.$route.params.id]
       ? this.accountStorage[this.$route.params.id].split("|")
       : [];
@@ -1536,7 +1534,7 @@ export default {
       let accountid = this.value3;
       this.SETSTATE({ k: "adaccountid", v: accountid });
       this.accountStorage[this.$route.params.id] = accountid.join("|");
-      localStorage.setItem("ad-account", JSON.stringify(this.accountStorage));
+      this.SETSTATE({k: 'ad_account', v: JSON.stringify(this.accountStorage)});
 
       this.resetPageData();
     },
@@ -1609,6 +1607,10 @@ export default {
       "optionselect",
       "bigimagevisible",
       "bigimageurl"
+    ]),
+    // 保存到缓存的数据
+    ...mapState([
+      'ad_account'
     ]),
     bigImageVisible() {
       return this.bigimagevisible;

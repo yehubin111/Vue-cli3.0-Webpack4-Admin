@@ -138,7 +138,7 @@ export default {
       // 渲染logo
       if (this.logoDots.length != 0) this.drawLogo();
     },
-    drawLogo() {
+    async drawLogo() {
       // 超過位置最大數量，截取前幾張
       let me = this;
       let maxcount = this.logoDots.length;

@@ -216,7 +216,7 @@ export default {
           canvas.width = width;
           canvas.height = height;
 
-          ctx.drawImage(img, 0, 0, width, height, destx, destx, width, height);
+          ctx.drawImage(img, destx, destx, width, height, 0, 0, width, height );
 
           url = canvas.toDataURL("image/jpeg");
           resolve(url);

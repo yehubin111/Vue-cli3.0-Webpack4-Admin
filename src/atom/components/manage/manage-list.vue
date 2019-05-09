@@ -165,7 +165,7 @@ export default {
   width: 100%;
   // height: 1000px;
   // grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+  grid-template-columns: repeat(4, minmax(285px, 1fr));
   // grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-gap: 20px;
   margin-bottom: 60px;

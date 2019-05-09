@@ -206,8 +206,8 @@ export default {
           } else {
             ratio = img.width / width;
           }
-          let realwidth = img.width * ratio;
-          let realheight = img.height * ratio;
+          let realwidth = img.width / ratio;
+          let realheight = img.height / ratio;
           let destx = realwidth / 2 - width / 2;
           let desty = realheight / 2 - height / 2;
 

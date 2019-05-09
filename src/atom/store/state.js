@@ -1,5 +1,6 @@
 import stateData from './state-data';
-export default Object.assign({}, stateData, {
+import stateStorage from './state-storage';
+export default Object.assign({}, stateData, stateStorage, {
   nickname: '',
   itemlist: [],
 

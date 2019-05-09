@@ -223,8 +223,10 @@ export default {
           canvas.height = realheight;
           console.log(realwidth, realheight);
           ctx.drawImage(img, 0, 0, realwidth, realheight );
+          let scaleurl = canvas.toDataURL("image/jpeg");
+          console.log(scaleurl);
           let img2 = new Image();
-          img2.src = canvas.toDataURL("image/jpeg");
+          img2.src = scaleurl;
           img2.onload = () => {
             ctx.clearRect(0, 0, realwidth, realheight);
 

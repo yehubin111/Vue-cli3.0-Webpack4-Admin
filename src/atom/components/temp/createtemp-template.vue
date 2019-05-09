@@ -113,7 +113,6 @@ export default {
 
         // 图片在使用之前先进行裁剪
         let origin = await this.imageSnip(images[i], width, height);
-        console.log(origin);
 
         await (() => {
           return new Promise((resolve, reject) => {
@@ -152,9 +151,12 @@ export default {
         let width = end[0] - start[0];
         let height = end[1] - start[1];
 
+        // 图片在使用之前先进行裁剪
+        let origin = await this.imageSnip(images[i], width, height);
+
         let img = new Image();
         // img.crossOrigin = "Anonymous";
-        img.src = images[i];
+        img.src = origin;
         img.onload = () => {
           me.ctx.drawImage(
             img,
@@ -199,7 +201,6 @@ export default {
           if (img.width == width && img.height == height) {
             resolve(url);
           }
-          console.log(img.width, "--", img.height);
           /**
            * 判断短边
            * 如果计算出的等比高度，大于图片实际高度，则表示高是短边，反之则宽是短边
@@ -224,7 +225,7 @@ export default {
           ctx.drawImage(img, 0, 0, realwidth, realheight );
           let scaleurl = canvas.toDataURL("image/jpeg");
           /**
-           * 使用缩放后的图片截取
+           * 使用缩放后的图片截取合适内容
            */
           let img2 = new Image();
           img2.src = scaleurl;
@@ -235,7 +236,6 @@ export default {
             let desty = realheight / 2 - height / 2;
             canvas.width = width;
             canvas.height = height;
-            console.log(destx, desty, width, height, 0, 0, width, height);
             ctx.drawImage(img2, destx, desty, width, height, 0, 0, width, height );
 
             url = canvas.toDataURL("image/jpeg");

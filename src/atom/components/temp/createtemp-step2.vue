@@ -13,7 +13,7 @@
         <ul class="imagelist">
           <li class="image" v-for="img in logo" :key="img.imageUrl">
             <p>
-              <span>
+              <span class="imgbox">
                 <img :src="logourl" alt>
               </span>
             </p>
@@ -34,7 +34,9 @@
             <!-- <transition-group type="transition" name="flip-list"> -->
             <li v-for="(m, idx) in matter" :key="m.name">
               <p>
-                <img :src="m.imageUrl" alt>
+                <span class="imgbox">
+                  <img :src="m.imageUrl" alt>
+                </span>
                 <span
                   class="close"
                   v-show="m.process == 100"
@@ -363,7 +365,7 @@ export default {
           margin-bottom: 3px;
           position: relative;
           // overflow: hidden;
-          span{
+          .imgbox{
             display: block;
             width: 100%;
             height: 100%;

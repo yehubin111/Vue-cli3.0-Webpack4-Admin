@@ -259,8 +259,7 @@ export default {
     },
     tempUploading(res) {
       this.logo = res;
-      this.logourl =
-        (res[0].imageUrl ? location.origin : "") + res[0].imageUrl; // location.origin
+      this.logourl = (res[0].imageUrl ? location.origin : "") + res[0].imageUrl; // location.origin
       if (this.logourl) {
         this.logoImages = [];
         this.logoImages.push(this.logourl);
@@ -365,7 +364,7 @@ export default {
           margin-bottom: 3px;
           position: relative;
           // overflow: hidden;
-          .imgbox{
+          .imgbox {
             display: block;
             width: 100%;
             height: 100%;
@@ -373,20 +372,20 @@ export default {
             img {
               width: 100%;
             }
-            .close {
-              width: 16px;
-              height: 16px;
-              background-color: #666;
-              position: absolute;
-              right: -16px;
-              top: -1px;
-              color: #fff;
-              text-align: center;
-              line-height: 16px;
-              cursor: pointer;
-              border-top-right-radius: 50%;
-              border-bottom-right-radius: 50%;
-            }
+          }
+          .close {
+            width: 16px;
+            height: 16px;
+            background-color: #666;
+            position: absolute;
+            right: -16px;
+            top: -1px;
+            color: #fff;
+            text-align: center;
+            line-height: 16px;
+            cursor: pointer;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
           }
         }
       }

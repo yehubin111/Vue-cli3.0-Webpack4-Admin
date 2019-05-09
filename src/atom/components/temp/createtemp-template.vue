@@ -79,13 +79,8 @@ export default {
     this.canvas = document.getElementById(this.id);
     this.canvas.width = this.canvaswidth;
     this.canvas.height = this.canvasheight;
-    // 导出用的canvas
-    // this.excanvas = document.createElement('canvas');
-    // this.excanvas.width = this.baseWidth;
-    // this.excanvas.height = this.baseHeight;
 
     this.ctx = this.canvas.getContext("2d");
-    // this.exctx = this.excanvas.getContext("2d");
 
     // 背景色
     this.ctx.fillStyle = "#f4f4f4";
@@ -99,7 +94,6 @@ export default {
       let me = this;
       // 清空canvas
       this.ctx.clearRect(0, 0, this.canvaswidth, this.canvasheight);
-      //   this.exctx.clearRect(0, 0, this.baseWidth, this.baseHeight);
       // 超過位置最大數量，截取前幾張
       let maxcount = this.fileDots.length;
       let images = this.fileImages.slice(0, maxcount);
@@ -127,7 +121,6 @@ export default {
                 width * me.ratio,
                 height * me.ratio
               );
-              //   me.exctx.drawImage(img, start[0], start[1], width, height);
               resolve();
             };
           });

@@ -13,7 +13,9 @@
         <ul class="imagelist">
           <li class="image" v-for="img in logo" :key="img.imageUrl">
             <p>
-              <img :src="logourl" alt>
+              <span>
+                <img :src="logourl" alt>
+              </span>
             </p>
             <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
           </li>
@@ -361,22 +363,28 @@ export default {
           margin-bottom: 3px;
           position: relative;
           // overflow: hidden;
-          img {
+          span{
+            display: block;
             width: 100%;
-          }
-          .close {
-            width: 16px;
-            height: 16px;
-            background-color: #666;
-            position: absolute;
-            right: -16px;
-            top: -1px;
-            color: #fff;
-            text-align: center;
-            line-height: 16px;
-            cursor: pointer;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
+            height: 100%;
+            overflow: hidden;
+            img {
+              width: 100%;
+            }
+            .close {
+              width: 16px;
+              height: 16px;
+              background-color: #666;
+              position: absolute;
+              right: -16px;
+              top: -1px;
+              color: #fff;
+              text-align: center;
+              line-height: 16px;
+              cursor: pointer;
+              border-top-right-radius: 50%;
+              border-bottom-right-radius: 50%;
+            }
           }
         }
       }

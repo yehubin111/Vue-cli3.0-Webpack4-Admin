@@ -205,7 +205,7 @@ export default {
         }
       });
       if (spe) {
-        Msgwarning(`第${t + 1}张图片素材不全，请不全后再生成图片`);
+        Msgwarning(`第${t + 1}张图片素材不全，请补全后再生成图片`);
         return;
       }
 

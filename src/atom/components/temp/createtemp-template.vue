@@ -146,7 +146,7 @@ export default {
 
         let img = new Image();
         // img.crossOrigin = "Anonymous";
-        img.src = origin;
+        img.src = images[i];
         img.onload = () => {
           me.ctx.drawImage(
             img,

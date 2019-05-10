@@ -13,7 +13,9 @@
         <ul class="imagelist">
           <li class="image" v-for="img in logo" :key="img.imageUrl">
             <p>
-              <img :src="logourl" alt>
+              <span class="imgbox">
+                <img :src="logourl" alt>
+              </span>
             </p>
             <el-progress :percentage="img.process" :status="img.process == 100?'success':''"></el-progress>
           </li>
@@ -32,8 +34,14 @@
             <!-- <transition-group type="transition" name="flip-list"> -->
             <li v-for="(m, idx) in matter" :key="m.name">
               <p>
-                <img :src="m.imageUrl" alt>
-                <span class="close" v-show="m.process == 100" @click="deleteImage(index, idx, m.imageUrl)">x</span>
+                <span class="imgbox">
+                  <img :src="m.imageUrl" alt>
+                </span>
+                <span
+                  class="close"
+                  v-show="m.process == 100"
+                  @click="deleteImage(index, idx, m.imageUrl)"
+                >x</span>
               </p>
               <el-progress :percentage="m.process" :status="m.process == 100?'success':''"></el-progress>
             </li>
@@ -121,12 +129,11 @@ export default {
       allImages: [],
       logoDots: [],
       logoImages: [],
-      logoResolution: '', // Logo分辨率
-      imageResolution: '' // 素材分辨率
+      logoResolution: "", // Logo分辨率
+      imageResolution: "" // 素材分辨率
     };
   },
   async mounted() {
-    console.log("step 2");
     let res = await this.$store.dispatch("getTempDetail", {
       id: this.$route.params.tempid
     });
@@ -152,7 +159,7 @@ export default {
     this.fileDots = [];
     let temp = JSON.parse(res["templateImage"]);
     temp.forEach((v, i) => {
-      if(i == 0) {
+      if (i == 0) {
         this.imageResolution = v.width_height;
       }
       let xy = v.location.split(",").map(v => v * 1);
@@ -179,9 +186,9 @@ export default {
       this.setCanvas();
     },
     setCanvas() {
-      if(this.allImages[0])
+      if (this.allImages[0])
         this.fileImages1 = this.allImages[0].map(v => v.imageUrl);
-      if(this.allImages[1])
+      if (this.allImages[1])
         this.fileImages2 = this.allImages[1].map(v => v.imageUrl);
     },
     dragImages() {
@@ -198,7 +205,7 @@ export default {
         }
       });
       if (spe) {
-        Msgwarning(`第${t + 1}张图片素材不全，请不全后再生成图片`);
+        Msgwarning(`第${t + 1}张图片素材不全，请补全后再生成图片`);
         return;
       }
 
@@ -269,6 +276,14 @@ export default {
           }
         });
       this.allImages = arr;
+
+      // this.allImages.forEach(v => {
+      //   v.imageUrl =
+      //     v.imageUrl.indexOf("http") == -1
+      //       ? "http://172.31.1.76" + v.imageUrl
+      //       : v.imageUrl;
+      // });
+
       // 设置canvas参数
       this.fileImages1 = this.allImages
         .slice(0, this.imagecount)
@@ -340,19 +355,25 @@ export default {
         width: 153px;
         margin-bottom: 20px;
         p {
-          display: flex;
-          align-items: center;
-          justify-content: center;
           border: 1px solid #ddd;
           width: 100px;
           height: 100px;
           margin-bottom: 3px;
           position: relative;
           // overflow: hidden;
-          img {
+          .imgbox {
+            display: block;
             width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+              width: 100%;
+            }
           }
-          .close{
+          .close {
             width: 16px;
             height: 16px;
             background-color: #666;

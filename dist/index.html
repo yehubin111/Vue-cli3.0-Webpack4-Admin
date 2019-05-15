@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang=en><head><meta charset=UTF-8><meta http-equiv=X-UA-Compatible content="ie=edge"><link rel=bookmark type=image/x-icon href=/favicon.ico><link rel="shortcut icon" href=/favicon.ico><link rel=icon href=/favicon.ico><title>总览</title><style>.el-menu-item.specialitem {
+            color: #303133;
+        }</style><link href=/css/chunk-vendors.6c51e417.css rel=preload as=style><link href=/css/index.530a8786.css rel=preload as=style><link href=/js/chunk-vendors.f81be0e0.js rel=preload as=script><link href=/js/index.0a742025.js rel=preload as=script><link href=/css/chunk-vendors.6c51e417.css rel=stylesheet><link href=/css/index.530a8786.css rel=stylesheet></head><body><div id=app></div><script>function taskDetail() {
+
+        }
+
+        var myChart;
+        var myChart2;
+        var myChart3;
+        var myChart4;
+
+        // 规则报表页面
+        var myChart5;
+        var myChart6;
+        var myChart7;
+
+        // 出价指南
+        var myChart8;
+        var myChart9;
+        var myChart10;
+
+        var rundetail;
+        var jobProcess; // 广告管理页面复制进度轮询
+        /**
+         * 广告管理筛选条件缓存名称
+         * old用于清除老的（下同）
+         */
+        const adFilterLS = {
+            old: 'ad-condition',
+            new: 'adfilter-condition'
+        }
+        // 广告管理自定义列缓存名称
+        // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
+        const adOptionSelectLS = {
+            old: '',
+            new: 'admanage-select'
+        }
+        const adOptionLS = {
+            old: 'admanage-option',
+            new: 'admanage-option-v2'
+        }
+        const adEventLS = {
+            old: 'adManage-event',
+            new: 'admanage-event-v2'
+        }
+        // 总览自定义列缓存名称
+        // 已选择的自定义列类型， default 常用，auto 刚选的，optionname 已保存的
+        const pandectSelectLS = {
+            old: '',
+            new: 'pandect-select'
+        }
+        const pandectOptionLS = {
+            old: 'pandectfilter-option',
+            new: 'pandectfilter-option-v2'
+        }
+        const pandectEventLS = {
+            old: 'pandect-event',
+            new: 'pandect-event-v2'
+        }</script><style>.el-tooltip__popper {
+            max-width: 80%;
+        }
+
+        .el-menu-item-group__title {
+            display: none;
+        }
+
+        .el-menu-item {
+            color: #666;
+        }
+
+        .sex .el-input--suffix .el-input__inner {
+            padding: 0 10px 0 10px;
+            border-color: transparent;
+        }
+
+        .createdialog .el-dialog {
+            width: 80%;
+        }
+
+        .minput .el-input__inner {
+            padding-left: 30px;
+        }
+
+        .el-menu-item:focus {
+            background-color: inherit;
+        }
+
+        .el-menu-item.is-active {
+            color: inherit;
+        }
+
+        .el-menu-item.is-active a {
+            /* color: #409eff; */
+        }
+
+        .el-icon-warning {
+            color: #e6a23c;
+            font-size: 14px;
+        }
+
+        .el-icon-success {
+            font-size: 14px;
+            color: #67c23a;
+        }
+
+        .el-icon-question {
+            color: #e6a23c;
+            font-size: 14px;
+        }
+
+        .el-icon-refresh {
+            font-size: 14px;
+            /* color: #409eff; */
+        }
+
+        .el-message-box__message p {
+            word-break: break-all;
+        }
+
+        .right-slide-fade-enter-active {
+            will-change: transform;
+            transition: all 500ms;
+            position: absolute;
+        }
+
+        .right-slide-fade-enter-to {
+            opacity: 1;
+            transform: translate3d(200px, 0, 0);
+        }
+
+        .right-slide-fade-enter {
+            opacity: 0;
+            transform: translate3d(200px, 0, 0);
+        }
+
+        /* body .el-table th.gutter {
+            display: table-cell !important;
+        }
+
+        body .el-table colgroup.gutter {
+            display: table-cell !important;
+        } */</style><script src=/js/chunk-vendors.f81be0e0.js></script><script src=/js/index.0a742025.js></script></body></html>

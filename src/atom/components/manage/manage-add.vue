@@ -318,7 +318,6 @@ export default {
 .dialog {
   width: 1200px;
   margin: auto;
-  overflow-y: hidden;
   .form {
     margin-top: -20px;
     margin-left: 20px;

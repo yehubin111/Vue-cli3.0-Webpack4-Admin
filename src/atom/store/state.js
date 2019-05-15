@@ -419,5 +419,8 @@ export default Object.assign({}, stateData, stateStorage, {
   templatetotal: 0,
   tempdetail: null, // 模板详情
   tempimages: [], // 模板图片列表
-  tempimagestotal: 0
+  tempimagestotal: 0,
+
+
+  test: 'test'
 })

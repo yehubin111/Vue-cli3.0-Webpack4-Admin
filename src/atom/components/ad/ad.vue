@@ -110,6 +110,7 @@
           <el-select
             v-model="conditionSelArr"
             multiple
+            collapse-tags
             class="elselect"
             @change="downselectChange"
             placeholder="请选择"

@@ -58,7 +58,7 @@ export default {
               {
                 name: "花费",
                 type: "bar",
-                data: v.last7DaySpends.map(v => v.spend)
+                data: v.last7DaySpends.map(v => parseFloat(v.spend).toFixed(2))
               }
             ];
             let x = v.last7DaySpends.map(v =>

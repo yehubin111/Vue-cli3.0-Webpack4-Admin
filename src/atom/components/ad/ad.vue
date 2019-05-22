@@ -1719,7 +1719,7 @@ export default {
   .ctrlbutton {
     // margin-left: 40px;
     // overflow: hidden;
-    // height: 40px;
+    min-height: 40px;
     margin-bottom: 10px;
     .tagall {
       // float: left;

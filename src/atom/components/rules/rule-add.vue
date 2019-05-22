@@ -608,7 +608,7 @@ export default {
       schedulelist: [
         { name: "每半小时", key: "SCHEDULE|SEMI_HOURLY" },
         { name: "每小时", key: "SCHEDULE|HOURLY" },
-        { name: "每日（每天12点）", key: "SCHEDULE|DAILY" },
+        { name: "每日（每天0点）", key: "SCHEDULE|DAILY" },
         { name: "自定义", key: "SCHEDULE|CUSTOM" }
       ],
       weeklist: [

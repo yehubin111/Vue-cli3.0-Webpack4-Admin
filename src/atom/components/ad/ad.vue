@@ -700,6 +700,7 @@ export default {
       value2: "",
       value3: [],
       value4: [],
+      caninit: true, // 开关，判断是否可以初始化数据，防止重复初始化
       accountStorage: [],
       status: false,
       mutilselect: [],
@@ -802,7 +803,8 @@ export default {
     this.getSaveData("1");
     await this.getSaveData("2");
 
-    if (this.itemlist.length > 0) {
+    if (this.itemlist.length > 0 && this.caninit) {
+      this.caninit = false;
       this.applicationid = this.itemlist.find(
         v => v.id == projectId
       ).applicationId;
@@ -1548,16 +1550,18 @@ export default {
     }
   },
   watch: {
-    // itemlist(n, v) {
-    //   if (n.length != 0) {
-    //     let applicationid = n.find(v => v.id == this.$route.params.id)
-    //       .applicationId;
+    itemlist(n, v) {
+      if (n.length != 0 && this.caninit) {
+        this.caninit = false;
+        let projectId = this.$route.params.id;
+        let applicationid = n.find(v => v.id == projectId)
+          .applicationId;
 
-    //     this.SETSTATE({ k: "adapplicationid", v: applicationid });
-    //     console.log('itemlist');
-    //     this.initData(applicationid);
-    //   }
-    // },
+        this.SETSTATE({ k: "adprojectid", v: projectId });
+        console.log('itemlist');
+        this.initData(applicationid);
+      }
+    },
     async projectid(n, o) {
       if (n != "") {
         let k = "pl_project_id";

@@ -105,7 +105,7 @@ export default {
               adAccount: opt.campaign.split("|")[1],
               // adSet: ["string"],
               adSetName: opt.name,
-              applicationId: opt.applicationid,
+              applicationId: opt.action,
               bidAmount: opt.maxbid === "" ? null : parseInt(opt.maxbid * 100),
               billingType: opt.bid,
               budgetType: opt.moneytype,

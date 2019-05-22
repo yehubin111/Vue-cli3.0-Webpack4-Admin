@@ -895,8 +895,6 @@ export default {
           option.push(obj);
         });
 
-        // console.log(option);
-
         return option;
       }
 

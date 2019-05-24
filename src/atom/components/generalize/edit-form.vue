@@ -31,6 +31,8 @@
           multiple
           filterable
           placeholder="请选择广告账户"
+          popper-class="downlist"
+          collapse-tags
           @change="accountToAudience"
         >
           <el-option
@@ -39,7 +41,16 @@
             :label="item.name + '(' + item.fbId.split('_')[1] + ')'"
             :value="item.fbId"
             :disabled="item.accountStatus != 1"
-          ></el-option>
+          >
+            <span class="downline" style>
+              <span style="float: left">{{ item.name }}</span>
+              <span class="info" style="float: right; font-size: 13px;">支持CPI</span>
+            </span>
+            <span
+              class="downline info"
+              style=" font-size: 13px;"
+            >{{item.fbId.split('_')[1]}}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="国家" class="cline">
@@ -162,6 +173,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          format="yyyy-MM-dd HH:mm"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="投放时段" class="cline timerange" v-show="form.moneytype == 'total_budget'">

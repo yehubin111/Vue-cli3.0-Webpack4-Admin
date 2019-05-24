@@ -31,6 +31,8 @@
           multiple
           filterable
           placeholder="请选择广告账户"
+          popper-class="downlist"
+          collapse-tags
           @change="accountToAudience"
         >
           <el-option
@@ -39,7 +41,16 @@
             :label="item.name + '(' + item.fbId.split('_')[1] + ')'"
             :value="item.fbId"
             :disabled="item.accountStatus != 1"
-          ></el-option>
+          >
+            <span class="downline" style>
+              <span style="float: left">{{ item.name }}</span>
+              <span class="info" style="float: right; font-size: 13px;">支持CPI</span>
+            </span>
+            <span
+              class="downline info"
+              style=" font-size: 13px;"
+            >{{item.fbId.split('_')[1]}}</span>
+          </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="国家" class="cline">
@@ -168,6 +179,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
+          format="yyyy-MM-dd HH:mm"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="投放时段" class="cline timerange" v-show="form.moneytype == 'total_budget'">
@@ -372,516 +384,539 @@
 </template>
 
 <script>
-import GenerGuide from "./gener-guide";
-import { mapState, mapGetters, mapMutations } from "vuex";
-import { Msgwarning } from "../../js/message";
-export default {
-  components: {
-    GenerGuide
-  },
-  data() {
-    return {
-      state: "",
-      state2: "",
-      state3: "",
-      week: [
-        {
-          name: "周一",
-          key: "1"
-        },
-        {
-          name: "周二",
-          key: "2"
-        },
-        {
-          name: "周三",
-          key: "3"
-        },
-        {
-          name: "周四",
-          key: "4"
-        },
-        {
-          name: "周五",
-          key: "5"
-        },
-        {
-          name: "周六",
-          key: "6"
-        },
-        {
-          name: "周七",
-          key: "7"
-        }
-      ],
-      maxbidplace: "请输入竞价上限（单位：美元）",
-      form: {
-        name: "",
-        type: this.$route.params.fid == 1 ? "manual" : "auto",
-        country: [],
-        actions: "",
-        platform: "",
-
-        target: [],
-        iftarget: ["1"],
-        notarget: [],
-        minversion: "",
-        maxversion: "",
-        moneytype: "day_budget",
-        money: "",
-        date: [],
-        timerange: "allday",
-        rdate: [],
-        rtime: [
-          new Date(2016, 9, 10, 0, 0, 0),
-          new Date(2016, 9, 10, 23, 0, 0)
+  import GenerGuide from "./gener-guide";
+  import { mapState, mapGetters, mapMutations } from "vuex";
+  import { Msgwarning } from "../../js/message";
+  export default {
+    components: {
+      GenerGuide
+    },
+    data() {
+      return {
+        state: "",
+        state2: "",
+        state3: "",
+        week: [
+          {
+            name: "周一",
+            key: "1"
+          },
+          {
+            name: "周二",
+            key: "2"
+          },
+          {
+            name: "周三",
+            key: "3"
+          },
+          {
+            name: "周四",
+            key: "4"
+          },
+          {
+            name: "周五",
+            key: "5"
+          },
+          {
+            name: "周六",
+            key: "6"
+          },
+          {
+            name: "周七",
+            key: "7"
+          }
         ],
-        equip: [],
-        sex: "0",
-        age: [13, 65],
-        language: [],
-        interest: [],
-        auto: ["1"],
-        verpla: ["facebook", "instagram"], //版位
-        bid: "cpi", //出价
-        maxbid: "0.02",
-        filtra: ["1", "2"],
-        filtrapage: [],
+        maxbidplace: "请输入竞价上限（单位：美元）",
+        form: {
+          name: "",
+          type: this.$route.params.fid == 1 ? "manual" : "auto",
+          country: [],
+          actions: "",
+          platform: "",
 
-        account: [],
-        adcount: 1,
-        count: 1,
-        createtype: [],
-        classify: [],
-        createcount: "100",
-        tactics: 1
-      },
-      msg: {
-        name: "请输入推广计划名称",
-        country: "请选择国家",
-        actions: "请选择应用",
-        platform: "请选择平台",
-        version: "请选择系统版本",
-        money: "请输入预算金额",
-        date: "请选择投放日期",
-        rdate: "请选择星期",
-        equip: "请选择设备",
-        language: "请选择语言",
-        // interest: "请选择兴趣",
-        verpla: "请选择版位",
-        maxbid: "请输入竞价上限",
-        maxbidmax: "竞价上限必须大于0.02美元",
-        filtra: "请选择用户过滤",
-        filtrapage: "请选择需要过滤的主页",
-        createtype: "请选择创意类型"
-      }
-    };
-  },
-  mounted() {
-    // if (this.actions) {
-    //   let applicationid = this.actions;
-    //   this.$store.dispatch("getCreatePlatform", { applicationid });
-    // }
-  },
-  computed: {
-    ...mapState([
-      "itemlist",
-      "othercountries",
-      "language",
-      "interests",
-      "commonapp",
-      "createplatform",
-      "system",
-      "commonpage",
-      "genertarget",
-      "commonaccount",
-      "classifyforplan",
-      "classifyfiltercount"
-    ]),
-    equip() {
-      return this.form.platform;
-    }
-    // actions() {
-    //   if (this.itemlist.length == 0) return;
-    //   return this.itemlist.find(v => v.id == this.$route.params.id)
-    //     .applicationId;
-    // }
-  },
-  watch: {
-    equip(n, o) {
-      this.form.equip =
-        n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];
-    },
-    "form.name": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.type": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.country": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.platform": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.target": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.notarget": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.minversion": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.maxversion": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.moneytype": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.money": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.sex": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.language": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.interest": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.bid": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.maxbid": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.filtrapage": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.account": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    },
-    "form.count": {
-      handler(n, o) {
-        this.$emit("changeEdit", false);
-      }
-    }
-  },
-  methods: {
-    ...mapMutations(["SETSTATE"]),
-    selectAction() {
-      // 选择应用之后获取出价指南数据
-      this.showBidChart();
+          target: [],
+          iftarget: ["1"],
+          notarget: [],
+          minversion: "",
+          maxversion: "",
+          moneytype: "day_budget",
+          money: "",
+          date: [],
+          timerange: "allday",
+          rdate: [],
+          rtime: [
+            new Date(2016, 9, 10, 0, 0, 0),
+            new Date(2016, 9, 10, 23, 0, 0)
+          ],
+          equip: [],
+          sex: "0",
+          age: [13, 65],
+          language: [],
+          interest: [],
+          auto: ["1"],
+          verpla: ["facebook", "instagram"], //版位
+          bid: "cpi", //出价
+          maxbid: "0.02",
+          filtra: ["1", "2"],
+          filtrapage: [],
 
-      this.form.platform = '';
-      let applicationid = this.form.actions;
-      this.$store.dispatch("getCreatePlatform", { applicationid });
-      this.form.minversion = "";
-      this.form.maxversion = "";
-      this.SETSTATE({k: 'system', v: []});
-    },
-    getFilterCount() {
-      if (this.form.createtype.length == 0 || this.form.country.length == 0) {
-        this.SETSTATE({ k: "classifyfiltercount", v: 0 });
-        return;
-      }
-
-      let country = this.form.country.join(",");
-      let gender = this.form.sex;
-      let projectId = this.$route.params.id;
-      let creativetype = this.form.createtype.join(",");
-      let classify = this.form.classify.join(",");
-      this.$store.dispatch("classifyFilterCountNoPlan", {
-        country,
-        gender,
-        projectId,
-        creativetype,
-        classify
-      });
-    },
-    selectCountry() {
-      this.getFilterCount();
-
-      this.showBidChart();
-    },
-    showBidChart() {
-      if (this.form.country.length == 0 || !this.form.actions) {
-        return;
-      }
-      // 20181105新增出价指南数据
-      let country = this.form.country.join(",");
-      let billingEvent =
-        this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
-      this.$store.dispatch("bidGuide", {
-        country,
-        fbApplicationId: this.form.actions,
-        billingEvent
-      });
-    },
-    accountToAudience() {
-      this.form.target = [];
-      this.form.notarget = [];
-
-      if (this.form.account.length == 0) {
-        this.SETSTATE({ k: "genertarget", v: [] });
-        return;
-      }
-      let fb_account_ids = this.form.account.join(",");
-      this.$store.dispatch("generTargetList", { fb_account_ids });
-    },
-    moneytypeChange() {
-      this.form.money = "";
-    },
-    formatTooltip(val) {
-      if (val == 65) return "65+";
-    },
-    maxbidDefault() {
-      if (this.form.bid == "cpi") {
-        this.form.maxbid = "0.02";
-        this.maxbidplace = "请输入竞价上限（单位：美元）";
-      } else {
-        this.form.maxbid = "";
-        this.maxbidplace = "选填";
-      }
-
-      this.showBidChart();
-    },
-    toSubmit() {
-      console.log(this.form);
-      let self = this;
-
-      let check = this.dataChecked();
-      if (!check[0]) {
-        Msgwarning(check[1]);
-        return;
-      }
-
-      let warnstr = [];
-      let h = this.$createElement;
-      let day = parseInt(
-        (this.form.date[1] - this.form.date[0]) / (24 * 3600 * 1000)
-      );
-      if (
-        this.form.moneytype == "day_budget" &&
-        parseFloat(this.form.money) >= 5000
-      ) {
-        warnstr.push(
-          h("p", null, [
-            h("span", { style: "color:#999" }, "每日预算："),
-            h("span", { style: "color:red" }, `$${this.form.money}`)
-          ])
-        );
-      }
-      if (
-        this.form.moneytype == "total_budget" &&
-        parseFloat(this.form.money) / day >= 5000
-      ) {
-        warnstr.push(
-          h("p", null, [
-            h("span", { style: "color:#999" }, "总预算："),
-            h("span", { style: "color:red" }, `$${this.form.money}`)
-          ])
-        );
-      }
-      if (this.form.bid == "cpi" && this.form.maxbid >= 50) {
-        warnstr.push(
-          h("p", null, [
-            h("span", { style: "color:#999" }, "CPI出价："),
-            h("span", { style: "color:red" }, `$${this.form.maxbid}`)
-          ])
-        );
-      }
-      if (this.form.bid == "cpm" && this.form.maxbid >= 50) {
-        warnstr.push(
-          h("p", null, [
-            h("span", { style: "color:#999" }, "CPM出价："),
-            h("span", { style: "color:red" }, `$${this.form.maxbid}`)
-          ])
-        );
-      }
-      if (warnstr.length > 0) {
-        this.$msgbox({
-          title: "创建推广计划",
-          message: h(
-            "div",
-            null,
-            [h("span", null, "确认创建此推广计划吗？")].concat(warnstr)
-          ),
-          showCancelButton: true,
-          confirmButtonText: "确定",
-          cancelButtonText: "取消"
-        })
-          .then(() => {
-            self.toDispatch();
-          })
-          .catch(() => {});
-      } else {
-        self.toDispatch();
-      }
-    },
-    toDispatch() {
-      let target = {},
-        notarget = {};
-      this.form.target.forEach(v => {
-        let k = v.split("|");
-        let account = k[1];
-        if (!target[account]) {
-          target[account] = [];
-        }
-        target[account].push(k[0]);
-      });
-      this.form.notarget.forEach(v => {
-        let k = v.split("|");
-        let account = k[1];
-        if (!notarget[account]) {
-          notarget[account] = [];
-        }
-        notarget[account].push(k[0]);
-      });
-
-      let option = {
-        // planAdaccountVOList: [],
-        // planCreativeVOList: [],
-        planInfoVO: {
-          adNum: this.form.count,
-          applicationId: this.form.actions,
-          bidAmount:
-            this.form.maxbid === "" ? null : parseInt(this.form.maxbid * 100),
-          billingType: this.form.bid,
-          budgetType: this.form.moneytype,
-          country: this.form.country,
-          createType: this.form.type,
-          creativeNum: this.form.createcount,
-          creativeType: this.form.createtype,
-          dayBudget: parseInt(this.form.money * 100),
-          days: this.form.rdate,
-          device:
-            this.form.platform == "itunes"
-              ? this.form.equip.filter(v => v == "iPhone" || v == "iPad")
-              : this.form.equip.filter(v => v == "Android_Smartphone"),
-          endMinute: this.$timeFormat(this.form.rtime[1], "HH") + ":00",
-          endTime: new Date(this.form.date[1]).getTime(),
-          filteAttentionUser: this.form.filtrapage,
-          filteInstalledUser: this.form.filtra.indexOf("1") != -1 ? "yes" : "",
-          gender: [this.form.sex],
-          goalBid: "",
-          interest: this.form.interest,
-          locales: this.form.language,
-          maxAge: this.form.age[1],
-          minAge: this.form.age[0],
-          name: this.form.name,
-          platform: this.form.platform,
-          position: this.form.auto[0] == "1" ? [] : this.form.verpla,
-          projectId: this.$route.params.id,
-          scheduleType: this.form.timerange,
-          startMinute: this.$timeFormat(this.form.rtime[0], "HH") + ":00",
-          startTime: new Date(this.form.date[0]).getTime(),
-          totalBudget: parseInt(this.form.money * 100),
-          fbAccountIds: this.form.account,
-          includeAudiences: JSON.stringify(target),
-          excludedAudiences:
-            this.form.iftarget[0] == 1 ? "" : JSON.stringify(notarget),
-          version: this.form.minversion,
-          maxVersion: this.form.maxversion ? this.form.maxversion : null,
-          adsetNum: this.form.adcount,
-          creativeStrategy: this.form.tactics,
-          creativeClassify: this.form.classify
+          account: [],
+          adcount: 1,
+          count: 1,
+          createtype: [],
+          classify: [],
+          createcount: "100",
+          tactics: 1
         },
-        route: this.$router,
-        projectid: this.$route.params.id
+        msg: {
+          name: "请输入推广计划名称",
+          country: "请选择国家",
+          actions: "请选择应用",
+          platform: "请选择平台",
+          version: "请选择系统版本",
+          money: "请输入预算金额",
+          date: "请选择投放日期",
+          rdate: "请选择星期",
+          equip: "请选择设备",
+          language: "请选择语言",
+          // interest: "请选择兴趣",
+          verpla: "请选择版位",
+          maxbid: "请输入竞价上限",
+          maxbidmax: "竞价上限必须大于0.02美元",
+          filtra: "请选择用户过滤",
+          filtrapage: "请选择需要过滤的主页",
+          createtype: "请选择创意类型"
+        }
       };
-      // 阻止路由离开页面钩子触发
-      this.$emit("changeEdit", true);
-
-      this.$store.dispatch("createGener", { option });
     },
-    dataChecked() {
-      if (this.form.name == "") return [false, this.msg.name];
-      if (this.form.country.length == 0) return [false, this.msg.country];
-      if (this.form.actions == "") return [false, this.msg.actions];
-      if (this.form.platform == "") return [false, this.msg.platform];
-
-      if (this.form.minversion == "") return [false, this.msg.version];
-      if (this.form.money == "") return [false, this.msg.money];
-      if (this.form.moneytype == "total_budget") {
-        if (!this.form.date || this.form.date.length == 0)
-          return [false, this.msg.date];
-        if (this.form.timerange == "schedule" && this.form.rdate.length == 0)
-          return [false, this.msg.rdate];
-      }
-      if (this.form.equip.filter(v => v).length == 0)
-        return [false, this.msg.equip];
-      // if (this.form.language.length == 0) return [false, this.msg.language];
-      //   if (this.form.interest.length == 0) return [false, this.msg.interest];
-      if (this.form.auto.length == 0 && this.form.verpla.length == 0)
-        return [false, this.msg.verpla];
-      if (this.form.bid == "cpi" && this.form.maxbid == "")
-        return [false, this.msg.maxbid];
-      if (
-        this.form.maxbid != "" &&
-        (isNaN(parseInt(this.form.maxbid)) || this.form.maxbid < 0.02)
-      )
-        return [false, this.msg.maxbidmax];
-      // if (this.form.filtra.length == 0) return [false, this.msg.filtra];
-      if (this.form.filtra.indexOf("2") != -1) {
-        if (this.form.filtrapage.length == 0)
-          return [false, this.msg.filtrapage];
-      }
-      if (this.form.type == "auto") {
-        if (this.form.createtype.length == 0)
-          return [false, this.msg.createtype];
-      }
-
-      return [true];
+    mounted() {
+      // if (this.actions) {
+      //   let applicationid = this.actions;
+      //   this.$store.dispatch("getCreatePlatform", { applicationid });
+      // }
     },
-    toGetsystem() {
-      let os = this.form.platform == "itunes" ? "ios" : "android";
-      this.form.minversion = "";
-      this.form.maxversion = "";
-      this.$store.dispatch("getSystem", { os });
+    computed: {
+      ...mapState([
+        "itemlist",
+        "othercountries",
+        "language",
+        "interests",
+        "commonapp",
+        "createplatform",
+        "system",
+        "commonpage",
+        "genertarget",
+        "commonaccount",
+        "classifyforplan",
+        "classifyfiltercount"
+      ]),
+      equip() {
+        return this.form.platform;
+      }
+      // actions() {
+      //   if (this.itemlist.length == 0) return;
+      //   return this.itemlist.find(v => v.id == this.$route.params.id)
+      //     .applicationId;
+      // }
     },
-    countChange() {},
-    adcountChange() {},
-    createcountChange() {}
-  }
-};
+    watch: {
+      equip(n, o) {
+        this.form.equip =
+          n == "google_play" ? ["Android_Smartphone"] : ["iPhone", "iPad"];
+      },
+      "form.name": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.type": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.country": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.platform": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.target": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.notarget": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.minversion": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.maxversion": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.moneytype": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.money": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.sex": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.language": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.interest": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.bid": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.maxbid": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.filtrapage": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.account": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      },
+      "form.count": {
+        handler(n, o) {
+          this.$emit("changeEdit", false);
+        }
+      }
+    },
+    methods: {
+      ...mapMutations(["SETSTATE"]),
+      selectAction() {
+        // 选择应用之后获取出价指南数据
+        this.showBidChart();
+
+        this.form.platform = "";
+        let applicationid = this.form.actions;
+        this.$store.dispatch("getCreatePlatform", { applicationid });
+        this.form.minversion = "";
+        this.form.maxversion = "";
+        this.SETSTATE({ k: "system", v: [] });
+      },
+      getFilterCount() {
+        if (this.form.createtype.length == 0 || this.form.country.length == 0) {
+          this.SETSTATE({ k: "classifyfiltercount", v: 0 });
+          return;
+        }
+
+        let country = this.form.country.join(",");
+        let gender = this.form.sex;
+        let projectId = this.$route.params.id;
+        let creativetype = this.form.createtype.join(",");
+        let classify = this.form.classify.join(",");
+        this.$store.dispatch("classifyFilterCountNoPlan", {
+          country,
+          gender,
+          projectId,
+          creativetype,
+          classify
+        });
+      },
+      selectCountry() {
+        this.getFilterCount();
+
+        this.showBidChart();
+      },
+      showBidChart() {
+        if (this.form.country.length == 0 || !this.form.actions) {
+          return;
+        }
+        // 20181105新增出价指南数据
+        let country = this.form.country.join(",");
+        let billingEvent =
+          this.form.bid == "cpi" ? "APP_INSTALLS" : "IMPRESSIONS";
+        this.$store.dispatch("bidGuide", {
+          country,
+          fbApplicationId: this.form.actions,
+          billingEvent
+        });
+      },
+      accountToAudience() {
+        this.form.target = [];
+        this.form.notarget = [];
+
+        if (this.form.account.length == 0) {
+          this.SETSTATE({ k: "genertarget", v: [] });
+          return;
+        }
+        let fb_account_ids = this.form.account.join(",");
+        this.$store.dispatch("generTargetList", { fb_account_ids });
+      },
+      moneytypeChange() {
+        this.form.money = "";
+      },
+      formatTooltip(val) {
+        if (val == 65) return "65+";
+      },
+      maxbidDefault() {
+        if (this.form.bid == "cpi") {
+          this.form.maxbid = "0.02";
+          this.maxbidplace = "请输入竞价上限（单位：美元）";
+        } else {
+          this.form.maxbid = "";
+          this.maxbidplace = "选填";
+        }
+
+        this.showBidChart();
+      },
+      toSubmit() {
+        console.log(this.form);
+        let self = this;
+
+        let check = this.dataChecked();
+        if (!check[0]) {
+          Msgwarning(check[1]);
+          return;
+        }
+
+        let warnstr = [];
+        let h = this.$createElement;
+        let day = parseInt(
+          (this.form.date[1] - this.form.date[0]) / (24 * 3600 * 1000)
+        );
+        if (
+          this.form.moneytype == "day_budget" &&
+          parseFloat(this.form.money) >= 5000
+        ) {
+          warnstr.push(
+            h("p", null, [
+              h("span", { style: "color:#999" }, "每日预算："),
+              h("span", { style: "color:red" }, `$${this.form.money}`)
+            ])
+          );
+        }
+        if (
+          this.form.moneytype == "total_budget" &&
+          parseFloat(this.form.money) / day >= 5000
+        ) {
+          warnstr.push(
+            h("p", null, [
+              h("span", { style: "color:#999" }, "总预算："),
+              h("span", { style: "color:red" }, `$${this.form.money}`)
+            ])
+          );
+        }
+        if (this.form.bid == "cpi" && this.form.maxbid >= 50) {
+          warnstr.push(
+            h("p", null, [
+              h("span", { style: "color:#999" }, "CPI出价："),
+              h("span", { style: "color:red" }, `$${this.form.maxbid}`)
+            ])
+          );
+        }
+        if (this.form.bid == "cpm" && this.form.maxbid >= 50) {
+          warnstr.push(
+            h("p", null, [
+              h("span", { style: "color:#999" }, "CPM出价："),
+              h("span", { style: "color:red" }, `$${this.form.maxbid}`)
+            ])
+          );
+        }
+        if (warnstr.length > 0) {
+          this.$msgbox({
+            title: "创建推广计划",
+            message: h(
+              "div",
+              null,
+              [h("span", null, "确认创建此推广计划吗？")].concat(warnstr)
+            ),
+            showCancelButton: true,
+            confirmButtonText: "确定",
+            cancelButtonText: "取消"
+          })
+            .then(() => {
+              self.toDispatch();
+            })
+            .catch(() => {});
+        } else {
+          self.toDispatch();
+        }
+      },
+      toDispatch() {
+        let target = {},
+          notarget = {};
+        this.form.target.forEach(v => {
+          let k = v.split("|");
+          let account = k[1];
+          if (!target[account]) {
+            target[account] = [];
+          }
+          target[account].push(k[0]);
+        });
+        this.form.notarget.forEach(v => {
+          let k = v.split("|");
+          let account = k[1];
+          if (!notarget[account]) {
+            notarget[account] = [];
+          }
+          notarget[account].push(k[0]);
+        });
+
+        let option = {
+          // planAdaccountVOList: [],
+          // planCreativeVOList: [],
+          planInfoVO: {
+            adNum: this.form.count,
+            applicationId: this.form.actions,
+            bidAmount:
+              this.form.maxbid === "" ? null : parseInt(this.form.maxbid * 100),
+            billingType: this.form.bid,
+            budgetType: this.form.moneytype,
+            country: this.form.country,
+            createType: this.form.type,
+            creativeNum: this.form.createcount,
+            creativeType: this.form.createtype,
+            dayBudget: parseInt(this.form.money * 100),
+            days: this.form.rdate,
+            device:
+              this.form.platform == "itunes"
+                ? this.form.equip.filter(v => v == "iPhone" || v == "iPad")
+                : this.form.equip.filter(v => v == "Android_Smartphone"),
+            endMinute: this.$timeFormat(this.form.rtime[1], "HH") + ":00",
+            endTime: new Date(this.form.date[1]).getTime(),
+            filteAttentionUser: this.form.filtrapage,
+            filteInstalledUser: this.form.filtra.indexOf("1") != -1 ? "yes" : "",
+            gender: [this.form.sex],
+            goalBid: "",
+            interest: this.form.interest,
+            locales: this.form.language,
+            maxAge: this.form.age[1],
+            minAge: this.form.age[0],
+            name: this.form.name,
+            platform: this.form.platform,
+            position: this.form.auto[0] == "1" ? [] : this.form.verpla,
+            projectId: this.$route.params.id,
+            scheduleType: this.form.timerange,
+            startMinute: this.$timeFormat(this.form.rtime[0], "HH") + ":00",
+            startTime: new Date(this.form.date[0]).getTime(),
+            totalBudget: parseInt(this.form.money * 100),
+            fbAccountIds: this.form.account,
+            includeAudiences: JSON.stringify(target),
+            excludedAudiences:
+              this.form.iftarget[0] == 1 ? "" : JSON.stringify(notarget),
+            version: this.form.minversion,
+            maxVersion: this.form.maxversion ? this.form.maxversion : null,
+            adsetNum: this.form.adcount,
+            creativeStrategy: this.form.tactics,
+            creativeClassify: this.form.classify
+          },
+          route: this.$router,
+          projectid: this.$route.params.id
+        };
+        // 阻止路由离开页面钩子触发
+        this.$emit("changeEdit", true);
+
+        this.$store.dispatch("createGener", { option });
+      },
+      dataChecked() {
+        if (this.form.name == "") return [false, this.msg.name];
+        if (this.form.country.length == 0) return [false, this.msg.country];
+        if (this.form.actions == "") return [false, this.msg.actions];
+        if (this.form.platform == "") return [false, this.msg.platform];
+
+        if (this.form.minversion == "") return [false, this.msg.version];
+        if (this.form.money == "") return [false, this.msg.money];
+        if (this.form.moneytype == "total_budget") {
+          if (!this.form.date || this.form.date.length == 0)
+            return [false, this.msg.date];
+          if (this.form.timerange == "schedule" && this.form.rdate.length == 0)
+            return [false, this.msg.rdate];
+        }
+        if (this.form.equip.filter(v => v).length == 0)
+          return [false, this.msg.equip];
+        // if (this.form.language.length == 0) return [false, this.msg.language];
+        //   if (this.form.interest.length == 0) return [false, this.msg.interest];
+        if (this.form.auto.length == 0 && this.form.verpla.length == 0)
+          return [false, this.msg.verpla];
+        if (this.form.bid == "cpi" && this.form.maxbid == "")
+          return [false, this.msg.maxbid];
+        if (
+          this.form.maxbid != "" &&
+          (isNaN(parseInt(this.form.maxbid)) || this.form.maxbid < 0.02)
+        )
+          return [false, this.msg.maxbidmax];
+        // if (this.form.filtra.length == 0) return [false, this.msg.filtra];
+        if (this.form.filtra.indexOf("2") != -1) {
+          if (this.form.filtrapage.length == 0)
+            return [false, this.msg.filtrapage];
+        }
+        if (this.form.type == "auto") {
+          if (this.form.createtype.length == 0)
+            return [false, this.msg.createtype];
+        }
+
+        return [true];
+      },
+      toGetsystem() {
+        let os = this.form.platform == "itunes" ? "ios" : "android";
+        this.form.minversion = "";
+        this.form.maxversion = "";
+        this.$store.dispatch("getSystem", { os });
+      },
+      countChange() {},
+      adcountChange() {},
+      createcountChange() {}
+    }
+  };
 </script>
+
+<style lang="less">
+.downlist {
+  .el-select-dropdown__item {
+    height: auto;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    .downline {
+      line-height: 24px;
+      overflow: hidden;
+      display: block;
+    }
+    .info{
+      color: #8492a6;
+    }
+    &.is-disabled {
+      .info{
+        color: #C0C4CC;
+      }
+    }
+  }
+}
+</style>
 
 <style lang="less" scoped>
 .formlist {

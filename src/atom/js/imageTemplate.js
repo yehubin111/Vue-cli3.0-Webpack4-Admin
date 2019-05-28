@@ -41,6 +41,10 @@ class exportTemplate {
         this.canvas.width = this.canvaswidth;
         this.canvas.height = this.canvasheight;
         this.ctx = this.canvas.getContext('2d');
+
+        // 文本信息
+        this.ctx.textAlign = "center";
+        this.ctx.textBaseline = "middle";
         // 填充图片
         return this.drawImages();
     }

@@ -119,10 +119,8 @@
       this.ctx.fillStyle = "#f4f4f4";
       this.ctx.fillRect(0, 0, this.canvaswidth, this.canvasheight);
       // 文本信息
-      // this.ctx.font = `${this.writingSize}px Arial`;
       this.ctx.textAlign = "center";
       this.ctx.textBaseline = "middle";
-      // this.ctx.fillStyle = this.writingColor;
 
       // 渲染背景
       this.drawBackground();

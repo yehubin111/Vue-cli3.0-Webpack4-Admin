@@ -309,7 +309,7 @@
         if (this.commonuse) {
           this.writingChange(1);
           if (this.writingDots.length > 1) {
-            this.writingChange(2);
+            this.writingChange(2, true);
           }
         } else {
           let blankwrite = Object.assign({}, this.writingbasetext);
@@ -343,8 +343,8 @@
           return basesize;
         }
       },
-      writingChange(i) {
-        if (this.timer) clearTimeout(this.timer);
+      writingChange(i, bl) {
+        if (this.timer && !bl) clearTimeout(this.timer);
 
         let me = this;
         this.timer = setTimeout(() => {
@@ -400,7 +400,8 @@
             return v;
           }
           if (
-            !this.commonuse && v.length != 0 && 
+            !this.commonuse &&
+            v.length != 0 &&
             (this.writelist[i].text1.trim() == "" ||
               this.writelist[i].text2.trim() == "")
           ) {
@@ -427,14 +428,16 @@
             size = this.writingSize1;
           } else {
             text = this.writelist[i];
+            let o = 0;
             for (let l in text) {
               size.push(
                 me.getFontSize(
                   text[l],
-                  me.writingbasesize[l],
-                  me.writingDots[l].size[0]
+                  me.writingbasesize[o],
+                  me.writingDots[o].size[0]
                 )
               );
+              o++;
             }
           }
 

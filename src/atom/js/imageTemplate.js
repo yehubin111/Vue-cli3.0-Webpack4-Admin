@@ -12,7 +12,8 @@ class exportTemplate {
         writingColor = [],
         writingDots = [],
         writingText,
-        writingSize = []
+        writingSize = [],
+        writingFamily = ['黑体']
     }) {
         this.baseImage = baseImage; // 背景图地址
         this.baseWidth = baseWidth; // 背景图宽度
@@ -29,7 +30,8 @@ class exportTemplate {
         this.writingColor = writingColor, // 文案颜色 ['#000', '#fff']
         this.writingDots = writingDots; // 文案位置 [{start: [left ,top], size: [width, height]}]
         this.writingText = writingText; // 文案内容 {text1: '123', text2: '456'}
-        this.writingSize = writingSize; // 文案大小 [20, 30] 
+        this.writingSize = writingSize; // 文案大小 [20, 30]
+        this.writingFamily = writingFamily; // 文案字体 ['黑体']
 
         return this.init();
     }

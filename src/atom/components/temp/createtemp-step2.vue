@@ -391,7 +391,6 @@
             Msgwarning(`文案不能为空`);
             return;
           }
-        } else {
         }
         // 素材必须上传，并且不能出现素材不全的情况
         let t;
@@ -401,7 +400,7 @@
             return v;
           }
           if (
-            v.length != 0 &&
+            !this.commonuse && v.length != 0 && 
             (this.writelist[i].text1.trim() == "" ||
               this.writelist[i].text2.trim() == "")
           ) {

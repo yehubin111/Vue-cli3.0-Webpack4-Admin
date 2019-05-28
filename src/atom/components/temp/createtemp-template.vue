@@ -125,9 +125,7 @@
       // this.ctx.fillStyle = this.writingColor;
 
       // 渲染背景
-      await this.drawBackground();
-      // 渲染文案
-      this.drawText();
+      this.drawBackground();
     },
     methods: {
       async drawImages() {

@@ -38,7 +38,7 @@
                 @input="writingChange(1)"
                 :disabled="!commonuse || writingDots.length == 0"
                 size="mini"
-                placeholder="请填写文案"
+                :placeholder="writingbasetext.text1"
               ></el-input>
             </div>
             <div class="writeline" v-show="writingDots.length > 1">
@@ -48,7 +48,7 @@
                 :disabled="!commonuse"
                 @input="writingChange(2)"
                 size="mini"
-                placeholder="请填写文案"
+                :placeholder="writingbasetext.text2"
               ></el-input>
             </div>
           </div>
@@ -246,9 +246,9 @@
           start: [xy[0], xy[1]],
           size: [wh[0], wh[1]]
         });
-        this.writingText1[`text${i + 1}`] = v.text;
-        this.writingText2[`text${i + 1}`] = v.text;
-        this.writingbasetext[`text${i + 1}`] = v.text;
+        this.writingText1[`text${i + 1}`] = "";
+        this.writingText2[`text${i + 1}`] = "";
+        this.writingbasetext[`text${i + 1}`] = "";
         this.writingColor.push(v.colour);
         this.writingSize1.push(this.getFontSize(v.text, v.text_size, wh[0]));
         this.writingSize2.push(this.getFontSize(v.text, v.text_size, wh[0]));
@@ -313,9 +313,6 @@
           }
         } else {
           let blankwrite = Object.assign({}, this.writingbasetext);
-          for (let i in blankwrite) {
-            blankwrite[i] = "";
-          }
           this.writingText1 = blankwrite;
           this.writingText2 = blankwrite;
 
@@ -349,9 +346,7 @@
         let me = this;
         this.timer = setTimeout(() => {
           let text = Object.assign({}, me.writingText1);
-          text[`text${i}`] = me[`commonwrite${i}`]
-            ? me[`commonwrite${i}`]
-            : me.writingbasetext[`text${i}`];
+          text[`text${i}`] = me[`commonwrite${i}`];
           me.writingSize1[i - 1] = me.getFontSize(
             me[`commonwrite${i}`],
             me.writingbasesize[i - 1],

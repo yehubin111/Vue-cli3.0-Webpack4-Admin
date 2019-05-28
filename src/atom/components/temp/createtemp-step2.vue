@@ -25,7 +25,11 @@
           <span class="name">文案</span>
           <div>
             <p class="writingcontent">
-              <el-checkbox v-model="commonuse" :disabled="writingDots.length == 0" @change="writeStatus">文案共用</el-checkbox>
+              <el-checkbox
+                v-model="commonuse"
+                :disabled="writingDots.length == 0"
+                @change="writeStatus"
+              >文案共用</el-checkbox>
             </p>
             <div class="writeline">
               <span class="font">文案一</span>
@@ -79,11 +83,21 @@
           <div class="write" v-if="writelist[index]" v-show="!commonuse">
             <div class="writeline">
               <span class="font">文案一</span>
-              <el-input v-model="writelist[index].text1" @input="ownerWriteChange(index, 1)" size="mini" placeholder="请填写文案"></el-input>
+              <el-input
+                v-model="writelist[index].text1"
+                @input="ownerWriteChange(index, 1)"
+                size="mini"
+                placeholder="请填写文案"
+              ></el-input>
             </div>
             <div class="writeline" v-show="writingDots.length > 1">
               <span class="font">文案二</span>
-              <el-input v-model="writelist[index].text2" @input="ownerWriteChange(index, 2)" size="mini" placeholder="请填写文案"></el-input>
+              <el-input
+                v-model="writelist[index].text2"
+                @input="ownerWriteChange(index, 2)"
+                size="mini"
+                placeholder="请填写文案"
+              ></el-input>
             </div>
           </div>
         </div>
@@ -150,7 +164,7 @@
   import { Loading } from "element-ui";
   import { Msgsuccess, Msgwarning } from "../../js/message";
   import draggable from "vuedraggable/src/vuedraggable";
-import { clearTimeout, setTimeout } from 'timers';
+  import { clearTimeout, setTimeout } from "timers";
 
   export default {
     components: {
@@ -269,9 +283,9 @@ import { clearTimeout, setTimeout } from 'timers';
          * @case 第三张图片开始，文案改变不影响图片渲染
          * @case 改变某一张图片下的文案，只会重新渲染当前图片
          */
-        if(index > 1) return;
+        if (index > 1) return;
 
-        if(this.timer) clearTimeout(this.timer);
+        if (this.timer) clearTimeout(this.timer);
 
         let me = this;
         this.timer = setTimeout(() => {
@@ -292,24 +306,24 @@ import { clearTimeout, setTimeout } from 'timers';
          * @case 如果勾选，则获取文案栏文本框内容，空白则显示默认文案
          * @case 如果取消勾选，则统一置空，需填写下发文案文本框
          */
-        if(this.commonuse) {
+        if (this.commonuse) {
           this.writingChange(1);
-          if(this.writingDots.length > 1) {
+          if (this.writingDots.length > 1) {
             this.writingChange(2);
           }
         } else {
           let blankwrite = Object.assign({}, this.writingbasetext);
-          for(let i in blankwrite) {
+          for (let i in blankwrite) {
             blankwrite[i] = "";
           }
           this.writingText1 = blankwrite;
           this.writingText2 = blankwrite;
 
           this.writelist.forEach(v => {
-            for(let i in v) {
+            for (let i in v) {
               v[i] = "";
             }
-          })
+          });
         }
       },
       getFontSize(text, basesize, maxwidth) {
@@ -323,7 +337,6 @@ import { clearTimeout, setTimeout } from 'timers';
         wtbox.style.fontSize = `${basesize}px`;
         wtbox.innerText = text;
         let wd = wtbox.clientWidth;
-        console.log(wd, maxwidth);
         if (wd > maxwidth) {
           return Math.ceil((maxwidth * basesize) / wd);
         } else {
@@ -331,12 +344,14 @@ import { clearTimeout, setTimeout } from 'timers';
         }
       },
       writingChange(i) {
-        if(this.timer) clearTimeout(this.timer);
+        if (this.timer) clearTimeout(this.timer);
 
         let me = this;
         this.timer = setTimeout(() => {
           let text = Object.assign({}, me.writingText1);
-          text[`text${i}`] = me[`commonwrite${i}`] ? me[`commonwrite${i}`] : me.writingbasetext[`text${i}`];
+          text[`text${i}`] = me[`commonwrite${i}`]
+            ? me[`commonwrite${i}`]
+            : me.writingbasetext[`text${i}`];
           me.writingSize1[i - 1] = me.getFontSize(
             me[`commonwrite${i}`],
             me.writingbasesize[i - 1],
@@ -349,10 +364,9 @@ import { clearTimeout, setTimeout } from 'timers';
           );
           me.writingText1 = text;
           me.writingText2 = text;
-        }, 300)
+        }, 300);
       },
       deleteImage(index, idx, url) {
-        console.log(index, idx);
         this.allImages[index].splice(idx, 1);
         // 需要在删除图片之后，删除上传队列中对应的文件，防止再次上传重复添加
         this.$refs.templatesUpload.resetUploaded(url);
@@ -370,9 +384,17 @@ import { clearTimeout, setTimeout } from 'timers';
         this.setCanvas();
       },
       async saveTempImages() {
-        console.log(this.commonwrite1, this.commonwrite2);
-        console.log(this.writinglist);
-        return;
+        // 文案不能为空
+        if (this.commonuse) {
+          if (
+            this.commonwrite1.trim() == "" ||
+            (this.writingDots.length > 1 && this.commonwrite2.trim() == "")
+          ) {
+            Msgwarning(`文案不能为空`);
+            return;
+          }
+        } else {
+        }
         // 素材必须上传，并且不能出现素材不全的情况
         let t;
         let spe = this.allImages.find((v, i) => {
@@ -380,17 +402,45 @@ import { clearTimeout, setTimeout } from 'timers';
             t = i;
             return v;
           }
+          if (
+            v.length != 0 &&
+            (this.writelist[i].text1.trim() == "" ||
+              this.writelist[i].text2.trim() == "")
+          ) {
+            t = i;
+            return v;
+          }
         });
         if (spe) {
-          Msgwarning(`第${t + 1}张图片素材不全，请补全后再生成图片`);
+          Msgwarning(`第${t + 1}张图片素材或者文案不全，请补全后再生成图片`);
           return;
         }
 
         let load = Loading.service({ fullscreen: true });
         let imagesarr = [];
+        let me = this;
         // 导出图片
         for (let i = 0; i < this.allImages.length; i++) {
           if (this.allImages[i].length == 0) continue;
+
+          let text = {},
+            size = [];
+          if (this.commonuse) {
+            text = this.writingText1;
+            size = this.writingSize1;
+          } else {
+            text = this.writelist[i];
+            for (let l in text) {
+              size.push(
+                me.getFontSize(
+                  text[l],
+                  me.writingbasesize[l],
+                  me.writingDots[l].size[0]
+                )
+              );
+            }
+          }
+
           let img = await new exportTemplate({
             baseImage: this.baseImage,
             baseWidth: this.baseWidth,
@@ -399,11 +449,14 @@ import { clearTimeout, setTimeout } from 'timers';
             logoDots: this.logoDots,
             logoImages: this.logoImages,
             fileImages: this.allImages[i].map(v => v.imageUrl),
-            fileDots: this.fileDots
+            fileDots: this.fileDots,
+            writingColor: this.writingColor,
+            writingDots: this.writingDots,
+            writingText: text,
+            writingSize: size
           });
           imagesarr.push(img);
         }
-        console.log(imagesarr);
         let images = new FormData();
         imagesarr.forEach(v => {
           let bl = this.convertBase64UrlToBlob(v);

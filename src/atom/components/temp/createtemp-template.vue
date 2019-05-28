@@ -51,7 +51,7 @@
         type: Array
       },
       // 20190527新增，模板制图支持文案
-      // 文案列表
+      // 文案列表 {text1: '12', text2: '34'}
       writingText: {
         type: Object
       },
@@ -64,7 +64,7 @@
         type: Array,
         required: true
       },
-      // 文案大小
+      // 文案大小 [20, 30]
       writingSize: {
         type: Array,
         required: true
@@ -97,16 +97,11 @@
       },
       writingText: {
         handler(n, o) {
-          console.log("qqqqqqqqq");
           // 内容的变化
           this.drawImages();
         },
         deep: true
       }
-      // writingList(n, o) {
-      //   console.log("qqqqqqqqqq");
-      //   // this.drawImages();
-      // }
     },
     async mounted() {
       this.canvaswidth = this.canvasWidth ? this.canvasWidth : this.baseWidth;

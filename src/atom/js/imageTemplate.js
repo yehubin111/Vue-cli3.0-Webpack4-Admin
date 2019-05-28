@@ -1,5 +1,19 @@
 class exportTemplate {
-    constructor({ baseImage = '', baseWidth = 0, baseHeight = 0, canvasWidth = 0, canvasHeight = 0, fileImages = [], fileDots = [], logoDots = [], logoImages = [] }) {
+    constructor({ 
+        baseImage = '', 
+        baseWidth = 0, 
+        baseHeight = 0, 
+        canvasWidth = 0, 
+        canvasHeight = 0,
+        fileImages = [], 
+        fileDots = [], 
+        logoDots = [], 
+        logoImages = [],
+        writingColor = [],
+        writingDots = [],
+        writingText,
+        writingSize = []
+    }) {
         this.baseImage = baseImage; // 背景图地址
         this.baseWidth = baseWidth; // 背景图宽度
         this.baseHeight = baseHeight; // 背景图高度
@@ -12,6 +26,10 @@ class exportTemplate {
         this.fileDots = fileDots; // 图片空位坐标 [{ left, top }, { left, top }]
         this.logoDots = logoDots; // LOGO图片路径
         this.logoImages = logoImages; // LOGO坐标 [{ left, top }, { left, top }]
+        this.writingColor = writingColor, // 文案颜色 ['#000', '#fff']
+        this.writingDots = writingDots; // 文案位置 [{start: [left ,top], size: [width, height]}]
+        this.writingText = writingText; // 文案内容 {text1: '123', text2: '456'}
+        this.writingSize = writingSize; // 文案大小 [20, 30] 
 
         return this.init();
     }
@@ -65,6 +83,8 @@ class exportTemplate {
         await this.drawBackground();
         // 渲染LOGO
         if (this.logoDots.length != 0) await this.drawLogo();
+        // 渲染文案
+        if (this.writingDots && this.writingDots.length != 0) this.drawText();
         // 导出
         return this.exportTemplate();
     }
@@ -98,7 +118,7 @@ class exportTemplate {
             });
         }
     }
-    drawBackground() {
+    drawBackground() { 
         let me = this;
         return new Promise((resolve, reject) => {
             let img = new Image();
@@ -110,6 +130,24 @@ class exportTemplate {
             };
         });
     }
+    drawText() {
+        let me = this;
+
+        this.writingDots.forEach((g, p) => {
+          let maxwidth = g.size[0];
+          me.ctx.font = `${me.writingSize[p] * me.ratio}px ${me.writingFamily[p] ? me.writingFamily[p] : me.writingFamily[0]}`;
+          me.ctx.fillStyle = me.writingColor[p];
+          // 居中显示，起始位置重新计算，取中间点
+          let x = g.start[0] + g.size[0] / 2;
+          let y = g.start[1] + g.size[1] / 2;
+          me.ctx.fillText(
+            this.writingText[`text${p + 1}`],
+            x * me.ratio,
+            y * me.ratio,
+            maxwidth * me.ratio
+          );
+        });
+      }
 
     exportTemplate() {
         let url = this.canvas.toDataURL('image/jpeg');

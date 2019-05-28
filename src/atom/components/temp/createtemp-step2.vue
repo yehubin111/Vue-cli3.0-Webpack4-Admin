@@ -248,7 +248,7 @@
         });
         this.writingText1[`text${i + 1}`] = "";
         this.writingText2[`text${i + 1}`] = "";
-        this.writingbasetext[`text${i + 1}`] = "";
+        this.writingbasetext[`text${i + 1}`] = v.text;
         this.writingColor.push(v.colour);
         this.writingSize1.push(this.getFontSize(v.text, v.text_size, wh[0]));
         this.writingSize2.push(this.getFontSize(v.text, v.text_size, wh[0]));
@@ -313,6 +313,9 @@
           }
         } else {
           let blankwrite = Object.assign({}, this.writingbasetext);
+          for (let i in blankwrite) {
+            blankwrite[i] = "";
+          }
           this.writingText1 = blankwrite;
           this.writingText2 = blankwrite;
 

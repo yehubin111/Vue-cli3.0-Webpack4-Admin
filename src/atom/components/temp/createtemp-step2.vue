@@ -296,6 +296,12 @@
           }
           this.writingText1 = blankwrite;
           this.writingText2 = blankwrite;
+
+          this.writelist.forEach(v => {
+            for(let i in v) {
+              v[i] = "";
+            }
+          })
         }
       },
       getFontSize(text, basesize, maxwidth) {

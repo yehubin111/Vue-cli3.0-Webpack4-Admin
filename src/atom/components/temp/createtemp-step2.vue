@@ -307,10 +307,7 @@
          * @case 如果取消勾选，则统一置空，需填写下发文案文本框
          */
         if (this.commonuse) {
-          this.writingChange(1);
-          if (this.writingDots.length > 1) {
-            this.writingChange(2, true);
-          }
+          this.writingRechange();
         } else {
           let blankwrite = Object.assign({}, this.writingbasetext);
           for (let i in blankwrite) {
@@ -343,8 +340,29 @@
           return basesize;
         }
       },
-      writingChange(i, bl) {
-        if (this.timer && !bl) clearTimeout(this.timer);
+      writingRechange() {
+        let me = this;
+        let text = Object.assign({}, me.writingbasetext);
+        let i = 1;
+        for (let f in text) {
+          text[f] = me[`commonwrite${i}`];
+          me.writingSize1[i - 1] = me.getFontSize(
+            me[`commonwrite${i}`],
+            me.writingbasesize[i - 1],
+            me.writingDots[i - 1].size[0]
+          );
+          me.writingSize2[i - 1] = me.getFontSize(
+            me[`commonwrite${i}`],
+            me.writingbasesize[i - 1],
+            me.writingDots[i - 1].size[0]
+          );
+          i++;
+        }
+        me.writingText1 = text;
+        me.writingText2 = text;
+      },
+      writingChange(i) {
+        if (this.timer) clearTimeout(this.timer);
 
         let me = this;
         this.timer = setTimeout(() => {

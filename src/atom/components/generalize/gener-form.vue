@@ -12,7 +12,7 @@
       <b>基础信息</b>
       <span>推广计划保存后可编辑，也可多次生成广告</span>
     </div>
-    <el-form class="elform" label-position="left" label-width="110px" :model="form">
+    <el-form class="elform" label-position="left" label-width="150px" :model="form">
       <el-form-item label="推广计划名称">
         <el-input v-model="form.name" placeholder="请输入推广计划名称，用以展示在计划管理中"></el-input>
       </el-form-item>
@@ -23,6 +23,16 @@
         </el-radio-group>
         <span class="typetip1">需要手动创建广告和选择创意</span>
         <span class="typetip2">每天11点自动选择创意并创建广告</span>
+      </el-form-item>
+      <el-form-item label="应用" class="cline">
+        <el-select class="select" v-model="form.actions" placeholder="请选择应用" @change="selectAction">
+          <el-option
+            v-for="(l, index) in commonapp"
+            :key="index"
+            :label="l.name"
+            :value="l.applicationId"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="广告账户" class="cline">
         <el-select
@@ -46,13 +56,98 @@
               <span style="float: left">{{ item.name }}</span>
               <span class="info" style="float: right; font-size: 13px;">支持CPI</span>
             </span>
-            <span
-              class="downline info"
-              style=" font-size: 13px;"
-            >{{item.fbId.split('_')[1]}}</span>
+            <span class="downline info" style=" font-size: 13px;">{{item.fbId.split('_')[1]}}</span>
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="广告系列花费上限">
+        <div>
+          <el-tooltip
+            class="conditiontip"
+            effect="dark"
+            content="设置广告系列总花费上限。当花费达到上限时，广告系列中的广告组就会停止"
+            placement="top-start"
+          >
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-input
+            class="optimizeinput"
+            v-show="form.setmax"
+            v-model="form.costmax"
+            placeholder="请输入花费上限，不能低于100"
+          ></el-input>
+          <el-progress class="progress" v-show="form.setmax" :percentage="70" status="text">已花费$300</el-progress>
+          <el-button type="text" @click="form.setmax = !form.setmax">{{form.setmax? '删除上限': '设置上限'}}</el-button>
+        </div>
+      </el-form-item>
+      <el-form-item label="广告系列预算优化">
+        <div>
+          <el-tooltip
+            class="conditiontip"
+            effect="dark"
+            content="根据你选择的优化投放方案和竞价策略，预算优化功能将为广告系列中的各广告组分配预算，力求获得更多成效。你可以控制每个广告组的花费。"
+            placement="top-start"
+          >
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-switch
+            v-model="form.campaignoptimize"
+            active-color="#13ce66"
+            inactive-color="#d7dae2"
+          ></el-switch>
+          <p class="optimizetip" v-show="form.campaignoptimize">
+            广告系列不符合广告系列预算优化要求。
+            <el-tooltip
+              effect="dark"
+              content="未满足 - 所有广告组均使用相同的预算类型（总预算或单日预算）"
+              placement="top-start"
+            >
+              <el-button type="text" class="checkbutton">查看资格要求</el-button>
+            </el-tooltip>
+          </p>
+        </div>
+      </el-form-item>
+      <el-form-item label="广告系列预算" v-show="form.campaignoptimize">
+        <div>
+          <el-radio-group v-model="form.moneytype">
+            <el-radio label="day_budget">单日预算</el-radio>
+            <el-radio label="total_budget">总预算</el-radio>
+          </el-radio-group>
+          <div class="moneyinput">
+            <span class="moneyus">$</span>
+            <el-input class="minput" v-model="form.money" placeholder="请输入预算金额（单位：美元）"></el-input>
+          </div>
+        </div>
+      </el-form-item>
+      <el-form-item label="广告系列竞价策略" v-show="form.campaignoptimize">
+        <div>
+          <el-tooltip class="conditiontip" effect="dark" placement="top-start">
+            <div slot="content">
+              每种竞价策略适合不同的业务目标，需要你权衡利弊。如果你更希望从预算获得最大价值，请使用最低费用竞价策略。如果你更关心稳定的单次优化事件平均费用，请使用目标费用竞价策略。
+              <br>你将在每个广告组中设置竞价上限。详细了解。
+              <br>你在广告组层级中设置的广告投放优化方式将影响你所获得的成效。如果你选择设置竞价上限或目标费用，请在每个广告组中输入具体金额。
+            </div>
+            <i class="el-icon-warning"></i>
+          </el-tooltip>
+          <el-select class="formselect" v-model="form.bidmethod" placeholder="请选择竞价策略">
+            <el-option
+              v-for="item in bidmethodlist"
+              :key="item.key"
+              :label="item.name"
+              :value="item.key"
+            ></el-option>
+          </el-select>
+          <p>
+            <el-button type="text" class="checkbutton" @click="setMaxCost">设置广告组{竞价上限/目标费用}</el-button>
+          </p>
+        </div>
+      </el-form-item>
+    </el-form>
+    <div class="eltitle">
+      <b>受众和版位</b>
+      <span>设置目标受众，正确选择版位，高效展示广告</span>
+    </div>
+    <el-form class="elform" label-position="left" label-width="150px" :model="form">
       <el-form-item label="国家" class="cline">
         <el-select
           class="select"
@@ -70,27 +165,30 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="应用" class="cline">
-        <el-select class="select" v-model="form.actions" placeholder="请选择应用" @change="selectAction">
-          <el-option
-            v-for="(l, index) in commonapp"
-            :key="index"
-            :label="l.name"
-            :value="l.applicationId"
-          ></el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="平台" class="cline timerange" v-show="form.actions">
         <el-radio-group v-model="form.platform" @change="toGetsystem">
           <el-radio :label="l.marketType" v-for="l in createplatform" :key="l.marketType"></el-radio>
         </el-radio-group>
       </el-form-item>
-    </el-form>
-    <div class="eltitle">
-      <b>广告组</b>
-      <span>同1个广告系列下的所有广告组的条件一致</span>
-    </div>
-    <el-form class="elform" label-position="left" label-width="110px" :model="form">
+      <el-form-item label="系统版本" class="cline" v-show="form.platform != ''">
+        <el-select class="selectHalf" v-model="form.minversion" placeholder="最低版本">
+          <el-option
+            v-for="(l, index) in system"
+            :key="index"
+            :label="l.os + ' ' + l.version"
+            :value="l.version"
+          ></el-option>
+        </el-select>--
+        <el-select class="selectHalf" v-model="form.maxversion" placeholder="最高版本">
+          <el-option
+            v-for="(l, index) in system"
+            :key="index"
+            :label="l.os + ' ' + l.version"
+            :value="l.version"
+          ></el-option>
+        </el-select>
+        <p style="font-size: 12px;color: #999;">最高版本为空则无上限</p>
+      </el-form-item>
       <el-form-item label="受众" class="cline">
         <div class="targettip">定位至少符合以下一项条件的用户</div>
         <el-select
@@ -142,65 +240,6 @@
             ></el-option>
           </el-option-group>
         </el-select>
-      </el-form-item>
-      <el-form-item label="系统版本" class="cline" v-show="form.platform != ''">
-        <el-select class="selectHalf" v-model="form.minversion" placeholder="最低版本">
-          <el-option
-            v-for="(l, index) in system"
-            :key="index"
-            :label="l.os + ' ' + l.version"
-            :value="l.version"
-          ></el-option>
-        </el-select>--
-        <el-select class="selectHalf" v-model="form.maxversion" placeholder="最高版本">
-          <el-option
-            v-for="(l, index) in system"
-            :key="index"
-            :label="l.os + ' ' + l.version"
-            :value="l.version"
-          ></el-option>
-        </el-select>
-        <p style="font-size: 12px;color: #999;">最高版本为空则无上限</p>
-      </el-form-item>
-      <el-form-item label="预算" class="cline ctype">
-        <el-radio-group v-model="form.moneytype" @change="moneytypeChange">
-          <el-radio label="day_budget">单日预算</el-radio>
-          <el-radio label="total_budget">总预算</el-radio>
-        </el-radio-group>
-        <div class="moneyinput">
-          <span class="moneyus">$</span>
-          <el-input class="minput" v-model="form.money" placeholder="请输入预算金额（单位：美元）"></el-input>
-        </div>
-      </el-form-item>
-      <el-form-item label="投放日期" v-show="form.moneytype == 'total_budget'">
-        <el-date-picker
-          v-model="form.date"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          format="yyyy-MM-dd HH:mm"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item label="投放时段" class="cline timerange" v-show="form.moneytype == 'total_budget'">
-        <el-radio-group v-model="form.timerange">
-          <el-radio label="allday">全天投放广告</el-radio>
-          <el-radio label="schedule">分时间段投放</el-radio>
-        </el-radio-group>
-        <div class="moneyinput" v-show="form.timerange == 'schedule'">
-          <el-select class="selectsmall" v-model="form.rdate" multiple placeholder="按广告受众所在时区">
-            <el-option v-for="(l, index) in week" :key="index" :label="l.name" :value="l.key"></el-option>
-          </el-select>
-          <el-time-picker
-            class="timeselect"
-            is-range
-            v-model="form.rtime"
-            range-separator="至"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-            placeholder="选择时间范围"
-          ></el-time-picker>
-        </div>
       </el-form-item>
       <el-form-item label="设备" v-show="form.platform != ''">
         <el-checkbox-group v-model="form.equip">
@@ -255,6 +294,22 @@
           ></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="用户过滤" class="cline">
+        <el-checkbox-group v-model="form.filtra">
+          <el-checkbox label="1" name="filtra">过滤已安装用户</el-checkbox>
+          <el-checkbox label="2" name="filtra">过滤已关注用户</el-checkbox>
+        </el-checkbox-group>
+        <div class="moneyinput" v-show="form.filtra.indexOf('2') != -1">
+          <el-select class="select" v-model="form.filtrapage" multiple placeholder="请选择要过滤的主页，必选">
+            <el-option
+              v-for="(l, index) in commonpage"
+              :key="index"
+              :label="l.name"
+              :value="l.pageId"
+            ></el-option>
+          </el-select>
+        </div>
+      </el-form-item>
       <el-form-item label="自动版位">
         <el-checkbox-group v-model="form.auto">
           <el-checkbox label="1" name="type">是（Facebook自动选择最好的版位）</el-checkbox>
@@ -280,7 +335,210 @@
           >Messenger</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="出价" class="cline">
+    </el-form>
+    <div class="eltitle">
+      <b>预算、排期和竞价</b>
+      <span>设置花费预期、展示时间、竞价策略等</span>
+    </div>
+    <el-form class="elform" label-position="left" label-width="150px" :model="form">
+      <el-form-item label="预算" class="cline ctype">
+        <el-radio-group v-model="form.moneytype" @change="moneytypeChange">
+          <el-radio label="day_budget">单日预算</el-radio>
+          <el-radio label="total_budget">总预算</el-radio>
+        </el-radio-group>
+        <div class="moneyinput">
+          <span class="moneyus">$</span>
+          <el-input class="minput" v-model="form.money" placeholder="请输入预算金额（单位：美元）"></el-input>
+        </div>
+      </el-form-item>
+      <el-form-item label="投放日期" v-show="form.moneytype == 'total_budget'">
+        <el-date-picker
+          v-model="form.date"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          format="yyyy-MM-dd HH:mm"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="投放时段" class="cline timerange" v-show="form.moneytype == 'total_budget'">
+        <el-radio-group v-model="form.timerange">
+          <el-radio label="allday">全天投放广告</el-radio>
+          <el-radio label="schedule">分时间段投放</el-radio>
+        </el-radio-group>
+        <div class="moneyinput" v-show="form.timerange == 'schedule'">
+          <el-select class="selectsmall" v-model="form.rdate" multiple placeholder="按广告受众所在时区">
+            <el-option v-for="(l, index) in putweek" :key="index" :label="l.name" :value="l.key"></el-option>
+          </el-select>
+          <el-time-picker
+            class="timeselect"
+            is-range
+            v-model="form.rtime"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围"
+          ></el-time-picker>
+        </div>
+      </el-form-item>
+      <el-form-item label="优化目标">
+        <el-tooltip
+          class="conditiontip"
+          style="left: -90px;"
+          effect="dark"
+          content="请根据你的目标选择广告投放的方式，我们会将广告展示给最有可能实现你所优化成效的用户。例如：如果选择链接点击量为优化目标，广告将向更可能点击链接的用户展示。"
+          placement="top-start"
+        >
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <el-select class="formselect" v-model="form.optimizedist" placeholder="请选择优化目标">
+          <el-option
+            v-for="item in adoptimizelist"
+            :key="item.key"
+            :label="item.name"
+            :value="item.key"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="留存率">
+        <el-tooltip
+          class="conditiontip"
+          style="left: -104px;"
+          effect="dark"
+          content="请根据你的目标选择广告投放的方式，我们会将广告展示给最有可能实现你所优化成效的用户。例如：如果选择链接点击量为优化目标，广告将向更可能点击链接的用户展示。"
+          placement="top-start"
+        >
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <el-select class="formselect" v-model="form.remain" placeholder="请选择留存率">
+          <el-option
+            v-for="item in remainlist"
+            :key="item.key"
+            :label="item.name"
+            :value="item.key"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="选择应用事件">
+        <el-tooltip
+          class="conditiontip"
+          style="left: -62px;"
+          effect="dark"
+          content="请根据你的目标选择广告投放的方式，我们会将广告展示给最有可能实现你所优化成效的用户。例如：如果选择链接点击量为优化目标，广告将向更可能点击链接的用户展示。"
+          placement="top-start"
+        >
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <el-select class="formselect" v-model="form.appevent" placeholder="请选择应用事件">
+          <el-option
+            v-for="item in appeventlist"
+            :key="item.key"
+            :label="item.name"
+            :value="item.key"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="归因窗口">
+        <el-tooltip
+          class="conditiontip"
+          effect="dark"
+          style="left: -90px;"
+          content="选择用户从点击或浏览广告到完成应用安装（或转化）通常需要的时间。使用基于这一时间窗生成的数据来优化广告投放。具体而言，假如你的转化时间窗是1天，我们将通过用户与广告互动后的1天内生成的数据来优化广告"
+          placement="top-start"
+        >
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <el-select class="formselect" v-model="form.because" placeholder="请选择归因窗口">
+          <el-option
+            v-for="item in becauselist"
+            :key="item.key"
+            :label="item.name"
+            :value="item.key"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="广告组花费上限">
+        <el-tooltip
+          class="conditiontip"
+          style="left: -50px;"
+          effect="dark"
+          content="这个广告组所属的广告系列使用了预算优化功能，如果你对其花费有要求，请在这里设置花费限额。"
+          placement="top-start"
+        >
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <p class="formtip">这个广告组所属的广告系列使用了预算优化功能，如果你对其花费有要求，请在这里设置花费限额。</p>
+        <p v-show="costmaxmin">
+          最低
+          <el-input v-model="form.adsetcostmin" class="smallinput" size="mini" placeholder="非必填"></el-input>
+          {单日/总}预算
+        </p>
+        <p v-show="costmaxmin">我们无法保证花费金额完全符合</p>
+        <p v-show="costmaxmin">
+          最高
+          <el-input v-model="form.adsetcostmax" class="smallinput" size="mini" placeholder="非必填"></el-input>
+          {单日/总}预算
+        </p>
+        <p v-show="costmaxmin">你的花费不会超过这个金额</p>
+        <el-button
+          type="text"
+          @click="costmaxmin = !costmaxmin"
+        >{{costmaxmin? '移除花费限制': '为广告组添加花费限额'}}</el-button>
+      </el-form-item>
+      <el-form-item label="广告组竞价策略">
+        <el-tooltip class="conditiontip" style="left: -50px;" effect="dark" placement="top-start">
+          <div slot="content">
+            每项竞价策略专门针对特定业务目标而设计，也有各自的利弊。
+            <br>如果你更重视花费效率，最低单次成效费用竞价策略最佳，但也可能导致你难以均衡花费。如果你更重视保持稳定花费，均衡单次成效费用竞价策略最佳，但也可能降低花费效率。
+            <br>请注意，可用的竞价策略因广告投放的优化方式而异。
+          </div>
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <p class="formtip">目标费用 - 提高预算时，单次应用安装/转化费用稳定在平均值</p>
+        <el-select class="formselect" v-model="form.bidmethodselect" placeholder="请选择竞价策略">
+          <el-option
+            v-for="item in bidmethodlist"
+            :key="item.key"
+            :label="item.name"
+            :value="item.key"
+          ></el-option>
+        </el-select>
+        <p>
+          <el-input v-model="form.bidmethodinput" class="smallinput" size="mini" placeholder="必填"></el-input>
+          /{应用安装/转化}
+        </p>
+        <p class="formtip">我们对任何单次应用安装/转化设置的竞价不会超过此金额。如果此金额过低，你可能无法充分花费预算</p>
+        <p class="formtip">在你的预算条件下获得更多应用安装/转化</p>
+        <p class="formtip">提高预算时，单次应用安装/转化费用稳定在平均值</p>
+      </el-form-item>
+      <el-form-item label="计费方式">
+        <el-tooltip class="conditiontip" style="left: -90px;" effect="dark" placement="top-start">
+          <div slot="content">
+            你的选项决定广告收费方式。对很多优化目标，你将为每次广告展示付费。
+            <br>部分优化目标还允许你选择展示或操作（例如链接点击量或视频 10 秒观看量）。
+            <br>这里显示的推荐选项，将为你平衡有效预算花费，分析广告成效，实现广告目标。
+          </div>
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <el-radio-group v-model="form.billingmethod">
+          <el-radio label="1">展示</el-radio>
+          <el-radio label="2">安装</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="投放类型">
+        <el-tooltip class="conditiontip" style="left: -90px;" effect="dark" placement="top-start">
+          <div slot="content">
+            匀速投放通过调整预算使用速率来控制你的花费。预算使用速率调整功能可防止预算花费过快，这是大多数广告主的首选设置，推荐使用。
+            <br>加速投放可能对时效性强的推广有帮助。你需要设置带上限的最低费用才能使用加速投放。
+          </div>
+          <i class="el-icon-warning"></i>
+        </el-tooltip>
+        <el-radio-group v-model="form.puttype">
+          <el-radio label="1">匀速</el-radio>
+          <el-radio label="2">加速</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <!-- <el-form-item label="出价" class="cline">
         <el-radio-group v-model="form.bid" @change="maxbidDefault">
           <el-radio label="cpi">CPI</el-radio>
           <el-radio label="cpm">CPM</el-radio>
@@ -291,29 +549,13 @@
           <span class="moneyus">$</span>
           <el-input class="minput" v-model="form.maxbid" :placeholder="maxbidplace"></el-input>
         </div>
-      </el-form-item>
-      <el-form-item label="用户过滤" class="cline">
-        <el-checkbox-group v-model="form.filtra">
-          <el-checkbox label="1" name="filtra">过滤已安装用户</el-checkbox>
-          <el-checkbox label="2" name="filtra">过滤已关注用户</el-checkbox>
-        </el-checkbox-group>
-        <div class="moneyinput" v-show="form.filtra.indexOf('2') != -1">
-          <el-select class="select" v-model="form.filtrapage" multiple placeholder="请选择要过滤的主页，必选">
-            <el-option
-              v-for="(l, index) in commonpage"
-              :key="index"
-              :label="l.name"
-              :value="l.pageId"
-            ></el-option>
-          </el-select>
-        </div>
-      </el-form-item>
+      </el-form-item>-->
     </el-form>
     <div class="eltitle">
       <b>结构和创意</b>
       <span>根据广告组数量、广告组创意数和创意数生成相对应的广告系列数量</span>
     </div>
-    <el-form class="elform" label-position="left" label-width="110px" :model="form">
+    <el-form class="elform" label-position="left" label-width="150px" :model="form">
       <el-form-item label="广告组数" class="cline ctype">
         <el-input-number v-model="form.adcount" :min="1" label="广告组数"></el-input-number>
         <div class="countfont">每个广告系列包含的广告组数量，太多也会有内部竞争影响整体效率</div>
@@ -396,37 +638,8 @@
         state: "",
         state2: "",
         state3: "",
-        week: [
-          {
-            name: "周一",
-            key: "1"
-          },
-          {
-            name: "周二",
-            key: "2"
-          },
-          {
-            name: "周三",
-            key: "3"
-          },
-          {
-            name: "周四",
-            key: "4"
-          },
-          {
-            name: "周五",
-            key: "5"
-          },
-          {
-            name: "周六",
-            key: "6"
-          },
-          {
-            name: "周七",
-            key: "7"
-          }
-        ],
         maxbidplace: "请输入竞价上限（单位：美元）",
+        costmaxmin: false,
         form: {
           name: "",
           type: this.$route.params.fid == 1 ? "manual" : "auto",
@@ -466,7 +679,22 @@
           createtype: [],
           classify: [],
           createcount: "100",
-          tactics: 1
+          tactics: 1,
+          // 20190524新增
+          setmax: false,
+          costmax: "",
+          campaignoptimize: false,
+          bidmethod: "",
+          optimizedist: "APP_INSTALLS",
+          remain: "",
+          appevent: "",
+          because: "",
+          adsetcostmin: "",
+          adsetcostmax: "",
+          bidmethodinput: "",
+          bidmethodselect: "LOWEST_COST_WITH_BID_CAP",
+          billingmethod: "1",
+          puttype: "1"
         },
         msg: {
           name: "请输入推广计划名称",
@@ -508,10 +736,20 @@
         "genertarget",
         "commonaccount",
         "classifyforplan",
-        "classifyfiltercount"
+        "classifyfiltercount",
+        "bidmethodlist",
+        "remainlist",
+        "putweek",
+        "allbecauselist",
+        "bidmethodlist",
+        "adoptimizelist",
+        "appeventlist"
       ]),
       equip() {
         return this.form.platform;
+      },
+      becauselist() {
+        return this.allbecauselist;
       }
       // actions() {
       //   if (this.itemlist.length == 0) return;
@@ -617,6 +855,7 @@
     },
     methods: {
       ...mapMutations(["SETSTATE"]),
+      setMaxCost() {},
       selectAction() {
         // 选择应用之后获取出价指南数据
         this.showBidChart();
@@ -906,12 +1145,12 @@
       overflow: hidden;
       display: block;
     }
-    .info{
+    .info {
       color: #8492a6;
     }
     &.is-disabled {
-      .info{
-        color: #C0C4CC;
+      .info {
+        color: #c0c4cc;
       }
     }
   }
@@ -921,6 +1160,21 @@
 <style lang="less" scoped>
 .formlist {
   position: relative;
+  .conditiontip {
+    position: absolute;
+    left: -36px;
+    top: 14px;
+  }
+  .formtip {
+    line-height: 24px;
+    padding-top: 8px;
+  }
+  .smallinput {
+    width: 100px;
+  }
+  .optimizeinput {
+    margin-bottom: 15px;
+  }
   .bidguide {
     position: absolute;
     top: 0;

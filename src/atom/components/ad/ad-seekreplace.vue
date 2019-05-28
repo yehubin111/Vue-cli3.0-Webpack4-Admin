@@ -13,6 +13,7 @@
     <div class="replacecont">
       <el-radio-group v-model="replaceType" @change="typeChange">
         <el-radio label="Text">名称</el-radio>
+        <el-radio label="Matter" v-show="type == 'adName'" :disabled="tablock">素材</el-radio>
         <el-radio label="Name" v-show="type == 'adName'" :disabled="tablock">标题</el-radio>
         <el-radio label="Desc" v-show="type == 'adName'" :disabled="tablock">文本</el-radio>
         <el-radio label="Link" v-show="type == 'adName'" :disabled="tablock">“查看更多”网址</el-radio>
@@ -63,6 +64,8 @@ export default {
       newInfoList: [],
       oldTextList: [], // 名称
       newTextList: [],
+      oldMatterList: [], // 创意素材，仅广告
+      newMatterList: [],
       oldNameList: [], // 创意标题，仅广告
       newNameList: [],
       oldDescList: [], // 创意文本，仅广告
@@ -107,6 +110,8 @@ export default {
       this.newInfoList = [];
       this.oldTextList = [];
       this.newTextList = [];
+      this.oldMatterList = [];
+      this.newMatterList = [];
       this.oldNameList = [];
       this.newNameList = [];
       this.oldDescList = [];
@@ -200,32 +205,6 @@ export default {
         this.$store.dispatch("seekReplaceCreate", {
           option: this.creativeList
         });
-
-        // if (res && res.data) {
-        //   let errlist = res.data.filter(v => !v.b);
-        //   if (errlist.length == 0) {
-        //     Msgsuccess("查找替换创意成功");
-        //     // 重置列表数据
-        //     this.$emit("resetPageData");
-        //   } else {
-        //     this.$alert(
-        //       `${errlist
-        //         .map(
-        //           v => `<b style="color: #409eff">${v.fbAdId}</b> ${v.message}`
-        //         )
-        //         .join("<br/>")}`,
-        //       "错误信息",
-        //       {
-        //         confirmButtonText: "确定",
-        //         dangerouslyUseHTMLString: true,
-        //         callback: () => {
-        //           // 重置列表数据
-        //           this.$emit("resetPageData");
-        //         }
-        //       }
-        //     );
-        //   }
-        // }
       }
 
       this.dialogFormVisible = false;

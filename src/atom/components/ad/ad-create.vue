@@ -1,5 +1,6 @@
 <template>
   <div class="create">
+    <max-cost :status.sync="maxcoststatus"></max-cost>
     <select-img :status.sync="selectstatus" @select="selectImage" :multiple="selectkey == 'active'"></select-img>
     <transition name="slide-fade">
       <div class="cr-content" v-show="status">
@@ -14,7 +15,7 @@
           </el-breadcrumb>
         </div>
         <div class="infobox" v-show="type == 'campaignName'">
-          <create-campaign ref="createCampaign" :editId="editId" @changeEdit="changeEdit"></create-campaign>
+          <create-campaign ref="createCampaign" :editId="editId" @changeEdit="changeEdit" @setMaxCost="setMaxCost"></create-campaign>
         </div>
         <div class="infobox adsetbox" v-show="type == 'adSetName'">
           <create-adset ref="createAdset" :editId="editId" @changeEdit="changeEdit"></create-adset>
@@ -35,6 +36,7 @@
 </template>
 
 <script>
+import MaxCost from "./ad-maxcost";
 import SelectImg from "../create/create-selectimg";
 import CreateCampaign from "./ad-createcampaign";
 import CreateAdset from "./ad-createadset";
@@ -48,11 +50,13 @@ export default {
     CreateAdset,
     CreateCampaign,
     CreateAd,
-    SelectImg
+    SelectImg,
+    MaxCost
   },
   data() {
     return {
       selectstatus: false,
+      maxcoststatus: false,
       typeName: "",
       status: false,
       breadcrumb: [],
@@ -66,6 +70,10 @@ export default {
   mounted() {},
   methods: {
     ...mapMutations(["SETSTATE"]),
+    // 20190524新增，创建广告系列设置竞价上线/目标费用
+    setMaxCost() {
+      this.maxcoststatus = true;
+    },
     // 20190507新增，可以直接选择模板制作的图片
     showTempImages(key) {
       this.selectkey = key;

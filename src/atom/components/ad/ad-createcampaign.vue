@@ -63,7 +63,12 @@
           >
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          <el-input class="optimizeinput" v-show="form.setmax" v-model="form.costmax" placeholder="请输入花费上限，不能低于100"></el-input>
+          <el-input
+            class="optimizeinput"
+            v-show="form.setmax"
+            v-model="form.costmax"
+            placeholder="请输入花费上限，不能低于100"
+          ></el-input>
           <el-progress class="progress" v-show="form.setmax" :percentage="70" status="text">已花费$300</el-progress>
           <el-button type="text" @click="form.setmax = !form.setmax">{{form.setmax? '删除上限': '设置上限'}}</el-button>
         </div>
@@ -78,7 +83,11 @@
           >
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          <el-switch v-model="form.campaignoptimize" active-color="#13ce66" inactive-color="#d7dae2"></el-switch>
+          <el-switch
+            v-model="form.campaignoptimize"
+            active-color="#13ce66"
+            inactive-color="#d7dae2"
+          ></el-switch>
           <p class="optimizetip" v-show="form.campaignoptimize">
             广告系列不符合广告系列预算优化要求。
             <el-tooltip
@@ -91,7 +100,7 @@
           </p>
         </div>
       </el-form-item>
-      <el-form-item label="广告系列预算优化" v-show="form.campaignoptimize">
+      <el-form-item label="广告系列预算" v-show="form.campaignoptimize">
         <div>
           <el-radio-group v-model="form.moneytype">
             <el-radio label="day_budget">单日预算</el-radio>
@@ -105,11 +114,7 @@
       </el-form-item>
       <el-form-item label="广告系列竞价策略" v-show="form.campaignoptimize">
         <div>
-          <el-tooltip
-            class="conditiontip"
-            effect="dark"
-            placement="top-start"
-          >
+          <el-tooltip class="conditiontip" effect="dark" placement="top-start">
             <div slot="content">
               每种竞价策略适合不同的业务目标，需要你权衡利弊。如果你更希望从预算获得最大价值，请使用最低费用竞价策略。如果你更关心稳定的单次优化事件平均费用，请使用目标费用竞价策略。
               <br>你将在每个广告组中设置竞价上限。详细了解。
@@ -117,11 +122,7 @@
             </div>
             <i class="el-icon-warning"></i>
           </el-tooltip>
-          <el-select
-            class="formselect"
-            v-model="form.bidmethod"
-            placeholder="请选择竞价策略"
-          >
+          <el-select class="formselect" v-model="form.bidmethod" placeholder="请选择竞价策略">
             <el-option
               v-for="item in bidmethodlist"
               :key="item.key"
@@ -130,7 +131,7 @@
             ></el-option>
           </el-select>
           <p>
-            <el-button type="text" class="checkbutton">设置广告组{竞价上限/目标费用}</el-button>
+            <el-button type="text" class="checkbutton" @click="setMaxCost">设置广告组{竞价上限/目标费用}</el-button>
           </p>
         </div>
       </el-form-item>
@@ -146,11 +147,6 @@
     data() {
       return {
         mutilAccount: false,
-        bidmethodlist: [
-          {name: '最低费用', key: 'LOWEST_COST_WITHOUT_CAP'},
-          {name: '设有竞价上限的最低费用', key: 'LOWEST_COST_WITH_BID_CAP'},
-          {name: '目标费用', key: 'TARGET_COST'}
-        ],
         form: {
           account: "",
           name: "",
@@ -172,6 +168,9 @@
       this.$textCopy("#copyButtonCampaign");
     },
     methods: {
+      setMaxCost() {
+        this.$emit("setMaxCost");
+      },
       extractInfo() {
         if (!this.form.account) {
           Msgwarning("请选择广告账户");
@@ -217,7 +216,12 @@
       }
     },
     computed: {
-      ...mapState(["commonaccount", "adaccountid", "editcampaignlist"])
+      ...mapState([
+        "commonaccount",
+        "adaccountid",
+        "editcampaignlist",
+        "bidmethodlist"
+      ])
     },
     watch: {
       editcampaignlist(n, o) {

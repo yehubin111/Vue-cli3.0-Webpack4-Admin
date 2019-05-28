@@ -110,654 +110,774 @@
 </template>
 
 <script>
-export default {
-  props: [
-    "status",
-    "opDefault",
-    "setDefaultOption",
-    "customEvent",
-    "customUnit",
-    "type"
-  ],
-  data() {
-    return {
-      state: "",
-      specialStatus: false, // 特殊字段初始状态
-      dialogFormVisible: false,
-      cantDeleteOption: [],
-      selectOption: [],
-      eventOption: [], // 已选的事件列表
-      localEvent: [], // 保存在本地的已选事件列表
-      leftOption: [
-        {
-          title: "常用",
-          key: "cy",
-          child: [
+  import { mapState } from "vuex";
+  export default {
+    props: [
+      "status",
+      "opDefault",
+      "setDefaultOption",
+      "customEvent",
+      "customUnit",
+      "type"
+    ],
+    data() {
+      return {
+        state: "",
+        specialStatus: false, // 特殊字段初始状态
+        dialogFormVisible: false,
+        cantDeleteOption: [],
+        selectOption: [],
+        eventOption: [], // 已选的事件列表
+        localEvent: [], // 保存在本地的已选事件列表
+        specialOption: this.customEvent,
+        middleOption: {}
+      };
+    },
+    mounted() {
+      this.$dragging.$on("dragged", ({ value }) => {
+        // console.log(value.item)
+        // console.log(value.list)
+        // console.log(value.otherData)
+      });
+      this.$dragging.$on("dragend", () => {});
+    },
+    computed: {
+      ...mapState(["adleftOption"]),
+      leftOption() {
+        return this.adleftOption;
+      }
+    },
+    methods: {
+      showBox() {
+        this.middleOption = {
+          常用: [
             {
-              name: "常用",
-              key: "cy"
+              name: "投放状态",
+              key: "effectiveStatusName",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "投放状态")
+                ? true
+                : false
+            },
+            {
+              name: "触达",
+              key: "reachNum",
+              checked: this.setDefaultOption.find(v => v.name == "触达")
+                ? true
+                : false
+            },
+            {
+              name: "展示",
+              key: "showNum",
+              checked: this.setDefaultOption.find(v => v.name == "展示")
+                ? true
+                : false
+            },
+            {
+              name: "点击",
+              key: "clicksNum",
+              checked: this.setDefaultOption.find(v => v.name == "点击")
+                ? true
+                : false
+            },
+            {
+              name: "CTR",
+              key: "ctr",
+              checked: this.setDefaultOption.find(v => v.name == "CTR")
+                ? true
+                : false
+            },
+            {
+              name: "CVR",
+              key: "cvr",
+              checked: this.setDefaultOption.find(v => v.name == "CVR")
+                ? true
+                : false
+            },
+            {
+              name: "CPM",
+              key: "cpm",
+              checked: this.setDefaultOption.find(v => v.name == "CPM")
+                ? true
+                : false
+            },
+            {
+              name: "CPC",
+              key: "cpc",
+              checked: this.setDefaultOption.find(v => v.name == "CPC")
+                ? true
+                : false
+            },
+            {
+              name: "安装",
+              key: "installNum",
+              checked: this.setDefaultOption.find(v => v.name == "安装")
+                ? true
+                : false
+            },
+            {
+              name: "花费",
+              key: "spend",
+              checked: this.setDefaultOption.find(v => v.name == "花费")
+                ? true
+                : false
+            },
+            {
+              name: "CPI",
+              key: "cpi",
+              checked: this.setDefaultOption.find(v => v.name == "CPI")
+                ? true
+                : false
+            },
+            {
+              name: "相关度",
+              key: "relevanceScore",
+              checked: this.setDefaultOption.find(v => v.name == "相关度")
+                ? true
+                : false
+            }
+          ],
+          Atom: [
+            {
+              name: "推广计划编号",
+              key: "planId",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "推广计划编号")
+                ? true
+                : false
+            },
+            {
+              name: "推广计划名称",
+              key: "planName",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "推广计划名称")
+                ? true
+                : false
+            },
+            {
+              name: "创建人",
+              key: "creator",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "创建人")
+                ? true
+                : false
+            }
+          ],
+          对象名称和编号: [
+            {
+              name: "账户编号",
+              key: "accountId",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "账户编号")
+                ? true
+                : false
+            },
+            {
+              name: "账户名称",
+              key: "accountName",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "账户名称")
+                ? true
+                : false
+            },
+            {
+              name: "广告系列名称",
+              key: "campaignName",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "广告系列名称")
+                ? true
+                : false
+            },
+            {
+              name: "广告系列编号",
+              key: "campaignId",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "广告系列编号")
+                ? true
+                : false
+            },
+            {
+              name: "广告组名称",
+              key: "adSetName",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "广告组名称")
+                ? true
+                : false
+            },
+            {
+              name: "广告组编号",
+              key: "adsetId",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "广告组编号")
+                ? true
+                : false
+            },
+            {
+              name: "广告名称",
+              key: "adName",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "广告名称")
+                ? true
+                : false
+            },
+            {
+              name: "广告编号",
+              key: "adId",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "广告编号")
+                ? true
+                : false
+            }
+          ],
+          "目标、预算与排期": [
+            {
+              name: "目标",
+              key: "objective",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "目标")
+                ? true
+                : false
+            },
+            {
+              name: "购买类型",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "购买类型")
+                ? true
+                : false
+            },
+            {
+              name: "竞价",
+              key: "bid_strategy",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "竞价")
+                ? true
+                : false
+            },
+            {
+              name: "预算",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "预算")
+                ? true
+                : false
+            },
+            {
+              name: "剩余预算",
+              key: "budget_remaining",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "剩余预算")
+                ? true
+                : false
+            },
+            {
+              name: "花费金额百分比",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "花费金额百分比")
+                ? true
+                : false
+            },
+            {
+              name: "花费上限",
+              key: "spend_cap",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "花费上限")
+                ? true
+                : false
+            }
+          ],
+          目标受众定位: [
+            {
+              name: "地区",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "地区")
+                ? true
+                : false
+            },
+            {
+              name: "年龄范围",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "年龄范围")
+                ? true
+                : false
+            },
+            {
+              name: "性别",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "性别")
+                ? true
+                : false
+            },
+            {
+              name: "包含的自定义受众",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "包含的自定义受众")
+                ? true
+                : false
+            },
+            {
+              name: "排除的自定义受众",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "排除的自定义受众")
+                ? true
+                : false
+            }
+          ],
+          广告创意: [
+            {
+              name: "主页名称",
+              key: "buying_type",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "主页名称")
+                ? true
+                : false
+            },
+            {
+              name: "标题",
+              key: "title",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "标题")
+                ? true
+                : false
+            },
+            {
+              name: "正文",
+              key: "body",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "正文")
+                ? true
+                : false
+            },
+            {
+              name: "链接",
+              key: "title",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "链接")
+                ? true
+                : false
+            },
+            {
+              name: "推广标的",
+              key: "title",
+              isevent: true,
+              checked: this.setDefaultOption.find(v => v.name == "推广标的")
+                ? true
+                : false
+            },
+          ],
+          表现: [
+            {
+              name: "AF_展示数",
+              key: "afShowsNum",
+              checked: this.setDefaultOption.find(v => v.name == "AF_展示数")
+                ? true
+                : false
+            },
+            {
+              name: "AF_点击数",
+              key: "afClicksNum",
+              checked: this.setDefaultOption.find(v => v.name == "AF_点击数")
+                ? true
+                : false
+            },
+            {
+              name: "AF_点击率",
+              key: "afCtr",
+              checked: this.setDefaultOption.find(v => v.name == "AF_点击率")
+                ? true
+                : false
+            },
+            {
+              name: "AF_安装数",
+              key: "afInstallsNum",
+              tip: "安装后有效激活的数量",
+              checked: this.setDefaultOption.find(v => v.name == "AF_安装数")
+                ? true
+                : false
+            },
+            {
+              name: "AF_安装数差异率",
+              key: "afMinsRate",
+              tip: "（监测平台安装数-Facebook安装数）/Facebook安装数",
+              // isevent: true,
+              checked: this.setDefaultOption.find(
+                v => v.name == "AF_安装数差异率"
+              )
+                ? true
+                : false
+            },
+            {
+              name: "AF_CPI",
+              key: "afCpi",
+              tip: "花费/AF_安装量",
+              checked: this.setDefaultOption.find(v => v.name == "AF_CPI")
+                ? true
+                : false
+            },
+            {
+              name: "AF_转化率",
+              key: "afConversionRate",
+              tip: "安装数/点击数",
+              checked: this.setDefaultOption.find(v => v.name == "AF_转化率")
+                ? true
+                : false
+            },
+            {
+              name: "AF_次日留存率",
+              key: "afRetentionRate",
+              tip: "AF_2d_rr_user_独立用户数/AF_安装量，仅tiktok显示",
+              checked: this.setDefaultOption.find(v => v.name == "AF_次日留存率")
+                ? true
+                : false
+            },
+            {
+              name: "AF_会话次数",
+              key: "afSessionsNum",
+              tip: "APP打开次数",
+              checked: this.setDefaultOption.find(v => v.name == "AF_会话次数")
+                ? true
+                : false
+            },
+            {
+              name: "AF_忠实用户",
+              key: "afLoyalUsersNum",
+              tip: "默认为打开app超过三次以上的用户，可重新定义",
+              checked: this.setDefaultOption.find(v => v.name == "AF_忠实用户")
+                ? true
+                : false
+            },
+            {
+              name: "AF_忠实用户比率",
+              key: "afLoyalUsersRate",
+              tip: "忠实用户数／安装数",
+              checked: this.setDefaultOption.find(
+                v => v.name == "AF_忠实用户比率"
+              )
+                ? true
+                : false
+            },
+            {
+              name: "AF_收益",
+              key: "afTotalReveue",
+              tip: "源自应用内购买事件的收益",
+              checked: this.setDefaultOption.find(v => v.name == "AF_收益")
+                ? true
+                : false
+            },
+            {
+              name: "AF_花费",
+              key: "afTotalCost",
+              tip: "渠道上报的总花费",
+              checked: this.setDefaultOption.find(v => v.name == "AF_花费")
+                ? true
+                : false
+            },
+            {
+              name: "AF_投资回报率",
+              key: "afROI",
+              tip: "ROI，收益/花费",
+              checked: this.setDefaultOption.find(v => v.name == "AF_投资回报率")
+                ? true
+                : false
+            },
+            {
+              name: "AF_单用户平均收益",
+              key: "afUserReveue",
+              tip: "平均每位用户带来的收益，收益/安装数",
+              checked: this.setDefaultOption.find(
+                v => v.name == "AF_单用户平均收益"
+              )
+                ? true
+                : false
+            },
+            {
+              name: "AF_平均eCPI",
+              key: "afEcpi",
+              tip: "每次安装的平均有效成本",
+              checked: this.setDefaultOption.find(v => v.name == "AF_平均eCPI")
+                ? true
+                : false
+            }
+          ],
+          留存: [
+            {
+              name: "Day 1留存量",
+              key: "retentionNum1",
+              checked: this.setDefaultOption.find(v => v.name == "Day 1留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 1留存率",
+              key: "afReRate1",
+              checked: this.setDefaultOption.find(v => v.name == "Day 1留存率")
+                ? true
+                : false
+            },
+            {
+              name: "Day 2留存量",
+              key: "retentionNum2",
+              checked: this.setDefaultOption.find(v => v.name == "Day 2留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 2留存率",
+              key: "afReRate2",
+              checked: this.setDefaultOption.find(v => v.name == "Day 2留存率")
+                ? true
+                : false
+            },
+            {
+              name: "Day 3留存量",
+              key: "retentionNum3",
+              checked: this.setDefaultOption.find(v => v.name == "Day 3留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 3留存率",
+              key: "afReRate3",
+              checked: this.setDefaultOption.find(v => v.name == "Day 3留存率")
+                ? true
+                : false
+            },
+            {
+              name: "Day 4留存量",
+              key: "retentionNum4",
+              checked: this.setDefaultOption.find(v => v.name == "Day 4留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 4留存率",
+              key: "afReRate4",
+              checked: this.setDefaultOption.find(v => v.name == "Day 4留存率")
+                ? true
+                : false
+            },
+            {
+              name: "Day 5留存量",
+              key: "retentionNum5",
+              checked: this.setDefaultOption.find(v => v.name == "Day 5留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 5留存率",
+              key: "afReRate5",
+              checked: this.setDefaultOption.find(v => v.name == "Day 5留存率")
+                ? true
+                : false
+            },
+            {
+              name: "Day 6留存量",
+              key: "retentionNum6",
+              checked: this.setDefaultOption.find(v => v.name == "Day 6留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 6留存率",
+              key: "afReRate6",
+              checked: this.setDefaultOption.find(v => v.name == "Day 6留存率")
+                ? true
+                : false
+            },
+            {
+              name: "Day 7留存量",
+              key: "retentionNum7",
+              checked: this.setDefaultOption.find(v => v.name == "Day 7留存量")
+                ? true
+                : false
+            },
+            {
+              name: "Day 7留存率",
+              key: "afReRate7",
+              checked: this.setDefaultOption.find(v => v.name == "Day 7留存率")
+                ? true
+                : false
             }
           ]
-        },
-        {
-          title: "设置",
-          key: "sz",
-          child: [
-            { name: "Atom", key: "atom" },
-            { name: "对象名称和编号", key: "dxmchbh" }
-          ]
-        },
-        {
-          title: "监测平台",
-          key: "jcpt",
-          child: [
-            { name: "表现", key: "bx" },
-            { name: "留存", key: "lc" },
-            { name: "应用内事件", key: "yynsj" }
-          ]
+        };
+        this.selectOption = this.setDefaultOption;
+
+        this.customEvent.forEach(v => {
+          v.checked1 = this.setDefaultOption.find(
+            g => g.name == `${v.name}独立用户数`
+          )
+            ? true
+            : false;
+          v.checked2 = this.setDefaultOption.find(
+            g => g.name == `${v.name}事件发生数`
+          )
+            ? true
+            : false;
+          v.checked3 = this.setDefaultOption.find(
+            g => g.name.indexOf(`${v.name}事件收益`) != -1
+          )
+            ? true
+            : false;
+        });
+      },
+      goAnchor(id) {
+        document.getElementById(this.type + "midList").scrollTop =
+          document.getElementById(id).offsetTop - 134;
+      },
+      saveList() {
+        let option = this.cantDeleteOption.concat(this.selectOption);
+        this.$emit("outOption", option, this.selectOption, this.localEvent);
+
+        this.dialogFormVisible = false;
+      },
+      toCancel() {
+        this.$emit("hideOptionbox");
+      },
+      deleteTag(key) {
+        this.selectOption = this.selectOption.filter(v => v.key != key);
+
+        for (let i in this.middleOption) {
+          this.middleOption[i].forEach(v => {
+            if (key == v.key) {
+              v.checked = false;
+            }
+          });
         }
-      ],
-      specialOption: this.customEvent,
-      middleOption: {}
-    };
-  },
-  mounted() {
-    this.$dragging.$on("dragged", ({ value }) => {
-      // console.log(value.item)
-      // console.log(value.list)
-      // console.log(value.otherData)
-    });
-    this.$dragging.$on("dragend", () => {});
-  },
-  methods: {
-    showBox() {
-      this.middleOption = {
-        常用: [
-          {
-            name: "投放状态",
-            key: "effectiveStatusName",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "投放状态")
-              ? true
-              : false
-          },
-          {
-            name: "触达",
-            key: "reachNum",
-            checked: this.setDefaultOption.find(v => v.name == "触达")
-              ? true
-              : false
-          },
-          {
-            name: "展示",
-            key: "showNum",
-            checked: this.setDefaultOption.find(v => v.name == "展示")
-              ? true
-              : false
-          },
-          {
-            name: "点击",
-            key: "clicksNum",
-            checked: this.setDefaultOption.find(v => v.name == "点击")
-              ? true
-              : false
-          },
-          {
-            name: "CTR",
-            key: "ctr",
-            checked: this.setDefaultOption.find(v => v.name == "CTR")
-              ? true
-              : false
-          },
-          {
-            name: "CVR",
-            key: "cvr",
-            checked: this.setDefaultOption.find(v => v.name == "CVR")
-              ? true
-              : false
-          },
-          {
-            name: "CPM",
-            key: "cpm",
-            checked: this.setDefaultOption.find(v => v.name == "CPM")
-              ? true
-              : false
-          },
-          {
-            name: "CPC",
-            key: "cpc",
-            checked: this.setDefaultOption.find(v => v.name == "CPC")
-              ? true
-              : false
-          },
-          {
-            name: "安装",
-            key: "installNum",
-            checked: this.setDefaultOption.find(v => v.name == "安装")
-              ? true
-              : false
-          },
-          {
-            name: "花费",
-            key: "spend",
-            checked: this.setDefaultOption.find(v => v.name == "花费")
-              ? true
-              : false
-          },
-          {
-            name: "CPI",
-            key: "cpi",
-            checked: this.setDefaultOption.find(v => v.name == "CPI")
-              ? true
-              : false
-          },
-          {
-            name: "相关度",
-            key: "relevanceScore",
-            checked: this.setDefaultOption.find(v => v.name == "相关度")
-              ? true
-              : false
-          }
-        ],
-        Atom: [
-          {
-            name: "推广计划编号",
-            key: "planId",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "推广计划编号")
-              ? true
-              : false
-          },
-          {
-            name: "推广计划名称",
-            key: "planName",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "推广计划名称")
-              ? true
-              : false
-          },
-          {
-            name: "创建人",
-            key: "creator",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "创建人")
-              ? true
-              : false
-          }
-        ],
-        对象名称和编号: [
-          {
-            name: "账户编号",
-            key: "accountId",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "账户编号")
-              ? true
-              : false
-          },
-          {
-            name: "账户名称",
-            key: "accountName",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "账户名称")
-              ? true
-              : false
-          },
-          {
-            name: "广告系列名称",
-            key: "campaignName",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "广告系列名称")
-              ? true
-              : false
-          },
-          {
-            name: "广告系列编号",
-            key: "campaignId",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "广告系列编号")
-              ? true
-              : false
-          },
-          {
-            name: "广告组名称",
-            key: "adSetName",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "广告组名称")
-              ? true
-              : false
-          },
-          {
-            name: "广告组编号",
-            key: "adsetId",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "广告组编号")
-              ? true
-              : false
-          },
-          {
-            name: "广告名称",
-            key: "adName",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "广告名称")
-              ? true
-              : false
-          },
-          {
-            name: "广告编号",
-            key: "adId",
-            isevent: true,
-            checked: this.setDefaultOption.find(v => v.name == "广告编号")
-              ? true
-              : false
-          }
-        ],
-        表现: [
-          {
-            name: "AF_展示数",
-            key: "afShowsNum",
-            checked: this.setDefaultOption.find(v => v.name == "AF_展示数")
-              ? true
-              : false
-          },
-          {
-            name: "AF_点击数",
-            key: "afClicksNum",
-            checked: this.setDefaultOption.find(v => v.name == "AF_点击数")
-              ? true
-              : false
-          },
-          {
-            name: "AF_点击率",
-            key: "afCtr",
-            checked: this.setDefaultOption.find(v => v.name == "AF_点击率")
-              ? true
-              : false
-          },
-          {
-            name: "AF_安装数",
-            key: "afInstallsNum",
-            tip: "安装后有效激活的数量",
-            checked: this.setDefaultOption.find(v => v.name == "AF_安装数")
-              ? true
-              : false
-          },
-          {
-            name: "AF_安装数差异率",
-            key: "afMinsRate",
-            tip: "（监测平台安装数-Facebook安装数）/Facebook安装数",
-            // isevent: true,
-            checked: this.setDefaultOption.find(
-              v => v.name == "AF_安装数差异率"
-            )
-              ? true
-              : false
-          },
-          {
-            name: "AF_CPI",
-            key: "afCpi",
-            tip: "花费/AF_安装量",
-            checked: this.setDefaultOption.find(v => v.name == "AF_CPI")
-              ? true
-              : false
-          },
-          {
-            name: "AF_转化率",
-            key: "afConversionRate",
-            tip: "安装数/点击数",
-            checked: this.setDefaultOption.find(v => v.name == "AF_转化率")
-              ? true
-              : false
-          },
-          {
-            name: "AF_次日留存率",
-            key: "afRetentionRate",
-            tip: "AF_2d_rr_user_独立用户数/AF_安装量，仅tiktok显示",
-            checked: this.setDefaultOption.find(v => v.name == "AF_次日留存率")
-              ? true
-              : false
-          },
-          {
-            name: "AF_会话次数",
-            key: "afSessionsNum",
-            tip: "APP打开次数",
-            checked: this.setDefaultOption.find(v => v.name == "AF_会话次数")
-              ? true
-              : false
-          },
-          {
-            name: "AF_忠实用户",
-            key: "afLoyalUsersNum",
-            tip: "默认为打开app超过三次以上的用户，可重新定义",
-            checked: this.setDefaultOption.find(v => v.name == "AF_忠实用户")
-              ? true
-              : false
-          },
-          {
-            name: "AF_忠实用户比率",
-            key: "afLoyalUsersRate",
-            tip: "忠实用户数／安装数",
-            checked: this.setDefaultOption.find(
-              v => v.name == "AF_忠实用户比率"
-            )
-              ? true
-              : false
-          },
-          {
-            name: "AF_收益",
-            key: "afTotalReveue",
-            tip: "源自应用内购买事件的收益",
-            checked: this.setDefaultOption.find(v => v.name == "AF_收益")
-              ? true
-              : false
-          },
-          {
-            name: "AF_花费",
-            key: "afTotalCost",
-            tip: "渠道上报的总花费",
-            checked: this.setDefaultOption.find(v => v.name == "AF_花费")
-              ? true
-              : false
-          },
-          {
-            name: "AF_投资回报率",
-            key: "afROI",
-            tip: "ROI，收益/花费",
-            checked: this.setDefaultOption.find(v => v.name == "AF_投资回报率")
-              ? true
-              : false
-          },
-          {
-            name: "AF_单用户平均收益",
-            key: "afUserReveue",
-            tip: "平均每位用户带来的收益，收益/安装数",
-            checked: this.setDefaultOption.find(
-              v => v.name == "AF_单用户平均收益"
-            )
-              ? true
-              : false
-          },
-          {
-            name: "AF_平均eCPI",
-            key: "afEcpi",
-            tip: "每次安装的平均有效成本",
-            checked: this.setDefaultOption.find(v => v.name == "AF_平均eCPI")
-              ? true
-              : false
-          }
-        ],
-        留存: [
-          {
-            name: "Day 1留存量",
-            key: "retentionNum1",
-            checked: this.setDefaultOption.find(v => v.name == "Day 1留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 1留存率",
-            key: "afReRate1",
-            checked: this.setDefaultOption.find(v => v.name == "Day 1留存率")
-              ? true
-              : false
-          },
-          {
-            name: "Day 2留存量",
-            key: "retentionNum2",
-            checked: this.setDefaultOption.find(v => v.name == "Day 2留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 2留存率",
-            key: "afReRate2",
-            checked: this.setDefaultOption.find(v => v.name == "Day 2留存率")
-              ? true
-              : false
-          },
-          {
-            name: "Day 3留存量",
-            key: "retentionNum3",
-            checked: this.setDefaultOption.find(v => v.name == "Day 3留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 3留存率",
-            key: "afReRate3",
-            checked: this.setDefaultOption.find(v => v.name == "Day 3留存率")
-              ? true
-              : false
-          },
-          {
-            name: "Day 4留存量",
-            key: "retentionNum4",
-            checked: this.setDefaultOption.find(v => v.name == "Day 4留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 4留存率",
-            key: "afReRate4",
-            checked: this.setDefaultOption.find(v => v.name == "Day 4留存率")
-              ? true
-              : false
-          },
-          {
-            name: "Day 5留存量",
-            key: "retentionNum5",
-            checked: this.setDefaultOption.find(v => v.name == "Day 5留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 5留存率",
-            key: "afReRate5",
-            checked: this.setDefaultOption.find(v => v.name == "Day 5留存率")
-              ? true
-              : false
-          },
-          {
-            name: "Day 6留存量",
-            key: "retentionNum6",
-            checked: this.setDefaultOption.find(v => v.name == "Day 6留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 6留存率",
-            key: "afReRate6",
-            checked: this.setDefaultOption.find(v => v.name == "Day 6留存率")
-              ? true
-              : false
-          },
-          {
-            name: "Day 7留存量",
-            key: "retentionNum7",
-            checked: this.setDefaultOption.find(v => v.name == "Day 7留存量")
-              ? true
-              : false
-          },
-          {
-            name: "Day 7留存率",
-            key: "afReRate7",
-            checked: this.setDefaultOption.find(v => v.name == "Day 7留存率")
-              ? true
-              : false
-          }
-        ]
-      };
-      this.selectOption = this.setDefaultOption;
+      },
+      toSelectOption(r) {
+        this.selectOption = [];
 
-      this.customEvent.forEach(v => {
-        v.checked1 = this.setDefaultOption.find(
-          g => g.name == `${v.name}独立用户数`
-        )
-          ? true
-          : false;
-        v.checked2 = this.setDefaultOption.find(
-          g => g.name == `${v.name}事件发生数`
-        )
-          ? true
-          : false;
-        v.checked3 = this.setDefaultOption.find(
-          g => g.name.indexOf(`${v.name}事件收益`) != -1
-        )
-          ? true
-          : false;
-      });
-    },
-    goAnchor(id) {
-      document.getElementById(this.type + "midList").scrollTop =
-        document.getElementById(id).offsetTop - 134;
-    },
-    saveList() {
-      let option = this.cantDeleteOption.concat(this.selectOption);
-      this.$emit("outOption", option, this.selectOption, this.localEvent);
+        /**
+         * 20181227新增逻辑
+         * 如果之前已选3个特殊字段，则后续继续加上
+         * 如果之前没选，则后续不加
+         */
+        for (let i in this.middleOption) {
+          let res = this.middleOption[i];
+          let arr = [];
+          let keyname = "";
 
-      this.dialogFormVisible = false;
-    },
-    toCancel() {
-      this.$emit("hideOptionbox");
-    },
-    deleteTag(key) {
-      this.selectOption = this.selectOption.filter(v => v.key != key);
+          switch (this.type) {
+            case "campaignName":
+              keyname = "广告系列名称";
+              break;
+            case "adSetName":
+              keyname = "广告组名称";
+              break;
+            case "adName":
+              keyname = "广告名称";
+              break;
+          }
+          if (!this.setDefaultOption.find(v => v.name == keyname))
+            arr = res.filter(v => v.checked && v.name != keyname);
+          else arr = res.filter(v => v.checked);
 
-      for (let i in this.middleOption) {
-        this.middleOption[i].forEach(v => {
-          if (key == v.key) {
-            v.checked = false;
+          this.selectOption = this.selectOption.concat(arr);
+        }
+
+        this.eventOption = [];
+        this.localEvent = [];
+        this.specialOption.forEach(v => {
+          // 保存已选的事件到本地
+          if (v.checked1 || v.checked2 || v.checked3) {
+            this.localEvent.push(v.name);
+          }
+          if (v.checked1) {
+            let obj1 = {
+              name: v.name + "独立用户数",
+              key: v.name + "|uniqueUsers",
+              checked: true,
+              isevent: true
+            };
+            this.eventOption.push(obj1);
+          }
+          if (v.checked2) {
+            let obj2 = {
+              name: v.name + "事件发生数",
+              key: v.name + "|eventCounter",
+              checked: true,
+              isevent: true
+            };
+            this.eventOption.push(obj2);
+          }
+          if (v.checked3) {
+            let obj3 = {
+              name: v.name + `事件收益(${this.customUnit})`,
+              key: v.name + "|salesIn",
+              checked: true,
+              isevent: true
+            };
+            this.eventOption.push(obj3);
           }
         });
+
+        this.selectOption = this.selectOption.concat(this.eventOption);
       }
     },
-    toSelectOption(r) {
-      this.selectOption = [];
-
-      /**
-       * 20181227新增逻辑
-       * 如果之前已选3个特殊字段，则后续继续加上
-       * 如果之前没选，则后续不加
-       */
-      for (let i in this.middleOption) {
-        let res = this.middleOption[i];
-        let arr = [];
+    watch: {
+      status(n, v) {
+        this.dialogFormVisible = n;
+        let obj = null;
         let keyname = "";
-
-        switch (this.type) {
-          case "campaignName":
-            keyname = "广告系列名称";
-            break;
-          case "adSetName":
-            keyname = "广告组名称";
-            break;
-          case "adName":
-            keyname = "广告名称";
-            break;
-        }
-        if (!this.setDefaultOption.find(v => v.name == keyname))
-          arr = res.filter(v => v.checked && v.name != keyname);
-        else arr = res.filter(v => v.checked);
-
-        this.selectOption = this.selectOption.concat(arr);
-      }
-
-      this.eventOption = [];
-      this.localEvent = [];
-      this.specialOption.forEach(v => {
-        // 保存已选的事件到本地
-        if (v.checked1 || v.checked2 || v.checked3) {
-          this.localEvent.push(v.name);
-        }
-        if (v.checked1) {
-          let obj1 = {
-            name: v.name + "独立用户数",
-            key: v.name + "|uniqueUsers",
-            checked: true,
-            isevent: true
-          };
-          this.eventOption.push(obj1);
-        }
-        if (v.checked2) {
-          let obj2 = {
-            name: v.name + "事件发生数",
-            key: v.name + "|eventCounter",
-            checked: true,
-            isevent: true
-          };
-          this.eventOption.push(obj2);
-        }
-        if (v.checked3) {
-          let obj3 = {
-            name: v.name + `事件收益(${this.customUnit})`,
-            key: v.name + "|salesIn",
-            checked: true,
-            isevent: true
-          };
-          this.eventOption.push(obj3);
-        }
-      });
-
-      this.selectOption = this.selectOption.concat(this.eventOption);
-    }
-  },
-  watch: {
-    status(n, v) {
-      this.dialogFormVisible = n;
-      let obj = null;
-      let keyname = "";
-      if (n) {
-        this.cantDeleteOption = this.opDefault[this.type];
-        switch (this.type) {
-          case "campaignName":
-            keyname = "campaignName";
-            break;
-          case "adSetName":
-            keyname = "adSetName";
-            break;
-          case "adName":
-            keyname = "adName";
-            break;
-        }
-        obj = this.middleOption["对象名称和编号"].find(v => v.key == keyname);
-        this.specialStatus = obj.checked;
-        obj.checked = true;
-      } else {
-        this.cantDeleteOption = [];
-        switch (this.type) {
-          case "campaignName":
-            keyname = "campaignName";
-            break;
-          case "adSetName":
-            keyname = "adSetName";
-            break;
-          case "adName":
-            keyname = "adName";
-            break;
-        }
-        obj = this.middleOption["对象名称和编号"].find(v => v.key == keyname);
-        obj.checked = this.specialStatus;
-      }
-    },
-    setDefaultOption(n, o) {
-      this.selectOption = n;
-
-      for (let i in this.middleOption) {
-        this.middleOption[i].forEach(v => {
-          if (n.find(g => g.name == v.name)) {
-            v.checked = true;
-          } else {
-            v.checked = false;
+        if (n) {
+          this.cantDeleteOption = this.opDefault[this.type];
+          switch (this.type) {
+            case "campaignName":
+              keyname = "campaignName";
+              break;
+            case "adSetName":
+              keyname = "adSetName";
+              break;
+            case "adName":
+              keyname = "adName";
+              break;
           }
-        });
+          obj = this.middleOption["对象名称和编号"].find(v => v.key == keyname);
+          this.specialStatus = obj.checked;
+          obj.checked = true;
+        } else {
+          this.cantDeleteOption = [];
+          switch (this.type) {
+            case "campaignName":
+              keyname = "campaignName";
+              break;
+            case "adSetName":
+              keyname = "adSetName";
+              break;
+            case "adName":
+              keyname = "adName";
+              break;
+          }
+          obj = this.middleOption["对象名称和编号"].find(v => v.key == keyname);
+          obj.checked = this.specialStatus;
+        }
+      },
+      setDefaultOption(n, o) {
+        this.selectOption = n;
+
+        for (let i in this.middleOption) {
+          this.middleOption[i].forEach(v => {
+            if (n.find(g => g.name == v.name)) {
+              v.checked = true;
+            } else {
+              v.checked = false;
+            }
+          });
+        }
+      },
+      customEvent(n, o) {
+        // if (n.length > 0) {
+        this.specialOption = n;
+        // }
       }
-    },
-    customEvent(n, o) {
-      // if (n.length > 0) {
-      this.specialOption = n;
-      // }
     }
-  }
-};
+  };
 </script>
 <style>
 .cont .el-checkbox__label {
@@ -863,16 +983,6 @@ export default {
               background-color: #ebebeb;
               margin-right: 20px;
             }
-            //   &:after{
-            //       content: '';
-            //       height: 1px;
-            //       background-color: #ebebeb;
-            //       width: 200px;
-            //       display: inline-block;
-            //     //   position: absolute;
-            //     //   left: 4em;
-            //     //   top: 14px;
-            //   }
           }
           .nchild {
             margin-top: 5px;
@@ -896,8 +1006,6 @@ export default {
   .rightnav {
     flex-basis: 150px;
     border-left: 1px solid #ebebeb;
-    // width: 0;
-    // flex-grow: 0;
     .tagtotal {
       margin-bottom: 10px;
       margin-left: 10px;
@@ -911,19 +1019,9 @@ export default {
       .tagline {
         margin-left: 10px;
         margin-right: 10px;
-        // overflow: hidden;
-        // text-overflow: ellipsis;
-        // white-space: nowrap;
         display: inline-block;
         height: 32px;
-        // max-width: 100%;
         box-sizing: border-box;
-        // position: relative;
-        // .el-tag__close{
-        //     top: 8px;
-        //     right: 4px;
-        //     position: absolute;
-        // }
       }
     }
   }

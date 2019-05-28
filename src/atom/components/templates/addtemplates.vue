@@ -83,6 +83,106 @@
             </div>
           </div>
         </el-form-item>
+        <el-form-item label="文案">
+          <div>
+            <el-checkbox v-model="form.withwriting">支持文案</el-checkbox>
+            <div class="matter" v-for="(wt, index) in form.writing" :key="index">
+              <div class="sizeinput">
+                <span class="font">位置</span>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="wt['x']"
+                  :min="0"
+                  placeholder="x"
+                  :disabled="!form.withwriting"
+                ></el-input-number>
+                <span class="between">,</span>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="wt['y']"
+                  :min="0"
+                  placeholder="y"
+                  :disabled="!form.withwriting"
+                ></el-input-number>
+                <el-button
+                  class="close"
+                  type="text"
+                  icon="el-icon-close"
+                  v-show="form.writing.length > 1"
+                  @click="deleteWriting(index)"
+                ></el-button>
+              </div>
+              <div class="sizeinput">
+                <span class="font">宽高</span>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="wt['w']"
+                  :min="0"
+                  placeholder="宽"
+                  :disabled="!form.withwriting"
+                ></el-input-number>
+                <span class="between">x</span>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="wt['h']"
+                  :min="0"
+                  placeholder="高"
+                  :disabled="!form.withwriting"
+                ></el-input-number>
+              </div>
+              <div class="colorinput">
+                <span class="font">颜色</span>
+                <el-color-picker v-model="wt['color']" :disabled="!form.withwriting"></el-color-picker>
+              </div>
+              <!-- <div class="sizeinput">
+                <span class="font">字体</span>
+                <el-input
+                  v-model="wt['family']"
+                  :disabled="!form.withwriting"
+                  size="mini"
+                  class="middleinput"
+                  placeholder="必填"
+                ></el-input>
+              </div> -->
+              <div class="sizeinput">
+                <span class="font">字体大小</span>
+                <el-input-number
+                  class="smallinput"
+                  size="mini"
+                  v-model="wt['size']"
+                  :min="0"
+                  placeholder="必填"
+                  style="margin-right: 5px;"
+                  :disabled="!form.withwriting"
+                ></el-input-number>
+                <span class="font">px</span>
+              </div>
+              <div class="sizeinput">
+                <span class="font">默认文案</span>
+                <el-input
+                  v-model="wt['default']"
+                  :disabled="!form.withwriting"
+                  size="mini"
+                  class="middleinput"
+                  placeholder="必填"
+                ></el-input>
+              </div>
+              <div class="line">
+                <p>用户填写时参考</p>
+              </div>
+            </div>
+            <el-button
+              type="primary"
+              size="mini"
+              @click="moreWriting"
+              :disabled="!form.withwriting || form.writing.length == 2"
+            >新增</el-button>
+          </div>
+        </el-form-item>
         <el-form-item label="素材">
           <div>
             <div class="matter" v-for="(mt, index) in form.matter" :key="index">
@@ -169,208 +269,283 @@
 </template>
 
 <script>
-import TemplatesUpload from "./addtemplates-upload";
-import { Msgwarning } from "../../js/message";
-import { mapState } from "vuex";
-export default {
-  components: {
-    TemplatesUpload
-  },
-  data() {
-    return {
-      editid: "",
-      form: {
-        size: "",
-        trade: "",
-        face: [],
-        faceurl: "",
-        // facewidth: 0,
-        // faceheight: 0,
-        temp: [],
-        tempurl: "",
-        tempwidth: 0,
-        tempheight: 0,
-        logo: {
-          with: true,
+  import TemplatesUpload from "./addtemplates-upload";
+  import { Msgwarning } from "../../js/message";
+  import { mapState } from "vuex";
+  export default {
+    components: {
+      TemplatesUpload
+    },
+    data() {
+      return {
+        editid: "",
+        form: {
+          size: "",
+          trade: "",
+          face: [],
+          faceurl: "",
+          // facewidth: 0,
+          // faceheight: 0,
+          temp: [],
+          tempurl: "",
+          tempwidth: 0,
+          tempheight: 0,
+          logo: {
+            with: true,
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 0
+          },
+          withwriting: false,
+          writing: [
+            {
+              x: 0,
+              y: 0,
+              w: 0,
+              h: 0,
+              default: "",
+              color: "#409EFF",
+              // family: "",
+              size: 0
+            }
+          ],
+          matter: [{ x: 0, y: 0, w: 0, h: 0 }],
+          tags: []
+        },
+        inputVisible: false,
+        inputValue: ""
+      };
+    },
+    mounted() {
+      console.log(this.$route.params);
+      this.editid = this.$route.params.eid;
+      if (this.editid) this.$store.dispatch("getTempDetail", { id: this.editid });
+      // 获取尺寸列表
+      this.$store.dispatch("getSizeTrade", "template_size");
+      // 获取行业列表
+      this.$store.dispatch("getSizeTrade", "template_business");
+    },
+    computed: {
+      ...mapState(["tempsize", "temptrade", "tempdetail"])
+    },
+    watch: {
+      tempdetail(n, v) {
+        if (n) {
+          this.form.size = n.size;
+          this.form.trade = n.business;
+          this.form.face = [
+            {
+              process: 100,
+              imageUrl: n.coverImage
+            }
+          ];
+          this.form.faceurl = n.coverImage;
+          this.form.temp = [
+            {
+              process: 100,
+              imageUrl: n.designMaterial
+            }
+          ];
+          this.form.tempurl = n.designMaterial;
+          this.form.tempwidth = n.size.split("x")[0];
+          this.form.tempheight = n.size.split("x")[1];
+          this.form.logo["with"] = n.isLogo == 1 ? true : false;
+          if (n.isLogo == 1) {
+            let xy = n.logoLocation.split(",");
+            this.form.logo["x"] = xy[0];
+            this.form.logo["y"] = xy[1];
+            let wh = n.logoWidthHeight.split("x");
+            this.form.logo["w"] = wh[0];
+            this.form.logo["h"] = wh[1];
+          }
+
+          let writing = JSON.parse(n.templateText);
+          this.form.writing = [];
+          writing.forEach(v => {
+            let xy = v.location.split(",");
+            let wh = v.width_height.split("x");
+            let obj = {
+              x: xy[0],
+              y: xy[1],
+              w: wh[0],
+              h: wh[1],
+              default: v.text,
+              color: v.colour,
+              size: v.text_size
+            }
+            this.form.writing.push(obj);
+          })
+
+          let temp = n.templateImage ? JSON.parse(n.templateImage) : [];
+          this.form.matter = [];
+          if(temp.length > 0) this.form.withwriting = true;
+          temp.forEach(v => {
+            let xy = v.location.split(",");
+            let wh = v.width_height.split("x");
+            let obj = {
+              x: xy[0],
+              y: xy[1],
+              w: wh[0],
+              h: wh[1]
+            };
+            this.form.matter.push(obj);
+          });
+          this.form.tags = n.label.split(",");
+        }
+      }
+    },
+    methods: {
+      deleteWriting(idx) {
+        this.form.writing.splice(idx, 1);
+      },
+      moreWriting() {
+        this.form.writing.push({
+          x: 0,
+          y: 0,
+          w: 0,
+          h: 0,
+          default: "",
+          color: "#409EFF",
+          // family: "",
+          size: 0
+        });
+      },
+      deleteMatter(idx) {
+        this.form.matter.splice(idx, 1);
+      },
+      moreMatter() {
+        this.form.matter.push({
           x: 0,
           y: 0,
           w: 0,
           h: 0
-        },
-        matter: [{ x: 0, y: 0, w: 0, h: 0 }],
-        tags: []
-      },
-      inputVisible: false,
-      inputValue: ""
-    };
-  },
-  mounted() {
-    console.log(this.$route.params);
-    this.editid = this.$route.params.eid;
-    if (this.editid) this.$store.dispatch("getTempDetail", { id: this.editid });
-    // 获取尺寸列表
-    this.$store.dispatch("getSizeTrade", "template_size");
-    // 获取行业列表
-    this.$store.dispatch("getSizeTrade", "template_business");
-  },
-  computed: {
-    ...mapState(["tempsize", "temptrade", "tempdetail"])
-  },
-  watch: {
-    tempdetail(n, v) {
-      if (n) {
-        this.form.size = n.size;
-        this.form.trade = n.business;
-        this.form.face = [
-          {
-            process: 100,
-            imageUrl: n.coverImage
-          }
-        ];
-        this.form.faceurl = n.coverImage;
-        this.form.temp = [
-          {
-            process: 100,
-            imageUrl: n.designMaterial
-          }
-        ];
-        this.form.tempurl = n.designMaterial;
-        this.form.tempwidth = n.size.split('x')[0];
-        this.form.tempheight = n.size.split('x')[1];
-        this.form.logo["with"] = n.isLogo == 1 ? true : false;
-        if (n.isLogo == 1) {
-          let xy = n.logoLocation.split(",");
-          this.form.logo["x"] = xy[0];
-          this.form.logo["y"] = xy[1];
-          let wh = n.logoWidthHeight.split("x");
-          this.form.logo["w"] = wh[0];
-          this.form.logo["h"] = wh[1];
-        }
-        let temp = JSON.parse(n.templateImage);
-        this.form.matter = [];
-        temp.forEach(v => {
-          let xy = v.location.split(",");
-          let wh = v.width_height.split("x");
-          let obj = {
-            x: xy[0],
-            y: xy[1],
-            w: wh[0],
-            h: wh[1]
-          };
-          this.form.matter.push(obj);
         });
-        this.form.tags = n.label.split(",");
-      }
-    }
-  },
-  methods: {
-    deleteMatter(idx) {
-      this.form.matter.splice(idx, 1);
-    },
-    moreMatter() {
-      this.form.matter.push({
-        x: 0,
-        y: 0,
-        w: 0,
-        h: 0
-      });
-    },
-    tempUploading(res) {
-      this.form.temp = res;
-      this.form.tempurl = res[0].imageUrl;
-      this.form.tempwidth = res[0].imageWidth;
-      this.form.tempheight = res[0].imageHeight;
-    },
-    imgUploading(res) {
-      this.form.face = res;
-      this.form.faceurl = res[0].imageUrl;
-      // this.form.facewidth = res[0].imageWidth;
-      // this.form.faceheight = res[0].imageHeight;
-    },
-    dataCheck() {
-      if (!this.form.size) return [false, "请选择尺寸"];
-      if (!this.form.trade) return [false, "请选择行业"];
-      if (!this.form.faceurl) return [false, "请上传封面"];
-      let size = this.form.size.split("x");
-      // if (this.form.facewidth != size[0] || this.form.faceheight != size[1])
-      //   return [false, "封面图尺寸与所选尺寸不一致，请重新上传"];
-      if (!this.form.tempurl) return [false, "请上传模板"];
-      if (this.form.tempwidth != size[0] || this.form.tempheight != size[1])
-        return [false, "模板尺寸与所选尺寸不一致，请重新上传"];
-      if (
-        this.form.logo["with"] &&
-        (this.form.logo["x"] === undefined ||
-          this.form.logo["y"] === undefined ||
-          this.form.logo["w"] === undefined ||
-          this.form.logo["h"] === undefined)
-      )
-        return [false, "logo位置或者宽高不能为空"];
-      if (
-        this.form.matter.find(
-          v =>
-            v["x"] === undefined ||
-            v["y"] === undefined ||
-            v["w"] === undefined ||
-            v["h"] === undefined
+      },
+      tempUploading(res) {
+        this.form.temp = res;
+        this.form.tempurl = res[0].imageUrl;
+        this.form.tempwidth = res[0].imageWidth;
+        this.form.tempheight = res[0].imageHeight;
+      },
+      imgUploading(res) {
+        this.form.face = res;
+        this.form.faceurl = res[0].imageUrl;
+        // this.form.facewidth = res[0].imageWidth;
+        // this.form.faceheight = res[0].imageHeight;
+      },
+      dataCheck() {
+        if (!this.form.size) return [false, "请选择尺寸"];
+        if (!this.form.trade) return [false, "请选择行业"];
+        if (!this.form.faceurl) return [false, "请上传封面"];
+        let size = this.form.size.split("x");
+        // if (this.form.facewidth != size[0] || this.form.faceheight != size[1])
+        //   return [false, "封面图尺寸与所选尺寸不一致，请重新上传"];
+        if (!this.form.tempurl) return [false, "请上传模板"];
+        if (this.form.tempwidth != size[0] || this.form.tempheight != size[1])
+          return [false, "模板尺寸与所选尺寸不一致，请重新上传"];
+        if (
+          this.form.logo["with"] &&
+          (this.form.logo["x"] === undefined ||
+            this.form.logo["y"] === undefined ||
+            this.form.logo["w"] === undefined ||
+            this.form.logo["h"] === undefined)
         )
-      )
-        return [false, "素材位置或者宽高不能为空"];
-      if (this.form.tags.length == 0) return [false, "请设置标签"];
+          return [false, "logo位置或者宽高不能为空"];
 
-      return [true];
-    },
-    onSubmit() {
-      let check = this.dataCheck();
-      if (!check[0]) {
-        Msgwarning(check[1]);
-        return;
-      }
+        if (
+          this.form.withwriting &&
+          this.form.writing.find(
+            v =>
+              v["x"] === undefined ||
+              v["y"] === undefined ||
+              v["w"] === undefined ||
+              v["h"] === undefined ||
+              v["size"] === undefined || 
+              v["default"].trim() == ""
+          )
+        ) {
+          return [false, "文案位置、宽高、大小、默认均不能为空"];
+        }
 
-      let temparr = [];
-      this.form.matter.forEach(v => {
-        let obj = {
-          location: v.x * 1 + "," + v.y * 1,
-          width_height: v.w * 1 + "x" + v.h * 1
+        if (
+          this.form.matter.find(
+            v =>
+              v["x"] === undefined ||
+              v["y"] === undefined ||
+              v["w"] === undefined ||
+              v["h"] === undefined
+          )
+        )
+          return [false, "素材位置或者宽高不能为空"];
+        if (this.form.tags.length == 0) return [false, "请设置标签"];
+
+        return [true];
+      },
+      onSubmit() {
+        let check = this.dataCheck();
+        if (!check[0]) {
+          Msgwarning(check[1]);
+          return;
+        }
+
+        let temparr = [];
+        this.form.matter.forEach(v => {
+          let obj = {
+            location: v.x * 1 + "," + v.y * 1,
+            width_height: v.w * 1 + "x" + v.h * 1
+          };
+          temparr.push(obj);
+        });
+        let writearr = [];
+        this.form.writing.forEach(v => {
+          let obj = {
+            location: v.x * 1 + "," + v.y * 1,
+            width_height: v.w * 1 + "x" + v.h * 1,
+            text: v.default.trim(),
+            colour: v.color,
+            text_size: v.size
+          };
+          writearr.push(obj);
+        });
+        let option = {
+          business: this.form.trade,
+          coverImage: this.form.faceurl,
+          designMaterial: this.form.tempurl,
+          isLogo: this.form.logo.with * 1,
+          label: this.form.tags.join(","),
+          logoLocation: this.form.logo.x * 1 + "," + this.form.logo.y * 1,
+          logoWidthHeight: this.form.logo.w * 1 + "x" + this.form.logo.h * 1,
+          size: this.form.size,
+          templateImage: JSON.stringify(temparr),
+          templateText: this.form.withwriting ? JSON.stringify(writearr) : ""
         };
-        temparr.push(obj);
-      });
-      let option = {
-        business: this.form.trade,
-        coverImage: this.form.faceurl,
-        designMaterial: this.form.tempurl,
-        isLogo: this.form.logo.with * 1,
-        label: this.form.tags.join(","),
-        logoLocation: this.form.logo.x * 1 + "," + this.form.logo.y * 1,
-        logoWidthHeight: this.form.logo.w * 1 + "x" + this.form.logo.h * 1,
-        size: this.form.size,
-        templateImage: JSON.stringify(temparr)
-      };
-      if (this.editid) {
-        option.id = this.editid;
-        this.$store.dispatch("editTemplate", { option, route: this.$router });
-      } else {
-        this.$store.dispatch("addTemplate", { option, route: this.$router });
+        if (this.editid) {
+          option.id = this.editid;
+          this.$store.dispatch("editTemplate", { option, route: this.$router });
+        } else {
+          this.$store.dispatch("addTemplate", { option, route: this.$router });
+        }
+      },
+      handleClose(tag) {
+        this.form.tags.splice(this.form.tags.indexOf(tag), 1);
+      },
+      showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+      handleInputConfirm() {
+        let inputValue = this.inputValue;
+        if (inputValue) {
+          this.form.tags.push(inputValue);
+        }
+        this.inputVisible = false;
+        this.inputValue = "";
       }
-    },
-    handleClose(tag) {
-      this.form.tags.splice(this.form.tags.indexOf(tag), 1);
-    },
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      if (inputValue) {
-        this.form.tags.push(inputValue);
-      }
-      this.inputVisible = false;
-      this.inputValue = "";
     }
-  }
-};
+  };
 </script>
 
 <style lang="less" scoped>
@@ -418,6 +593,21 @@ export default {
         }
       }
     }
+    .line {
+      p {
+        font-size: 12px;
+        color: #999;
+        line-height: 16px;
+        padding-left: 5em;
+      }
+    }
+    .colorinput {
+      display: flex;
+      .font {
+        margin-right: 10px;
+        font-size: 12px;
+      }
+    }
     .sizeinput {
       .font {
         margin-right: 10px;
@@ -426,6 +616,11 @@ export default {
       .smallinput {
         display: inline-block;
         width: 100px;
+      }
+      .middleinput {
+        display: inline-block;
+        width: 150px;
+        margin-right: 5px;
       }
       .between {
         width: 10px;

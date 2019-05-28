@@ -150,6 +150,8 @@
   import { Loading } from "element-ui";
   import { Msgsuccess, Msgwarning } from "../../js/message";
   import draggable from "vuedraggable/src/vuedraggable";
+import { clearTimeout, setTimeout } from 'timers';
+
   export default {
     components: {
       ImageTemplate,
@@ -158,6 +160,7 @@
     },
     data() {
       return {
+        timer: null,
         tempdetail: null,
         islogo: true,
         logo: [],
@@ -268,14 +271,19 @@
          */
         if(index > 1) return;
 
-        let text = Object.assign({}, this[`writingText${index + 1}`]);
-        text[`text${i}`] = this.writelist[index][`text${i}`];
-        this[`writingSize${index + 1}`][i - 1] = this.getFontSize(
-          text[`text${i}`],
-          this.writingbasesize[i - 1],
-          this.writingDots[i - 1].size[0]
-        );
-        this[`writingText${index + 1}`] = text;
+        if(this.timer) clearTimeout(this.timer);
+
+        let me = this;
+        this.timer = setTimeout(() => {
+          let text = Object.assign({}, me[`writingText${index + 1}`]);
+          text[`text${i}`] = me.writelist[index][`text${i}`];
+          me[`writingSize${index + 1}`][i - 1] = me.getFontSize(
+            text[`text${i}`],
+            me.writingbasesize[i - 1],
+            me.writingDots[i - 1].size[0]
+          );
+          me[`writingText${index + 1}`] = text;
+        }, 300);
       },
       writeStatus() {
         /**
@@ -323,20 +331,25 @@
         }
       },
       writingChange(i) {
-        let text = Object.assign({}, this.writingText1);
-        text[`text${i}`] = this[`commonwrite${i}`] ? this[`commonwrite${i}`] : this.writingbasetext[`text${i}`];
-        this.writingSize1[i - 1] = this.getFontSize(
-          this[`commonwrite${i}`],
-          this.writingbasesize[i - 1],
-          this.writingDots[i - 1].size[0]
-        );
-        this.writingSize2[i - 1] = this.getFontSize(
-          this[`commonwrite${i}`],
-          this.writingbasesize[i - 1],
-          this.writingDots[i - 1].size[0]
-        );
-        this.writingText1 = text;
-        this.writingText2 = text;
+        if(this.timer) clearTimeout(this.timer);
+
+        let me = this;
+        this.timer = setTimeout(() => {
+          let text = Object.assign({}, me.writingText1);
+          text[`text${i}`] = me[`commonwrite${i}`] ? me[`commonwrite${i}`] : me.writingbasetext[`text${i}`];
+          me.writingSize1[i - 1] = me.getFontSize(
+            me[`commonwrite${i}`],
+            me.writingbasesize[i - 1],
+            me.writingDots[i - 1].size[0]
+          );
+          me.writingSize2[i - 1] = me.getFontSize(
+            me[`commonwrite${i}`],
+            me.writingbasesize[i - 1],
+            me.writingDots[i - 1].size[0]
+          );
+          me.writingText1 = text;
+          me.writingText2 = text;
+        }, 300)
       },
       deleteImage(index, idx, url) {
         console.log(index, idx);

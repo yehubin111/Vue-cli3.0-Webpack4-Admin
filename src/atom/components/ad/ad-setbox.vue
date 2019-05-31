@@ -158,676 +158,712 @@
 </template>
 
 <script>
-import AdSetlist from "./ad-setlist";
-import AdRename from "./ad-rename";
-import { mapState, mapMutations } from "vuex";
-import { Msgwarning } from "../../js/message";
-let search;
-export default {
-  props: ["opDefault", "type", "defaultOption"],
-  data() {
-    return {
-      optionmenu: false,
-      sortDown: false,
-      firstSearch: "",
-      firstKey: "",
-      secondSearchList: [],
-      state: "",
-      value2: "",
-      customOption: this.defaultOption.concat(this.opDefault), // 自定义列配置, 默认+常用
-      pageindex: 1,
-      mutilselect: [],
-      archivedbutton: false,
-      sort: "",
-      order: true,
-      statuslist: [
-        {
-          name: "不限",
-          code: "-1"
-        },
-        {
-          name: "投放中",
-          code: "ACTIVE"
-        },
-        {
-          name: "已暂停",
-          code: "PAUSED"
-        },
-        {
-          name: "已归档",
-          code: "ARCHIVED"
-        },
-        {
-          name: "已删除",
-          code: "DELETED"
+  import AdSetlist from "./ad-setlist";
+  import AdRename from "./ad-rename";
+  import { mapState, mapMutations } from "vuex";
+  import { Msgwarning } from "../../js/message";
+  let search;
+  export default {
+    props: ["opDefault", "type", "defaultOption"],
+    data() {
+      return {
+        optionmenu: false,
+        sortDown: false,
+        firstSearch: "",
+        firstKey: "",
+        secondSearchList: [],
+        state: "",
+        value2: "",
+        customOption: this.defaultOption.concat(this.opDefault), // 自定义列配置, 默认+常用
+        pageindex: 1,
+        mutilselect: [],
+        archivedbutton: false,
+        sort: "",
+        order: true,
+        statuslist: [
+          {
+            name: "不限",
+            code: "-1"
+          },
+          {
+            name: "投放中",
+            code: "ACTIVE"
+          },
+          {
+            name: "已暂停",
+            code: "PAUSED"
+          },
+          {
+            name: "已归档",
+            code: "ARCHIVED"
+          },
+          {
+            name: "已删除",
+            code: "DELETED"
+          }
+        ]
+      };
+    },
+    components: {
+      AdSetlist,
+      AdRename
+    },
+    mounted() {},
+    watch: {},
+    methods: {
+      ...mapMutations(["SETSTATE"]),
+      optionSelect(key) {
+        this.$emit("optionSelect", key);
+      },
+      deleteOption(id, name) {
+        this.$emit("deleteSaveSearch", id, "2", name);
+      },
+      saveOption() {
+        this.$emit("setCondition", "2");
+      },
+      ruleCtrl(key) {
+        if ([...new Set(this.mutilselect.map(v => v.accountId))].length > 1) {
+          Msgwarning("暂不支持跨广告账户设置规则，请选择同一个广告账户下的对象");
+          return;
         }
-      ]
-    };
-  },
-  components: {
-    AdSetlist,
-    AdRename
-  },
-  mounted() {},
-  watch: {},
-  methods: {
-    ...mapMutations(["SETSTATE"]),
-    optionSelect(key) {
-      this.$emit("optionSelect", key);
-    },
-    deleteOption(id, name) {
-      this.$emit("deleteSaveSearch", id, '2', name);
-    },
-    saveOption() {
-      this.$emit("setCondition", "2");
-    },
-    ruleCtrl(key) {
-      if ([...new Set(this.mutilselect.map(v => v.accountId))].length > 1) {
-        Msgwarning("暂不支持跨广告账户设置规则，请选择同一个广告账户下的对象");
-        return;
-      }
-      switch (key) {
-        case "a":
-          this.$emit("ruleAdd", this.mutilselect, this.type);
-          break;
-        case "b":
-          this.$emit("ruleCreate", this.mutilselect, this.type);
-          break;
-      }
-    },
-    setRule(id) {
-      this.$emit("ruleRemove", id, this.type);
-    },
-    tabJump(tabname, row, type) {
-      this.$emit("tabJump", tabname, row, type);
-    },
-    toEdit(id, name) {
-      this.$emit("wantEdit", this.type, id, name);
-    },
-    toCopy(option, accountId) {
-      this.$emit("wantCopy", this.type, option, accountId);
-    },
-    // 初始化细分，用于切换页面时初始化细分选项
-    resetCare() {
-      this.searchList.forEach(v => {
-        v.list.forEach(g => {
-          g.checked = false;
-        });
-      });
-
-      this.SETSTATE({ k: "careData", v: [] });
-    },
-    // 清空细分数据
-    clearCare() {
-      this.resetCare();
-
-      this.toGetdata();
-    },
-    sweepCare() {
-      this.secondSearchList = [];
-      this.firstSearch = "";
-    },
-    selectCare(key, importkey) {
-      // 排除轮播以外的第一级选项，点击无需请求接口
-      if (!key && importkey === undefined) return;
-
-      this.searchList.forEach(v => {
-        if (v.key == this.firstKey) {
+        switch (key) {
+          case "a":
+            this.$emit("ruleAdd", this.mutilselect, this.type);
+            break;
+          case "b":
+            this.$emit("ruleCreate", this.mutilselect, this.type);
+            break;
+        }
+      },
+      setRule(id) {
+        this.$emit("ruleRemove", id, this.type);
+      },
+      tabJump(tabname, row, type) {
+        this.$emit("tabJump", tabname, row, type);
+      },
+      toEdit(id, name) {
+        this.$emit("wantEdit", this.type, id, name);
+      },
+      toCopy(option, accountId) {
+        this.$emit("wantCopy", this.type, option, accountId);
+      },
+      // 初始化细分，用于切换页面时初始化细分选项
+      resetCare() {
+        this.searchList.forEach(v => {
           v.list.forEach(g => {
             g.checked = false;
           });
-        }
-      });
-      // 如果选择的是无，则清空选项
-      if (key) {
-        this.secondSearchList.forEach(v => {
-          if (v.key == key) {
-            v.checked = true;
+        });
+
+        this.SETSTATE({ k: "careData", v: [] });
+      },
+      // 清空细分数据
+      clearCare() {
+        this.resetCare();
+
+        this.toGetdata();
+      },
+      sweepCare() {
+        this.secondSearchList = [];
+        this.firstSearch = "";
+      },
+      selectCare(key, importkey) {
+        // 排除轮播以外的第一级选项，点击无需请求接口
+        if (!key && importkey === undefined) return;
+
+        this.searchList.forEach(v => {
+          if (v.key == this.firstKey) {
+            v.list.forEach(g => {
+              g.checked = false;
+            });
           }
         });
-      }
-
-      let obj = {
-        key: this.firstKey,
-        vl: importkey ? importkey : key
-      };
-      let careData = this.careData;
-
-      careData = careData.filter(v => v.key != this.firstKey);
-      careData.push(obj);
-      this.SETSTATE({ k: "careData", v: careData });
-
-      this.toGetdata();
-    },
-    createAd() {
-      this.$emit("toCreateAd", this.type);
-    },
-    // 重命名
-    reName(key, name) {
-      this.$refs.reName.showBox(key, name);
-    },
-    searchStatus() {
-      this.sortDown = !this.sortDown;
-      this.secondSearchList = [];
-      this.firstSearch = "";
-    },
-    searchClick(name, key, importkey) {
-      /**
-       * 20190212新增特殊细分数据逻辑，选择第一级之后可以直接细分，无第二级菜单
-       */
-      this.firstSearch = importkey ? "" : name;
-      this.firstKey = key;
-      this.secondSearchList = importkey
-        ? []
-        : this.searchList.find(v => this.firstSearch == v.name).list;
-    },
-    tableSort(sort) {
-      this.sort = sort;
-      // this.order = sort ? true : false;
-      this.toGetdata(true);
-    },
-    adSearch() {
-      let self = this;
-      if (this.value == "") return;
-
-      clearTimeout(search);
-      search = setTimeout(function() {
-        self.toSort();
-      }, 300);
-    },
-    outListOption() {
-      this.$emit("showOptionbox", this.type);
-      // this.status = true;
-    },
-    importRemain() {
-      this.$emit("showRemainBox", this.type);
-    },
-    outTable() {
-      if (!this.exportstatus) return;
-      // 数据超过5万条，无法导出
-      if (this.adtotal > 50000) {
-        Msgwarning("数据请少于5万条");
-        return;
-      }
-
-      let name = `${this.projectname}${this.opDefault[0].name.replace(
-        "名称",
-        ""
-      )}${this.$timeFormat(new Date(), "yyyyMMddHHmmss")}`;
-
-      let outNotify = this.$notify({
-        title: "正在导出...",
-        message: "广告管理数据量较大，请稍等",
-        duration: 0,
-        showClose: false
-      });
-      // 改变导出按钮状态
-      this.SETSTATE({ k: "exportstatus", v: false });
-
-      let option = "";
-      let k = this.typeData.optionName;
-      option = this[k];
-      option.pageSize = this.adtotal;
-      this.$store.dispatch("getAdlist", {
-        option,
-        name,
-        fullScreen: false,
-        customOption: this.customOptionDefault,
-        type: this.type,
-        // order: this.order,
-        // applicationid: this.applicationId,
-        editType: "export",
-        outNotify // notification实例
-      });
-    },
-    toSort() {
-      this.toGetdata(true);
-    },
-    pageSwitch(page) {
-      this.pageindex = page;
-
-      this.toGetdata();
-    },
-    pageSizeChange(size) {
-      // this.pagesize = size;
-      this.SETSTATE({ k: "adpagesize", v: size });
-
-      this.toGetdata(true);
-    },
-    // changeFilterSwitch(status) {
-    //   this.defaultSwitch = status ? status : false;
-    // },
-    sortConditionLogic(option) {
-      /**
-       * 20180104新增需求，筛选条件默认情况
-       * @父级 已归档/已删除 @子级 已归档/已删除
-       * @父级 没选/已暂停/投放中 @子级 已暂停+投放中
-       * @父级 已暂停/投放中+已归档/已删除 @子级 已暂停+投放中+已归档/已删除
-       */
-      let kdefault = "ACTIVE,PAUSED";
-      let defaultkey = option["adSetStatusStr"]
-        ? "adSetStatusStr"
-        : "adCampaignStatusStr";
-      if (option[defaultkey]) {
-        kdefault = "";
-        if (
-          option[defaultkey].indexOf("ACTIVE") != -1 ||
-          option[defaultkey].indexOf("PAUSED") != -1
-        ) {
-          kdefault = "ACTIVE,PAUSED";
+        // 如果选择的是无，则清空选项
+        if (key) {
+          this.secondSearchList.forEach(v => {
+            if (v.key == key) {
+              v.checked = true;
+            }
+          });
         }
-        if (option[defaultkey].indexOf("ARCHIVED") != -1) {
-          kdefault += ",ARCHIVED";
-        }
-        if (option[defaultkey].indexOf("DELETED") != -1) {
-          kdefault += ",DELETED";
-        }
-      }
-      this.SETSTATE({ k: "sortdefault", v: kdefault.replace(/^,/, "") });
-    },
-    toGetdata(pageReset) {
-      // console.log('pageReset');
-      let batchId = this.$route.params.bid;
-      // 从本地缓存获取筛选条件
-      let allCondition = localStorage.getItem(adFilterLS.new)
-        ? JSON.parse(localStorage.getItem(adFilterLS.new))
-        : {};
-      let disCondition = allCondition[this.$route.params.id]
-        ? allCondition[this.$route.params.id]
-        : [];
 
-      if (pageReset) this.pageindex = 1;
-
-      let option = {
-        pageNo: this.pageindex,
-        pageSize: this.adpagesize,
-        projectId: this.$route.params.id,
-        batchId
-      };
-      if (this.sort) option.orderByCause = this.sort;
-      if (this.value2) option[this.typeData.effect] = this.value2;
-      if (this.state) option[this.typeData.searchKeyword] = this.state;
-
-      // 添加细分数据
-      this.careData.forEach(v => {
-        if (v.vl) {
-          option[v.key] = v.vl;
-        }
-      });
-      /**
-       * 20181227新增默认条件
-       * 各tab分别默认各投放状态投放中and已暂停
-       * 如果有操作过相关条件，则取消默认
-       */
-      disCondition.forEach(v => {
-        if (option[v.key] && v.key != this.typeData.defaultFilter)
-          option[v.key] += " and " + v.option;
-        else option[v.key] = v.option;
-      });
-      // 设置默认条件，详情见方法注释
-      this.sortConditionLogic(option);
-
-      option[this.typeData.defaultFilter] = option[this.typeData.defaultFilter]
-        ? option[this.typeData.defaultFilter]
-        : this.sortdefault;
-
-      let v = {
-        ...option
-      };
-      // v.pageNo = 1;
-
-      var k = this.typeData.optionName;
-      this.SETSTATE({ k, v });
-
-      this.$store.dispatch("getAdlist", {
-        option,
-        type: this.type,
-        order: this.order,
-        // applicationid: this.applicationId
-      });
-    },
-    mutilSelect(arr) {
-      this.mutilselect = arr;
-
-      this.archivedbutton = this.mutilselect.find(
-        v => v.effectiveStatus == "ARCHIVED"
-      )
-        ? true
-        : false;
-      /**
-       * 只有广告系列才有的方法，筛选广告组和广告账户的列表
-       * 广告系列选择了几个，广告组和广告分别对应显示几个
-       * 没选则的情况下，显示全部
-       *  */
-
-      this.$emit("selectSort", arr);
-    },
-    async toCtrlAll(k) {
-      if (this.mutilselect.length == 0) {
-        Msgwarning("请先选择要处理的广告系列/广告组/广告");
-        return;
-      }
-      if (this.mutilselect.length > 200) {
-        Msgwarning("批量操作最大条数为200");
-        return;
-      }
-      if (
-        k == "Edit" &&
-        this.mutilselect.find(v => v.effectiveStatus == "ARCHIVED")
-      ) {
-        Msgwarning("已选项中包含已归档项，已归档无法编辑");
-        return;
-      }
-      let effectiveStatus = k,
-        adIds = [];
-      let option = [];
-      this.mutilselect.forEach(v => {
-        // 批量复制用
         let obj = {
-          id: v[this.typeData.effectIdsPush],
-          orgid: v[this.typeData.originalId],
-          orgname: v[this.typeData.originalName]
+          key: this.firstKey,
+          vl: importkey ? importkey : key
         };
-        option.push(obj);
+        let careData = this.careData;
 
-        adIds.push(v[this.typeData.effectIdsPush]);
-      });
-      adIds = adIds.join(",");
-      // 归档
-      if (k == "ARCHIVED") {
+        careData = careData.filter(v => v.key != this.firstKey);
+        careData.push(obj);
+        this.SETSTATE({ k: "careData", v: careData });
+
+        this.toGetdata();
+      },
+      createAd() {
+        this.$emit("toCreateAd", this.type);
+      },
+      // 重命名
+      reName(key, name) {
+        this.$refs.reName.showBox(key, name);
+      },
+      searchStatus() {
+        this.sortDown = !this.sortDown;
+        this.secondSearchList = [];
+        this.firstSearch = "";
+      },
+      searchClick(name, key, importkey) {
         /**
-         * 20190220 v2.2.1 新增
-         * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
+         * 20190212新增特殊细分数据逻辑，选择第一级之后可以直接细分，无第二级菜单
          */
-        let activead = []; // 动态创意广告
-        let activeidsarr = []; // 动态创意广告id集合
-        let activeids = ""; // 动态创意广告id（String）
-        let activecreative = []; // 动态创意集合
-        let activecreativeids = []; // 动态创意id集合
-        let activenotice = ""; // confirm提示内容
-        if (this.type == "adName") {
-          let res = await this.$store.dispatch("creativeDetail", {
-            creativeId: this.mutilselect.map(v => v.creativeId).join(","),
-            fullScreen: true
-          });
-          let activecreative = res.data.filter(
-            v => v.assetFeedSpec && v.assetFeedSpec != "null"
-          );
-          let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
-          let activead = this.mutilselect.filter(
-            v => activecreativeids.indexOf(v["creativeId"]) != -1
-          );
-          activeidsarr = activead.map(v => v["adId"]);
-          if (activeidsarr.length > 0) {
-            activenotice =
-              "选中了至少一条使用动态创意的广告。归档此类型广告后，广告组也会自动归档";
-            // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
-            adIds = adIds
-              .split(",")
-              .filter(v => activeidsarr.indexOf(v) == -1)
-              .join(",");
-            activeids = activeidsarr.join(",");
-          }
-        }
-        this.$confirm(
-          activenotice
-            ? activenotice
-            : `确认对${this.mutilselect.length}个${
-                this.typeData.name
-              }执行归档操作？归档后无法恢复`,
-          "提示",
-          {
-            confirmButtonText: "归档",
-            cancelButtonText: "取消",
-            type: "warning"
-          }
-        )
-          .then(() => {
-            // 归档动态创意广告等于归档其广告组
-            this.commandExecute(adIds, effectiveStatus, activeids);
-          })
-          .catch(() => {});
-      } else if (k == "DELETED") {
-        /**
-         * 20190220 v2.2.1 新增
-         * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
-         */
-        let activead = []; // 动态创意广告
-        let activeidsarr = []; // 动态创意广告id集合
-        let activeids = ""; // 动态创意广告id（String）
-        let activecreative = []; // 动态创意集合
-        let activecreativeids = []; // 动态创意id集合
-        let activenotice = ""; // confirm提示内容
-        if (this.type == "adName") {
-          let res = await this.$store.dispatch("creativeDetail", {
-            creativeId: this.mutilselect.map(v => v.creativeId).join(","),
-            fullScreen: true
-          });
-          let activecreative = res.data.filter(
-            v => v.assetFeedSpec && v.assetFeedSpec != "null"
-          );
-          let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
-          let activead = this.mutilselect.filter(
-            v => activecreativeids.indexOf(v["creativeId"]) != -1
-          );
-          activeidsarr = activead.map(v => v["adId"]);
-          if (activeidsarr.length > 0) {
-            activenotice =
-              "选中了至少一条使用动态创意的广告。删除此类型广告后，广告组也会自动删除";
-            // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
-            adIds = adIds
-              .split(",")
-              .filter(v => activeidsarr.indexOf(v) == -1)
-              .join(",");
-            activeids = activeidsarr.join(",");
-          }
-        }
-        this.$confirm(
-          activenotice
-            ? activenotice
-            : `确认对${this.mutilselect.length}个${
-                this.typeData.name
-              }执行删除操作？删除后无法恢复`,
-          "提示",
-          {
-            confirmButtonText: "删除",
-            cancelButtonText: "取消",
-            type: "warning"
-          }
-        )
-          .then(() => {
-            // 删除动态创意广告等于删除其广告组
-            this.commandExecute(adIds, effectiveStatus, activeids);
-          })
-          .catch(() => {});
-      } else if (k == "Copy") {
-        if ([...new Set(this.mutilselect.map(v => v.accountId))].length > 1) {
-          Msgwarning("暂不支持跨广告账户复制，请选择同一个广告账户下的对象");
+        this.firstSearch = importkey ? "" : name;
+        this.firstKey = key;
+        this.secondSearchList = importkey
+          ? []
+          : this.searchList.find(v => this.firstSearch == v.name).list;
+      },
+      tableSort(sort) {
+        this.sort = sort;
+        // this.order = sort ? true : false;
+        this.toGetdata(true);
+      },
+      adSearch() {
+        let self = this;
+        if (this.value == "") return;
+
+        clearTimeout(search);
+        search = setTimeout(function() {
+          self.toSort();
+        }, 300);
+      },
+      outListOption() {
+        this.$emit("showOptionbox", this.type);
+        // this.status = true;
+      },
+      importRemain() {
+        this.$emit("showRemainBox", this.type);
+      },
+      outTable() {
+        if (!this.exportstatus) return;
+        // 数据超过5万条，无法导出
+        if (this.adtotal > 50000) {
+          Msgwarning("数据请少于5万条");
           return;
         }
-        let accountId = this.mutilselect[0].accountId;
-        this.$emit("wantCopy", this.type, option, accountId);
-      } else if (k == "Edit") {
-        this.$emit(
-          "wantEdit",
-          this.type,
-          this.mutilselect.map(v => v[this.typeData.effectIdsPush]),
-          [
-            [...new Set(this.mutilselect.map(v => v.campaignName))].join(","),
-            [...new Set(this.mutilselect.map(v => v.adSetName))].join(","),
-            [...new Set(this.mutilselect.map(v => v.adName))].join(",")
-          ]
-        );
-      }
-    },
-    handleCommand(k) {
-      if (this.mutilselect.length == 0) {
-        Msgwarning("请先选择广告");
-        return;
-      }
-      if (this.mutilselect.length > 200) {
-        Msgwarning("批量操作最大条数为200");
-        return;
-      }
 
-      let effectiveStatus,
-        adIds = [];
-      this.mutilselect.forEach(v => {
-        // seekid 用来查找替换
-        v.seekid = v[this.typeData.effectIdsPush];
+        let name = `${this.projectname}${this.opDefault[0].name.replace(
+          "名称",
+          ""
+        )}${this.$timeFormat(new Date(), "yyyyMMddHHmmss")}`;
 
-        adIds.push(v[this.typeData.effectIdsPush]);
-      });
-      adIds = adIds.join(",");
-      // 开启
-      if (k == "a") {
-        effectiveStatus = "ACTIVE";
-        this.commandExecute(adIds, effectiveStatus);
-      }
-      // 关闭
-      if (k == "b") {
-        effectiveStatus = "PAUSED";
-        this.commandExecute(adIds, effectiveStatus);
-      }
-      if (k == "c") {
-        this.reName(adIds);
-      }
-      if (k == "d") {
-        this.$emit("changeReplace", this.type, this.mutilselect);
-      }
-    },
-    commandExecute(adIds, effectiveStatus, activeIds) {
-      let option = {
-        effectiveStatus
-      };
-      // console.log(this.typeData);
-      option[this.typeData.effectIds] = adIds;
-      option["isActiveAdIds"] = activeIds;
-      this.$store.dispatch("changeAdstatus", {
-        option,
-        type: this.type,
-        fullScreen: true
-      });
-    }
-  },
-  computed: {
-    ...mapState([
-      "itemlist",
-      "adcampaigntotal",
-      "adsettotal",
-      "adadtotal",
-      "ad_option",
-      "campain_option",
-      "set_option",
-      "searchList",
-      "careData",
-      "adpagesize",
-      "adlisttimeout",
-      "exportstatus",
-      "sortdefault",
-      "optionselect",
-      "saveoption"
-    ]),
-    customOptionDefault() {
-      /**
-       * 去除不显示的项
-       * 广告系列 => 相关度、广告编号、广告组编号、广告组名称、广告系列名称、广告名称
-       * 广告组 => 相关度、广告编号、广告组名称、广告名称
-       * 广告 => 广告名称
-       * 非Tiktok => AF_次日留存率
-       */
-      let optionArr = this.defaultOption;
-      if (this.applicationId != "597615686992125") {
-        optionArr = this.defaultOption.filter(v => v.name != "AF_次日留存率");
-      }
-      if (this.type == "adName") {
-        return this.opDefault.concat(
-          optionArr.filter(v => v.name != "广告名称")
-        );
-      } else if (this.type == "campaignName") {
-        return this.opDefault.concat(
-          optionArr.filter(
-            v =>
-              v.name != "相关度" &&
-              v.name != "广告编号" &&
-              v.name != "广告组编号" &&
-              v.name != "广告组名称" &&
-              v.name != "广告系列名称" &&
-              v.name != "广告名称"
+        let outNotify = this.$notify({
+          title: "正在导出...",
+          message: "广告管理数据量较大，请稍等",
+          duration: 0,
+          showClose: false
+        });
+        // 改变导出按钮状态
+        this.SETSTATE({ k: "exportstatus", v: false });
+
+        let option = "";
+        let k = this.typeData.optionName;
+        option = this[k];
+        option.pageSize = this.adtotal;
+        this.$store.dispatch("getAdlist", {
+          option,
+          name,
+          fullScreen: false,
+          customOption: this.customOptionDefault,
+          type: this.type,
+          // order: this.order,
+          // applicationid: this.applicationId,
+          editType: "export",
+          outNotify // notification实例
+        });
+      },
+      toSort() {
+        this.toGetdata(true);
+      },
+      pageSwitch(page) {
+        this.pageindex = page;
+
+        this.toGetdata();
+      },
+      pageSizeChange(size) {
+        // this.pagesize = size;
+        this.SETSTATE({ k: "adpagesize", v: size });
+
+        this.toGetdata(true);
+      },
+      // changeFilterSwitch(status) {
+      //   this.defaultSwitch = status ? status : false;
+      // },
+      sortConditionLogic(option) {
+        /**
+         * 20180104新增需求，筛选条件默认情况
+         * @父级 已归档/已删除 @子级 已归档/已删除
+         * @父级 没选/已暂停/投放中 @子级 已暂停+投放中
+         * @父级 已暂停/投放中+已归档/已删除 @子级 已暂停+投放中+已归档/已删除
+         */
+        let kdefault = "ACTIVE,PAUSED";
+        let defaultkey = option["adSetStatusStr"]
+          ? "adSetStatusStr"
+          : "adCampaignStatusStr";
+        if (option[defaultkey]) {
+          kdefault = "";
+          if (
+            option[defaultkey].indexOf("ACTIVE") != -1 ||
+            option[defaultkey].indexOf("PAUSED") != -1
+          ) {
+            kdefault = "ACTIVE,PAUSED";
+          }
+          if (option[defaultkey].indexOf("ARCHIVED") != -1) {
+            kdefault += ",ARCHIVED";
+          }
+          if (option[defaultkey].indexOf("DELETED") != -1) {
+            kdefault += ",DELETED";
+          }
+        }
+        this.SETSTATE({ k: "sortdefault", v: kdefault.replace(/^,/, "") });
+      },
+      toGetdata(pageReset) {
+        // console.log('pageReset');
+        let batchId = this.$route.params.bid;
+        // 从本地缓存获取筛选条件
+        let allCondition = localStorage.getItem(adFilterLS.new)
+          ? JSON.parse(localStorage.getItem(adFilterLS.new))
+          : {};
+        let disCondition = allCondition[this.$route.params.id]
+          ? allCondition[this.$route.params.id]
+          : [];
+
+        if (pageReset) this.pageindex = 1;
+
+        let option = {
+          pageNo: this.pageindex,
+          pageSize: this.adpagesize,
+          projectId: this.$route.params.id,
+          batchId
+        };
+        if (this.sort) option.orderByCause = this.sort;
+        if (this.value2) option[this.typeData.effect] = this.value2;
+        if (this.state) option[this.typeData.searchKeyword] = this.state;
+
+        // 添加细分数据
+        this.careData.forEach(v => {
+          if (v.vl) {
+            option[v.key] = v.vl;
+          }
+        });
+        /**
+         * 20181227新增默认条件
+         * 各tab分别默认各投放状态投放中and已暂停
+         * 如果有操作过相关条件，则取消默认
+         */
+        disCondition.forEach(v => {
+          if (option[v.key] && v.key != this.typeData.defaultFilter)
+            option[v.key] += " and " + v.option;
+          else option[v.key] = v.option;
+        });
+        // 设置默认条件，详情见方法注释
+        this.sortConditionLogic(option);
+
+        option[this.typeData.defaultFilter] = option[this.typeData.defaultFilter]
+          ? option[this.typeData.defaultFilter]
+          : this.sortdefault;
+
+        let v = {
+          ...option
+        };
+        // v.pageNo = 1;
+
+        var k = this.typeData.optionName;
+        this.SETSTATE({ k, v });
+
+        this.$store.dispatch("getAdlist", {
+          option,
+          type: this.type,
+          order: this.order
+          // applicationid: this.applicationId
+        });
+      },
+      mutilSelect(arr) {
+        this.mutilselect = arr;
+
+        this.archivedbutton = this.mutilselect.find(
+          v => v.effectiveStatus == "ARCHIVED"
+        )
+          ? true
+          : false;
+        /**
+         * 只有广告系列才有的方法，筛选广告组和广告账户的列表
+         * 广告系列选择了几个，广告组和广告分别对应显示几个
+         * 没选则的情况下，显示全部
+         *  */
+
+        this.$emit("selectSort", arr);
+      },
+      async toCtrlAll(k) {
+        if (this.mutilselect.length == 0) {
+          Msgwarning("请先选择要处理的广告系列/广告组/广告");
+          return;
+        }
+        if (this.mutilselect.length > 200) {
+          Msgwarning("批量操作最大条数为200");
+          return;
+        }
+        if (
+          k == "Edit" &&
+          this.mutilselect.find(v => v.effectiveStatus == "ARCHIVED")
+        ) {
+          Msgwarning("已选项中包含已归档项，已归档无法编辑");
+          return;
+        }
+        let effectiveStatus = k,
+          adIds = [];
+        let option = [];
+        this.mutilselect.forEach(v => {
+          // 批量复制用
+          let obj = {
+            id: v[this.typeData.effectIdsPush],
+            orgid: v[this.typeData.originalId],
+            orgname: v[this.typeData.originalName]
+          };
+          option.push(obj);
+
+          adIds.push(v[this.typeData.effectIdsPush]);
+        });
+        adIds = adIds.join(",");
+        // 归档
+        if (k == "ARCHIVED") {
+          /**
+           * 20190220 v2.2.1 新增
+           * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
+           */
+          let activead = []; // 动态创意广告
+          let activeidsarr = []; // 动态创意广告id集合
+          let activeids = ""; // 动态创意广告id（String）
+          let activecreative = []; // 动态创意集合
+          let activecreativeids = []; // 动态创意id集合
+          let activenotice = ""; // confirm提示内容
+          if (this.type == "adName") {
+            let res = await this.$store.dispatch("creativeDetail", {
+              creativeId: this.mutilselect.map(v => v.creativeId).join(","),
+              fullScreen: true
+            });
+            let activecreative = res.data.filter(
+              v => v.assetFeedSpec && v.assetFeedSpec != "null"
+            );
+            let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
+            let activead = this.mutilselect.filter(
+              v => activecreativeids.indexOf(v["creativeId"]) != -1
+            );
+            activeidsarr = activead.map(v => v["adId"]);
+            if (activeidsarr.length > 0) {
+              activenotice =
+                "选中了至少一条使用动态创意的广告。归档此类型广告后，广告组也会自动归档";
+              // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
+              adIds = adIds
+                .split(",")
+                .filter(v => activeidsarr.indexOf(v) == -1)
+                .join(",");
+              activeids = activeidsarr.join(",");
+            }
+          }
+          this.$confirm(
+            activenotice
+              ? activenotice
+              : `确认对${this.mutilselect.length}个${
+                  this.typeData.name
+                }执行归档操作？归档后无法恢复`,
+            "提示",
+            {
+              confirmButtonText: "归档",
+              cancelButtonText: "取消",
+              type: "warning"
+            }
           )
-        );
-      } else {
-        return this.opDefault.concat(
-          optionArr.filter(
-            v =>
-              v.name != "相关度" &&
-              v.name != "广告编号" &&
-              v.name != "广告名称" &&
-              v.name != "广告组名称"
+            .then(() => {
+              // 归档动态创意广告等于归档其广告组
+              this.commandExecute(adIds, effectiveStatus, activeids);
+            })
+            .catch(() => {});
+        } else if (k == "DELETED") {
+          /**
+           * 20190220 v2.2.1 新增
+           * 广告在归档之前，需要先去请求其创意详情，判断是不是动态创意广告
+           */
+          let activead = []; // 动态创意广告
+          let activeidsarr = []; // 动态创意广告id集合
+          let activeids = ""; // 动态创意广告id（String）
+          let activecreative = []; // 动态创意集合
+          let activecreativeids = []; // 动态创意id集合
+          let activenotice = ""; // confirm提示内容
+          if (this.type == "adName") {
+            let res = await this.$store.dispatch("creativeDetail", {
+              creativeId: this.mutilselect.map(v => v.creativeId).join(","),
+              fullScreen: true
+            });
+            let activecreative = res.data.filter(
+              v => v.assetFeedSpec && v.assetFeedSpec != "null"
+            );
+            let activecreativeids = activecreative.map(v => v["fbCreativeId"]);
+            let activead = this.mutilselect.filter(
+              v => activecreativeids.indexOf(v["creativeId"]) != -1
+            );
+            activeidsarr = activead.map(v => v["adId"]);
+            if (activeidsarr.length > 0) {
+              activenotice =
+                "选中了至少一条使用动态创意的广告。删除此类型广告后，广告组也会自动删除";
+              // 如果有动态创意广告，则普通广告id中排除掉动态创意广告id
+              adIds = adIds
+                .split(",")
+                .filter(v => activeidsarr.indexOf(v) == -1)
+                .join(",");
+              activeids = activeidsarr.join(",");
+            }
+          }
+          this.$confirm(
+            activenotice
+              ? activenotice
+              : `确认对${this.mutilselect.length}个${
+                  this.typeData.name
+                }执行删除操作？删除后无法恢复`,
+            "提示",
+            {
+              confirmButtonText: "删除",
+              cancelButtonText: "取消",
+              type: "warning"
+            }
           )
-        );
+            .then(() => {
+              // 删除动态创意广告等于删除其广告组
+              this.commandExecute(adIds, effectiveStatus, activeids);
+            })
+            .catch(() => {});
+        } else if (k == "Copy") {
+          if ([...new Set(this.mutilselect.map(v => v.accountId))].length > 1) {
+            Msgwarning("暂不支持跨广告账户复制，请选择同一个广告账户下的对象");
+            return;
+          }
+          let accountId = this.mutilselect[0].accountId;
+          this.$emit("wantCopy", this.type, option, accountId);
+        } else if (k == "Edit") {
+          this.$emit(
+            "wantEdit",
+            this.type,
+            this.mutilselect.map(v => v[this.typeData.effectIdsPush]),
+            [
+              [...new Set(this.mutilselect.map(v => v.campaignName))].join(","),
+              [...new Set(this.mutilselect.map(v => v.adSetName))].join(","),
+              [...new Set(this.mutilselect.map(v => v.adName))].join(",")
+            ]
+          );
+        }
+      },
+      handleCommand(k) {
+        if (this.mutilselect.length == 0) {
+          Msgwarning("请先选择广告");
+          return;
+        }
+        if (this.mutilselect.length > 200) {
+          Msgwarning("批量操作最大条数为200");
+          return;
+        }
+
+        let effectiveStatus,
+          adIds = [];
+        this.mutilselect.forEach(v => {
+          // seekid 用来查找替换
+          v.seekid = v[this.typeData.effectIdsPush];
+
+          adIds.push(v[this.typeData.effectIdsPush]);
+        });
+        adIds = adIds.join(",");
+        // 开启
+        if (k == "a") {
+          effectiveStatus = "ACTIVE";
+          this.commandExecute(adIds, effectiveStatus);
+        }
+        // 关闭
+        if (k == "b") {
+          effectiveStatus = "PAUSED";
+          this.commandExecute(adIds, effectiveStatus);
+        }
+        if (k == "c") {
+          this.reName(adIds);
+        }
+        if (k == "d") {
+          this.$emit("changeReplace", this.type, this.mutilselect);
+        }
+      },
+      commandExecute(adIds, effectiveStatus, activeIds) {
+        let option = {
+          effectiveStatus
+        };
+        // console.log(this.typeData);
+        option[this.typeData.effectIds] = adIds;
+        option["isActiveAdIds"] = activeIds;
+        this.$store.dispatch("changeAdstatus", {
+          option,
+          type: this.type,
+          fullScreen: true
+        });
       }
     },
-    typeData() {
-      let k = { name: "", effect: "", effectIds: "" };
-      switch (this.type) {
-        case "campaignName":
-          k.name = "广告系列";
-          k.effect = "adCampaignStatus";
-          k.effectIds = "adCampaignIds";
-          k.effectIdsPush = "campaignId";
-          k.effectName = "campaignName";
-          k.optionName = "campain_option";
-          k.searchKeyword = "campaignName";
-          k.listTotal = "adcampaigntotal";
-          k.originalId = "campaignId"; // 复制所需特殊id, 复制campaign无需id
-          k.originalName = "campaignName"; // 复制所需特殊name, 复制campaign无需name
-          k.defaultFilter = "adCampaignStatusStr"; // 默认筛选投放状态
-          break;
-        case "adSetName":
-          k.name = "广告组";
-          k.effect = "adSetStatus";
-          k.effectIds = "adSetIds";
-          k.effectIdsPush = "adsetId";
-          k.effectName = "adSetName";
-          k.optionName = "set_option";
-          k.searchKeyword = "adSetName";
-          k.listTotal = "adsettotal";
-          k.originalId = "campaignId";
-          k.originalName = "campaignName";
-          k.defaultFilter = "adSetStatusStr"; // 默认筛选投放状态
-          break;
-        case "adName":
-          k.name = "广告";
-          k.effect = "effectiveStatus";
-          k.effectIds = "adIds";
-          k.effectIdsPush = "adId";
-          k.effectName = "adName";
-          k.optionName = "ad_option";
-          k.searchKeyword = "adName";
-          k.listTotal = "adadtotal";
-          k.originalId = "adsetId";
-          k.originalName = "adSetName";
-          k.defaultFilter = "adStatusStr"; // 默认筛选投放状态
-          break;
+    computed: {
+      ...mapState([
+        "itemlist",
+        "adcampaigntotal",
+        "adsettotal",
+        "adadtotal",
+        "ad_option",
+        "campain_option",
+        "set_option",
+        "searchList",
+        "careData",
+        "adpagesize",
+        "adlisttimeout",
+        "exportstatus",
+        "sortdefault",
+        "optionselect",
+        "saveoption"
+      ]),
+      customOptionDefault() {
+        /**
+         * v2.2.4 20190530新增设置类字段
+         * 去除不显示的项
+         * 广告系列 => 相关度、广告编号、广告组编号、广告组名称、广告系列名称、广告名称、
+         *            地区、年龄范围、性别、包含的自定义受众、排除的自定义受众、主页名称
+         *            标题、正文、链接、推广标的
+         * 广告组 => 相关度、广告编号、广告组名称、广告名称、主页名称、标题、正文、链接、推广标的、
+         *          购买类型、目标、
+         * 广告 => 广告名称、地区、年龄范围、性别、包含的自定义受众、排除的自定义受众、购买类型、
+         *        目标、竞价、预算、剩余预算、花费上限
+         * 非Tiktok => AF_次日留存率
+         */
+        let optionArr = this.defaultOption;
+        if (this.applicationId != "597615686992125") {
+          optionArr = this.defaultOption.filter(v => v.key != "afRetentionRate");
+        }
+        if (this.type == "adName") {
+          return this.opDefault.concat(
+            optionArr.filter(
+              v =>
+                v.key != "adName" &&
+                v.key != "objective" &&
+                v.key != "buyingType" &&
+                v.key != "bidStrategy" &&
+                v.key != "budget" &&
+                v.key != "budgetRemaining" &&
+                v.key != "spendCap" &&
+                v.key != "countries" &&
+                v.key != "ageRange" &&
+                v.key != "genders" &&
+                v.key != "customAudiencesNames" &&
+                v.key != "excludedCustomAudiencesNames"
+            )
+          );
+        } else if (this.type == "campaignName") {
+          return this.opDefault.concat(
+            optionArr.filter(
+              v =>
+                v.key != "relevanceScore" &&
+                v.key != "adId" &&
+                v.key != "adsetId" &&
+                v.key != "adSetName" &&
+                v.key != "campaignName" &&
+                v.key != "adName" &&
+                v.key != "countries" &&
+                v.key != "ageRange" &&
+                v.key != "genders" &&
+                v.key != "customAudiencesNames" &&
+                v.key != "excludedCustomAudiencesNames" &&
+                v.key != "themeName" &&
+                v.key != "title" &&
+                v.key != "messageText" &&
+                v.key != "linkUrl" &&
+                v.key != "appName"
+            )
+          );
+        } else {
+          return this.opDefault.concat(
+            optionArr.filter(
+              v =>
+                v.key != "relevanceScore" &&
+                v.key != "adId" &&
+                v.key != "adName" &&
+                v.key != "adSetName" &&
+                v.key != "objective" &&
+                v.key != "buyingType" &&
+                v.key != "themeName" &&
+                v.key != "title" &&
+                v.key != "messageText" &&
+                v.key != "linkUrl" &&
+                v.key != "appName"
+            )
+          );
+        }
+      },
+      typeData() {
+        let k = { name: "", effect: "", effectIds: "" };
+        switch (this.type) {
+          case "campaignName":
+            k.name = "广告系列";
+            k.effect = "adCampaignStatus";
+            k.effectIds = "adCampaignIds";
+            k.effectIdsPush = "campaignId";
+            k.effectName = "campaignName";
+            k.optionName = "campain_option";
+            k.searchKeyword = "campaignName";
+            k.listTotal = "adcampaigntotal";
+            k.originalId = "campaignId"; // 复制所需特殊id, 复制campaign无需id
+            k.originalName = "campaignName"; // 复制所需特殊name, 复制campaign无需name
+            k.defaultFilter = "adCampaignStatusStr"; // 默认筛选投放状态
+            break;
+          case "adSetName":
+            k.name = "广告组";
+            k.effect = "adSetStatus";
+            k.effectIds = "adSetIds";
+            k.effectIdsPush = "adsetId";
+            k.effectName = "adSetName";
+            k.optionName = "set_option";
+            k.searchKeyword = "adSetName";
+            k.listTotal = "adsettotal";
+            k.originalId = "campaignId";
+            k.originalName = "campaignName";
+            k.defaultFilter = "adSetStatusStr"; // 默认筛选投放状态
+            break;
+          case "adName":
+            k.name = "广告";
+            k.effect = "effectiveStatus";
+            k.effectIds = "adIds";
+            k.effectIdsPush = "adId";
+            k.effectName = "adName";
+            k.optionName = "ad_option";
+            k.searchKeyword = "adName";
+            k.listTotal = "adadtotal";
+            k.originalId = "adsetId";
+            k.originalName = "adSetName";
+            k.defaultFilter = "adStatusStr"; // 默认筛选投放状态
+            break;
+        }
+        return k;
+      },
+      adtotal() {
+        let k = this[this.typeData.listTotal];
+        return k;
+      },
+      projectname() {
+        if (this.itemlist.length == 0) return;
+        return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
+      },
+      applicationId() {
+        if (this.itemlist.length == 0) return;
+        return this.itemlist.find(v => v.id == this.$route.params.id)
+          .applicationId;
       }
-      return k;
-    },
-    adtotal() {
-      let k = this[this.typeData.listTotal];
-      return k;
-    },
-    projectname() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id).projectName;
-    },
-    applicationId() {
-      if (this.itemlist.length == 0) return;
-      return this.itemlist.find(v => v.id == this.$route.params.id)
-        .applicationId;
     }
-  }
-};
+  };
 </script>
 
 <style lang="less" scoped>

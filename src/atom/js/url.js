@@ -44,6 +44,7 @@ export default {
     'manageofflist': 'project/getProjects?keywords={keywords}&status={status}&pageIndex={pageIndex}&pageSize={pageSize}', // 项目管理列表
     'managelist': 'project/getProjectsRichInfo?', // 项目管理列表
     'addproject': 'project/addProject',  // 添加项目
+    'apptoaccount': 'project/rePullApplicationAdaccounts?', // 获取应用对应的广告账户
     'editproject': 'project/updateProject',  // 编辑项目
     'userslist': 'project/users', // 参与成员列表
     'adaccount': 'project/getAllAdaccountWithoutBm', // 广告账户列表，创建项目用
@@ -133,6 +134,7 @@ export default {
     // ad
     'adlisttotal': 'projectad/sumFbAdList', // 广告管理列表合计
     'adlist': 'projectad/getProjectsAd?', // 广告列表
+    'adcolumnlist': 'projectad/getFbAdColumnList', // 广告管理设置类字段数据
     'adlistnew': 'projectad/getFbAdList', // 新版广告列表
     'adlistdata': 'projectad/getProjectsAdCpi?', //广告列表其他数据
     // 'adaccountlist': 'projectad/getAdaccountLists?', // 广告账户列表

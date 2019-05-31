@@ -334,10 +334,9 @@
     <seek-replace ref="seekReplace" :type="tabtype" @resetPageData="resetPageData"></seek-replace>
     <ad-copy ref="adCopy"></ad-copy>
     <list-option
-      :status="optionstatus"
+      :status.sync="optionstatus"
       :type="tabtype"
       @outOption="outOption"
-      @hideOptionbox="hideOptionbox"
       :customEvent="adcustomevent"
       :customUnit="customunit"
       :opDefault="opDefault"
@@ -425,7 +424,7 @@ export default {
           name: "投放状态",
           key: "effectiveStatusName",
           checked: true,
-          isevent: true
+          nosort: true
         },
         { name: "触达", key: "reachNum", checked: true },
         { name: "展示", key: "showNum", checked: true },
@@ -719,15 +718,6 @@ export default {
     if (adFilterLS.old && localStorage.getItem(adFilterLS.old)) {
       localStorage.removeItem(adFilterLS.old);
     }
-    if (adOptionLS.old && localStorage.getItem(adOptionLS.old)) {
-      localStorage.removeItem(adOptionLS.old);
-    }
-    if (adEventLS.old && localStorage.getItem(adEventLS.old)) {
-      localStorage.removeItem(adEventLS.old);
-    }
-    if (adOptionSelectLS.old && localStorage.getItem(adOptionSelectLS.old)) {
-      localStorage.removeItem(adOptionSelectLS.old);
-    }
 
     let dt = this.date;
 
@@ -842,9 +832,9 @@ export default {
       });
       this.SETSTATE({ k: "optionselect", v: key });
       // 保存选择类型
-      this.saveLocalstorage(adOptionSelectLS.new, key);
+      this.saveLocalstorage('admanage_select', key);
       // 保存当前事件
-      this.saveLocalstorage(adEventLS.new, event);
+      this.saveLocalstorage('admanage_evnet', event);
 
       if (frm != "init") this.resetPageData();
     },
@@ -874,9 +864,9 @@ export default {
 
       this.$refs.listOption.showBox();
     },
-    hideOptionbox() {
-      this.optionstatus = false;
-    },
+    // hideOptionbox() {
+    //   this.optionstatus = false;
+    // },
     showRemainBox(type) {
       this.remainstatus = true;
       this.tabtype = type;
@@ -886,17 +876,22 @@ export default {
     },
     saveLocalstorage(name, val) {
       let projectid = this.$route.params.id;
-      let savedata = localStorage.getItem(name);
+      let savedata = this[name];
       if (!savedata) {
         savedata = {};
       } else savedata = JSON.parse(savedata);
       savedata[projectid] = val;
-      localStorage.setItem(name, JSON.stringify(savedata));
+      this.SETSTATE({k: name, v: JSON.stringify(savedata)})
     },
     outOption(opt, selectOption, localEvent) {
       this.defaultOption = selectOption;
       this.localEvent = localEvent;
       this.defaultListOption = [];
+      /**
+       * v2.2.4
+       * 20190530新增设置类字段，单独保存
+       */
+      let dataSets = selectOption.filter(v => v.type == 'set');
       selectOption.forEach(v => {
         this.defaultListOption.push(Object.assign({}, v));
       });
@@ -913,16 +908,18 @@ export default {
        * 解决不同app不同事件问题
        */
       // 保存自定义列
-      this.saveLocalstorage(adOptionLS.new, selectOption);
+      this.saveLocalstorage('admanage_option', selectOption);
       // 保存自定义事件
-      this.saveLocalstorage(adEventLS.new, localEvent);
+      this.saveLocalstorage('admanage_event', localEvent);
+      // 保存设置类自定义列
+      this.saveLocalstorage('admanage_set', dataSets);
       /**
        * 20190429新增
        * 保存自定义列到缓存的同时，保存特别参数到 adOptionSelectLS.new
        * 标明当前是选择的自定义
        */
       // 保存选择类型
-      this.saveLocalstorage(adOptionSelectLS.new, "auto");
+      this.saveLocalstorage('admanage_select', "auto");
 
       this.resetPageData();
     },
@@ -1439,7 +1436,6 @@ export default {
           break;
       }
       this.SETSTATE({ k, v: option });
-
       /**
        * 20190429新增逻辑
        * 初始化获取上一次操作的自定义列，可能为常用(default) or 保存的(optionname) or 自定义的(auto)
@@ -1448,14 +1444,14 @@ export default {
        * 其他两种情况，从接口或者默认数据获取
        */
       let optionkey =
-        localStorage.getItem(adOptionSelectLS.new) &&
-        JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
-          ? JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
+        this.admanage_select &&
+        JSON.parse(this.admanage_select)[projectId]
+          ? JSON.parse(this.admanage_select)[projectId]
           : "default";
       console.log(optionkey);
       if (optionkey == "auto") {
-        this.defaultOption = JSON.parse(localStorage.getItem(adOptionLS.new))
-          ? JSON.parse(localStorage.getItem(adOptionLS.new))[projectId]
+        this.defaultOption = JSON.parse(this.admanage_option)
+          ? JSON.parse(this.admanage_option)[projectId]
           : [];
         this.defaultListOption = [];
         this.defaultOption.forEach(v => {
@@ -1469,9 +1465,9 @@ export default {
       this.$store.dispatch("jobList");
 
       let optionselect =
-        localStorage.getItem(adOptionSelectLS.new) &&
-        JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
-          ? JSON.parse(localStorage.getItem(adOptionSelectLS.new))[projectId]
+        this.admanage_select &&
+        JSON.parse(this.admanage_select)[projectId]
+          ? JSON.parse(this.admanage_select)[projectId]
           : "default";
       this.SETSTATE({ k: "optionselect", v: optionselect });
 
@@ -1611,7 +1607,12 @@ export default {
       "saveoption",
       "optionselect",
       "bigimagevisible",
-      "bigimageurl"
+      "bigimageurl",
+
+      "admanage_option",
+      "admanage_event",
+      "admanage_select",
+      "admanage_set"
     ]),
     // 保存到缓存的数据
     ...mapState([

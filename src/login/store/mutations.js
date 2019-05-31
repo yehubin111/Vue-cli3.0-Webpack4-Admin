@@ -26,17 +26,12 @@ export default {
     },
     SETBIND(state, r) {
         console.log(JSON.stringify(r));
-        if (r.data.status == 'normal')
-            localStorage.setItem('atom_bind', 1);
-        else
-            localStorage.setItem('atom_bind', 0);
+        // if (r.data.status == 'normal')
+        //     localStorage.setItem('atom_bind', 1);
+        // else
+        //     localStorage.setItem('atom_bind', 0);
 
         // 登录成功之后跳转来源页面
         location.href = !state.refurl || state.refurl.indexOf('login') != -1 ? '/#/pandect' : state.refurl;
-        // Message({
-        //     message: '登录成功',
-        //     type: 'success',
-        //     duration: 5000
-        // })
     }
 }

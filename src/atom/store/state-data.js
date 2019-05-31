@@ -287,7 +287,7 @@ export default {
   // 创建广告组，优化目标
   adoptimizelist: [
     { name: '应用安装量', key: 'APP_INSTALLS' },
-    { name: '留存率', key: 'DERIVED_EVENTS' },
+    // { name: '留存率', key: 'DERIVED_EVENTS' },
     { name: '应用事件', key: 'DERIVED_EVENTS' }
   ],
   // 创建广告组，留存率

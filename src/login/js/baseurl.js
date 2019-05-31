@@ -1,7 +1,6 @@
 export default {
     'development': {
         BASE_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.1.76:9600',
-        // UPLOAD_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.1.27:8888',
         // BASE_URL: 'http://172.31.1.45/api' //http://172.31.1.45
         
         // BASE_URL: process.env.NODE_SPECIAL_HOST || 'http://172.31.17.190:9600/', // wuhonggang

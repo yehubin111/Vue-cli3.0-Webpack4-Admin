@@ -658,6 +658,14 @@ export default {
                 console.log(err);
             })
     },
+    applicationToAccount({ state, commit }, application_id) {
+        let url = URL.apptoaccount + 'application_id=' + application_id;
+
+        return Axios({
+            url,
+            success: res => res
+        })
+    },
     addProject({ state, commit, dispatch }, { memberaccount }) {
         let url = URL.addproject;
         let arr = [];
@@ -672,8 +680,12 @@ export default {
                 arr.push(obj);
             }
         }
+        let appaccount = state.createoption['appaccount'];
+        appaccount.forEach(v => {
+            delete v['fbAccountNames']
+        })
         let params = {
-            applicationId: state.createoption['region'].join(','),
+            applicationId: state.createoption['region'].map(v => v.split('|')[0]).join(','),
             fbAccountIds: state.createoption['account'].map(v => v.fbId.replace('act_', '')).join(','),
             fbPageIds: state.createoption['page'].join(','),
             participaterIds: state.createoption['member'].map(v => v.id).join(','),
@@ -681,6 +693,7 @@ export default {
             projectPlatForm: 0,
             projectTarget: 0,
             projectUserAccountVos: arr,
+            applicationAdaccounts: appaccount,
             status: true,
             token: localStorage.getItem('atom_token')
         }
@@ -733,8 +746,12 @@ export default {
                 arr.push(obj);
             }
         }
+        let appaccount = state.createoption['appaccount'];
+        appaccount.forEach(v => {
+            delete v['fbAccountNames']
+        })
         let params = {
-            applicationId: state.createoption['region'].join(','),
+            applicationId: state.createoption['region'].map(v => v.split('|')[0]).join(','),
             fbAccountIds: state.createoption['account'].map(v => v.fbId.replace('act_', '')).join(','),
             fbPageIds: state.createoption['page'].join(','),
             participaterIds: state.createoption['member'].map(v => v.id).join(','),
@@ -743,6 +760,7 @@ export default {
             projectPlatForm: 0,
             projectTarget: 0,
             projectUserAccountVos: arr,
+            applicationAdaccounts: appaccount,
             status: true,
             token: localStorage.getItem('atom_token')
         }
@@ -2185,11 +2203,22 @@ export default {
                 console.log(err);
             })
     },
+    getAdColumnList({ state, commit }, params) {
+        let url = URL.adcolumnlist;
+
+        return Axios({
+            url,
+            method: 'post',
+            data: params,
+            success: res => res
+        })
+
+    },
     async getAdlist({ state, commit, dispatch }, { option, loading = false, fullScreen = true, type, editType = '', name = '', customOption = null, outNotify = null }) {
         let url = URL.adlistnew;
         let load;
         let projectId = state.adprojectid;
-        let eventsName = localStorage.getItem(adEventLS.new) && JSON.parse(localStorage.getItem(adEventLS.new))[projectId] ? JSON.parse(localStorage.getItem(adEventLS.new))[projectId].join(',') : '';
+        let eventsName = state.admanage_event && JSON.parse(state.admanage_event)[projectId] ? JSON.parse(state.admanage_event)[projectId].join(',') : '';
         /*
          * 如果广告系列有勾选，则广告组以及广告根据筛选条件来获取数据
          * 如果广告组有勾选，则广告栏根据筛选条件来获取数据，优先级高于广告系列 
@@ -2208,17 +2237,21 @@ export default {
         if (eventsName)
             opt.eventsName = eventsName;
 
-        let group = ''
+        let group = '';
+        let typeid = '';
         if (type == 'campaignName') {
             group = 'campaign_id';
+            typeid = 'campaignId';
         }
         if (type == 'adSetName') {
             group = 'adset_id';
+            typeid = 'adsetId';
             if (state.campainsortlist.length > 0)
                 opt.campaignIdInStr = state.campainsortlist.map(v => v.campaignId).join(',');
         }
         if (type == 'adName') {
             group = 'ad_id';
+            typeid = 'adId';
             if (state.setsortlist.length > 0)
                 opt.adSetIdInStr = state.setsortlist.map(v => v.adsetId).join(',');
             else if (state.campainsortlist.length > 0)
@@ -2252,7 +2285,21 @@ export default {
                     if (load)
                         load.close();
 
-                    commit('ADLIST', { res, type, dateCond: opt.dateOptions, editType, name, customOption })
+                    let datasets = state.admanage_set && JSON.parse(state.admanage_set)[projectId] ? JSON.parse(state.admanage_set)[projectId] : [];
+                    let datasetcolumn = datasets.map(v => v.key);
+                    let setres;
+                    // 如果有选择设置类字段，则去请求这些数据
+                    if (datasets.length > 0) {
+                        let params = {
+                            columnStrList: datasetcolumn.join(','),
+                            groupByClause: group,
+                            idStrList: res.data.list.map(v => v[typeid]).join(',')
+                        }
+                        setres = await dispatch('getAdColumnList', params);
+                    }
+                    commit('ADLIST', { res, type, dateCond: opt.dateOptions, editType, name, customOption, setres, datasetcolumn })
+
+
                     // 获取更新时间情况
                     dispatch('getUpdateTime');
                 })

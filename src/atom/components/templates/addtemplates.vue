@@ -86,7 +86,7 @@
         <el-form-item label="文案">
           <div>
             <el-checkbox v-model="form.withwriting">支持文案</el-checkbox>
-            <div class="matter" v-for="(wt, index) in form.writing" :key="index">
+            <div class="matter" v-for="(wt, index) in form.writing" :key="index" v-show="form.withwriting">
               <div class="sizeinput">
                 <span class="font">位置</span>
                 <el-input-number
@@ -95,7 +95,6 @@
                   v-model="wt['x']"
                   :min="0"
                   placeholder="x"
-                  :disabled="!form.withwriting"
                 ></el-input-number>
                 <span class="between">,</span>
                 <el-input-number
@@ -104,7 +103,6 @@
                   v-model="wt['y']"
                   :min="0"
                   placeholder="y"
-                  :disabled="!form.withwriting"
                 ></el-input-number>
                 <el-button
                   class="close"
@@ -122,7 +120,6 @@
                   v-model="wt['w']"
                   :min="0"
                   placeholder="宽"
-                  :disabled="!form.withwriting"
                 ></el-input-number>
                 <span class="between">x</span>
                 <el-input-number
@@ -131,12 +128,11 @@
                   v-model="wt['h']"
                   :min="0"
                   placeholder="高"
-                  :disabled="!form.withwriting"
                 ></el-input-number>
               </div>
               <div class="colorinput">
                 <span class="font">颜色</span>
-                <el-color-picker v-model="wt['color']" :disabled="!form.withwriting"></el-color-picker>
+                <el-color-picker v-model="wt['color']"></el-color-picker>
               </div>
               <!-- <div class="sizeinput">
                 <span class="font">字体</span>
@@ -157,7 +153,6 @@
                   :min="0"
                   placeholder="必填"
                   style="margin-right: 5px;"
-                  :disabled="!form.withwriting"
                 ></el-input-number>
                 <span class="font">px</span>
               </div>
@@ -165,7 +160,6 @@
                 <span class="font">默认文案</span>
                 <el-input
                   v-model="wt['default']"
-                  :disabled="!form.withwriting"
                   size="mini"
                   class="middleinput"
                   placeholder="必填"
@@ -179,7 +173,8 @@
               type="primary"
               size="mini"
               @click="moreWriting"
-              :disabled="!form.withwriting || form.writing.length == 2"
+              :disabled="form.writing.length == 2"
+              v-show="form.withwriting"
             >新增</el-button>
           </div>
         </el-form-item>

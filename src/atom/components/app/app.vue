@@ -7,11 +7,11 @@
           <el-button class="add" type="primary" @click="status1 = true">新增应用</el-button>
           <el-input class="search" v-model="state4" placeholder="搜索应用ID/名称" suffix-icon="el-icon-search" @input="appSearch"></el-input>
         </div>
-        <app-list @editApp="editApp"></app-list>
+        <app-list></app-list>
       </div>
     </div>
     <add-app :status="status1" @cancelAddapp="cancelAddapp"></add-app>
-    <set-app :status="status2" :id="id" @cancelAddapp="cancelAddapp"></set-app>
+    <!-- <set-app :status="status2" :id="id" @cancelAddapp="cancelAddapp"></set-app> -->
     <!-- <app-detection :status="status3" :platform="platform" :id="id" @cancelAddapp="cancelAddapp"></app-detection> -->
   </div>
 </template>
@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       status1: false,
-      status2: false,
+      // status2: false,
       status3: false,
       state4: "",
       platform: [],
@@ -68,10 +68,10 @@ export default {
     cancelAddapp(k) {
       this[k] = false;
     },
-    editApp(id) {
-      this.status2 = true;
-      this.id = id;
-    }
+    // editApp(id) {
+    //   this.status2 = true;
+    //   this.id = id;
+    // }
   }
 };
 </script>

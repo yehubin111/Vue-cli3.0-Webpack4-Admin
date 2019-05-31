@@ -4,17 +4,14 @@
       <top-header></top-header>
     </el-header>
     <router-view></router-view>
-    <!-- <pig-module></pig-module> -->
   </el-container>
 </template>
 <script>
 import TopHeader from "./header";
-// import PigModule from './ummodule/pigmodule';
 
 export default {
   components: {
-    TopHeader,
-    // PigModule
+    TopHeader
   }
 };
 </script>

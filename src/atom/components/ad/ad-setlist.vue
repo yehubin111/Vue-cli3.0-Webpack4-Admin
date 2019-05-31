@@ -51,7 +51,7 @@
       :key="index"
       :fixed="!item.checked"
       :label="item.name"
-      :sortable="item.name != '广告系列名称' && item.name != '广告组名称' && item.name != '广告名称' && !item.isevent? 'custom' : false"
+      :sortable="item.name != '广告系列名称' && item.name != '广告组名称' && item.name != '广告名称' && !item.isevent && !item.nosort? 'custom' : false"
       :width="item.name.indexOf('名称') == -1 && item.name.indexOf('编号') == -1?'100': '200'"
     >
       <template slot-scope="scope">

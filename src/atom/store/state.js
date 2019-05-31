@@ -75,6 +75,7 @@ export default Object.assign({}, stateData, stateStorage, {
   userslist: [], // 参与成员列表，创建项目用
   adaccountslist: [], // 广告账户列表，创建项目用
   adpages: [], // 主页列表，创建项目用
+  // apptoaccount: {}, // 应用对应的广告账户列表
   createoption: {
     projectname: "",
     radio1: "Facebook ADS",
@@ -82,6 +83,7 @@ export default Object.assign({}, stateData, stateStorage, {
     region: [],
     page: [],
     member: [],
+    appaccount: [],
     account: []
   }, // 创建项目填充数据
   createeditid: '', // 项目编辑id
@@ -92,6 +94,7 @@ export default Object.assign({}, stateData, stateStorage, {
     region: [],
     page: [],
     member: [],
+    appaccount: [],
     account: []
   },
   allotid: '', // 分配所需项目id

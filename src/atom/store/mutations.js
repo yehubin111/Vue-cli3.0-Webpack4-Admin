@@ -412,6 +412,11 @@ export default {
     ADPAGES(state, r) {
         state.adpages = r.data;
     },
+    // APPLICATIONTOACCOUNT(state, { res, application_id }) {
+    //     let obj = Object.assign({}, state.apptoaccount);
+    //     obj[application_id] = res.data;
+    //     state.apptoaccount[application_id] = obj;
+    // },
     // project rules
     RULES(state, r) {
         state.rulelist = r.data;
@@ -741,7 +746,6 @@ export default {
     CUSTOMEVENTAD(state, { r, applicationId }) {
         state.adcustomevent = [];
         state.customunit = r.data.eventsunit;
-        // let localevent = localStorage.getItem(adOptionLS.new) && JSON.parse(localStorage.getItem(adOptionLS.new))[applicationId] ? JSON.parse(localStorage.getItem(adOptionLS.new))[applicationId] : [];
 
         r.data.eventsNameList.forEach(v => {
             let obj = {};
@@ -773,7 +777,7 @@ export default {
             })
         }
     },
-    ADLIST(state, { res, type, dateCond, editType, name, customOption }) {
+    ADLIST(state, { res, type, dateCond, editType, name, customOption, setres, datasetcolumn }) {
         // 重置超时状态
         state.adlisttimeout = false;
 
@@ -781,18 +785,22 @@ export default {
         // 投放状态不同的分组不同的字段
         let effect = '';
         let imptEffect = '';
+        let typeid = '';
         switch (type) {
             case 'campaignName':
                 effect = 'adCampaignStatus';
                 imptEffect = 'adCampaignFbStatus';
+                typeid = 'campaignId';
                 break;
             case 'adSetName':
                 effect = 'adSetStatus';
                 imptEffect = 'adSetFbStatus';
+                typeid = 'adsetId';
                 break;
             case 'adName':
                 effect = 'adStatus';
                 imptEffect = 'adFbStatus';
+                typeid = 'adId';
                 break;
         }
 
@@ -803,6 +811,16 @@ export default {
         let afcaredata = [];
         // 提取细分数据
         res.data.list.forEach((v, i) => {
+            /**
+             * v2.2.4
+             * 20190530新增，设置类字段数据
+             */
+            if (setres.data && setres.data.length > 0) {
+                let set = setres.data.find(h => h[typeid] == v[typeid]);
+                datasetcolumn.forEach(j => {
+                    v[j] = set[j];
+                })
+            }
             // 普通细分数据
             if (v.fbAdPartList) {
                 v.fbAdPartList.forEach((g, q) => {

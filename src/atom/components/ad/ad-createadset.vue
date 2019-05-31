@@ -444,7 +444,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="留存率">
+      <!-- <el-form-item label="留存率">
         <el-tooltip
           class="conditiontip"
           style="left: -74px;"
@@ -462,7 +462,7 @@
             :value="item.key"
           ></el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="选择应用事件">
         <el-tooltip
           class="conditiontip"

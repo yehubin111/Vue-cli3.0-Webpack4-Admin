@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="自定义列"
-    :visible.sync="dialogFormVisible"
+    :visible="status"
     class="dialog pandectdialog"
     @close="toCancel"
   >
@@ -103,7 +103,7 @@
       </div>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button @click="toCancel">取 消</el-button>
       <el-button @click="saveList" type="primary">确 定</el-button>
     </div>
   </el-dialog>
@@ -124,7 +124,6 @@
       return {
         state: "",
         specialStatus: false, // 特殊字段初始状态
-        dialogFormVisible: false,
         cantDeleteOption: [],
         selectOption: [],
         eventOption: [], // 已选的事件列表
@@ -149,12 +148,17 @@
     },
     methods: {
       showBox() {
+        /**
+         * v2.2.4
+         * 20190530新增特殊字段
+         * 需要通过单独请求接口获取响应数据，不支持排序
+         */
         this.middleOption = {
           常用: [
             {
               name: "投放状态",
               key: "effectiveStatusName",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "投放状态")
                 ? true
                 : false
@@ -241,7 +245,7 @@
             {
               name: "推广计划编号",
               key: "planId",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "推广计划编号")
                 ? true
                 : false
@@ -249,7 +253,7 @@
             {
               name: "推广计划名称",
               key: "planName",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "推广计划名称")
                 ? true
                 : false
@@ -257,7 +261,7 @@
             {
               name: "创建人",
               key: "creator",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "创建人")
                 ? true
                 : false
@@ -267,7 +271,7 @@
             {
               name: "账户编号",
               key: "accountId",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "账户编号")
                 ? true
                 : false
@@ -275,7 +279,7 @@
             {
               name: "账户名称",
               key: "accountName",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "账户名称")
                 ? true
                 : false
@@ -283,7 +287,7 @@
             {
               name: "广告系列名称",
               key: "campaignName",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "广告系列名称")
                 ? true
                 : false
@@ -291,7 +295,7 @@
             {
               name: "广告系列编号",
               key: "campaignId",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "广告系列编号")
                 ? true
                 : false
@@ -299,7 +303,7 @@
             {
               name: "广告组名称",
               key: "adSetName",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "广告组名称")
                 ? true
                 : false
@@ -307,7 +311,7 @@
             {
               name: "广告组编号",
               key: "adsetId",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "广告组编号")
                 ? true
                 : false
@@ -315,7 +319,7 @@
             {
               name: "广告名称",
               key: "adName",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "广告名称")
                 ? true
                 : false
@@ -323,8 +327,74 @@
             {
               name: "广告编号",
               key: "adId",
-              isevent: true,
+              nosort: true,
               checked: this.setDefaultOption.find(v => v.name == "广告编号")
+                ? true
+                : false
+            }
+          ],
+          状态和日期: [
+            {
+              name: "创建日期",
+              key: "fbCreatedTime",
+              nosort: true,
+              checked: this.setDefaultOption.find(v => v.name == "创建日期")
+                ? true
+                : false
+            },
+            {
+              name: "上次编辑",
+              key: "fbUpdateTime",
+              nosort: true,
+              checked: this.setDefaultOption.find(v => v.name == "上次编辑")
+                ? true
+                : false
+            },
+            {
+              name: "开始日期",
+              key: "startTime",
+              nosort: true,
+              checked: this.setDefaultOption.find(v => v.name == "开始日期")
+                ? true
+                : false
+            },
+            {
+              name: "结束日期",
+              key: "stopTime",
+              nosort: true,
+              checked: this.setDefaultOption.find(v => v.name == "结束日期")
+                ? true
+                : false
+            },
+            {
+              name: "错误",
+              key: "issuesInfo",
+              nosort: true,
+              checked: this.setDefaultOption.find(v => v.name == "错误")
+                ? true
+                : false
+            },
+            // {
+            //   name: "报告开始日期",
+            //   key: "accountId",
+            //   nosort: true,
+            //   checked: this.setDefaultOption.find(v => v.name == "报告开始日期")
+            //     ? true
+            //     : false
+            // },
+            // {
+            //   name: "报告结束日期",
+            //   key: "accountId",
+            //   nosort: true,
+            //   checked: this.setDefaultOption.find(v => v.name == "报告结束日期")
+            //     ? true
+            //     : false
+            // },
+            {
+              name: "经过时间百分比",
+              key: "passTimeRate",
+              nosort: true,
+              checked: this.setDefaultOption.find(v => v.name == "经过时间百分比")
                 ? true
                 : false
             }
@@ -333,55 +403,62 @@
             {
               name: "目标",
               key: "objective",
-              isevent: true,
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "目标")
                 ? true
                 : false
             },
             {
               name: "购买类型",
-              key: "buying_type",
-              isevent: true,
+              key: "buyingType",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "购买类型")
                 ? true
                 : false
             },
             {
               name: "竞价",
-              key: "bid_strategy",
-              isevent: true,
+              key: "bidStrategy",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "竞价")
                 ? true
                 : false
             },
             {
               name: "预算",
-              key: "buying_type",
-              isevent: true,
+              key: "budget",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "预算")
                 ? true
                 : false
             },
             {
               name: "剩余预算",
-              key: "budget_remaining",
-              isevent: true,
+              key: "budgetRemaining",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "剩余预算")
                 ? true
                 : false
             },
             {
               name: "花费金额百分比",
-              key: "buying_type",
-              isevent: true,
+              key: "spendRate",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "花费金额百分比")
                 ? true
                 : false
             },
             {
               name: "花费上限",
-              key: "spend_cap",
-              isevent: true,
+              key: "spendCap",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "花费上限")
                 ? true
                 : false
@@ -390,40 +467,45 @@
           目标受众定位: [
             {
               name: "地区",
-              key: "buying_type",
-              isevent: true,
+              key: "countries",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "地区")
                 ? true
                 : false
             },
             {
               name: "年龄范围",
-              key: "buying_type",
-              isevent: true,
+              key: "ageRange",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "年龄范围")
                 ? true
                 : false
             },
             {
               name: "性别",
-              key: "buying_type",
-              isevent: true,
+              key: "genders",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "性别")
                 ? true
                 : false
             },
             {
               name: "包含的自定义受众",
-              key: "buying_type",
-              isevent: true,
+              key: "customAudiencesNames",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "包含的自定义受众")
                 ? true
                 : false
             },
             {
               name: "排除的自定义受众",
-              key: "buying_type",
-              isevent: true,
+              key: "excludedCustomAudiencesNames",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "排除的自定义受众")
                 ? true
                 : false
@@ -432,8 +514,9 @@
           广告创意: [
             {
               name: "主页名称",
-              key: "buying_type",
-              isevent: true,
+              key: "themeName",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "主页名称")
                 ? true
                 : false
@@ -441,31 +524,35 @@
             {
               name: "标题",
               key: "title",
-              isevent: true,
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "标题")
                 ? true
                 : false
             },
             {
               name: "正文",
-              key: "body",
-              isevent: true,
+              key: "messageText",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "正文")
                 ? true
                 : false
             },
             {
               name: "链接",
-              key: "title",
-              isevent: true,
+              key: "linkUrl",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "链接")
                 ? true
                 : false
             },
             {
               name: "推广标的",
-              key: "title",
-              isevent: true,
+              key: "appName",
+              nosort: true,
+              type: 'set',
               checked: this.setDefaultOption.find(v => v.name == "推广标的")
                 ? true
                 : false
@@ -734,10 +821,10 @@
         let option = this.cantDeleteOption.concat(this.selectOption);
         this.$emit("outOption", option, this.selectOption, this.localEvent);
 
-        this.dialogFormVisible = false;
+        this.toCancel();
       },
       toCancel() {
-        this.$emit("hideOptionbox");
+        this.$emit("update:status", false);
       },
       deleteTag(key) {
         this.selectOption = this.selectOption.filter(v => v.key != key);
@@ -822,7 +909,6 @@
     },
     watch: {
       status(n, v) {
-        this.dialogFormVisible = n;
         let obj = null;
         let keyname = "";
         if (n) {

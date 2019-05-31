@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import index from '../components/index'
-import bind from '../components/bind'
+// import bind from '../components/bind'
 import pandect from '../components/pandect/pandect'
 import bm from '../components/bm/bm'
 import app from '../components/app/app'
@@ -43,21 +43,22 @@ export default new Router({
         name: 'index',
         component: index,
         redirect: to => {
-            if (localStorage.getItem('atom_bind') == 1) {
-                return '/pandect';
-            } else {
-                return '/bind';
-            }
+            return '/pandect';
+            // if (localStorage.getItem('atom_bind') == 1) {
+            //     return '/pandect';
+            // } else {
+            //     return '/bind';
+            // }
         },
         children: [
-            {
-                path: 'bind',
-                name: 'bind',
-                component: bind,
-                meta: {
-                    title: '绑定facebook'
-                }
-            },
+            // {
+            //     path: 'bind',
+            //     name: 'bind',
+            //     component: bind,
+            //     meta: {
+            //         title: '绑定facebook'
+            //     }
+            // },
             {
                 path: 'pandect',
                 name: 'pandect',

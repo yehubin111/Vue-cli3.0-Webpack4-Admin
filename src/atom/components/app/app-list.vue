@@ -14,11 +14,11 @@
         <span class="marketType" v-for="(l, index) in scope.row.applicationPlatformVO" :key="index">{{l.marketType}}</span>
       </template>
     </el-table-column>
-    <el-table-column prop="accountNum" label="广告账户" width="180">
+    <!-- <el-table-column prop="accountNum" label="广告账户" width="180">
       <template slot-scope="scope">
         <el-button type="text" @click="setApp(scope.row.applicationId)">{{scope.row.accountNum}}</el-button>
       </template>
-    </el-table-column>
+    </el-table-column> -->
     <!-- <el-table-column label="操作" width="120">
       <template slot-scope="scope">
         <el-button type="text" size="small" :disabled="scope.row.applicationPlatformVO.filter(v => v.marketType == 'google_play' || v.marketType == 'itunes').length == 0" @click="setDetection(scope.row.applicationId, scope.row.applicationPlatformVO)">设置监测平台</el-button>
@@ -42,9 +42,9 @@ export default {
     switchChange(status, id) {
       this.$store.dispatch("accountStatus", { status, id });
     },
-    setApp(id) {
-      this.$emit("editApp", id);
-    },
+    // setApp(id) {
+    //   this.$emit("editApp", id);
+    // },
     // setDetection(id, platform) {
     //   this.$emit("setDetection", id, platform);
     // }
